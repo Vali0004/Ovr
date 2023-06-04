@@ -14,3 +14,4 @@ Bin/Int/Release/Ovr.tlog/Masm.read.1u.tlog
 *.ipch
 *.iobj
 *.ipdb
+*.dll.recipe
