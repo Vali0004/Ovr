@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{66f8b86f-12f7-4ab2-9f1a-fe4f43c51ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{5f417b0a-ebf7-4490-bd39-51d2c22236cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\pch">
+      <UniqueIdentifier>{f6bc535d-d33f-4c2d-9511-fd536f3e27df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\exports">
+      <UniqueIdentifier>{6d0b99ea-a68d-4956-baf6-ccc3122e7916}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch\pch.cpp">
+      <Filter>src\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\core.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch\pch.h">
+      <Filter>src\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\core.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\joaat.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exports\exports.h">
+      <Filter>src\exports</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
