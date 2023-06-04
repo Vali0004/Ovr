@@ -4,7 +4,7 @@
 #include "rage/classes.h"
 #include "methods/vmt.h"
 #include "methods/detour.h"
-#include "shv/dynamic_loader.h"
+#include "features/shv/dynamic_loader.h"
 #include "rage/joaat.h"
 #define CALL(hk, ...) g_hooking->m_##hk##.getOg<pointers::types::##hk##>()(__VA_ARGS__);
 #define CALL_DECL(hk, ...) g_hooking->m_##hk##.getOg<decltype(&##hk)>()(__VA_ARGS__);

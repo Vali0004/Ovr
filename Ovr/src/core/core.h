@@ -2,7 +2,7 @@
 #include "pch/pch.h"
 #include "renderer/renderer.h"
 #include "hooking/hooking.h"
-#include "commands/invoker/invoker.h"
+#include "rage/commands/invoker/invoker.h"
 #include "fiber/pool.h"
 #include "script/script.h"
 #include "features/features.h"

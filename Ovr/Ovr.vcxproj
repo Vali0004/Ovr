@@ -104,8 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -124,8 +124,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -144,8 +144,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -182,10 +182,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\features\manager\command_engine.h" />
-    <ClInclude Include="src\commands\conversion_table.h" />
-    <ClInclude Include="src\commands\invoker\call_context.h" />
-    <ClInclude Include="src\commands\invoker\spoof\call_spoof.h" />
-    <ClInclude Include="src\commands\types.h" />
+    <ClInclude Include="src\rage\commands\conversion_table.h" />
+    <ClInclude Include="src\rage\commands\invoker\call_context.h" />
+    <ClInclude Include="src\rage\commands\invoker\spoof\call_spoof.h" />
+    <ClInclude Include="src\rage\commands\types.h" />
     <ClInclude Include="src\core\core.h" />
     <ClInclude Include="src\curl\curl.h" />
     <ClInclude Include="src\curl\curlver.h" />
@@ -250,8 +250,8 @@
     <ClInclude Include="src\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\imgui\imstb_textedit.h" />
     <ClInclude Include="src\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\commands\invoker\invoker.h" />
-    <ClInclude Include="src\commands\list.h" />
+    <ClInclude Include="src\rage\commands\invoker\invoker.h" />
+    <ClInclude Include="src\rage\commands\list.h" />
     <ClInclude Include="src\json\json.h" />
     <ClInclude Include="src\memory\patch.h" />
     <ClInclude Include="src\memory\pointers.h" />
@@ -307,8 +307,8 @@
     <ClInclude Include="src\script\tabs\weapon.h" />
     <ClInclude Include="src\script\tabs\weapon\ammo.h" />
     <ClInclude Include="src\script\tabs\weapon\loadout.h" />
-    <ClInclude Include="src\shv\dynamic_loader.h" />
-    <ClInclude Include="src\shv\scripthookv.h" />
+    <ClInclude Include="src\features\shv\dynamic_loader.h" />
+    <ClInclude Include="src\features\shv\scripthookv.h" />
     <ClInclude Include="src\stackwalker\stackwalker.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
@@ -317,7 +317,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\features\manager\command_engine.cpp" />
-    <ClCompile Include="src\commands\invoker\invoker.cpp" />
+    <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\core\core.cpp" />
     <ClCompile Include="src\directx\AlphaTestEffect.cpp" />
     <ClCompile Include="src\directx\BasicEffect.cpp" />
@@ -396,11 +396,11 @@
     </ClCompile>
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\script\script.cpp" />
-    <ClCompile Include="src\shv\scripthookv.cpp" />
+    <ClCompile Include="src\features\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="src\commands\invoker\spoof\spoof.asm" />
+    <MASM Include="src\rage\commands\invoker\spoof\spoof.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.inc" />

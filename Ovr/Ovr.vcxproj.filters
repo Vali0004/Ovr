@@ -34,14 +34,14 @@
     <ClInclude Include="src\imgui\backends\imgui_impl_win32.h">
       <Filter>src\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\list.h">
-      <Filter>src\commands</Filter>
+    <ClInclude Include="src\rage\commands\list.h">
+      <Filter>src\rage\commands</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\conversion_table.h">
-      <Filter>src\commands</Filter>
+    <ClInclude Include="src\rage\commands\conversion_table.h">
+      <Filter>src\rage\commands</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\types.h">
-      <Filter>src\commands</Filter>
+    <ClInclude Include="src\rage\commands\types.h">
+      <Filter>src\rage\commands</Filter>
     </ClInclude>
     <ClInclude Include="src\rage\engine.h">
       <Filter>src\rage</Filter>
@@ -103,17 +103,17 @@
     <ClInclude Include="src\minhook\hde\table64.h">
       <Filter>src\minhook\hde</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\invoker\spoof\call_spoof.h">
-      <Filter>src\commands\invoker\spoof</Filter>
+    <ClInclude Include="src\rage\commands\invoker\spoof\call_spoof.h">
+      <Filter>src\rage\commands\invoker\spoof</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\invoker\invoker.h">
-      <Filter>src\commands\invoker</Filter>
+    <ClInclude Include="src\rage\commands\invoker\invoker.h">
+      <Filter>src\rage\commands\invoker</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer\renderer.h">
       <Filter>src\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\commands\invoker\call_context.h">
-      <Filter>src\commands\invoker</Filter>
+    <ClInclude Include="src\rage\commands\invoker\call_context.h">
+      <Filter>src\rage\commands\invoker</Filter>
     </ClInclude>
     <ClInclude Include="src\pch\pch.h">
       <Filter>src\pch</Filter>
@@ -155,7 +155,7 @@
       <Filter>src\exceptions</Filter>
     </ClInclude>
     <ClInclude Include="src\stackwalker\stackwalker.h">
-      <Filter>src\stackwalker</Filter>
+      <Filter>src\util\stackwalker</Filter>
     </ClInclude>
     <ClInclude Include="src\rage\joaat.h">
       <Filter>src\rage</Filter>
@@ -319,11 +319,11 @@
     <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h">
       <Filter>src\renderer\dxtk</Filter>
     </ClInclude>
-    <ClInclude Include="src\shv\scripthookv.h">
-      <Filter>src\shv</Filter>
+    <ClInclude Include="src\features\shv\scripthookv.h">
+      <Filter>src\features\shv</Filter>
     </ClInclude>
-    <ClInclude Include="src\shv\dynamic_loader.h">
-      <Filter>src\shv</Filter>
+    <ClInclude Include="src\features\shv\dynamic_loader.h">
+      <Filter>src\features\shv</Filter>
     </ClInclude>
     <ClInclude Include="src\util\global.h">
       <Filter>src\util</Filter>
@@ -398,7 +398,7 @@
       <Filter>src\script\tabs\network</Filter>
     </ClInclude>
     <ClInclude Include="src\json\json.h">
-      <Filter>src\json</Filter>
+      <Filter>src\util\json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -456,8 +456,8 @@
     <ClCompile Include="src\renderer\renderer.cpp">
       <Filter>src\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\commands\invoker\invoker.cpp">
-      <Filter>src\commands\invoker</Filter>
+    <ClCompile Include="src\rage\commands\invoker\invoker.cpp">
+      <Filter>src\rage\commands\invoker</Filter>
     </ClCompile>
     <ClCompile Include="src\pch\pch.cpp">
       <Filter>src\pch</Filter>
@@ -475,7 +475,7 @@
       <Filter>src\exceptions</Filter>
     </ClCompile>
     <ClCompile Include="src\stackwalker\stackwalker.cpp">
-      <Filter>src\stackwalker</Filter>
+      <Filter>src\util\stackwalker</Filter>
     </ClCompile>
     <ClCompile Include="src\core\core.cpp">
       <Filter>src\core</Filter>
@@ -597,8 +597,8 @@
     <ClCompile Include="src\directx\WICTextureLoader.cpp">
       <Filter>src\directx</Filter>
     </ClCompile>
-    <ClCompile Include="src\shv\scripthookv.cpp">
-      <Filter>src\shv</Filter>
+    <ClCompile Include="src\features\shv\scripthookv.cpp">
+      <Filter>src\features\shv</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp">
       <Filter>src\hooking\hooks</Filter>
@@ -641,9 +641,6 @@
     <Filter Include="src\rage">
       <UniqueIdentifier>{2a7cf785-09cd-4f8c-95fd-57668b37b10a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\commands">
-      <UniqueIdentifier>{249371e8-9078-468c-b367-dc61cd28fe80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\fiber">
       <UniqueIdentifier>{e013f802-338c-489f-b4b8-739899fdf553}</UniqueIdentifier>
     </Filter>
@@ -670,12 +667,6 @@
     </Filter>
     <Filter Include="src\hooking\hooks">
       <UniqueIdentifier>{deb295bf-9b66-426d-9d1e-63be0d6313fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands\invoker">
-      <UniqueIdentifier>{8501430d-f7d9-41e1-b25c-d2231959c142}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands\invoker\spoof">
-      <UniqueIdentifier>{f0ff0709-c39d-4726-b8d4-87c2969adb62}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\renderer">
       <UniqueIdentifier>{68e96c16-bf06-43cc-ac13-57dfe31e51f7}</UniqueIdentifier>
@@ -710,9 +701,6 @@
     <Filter Include="src\exceptions">
       <UniqueIdentifier>{632a6eaa-21fd-4e63-949d-ab7efa2a17e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\stackwalker">
-      <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\core">
       <UniqueIdentifier>{ee9cca48-bcc1-44ab-aa7e-684ec5e1ad84}</UniqueIdentifier>
     </Filter>
@@ -730,9 +718,6 @@
     </Filter>
     <Filter Include="src\renderer\dxtk">
       <UniqueIdentifier>{170a059d-7b6a-4333-8712-68b6e61a6621}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\shv">
-      <UniqueIdentifier>{e92b33cc-3672-4bbf-9ccb-e0aea59c17bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\script\tabs\scripting">
       <UniqueIdentifier>{bf16c572-3db0-43fd-82d4-3065bf0adc44}</UniqueIdentifier>
@@ -755,13 +740,28 @@
     <Filter Include="src\features\manager">
       <UniqueIdentifier>{111f5a30-54e3-49ec-b439-0fa6f44ce859}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\json">
+    <Filter Include="src\features\shv">
+      <UniqueIdentifier>{e92b33cc-3672-4bbf-9ccb-e0aea59c17bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rage\commands">
+      <UniqueIdentifier>{249371e8-9078-468c-b367-dc61cd28fe80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rage\commands\invoker">
+      <UniqueIdentifier>{8501430d-f7d9-41e1-b25c-d2231959c142}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rage\commands\invoker\spoof">
+      <UniqueIdentifier>{f0ff0709-c39d-4726-b8d4-87c2969adb62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util\stackwalker">
+      <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util\json">
       <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="src\commands\invoker\spoof\spoof.asm">
-      <Filter>src\commands\invoker\spoof</Filter>
+    <MASM Include="src\rage\commands\invoker\spoof\spoof.asm">
+      <Filter>src\rage\commands\invoker\spoof</Filter>
     </MASM>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #include "renderer.h"
 #include "script/script.h"
 #include "util/util.h"
-#include "shv/scripthookv.h"
+#include "features/shv/scripthookv.h"
 
 renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	m_wndProc = WNDPROC(SetWindowLongPtrA(pointers::g_hwnd, GWLP_WNDPROC, LONG_PTR(&renderer::wndProc)));

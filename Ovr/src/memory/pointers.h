@@ -1,7 +1,7 @@
 #pragma once
 #include "pch/pch.h"
 #include "rage/classdefs.h"
-#include "commands/types.h"
+#include "rage/commands/types.h"
 
 namespace pointers {
 	extern void scanAll();

@@ -1,7 +1,7 @@
 #include "core/core.h"
 #include "util/util.h"
 #include "util/clipboard.h"
-#include "shv/dynamic_loader.h"
+#include "features/shv/dynamic_loader.h"
 #include "memory/patch.h"
 #include <memory/scanner.h>
 

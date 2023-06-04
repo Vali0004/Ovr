@@ -15,3 +15,5 @@
 *.iobj
 *.ipdb
 *.dll.recipe
+*.idb
+*.ilk

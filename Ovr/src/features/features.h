@@ -5,7 +5,7 @@
 #include "memory/pointers.h"
 #include "rage/classes.h"
 #include "rage/tables.h"
-#include "commands/list.h"
+#include "rage/commands/list.h"
 #include "manager/manager.h"
 #include "manager/command_engine.h"
 #include "math.h"

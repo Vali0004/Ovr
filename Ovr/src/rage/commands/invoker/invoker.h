@@ -1,6 +1,6 @@
 #pragma once
 #include "pch/pch.h"
-#include "commands/conversion_table.h"
+#include "rage/commands/conversion_table.h"
 #include "memory/pointers.h"
 #include "rage/classes.h"
 #include "spoof/call_spoof.h"

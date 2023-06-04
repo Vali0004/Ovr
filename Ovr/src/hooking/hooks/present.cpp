@@ -1,6 +1,6 @@
 #include "hooking/hooking.h"
 #include "renderer/renderer.h"
-#include "shv/scripthookv.h"
+#include "features/shv/scripthookv.h"
 
 HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags) {
 	ImGui_ImplWin32_NewFrame();

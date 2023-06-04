@@ -1,8 +1,8 @@
-#include "shv/scripthookv.h"
+#include "features/shv/scripthookv.h"
 #include "util/util.h"
 #include "util/global.h"
 #include "fiber/manager.h"
-#include "commands/invoker/invoker.h"
+#include "rage/commands/invoker/invoker.h"
 
 namespace shv {
 	namespace exports {
