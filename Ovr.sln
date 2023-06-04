@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuickAndDirty", "QuickAndDirty\QuickAndDirty.vcxproj", "{0B7EB3A1-17B3-4F3F-8299-94D3C3F37AD2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ovr", "Ovr\Ovr.vcxproj", "{0B7EB3A1-17B3-4F3F-8299-94D3C3F37AD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
