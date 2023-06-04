@@ -1,0 +1,16 @@
+
+.vs/Ovr/v16/.suo
+Bin/Int/Release/Ovr.tlog/Masm.read.1u.tlog
+.vs/Ovr/v16/Browse.VC.db-wal
+.vs/Ovr/v16/Browse.VC.db-shm
+*.db
+*.opendb
+*.obj
+*.log
+*.pch
+*.tlog
+*.pdb
+*.dll
+*.ipch
+*.iobj
+*.ipdb

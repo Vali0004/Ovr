@@ -24,7 +24,7 @@
     <ProjectGuid>{0b7eb3a1-17b3-4f3f-8299-94d3c3f37ad2}</ProjectGuid>
     <RootNamespace>ModelSwapping</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>QuickAndDirty</ProjectName>
+    <ProjectName>Ovr</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
