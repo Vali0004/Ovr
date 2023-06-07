@@ -76,9 +76,6 @@
     <ClInclude Include="src\hooking\methods\detour.h">
       <Filter>src\hooking\methods</Filter>
     </ClInclude>
-    <ClInclude Include="src\framework.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\minhook\buffer.h">
       <Filter>src\minhook</Filter>
     </ClInclude>
@@ -400,6 +397,37 @@
     <ClInclude Include="src\json\json.h">
       <Filter>src\util\json</Filter>
     </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\crashes.h">
+      <Filter>src\script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\kicks.h">
+      <Filter>src\script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\script_events.h">
+      <Filter>src\script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\network_events.h">
+      <Filter>src\script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\network_event.h">
+      <Filter>src\script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\kick.h">
+      <Filter>src\script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\crash.h">
+      <Filter>src\script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\script_event.h">
+      <Filter>src\script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions.h">
+      <Filter>src\script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch\framework.h">
+      <Filter>src\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -615,12 +643,6 @@
     <ClCompile Include="src\hooking\hooks\run_async_module_request.cpp">
       <Filter>src\hooking\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\game_skeleton_run_base_run_group.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\game_skeleton_run_update.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
     <ClCompile Include="src\features\manager\manager.cpp">
       <Filter>src\features\manager</Filter>
     </ClCompile>
@@ -632,6 +654,15 @@
     </ClCompile>
     <ClCompile Include="src\fiber\pool.cpp">
       <Filter>src\fiber</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\script_vm.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp">
+      <Filter>src\hooking\hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -757,6 +788,9 @@
     </Filter>
     <Filter Include="src\util\json">
       <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\script\tabs\protections\reactions">
+      <UniqueIdentifier>{124209a6-035e-4e62-8864-95d36bc4c59c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

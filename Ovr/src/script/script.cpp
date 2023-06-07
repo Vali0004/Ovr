@@ -17,8 +17,8 @@
 namespace script {
 	void onPresent() {
 		if (script::g_guiOpen) {
-			elements::window("Ovr", g_guiOpen, [] {
-				elements::tabBar("Main", [] {
+			elements::window(BRAND, g_guiOpen, [] {
+				elements::tabBar(BRAND, [] {
 					elements::tabItem("Self", &tabs::self::tab);
 					elements::tabItem("Weapon", &tabs::weapon::tab);
 					elements::tabItem("Vehicle", &tabs::vehicle::tab);
@@ -35,6 +35,13 @@ namespace script {
 			elements::text("Peds: {}", util::getPedCounts());
 			elements::text("Pickups: {}", util::getPedCounts());
 			elements::text("Objects: {}", util::getObjectCounts());
+		});
+		elements::setWindow({ ImGui::GetIO().DisplaySize.x - 455.f, 5.f }, { 445.f, 40.f });
+		elements::primitiveWindow("Overlay", [] {
+			elements::setStyleColor({ { ImGuiCol_Border, {} } }, [] {
+				elements::addWindowRect({ 435.f, 2.f }, { 255, 192, 255, 255 });
+				elements::text("overseer.menu | FPS: {} | Date: {}", static_cast<u32>(ImGui::GetIO().Framerate / 1.5f), util::time("%c"));
+			});
 		});
 	}
 	void onTick() {

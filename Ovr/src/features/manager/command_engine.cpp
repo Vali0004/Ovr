@@ -7,7 +7,7 @@ namespace features::cmd {
 		if (isNumber(arg)) {
 			u64 indexFromArg{ stoull(arg) };
 			if (indexFromArg > 30) {
-				LOG(FOREGROUND_WHITE, "Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", indexFromArg);
+				LOG(Commands, "The index '{}' provided is out of range! Please provide a name or valid index.", indexFromArg);
 				return {};
 			}
 			util::network::iteratePlayers([&](u16 index, CNetGamePlayer* player) {
@@ -33,7 +33,7 @@ namespace features::cmd {
 					return true;
 				}
 				else if (std::string(player->GetName()).find(name) != -1) {
-					LOG(FOREGROUND_WHITE, "Commands", "The name '{}' isn't unique enough! Please try again", name);
+					LOG(Commands, "The name '{}' isn't unique enough! Please try again", name);
 					return true;
 				}
 				//A context box would be a pretty good idea. TODO ig
@@ -49,13 +49,13 @@ namespace features::cmd {
 		if (feature->m_type != eFeatureType::ActionFeature && feature->m_type != eFeatureType::ToggleFeature && feature->m_type != eFeatureType::VariadicFeature) {
 			if (feature->m_type != eFeatureType::ToggleIntFeature && feature->m_type != eFeatureType::ToggleFloatFeature) {
 				if (trueArgCount != 1) {
-					LOG(FOREGROUND_WHITE, "Commands", "You provided {} arguments for a command that requires one argument.", trueArgCount);
+					LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
 					return;
 				}
 			}
 			else {
 				if (trueArgCount != 2) {
-					LOG(FOREGROUND_WHITE, "Commands", "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
+					LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
 					return;
 				}
 			}
@@ -84,11 +84,14 @@ namespace features::cmd {
 			// Just incase we provide a unneeded space, we won't kill everything. An example would be "suicide "
 			feature->run();
 		} break;
+		case eFeatureType::ProtectionFeature: {
+			feature->get(0).string = arguments[1].c_str();
+		} break;
 		case eFeatureType::VariadicFeature: {
 			if (feature->has_value()) {
 				if (feature->get_value(0)->m_type != eValueType::String) {
 					if (feature->value_count() != trueArgCount) {
-						LOG(FOREGROUND_WHITE, "Commands", "You provided {} arguments for a command that requires {} arguments.", trueArgCount, feature->value_count());
+						LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, feature->value_count());
 						return;
 					}
 					for (size_t i{ 1 }; i != arguments.size(); ++i) {
@@ -165,16 +168,16 @@ namespace features::cmd {
 	}
 	 void engine::execute(std::string& string) {
 		if (!string.size()) {
-			LOG(FOREGROUND_WHITE, "Commands", "Empty command string!");
+			LOG(Commands, "Empty command string!");
 			return;
 		}
 		std::vector<std::string> words{ g_splitStr(string, ' ') };
 		if (words.empty()) {
-			LOG(FOREGROUND_WHITE, "Commands", "No command!");
+			LOG(Commands, "No command!");
 			return;
 		}
 		if (isNumber(words.at(0))) {
-			LOG(FOREGROUND_WHITE, "Commands", "Provide a command!");
+			LOG(Commands, "Provide a command!");
 			return;
 		}
 		abstractFeature* feature{ getFeature(words[0]) };
@@ -187,7 +190,7 @@ namespace features::cmd {
 				return;
 			}
 			if (feature->m_type != eFeatureType::ActionFeature) {
-				LOG(FOREGROUND_WHITE, "Commands", "You provided no arguments for a command that requires arguments!");
+				LOG(Commands, "You provided no arguments for a command that requires arguments!");
 				return;
 			}
 			else {
@@ -226,7 +229,8 @@ namespace features::cmd {
 	abstractFeature* engine::getFeature(std::string search) {
 		auto matches{ findMatches(search) };
 		if (matches.empty()) {
-			LOG(FOREGROUND_WHITE, "Commands", "'{}' isn't a valid command.", search);
+			LOG(Commands, "'{}' isn't a valid command.", search);
+			return nullptr;
 		}
 		else {
 			if (m_useDirectMatchResults) {
@@ -234,21 +238,22 @@ namespace features::cmd {
 				lower[0] = tolower(lower[0]);
 				for (auto& m : matches) {
 					if (m->m_id == search || m->m_id == lower) {
-						LOG(FOREGROUND_WHITE, "Commands", "{} found.", m->m_id);
+						LOG(Commands, "{} found.", m->m_id);
 						return m;
 					}
 				}
 			}
 			if (matches.size() > 1) {
 				if (m_useFirstResultOnTooManyResults) {
-					LOG(FOREGROUND_WHITE, "Commands", "'{}' isn't unique enough. Using {} instead.", search, matches.at(0)->m_id);
+					LOG(Commands, "'{}' isn't unique enough. Using {} instead.", search, matches.at(0)->m_id);
 					return matches.at(0);
 				}
-				LOG(FOREGROUND_WHITE, "Commands", "'{}' isn't unique enough. Maybe you meant {}?", search, matches.at(0)->m_id);
+				LOG(Commands, "'{}' isn't unique enough. Maybe you meant {}?", search, matches.at(0)->m_id);
 			}
-			LOG(FOREGROUND_WHITE, "Commands", "{} found.", matches.at(0)->m_id);
+			LOG(Commands, "{} found.", matches.at(0)->m_id);
 			return matches.at(0);
 		}
+		return nullptr;
 	}
 	template <typename t>
 	t engine::convertData(std::string str) {

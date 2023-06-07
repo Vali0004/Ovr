@@ -213,7 +213,7 @@ namespace features {
 							}
 						}
 						if (!found) {
-							LOG(FOREGROUND_WHITE, "Commands", "Command 'go' accepts a string but there is no type '{}'", cid);
+							LOG(Commands, "Command 'go' accepts a string but there is no type '{}'", cid);
 							return;
 						}
 					}
@@ -273,11 +273,11 @@ namespace features {
 								return json["Accounts"][0]["RockstarId"].get<uint64_t>();
 							}
 							else {
-								LOG(FOREGROUND_WHITE, "Info", "{} wasn't found. Please ensure there are no spelling mistakes", name);
+								LOG(Info, "{} wasn't found. Please ensure there are no spelling mistakes", name);
 							}
 						}
 						else {
-							LOG(FOREGROUND_WHITE, "Info", "The character count cannot exceed 20, please shorten the value");
+							LOG(Info, "The character count cannot exceed 20, please shorten the value");
 						}
 						return 0;
 					}
@@ -336,6 +336,14 @@ namespace features {
 			util::clipboard clipboard{ feature->get(0).string };
 			clipboard.set();
 		}
+		void copyScString(variadicFeature* feature) {
+			cmd::g_engine.primitiveExecute("copyText {}", util::network::socialclub::getString(feature->get(0).string));
+		}
+		void printCliboard(actionFeature* feature) {
+			util::clipboard clipboard{};
+			clipboard.get();
+			LOG_DIRECT(White, "Clipboard", "{}", clipboard.str());
+		}
 	}
 	void onTick() {
 		//Self::Ped::Proofs
@@ -390,6 +398,10 @@ namespace features {
 		features::g_manager.add(features::variadicFeature("ridToName", "Rockstar ID To Name", "Converts a given RID to an name and copies it to clipboard", { { eValueType::UInt64 } }, network::socialclub::ridToName, false));
 		//Network
 		features::g_manager.add(features::actionFeature("bail", "Bail", "Bail from online", network::bail));
+		//Protections::Kicks
+		features::g_manager.add(features::protectionFeature("breakupKickProtection", "Breakup", "Sends the remove gamer command"));
+		features::g_manager.add(features::protectionFeature("desyncKickProtection", "Desync", "Removes you from the player manager"));
+		features::g_manager.add(features::protectionFeature("lostConnectionKickProtection", "Lost Connection", "Spam disconnects you from the host"));
 		//Settings::Ui
 		features::g_manager.add(features::floatFeature("scale", "Scale", "Set the global UI scale", settings::ui::scale, true));
 		//Settings::Game
@@ -398,6 +410,8 @@ namespace features {
 		features::g_manager.add(features::actionFeature("exit", "Exit", "Exit the game", settings::game::exit));
 		//Commands
 		features::g_manager.add(features::variadicFeature("copyText", "Copy Text", "Copies text to clipboard", { { eValueType::String } }, commands::copyText, false));
+		features::g_manager.add(features::variadicFeature("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", { { eValueType::String } }, commands::copyScString, false));
+		features::g_manager.add(features::actionFeature("printClipboard", "Print Clipboard", "Prints your clipboard to log", commands::printCliboard));
 		features::g_manager.init();
 		//These need to be after init because the values aren't created yet.
 		//Self::Movement

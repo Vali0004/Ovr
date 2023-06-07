@@ -1,5 +1,6 @@
 #pragma once
 #include "pch/pch.h"
+#include "core/logger.h"
 #include "rage/commands/conversion_table.h"
 #include "memory/pointers.h"
 #include "rage/classes.h"

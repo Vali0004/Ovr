@@ -27,6 +27,36 @@ namespace elements {
 		setWindowPos(pos);
 		setWindowSize(size);
 	}
+	inline ImVec2 getWindowsPos() {
+		return ImGui::GetWindowPos();
+	}
+	inline ImGuiWindow* getWindow() {
+		return ImGui::GetCurrentWindow();
+	}
+	inline ImDrawList* getWindowDrawlist() {
+		return getWindow()->DrawList;
+	}
+	inline void addWindowRect(ImVec2 size, ImColor color) {
+		ImVec2 pos{ getWindowsPos() };
+		getWindowDrawlist()->AddRectFilled(pos, pos + size, color);
+	}
+	inline void setStyleVars(std::vector<std::pair<ImGuiStyleVar_, ImVec2>> vars, std::function<void()> cb = {}) {
+		for (auto& var : vars) {
+			ImGui::PushStyleVar(var.first, var.second);
+		}
+		cb();
+		ImGui::PopStyleVar(vars.size());
+	}
+	inline void setStyleColor(std::vector<std::pair<ImGuiCol_, ImU32>> vars, std::function<void()> cb = {}) {
+		for (auto& var : vars) {
+			ImGui::PushStyleColor(var.first, var.second);
+		}
+		cb();
+		ImGui::PopStyleColor(vars.size());
+	}
+	inline void setNextItemWidth(float width) {
+		ImGui::SetNextItemWidth(width);
+	}
 	template <typename ...t>
 	inline void text(std::string fmt, t... args) {
 		std::string str{ std::vformat(fmt, std::make_format_args(args...)) };
@@ -111,6 +141,12 @@ namespace elements {
 			}
 		}
 	}
+	inline void combo(std::string label, std::string preview, std::function<void()> cb = {}) {
+		if (ImGui::BeginCombo(label.c_str(), preview.c_str())) {
+			cb();
+			ImGui::EndCombo();
+		}
+	}
 	inline void button(std::string label, std::function<void()> cb = {}, bool runUnderFiber = false) {
 		if (ImGui::Button(label.c_str())) {
 			if (cb) {
@@ -150,14 +186,13 @@ namespace elements {
 	}
 	template <size_t size>
 	inline void inputText(std::string label, char(&output)[size], float width = -1.f, std::function<void()> cb = {}, bool hidden = false) {
-		ImGui::SetNextItemWidth(width);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-		if (ImGui::InputTextWithHint(("##_" + label).c_str(), label.c_str(), output, size, hidden ? ImGuiInputTextFlags_Password : ImGuiInputTextFlags_None)) {
-			if (cb) {
-				cb();
+		setNextItemWidth(width);
+		setStyleVars({ { ImGuiStyleVar_FramePadding, { 10.f, 8.f } }, { ImGuiStyleVar_FrameRounding, { 4.f, 0.f } } }, [&] {
+			if (ImGui::InputTextWithHint(("##_" + label).c_str(), label.c_str(), output, size, hidden ? ImGuiInputTextFlags_Password : ImGuiInputTextFlags_None)) {
+				if (cb) {
+					cb();
+				}
 			}
-		}
-		ImGui::PopStyleVar(2);
+		});
 	}
 }

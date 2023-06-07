@@ -2,6 +2,7 @@
 #include "pch/pch.h"
 #include "rage/classdefs.h"
 #include "rage/commands/types.h"
+#include "core/logger.h"
 
 namespace pointers {
 	extern void scanAll();
@@ -19,10 +20,10 @@ namespace pointers {
 		using cTaskFallConstructor = void*(*)(u64 _This, u32 Flags);
 		using runAsyncModuleRequest = void(*)(u64* Module);
 		using hasIntervalElapsed = bool(*)(u32 Timestamp, u32 Interval);
-		using gameSkeletonRunUpdate = u64(*)(rage::gameSkeleton* _This, s32 Type);
-		using gameSkeletonUpdateBaseRunGroup = u64(*)(rage::gameSkeletonUpdateBase* _This);
 		using dispatchEvent = bool(*)(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent);
+		using scriptVm = rage::eThreadState(*)(rage::scrValue* Stack, rage::scrValue** Globals, rage::scrProgram* Program, rage::scrThreadSerialised* Serialised);
 		using scGetGameInfoIndex = int(*)(const char* StringId, u64 Unk, u32 GameId);
+		using joinBySessionInfo = bool(*)(Network* Network, rage::rlSessionInfo* Info, s32 Unk, s32 Flags, rage::rlGamerHandle* Handles, s32 HandleCount);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -36,10 +37,10 @@ namespace pointers {
 	inline types::cTaskFallConstructor g_cTaskFallConstructor{};
 	inline types::runAsyncModuleRequest g_runAsyncModuleRequest{};
 	inline types::hasIntervalElapsed g_hasIntervalElapsed{};
-	inline types::gameSkeletonRunUpdate g_gameSkeletonRunUpdate{};
-	inline types::gameSkeletonUpdateBaseRunGroup g_gameSkeletonUpdateBaseRunGroup{};
 	inline types::dispatchEvent g_dispatchEvent{};
+	inline types::scriptVm g_scriptVm{};
 	inline types::scGetGameInfoIndex g_scGetGameInfoIndex{};
+	inline types::joinBySessionInfo g_joinBySessionInfo{};
 
 	inline ScGameInfo* g_scGameInfo{};
 	inline FriendRegistry* g_friendRegistry{};
@@ -52,6 +53,7 @@ namespace pointers {
 	inline rage::scrProgramTable* g_scrProgramTable{};
 	inline rage::scrNativeRegistrationTable* g_nativeRegistrationTable{};
 	inline IDXGISwapChain** g_swapChain{};
+	inline PresenceData** g_presenceData{};
 	inline HashTable<rage::CBaseModelInfo*>* g_hashTable{};
 	inline rage::atArray<GtaThread*>* g_gtaThreads{};
 	inline rage::scrValue** g_globals{};

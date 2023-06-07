@@ -1,24 +1,297 @@
 #pragma once
 #include <windows.h>
 #include <map>
-
-enum class eCloneSyncType : int64_t {
-	NotInBubble,
-	WrongOwner,
-	NoNetObj,
-	NoGameObj,
-	NetClosed,
-	Success,
+enum class eVehicleType : uint32_t {
+	Car,
+	Plane,
+	Unk2,
+	Quadbike,
+	Unk4,
+	Unk5,
+	AmphibiousCar,
+	AmphibiousQuadbike,
+	Heli,
+	Unk9,
+	Unk10,
+	Bike,
+	Bicycle,
+	Boat,
+	Train
+};
+enum class ePedBoneType {
+	Head,
+	LeftFoot,
+	RightFoot,
+	LeftAnkle,
+	RightAnkle,
+	LeftHand,
+	RightHand,
+	Neck,
+	Abdomen
+};
+enum class ePedTask {
+	None,
+	Foot = 1 << 4,
+	Unk = 1 << 5,
+	Driving = 1 << 6
+};
+enum class eEntityFlags : uint32_t {
+	Visible = 1 << 0
+};
+enum class eAbilityFlags : uint32_t {
+	Parachute = (1 << 0),
+};
+enum class ePedType : uint32_t {
+	Ragdogable = (1 << 5)
+};
+enum class eTaskFlags : uint32_t {
+	Unk10 = (1 << 10),
+	Unk11 = (1 << 11),
+	Unk12 = (1 << 12),
+	SuperJump = (1 << 15),
+	LandOnJump = (1 << 16),
+	BeastJump = (1 << 17),
+	BeastJumpWithSuper = SuperJump | BeastJump,
+	GracefulLanding = Unk10 | Unk11 | Unk12 | LandOnJump
+};
+enum eFrameFlags : uint32_t {
+	eFrameFlagExplosiveAmmo = 1 << 11,
+	eFrameFlagFireAmmo = 1 << 12,
+	eFrameFlagExplosiveMelee = 1 << 13,
+	eFrameFlagSuperJump = 1 << 14,
+};
+enum class eEntityProofs : uint32_t {
+	Bullet = 1 << 4,
+	Fire = 1 << 5,
+	Collision = 1 << 6,
+	Melee = 1 << 7,
+	God = 1 << 8,
+	Explosion = 1 << 11,
+	Steam = 1 << 15,
+	Drown = 1 << 16,
+	Water = 1 << 24,
+};
+enum class eAmmoSpecialType : int32_t {
 	Invalid = -1,
+	None,
+	ArmorPiercing,
+	Explosive,
+	FMJ,
+	HollowPoint,
+	Incendiary,
+	Tracer
+};
+enum class eDamageType : int32_t {
+	Unknown,
+	None,
+	Melee,
+	Bullet,
+	_0xC5403EC0,
+	Explosive,
+	Fire,
+	_0xA869C908,
+	Fall,
+	_0xCAE075C0,
+	Electric,
+	BarbedWire,
+	FireExtinguisher,
+	Smoke,
+	WaterCannon,
+	_0x1C8E59AE
+};
+enum class eFireType : int32_t {
+	None,
+	Melee,
+	InstantHit,
+	DelayedHit,
+	ProjectTile,
+	VolumetricParticle
+};
+enum class eWheelSlot : int32_t {
+	Pistol,
+	SMG,
+	Rifle,
+	Sniper,
+	UnarmedMelee,
+	ShotGun,
+	Heavy,
+	Throwable
+};
+enum class ePlayerGameState : int32_t {
+	Invalid = -1,
+	Playing,
+	Died,
+	Arrested,
+	FailedMission,
+	LeftGame,
+	Respawn,
+	InMPCutscene
+};
+enum class eGameState : int32_t {
+	Invalid = -1,
+	Playing,
+	PreLegal,
+	Unknown_2,
+	Legals,
+	Unknown_4,
+	MainMenu,
+	Transition,
+	Unknown_7,
+	Unknown_8,
+	Unknown_9,
+	SessionStartLeave
+};
+enum scrOpcode {
+	OP_NOP,
+	OP_IADD,
+	OP_ISUB,
+	OP_IMUL,
+	OP_IDIV,
+	OP_IMOD,
+	OP_INOT,
+	OP_INEG,
+	OP_IEQ,
+	OP_INE,
+	OP_IGT,
+	OP_IGE,
+	OP_ILT,
+	OP_ILE,
+	OP_FADD,
+	OP_FSUB,
+	OP_FMUL,
+	OP_FDIV,
+	OP_FMOD,
+	OP_FNEG,
+	OP_FEQ,
+	OP_FNE,
+	OP_FGT,
+	OP_FGE,
+	OP_FLT,
+	OP_FLE,
+	OP_VADD,
+	OP_VSUB,
+	OP_VMUL,
+	OP_VDIV,
+	OP_VNEG,
+	OP_IAND,
+	OP_IOR,
+	OP_IXOR,
+	OP_I2F,
+	OP_F2I,
+	OP_F2V,
+	OP_PUSH_CONST_U8,
+	OP_PUSH_CONST_U8_U8,
+	OP_PUSH_CONST_U8_U8_U8,
+	OP_PUSH_CONST_U32,
+	OP_PUSH_CONST_F,
+	OP_DUP,
+	OP_DROP,
+	OP_NATIVE,
+	OP_ENTER,
+	OP_LEAVE,
+	OP_LOAD,
+	OP_STORE,
+	OP_STORE_REV,
+	OP_LOAD_N,
+	OP_STORE_N,
+	OP_ARRAY_U8,
+	OP_ARRAY_U8_LOAD,
+	OP_ARRAY_U8_STORE,
+	OP_LOCAL_U8,
+	OP_LOCAL_U8_LOAD,
+	OP_LOCAL_U8_STORE,
+	OP_STATIC_U8,
+	OP_STATIC_U8_LOAD,
+	OP_STATIC_U8_STORE,
+	OP_IADD_U8,
+	OP_IMUL_U8,
+	OP_IOFFSET,
+	OP_IOFFSET_U8,
+	OP_IOFFSET_U8_LOAD,
+	OP_IOFFSET_U8_STORE,
+	OP_PUSH_CONST_S16,
+	OP_IADD_S16,
+	OP_IMUL_S16,
+	OP_IOFFSET_S16,
+	OP_IOFFSET_S16_LOAD,
+	OP_IOFFSET_S16_STORE,
+	OP_ARRAY_U16,
+	OP_ARRAY_U16_LOAD,
+	OP_ARRAY_U16_STORE,
+	OP_LOCAL_U16,
+	OP_LOCAL_U16_LOAD,
+	OP_LOCAL_U16_STORE,
+	OP_STATIC_U16,
+	OP_STATIC_U16_LOAD,
+	OP_STATIC_U16_STORE,
+	OP_GLOBAL_U16,
+	OP_GLOBAL_U16_LOAD,
+	OP_GLOBAL_U16_STORE,
+	OP_J,
+	OP_JZ,
+	OP_IEQ_JZ,
+	OP_INE_JZ,
+	OP_IGT_JZ,
+	OP_IGE_JZ,
+	OP_ILT_JZ,
+	OP_ILE_JZ,
+	OP_CALL,
+	OP_STATIC_U24,
+	OP_STATIC_U24_LOAD,
+	OP_STATIC_U24_STORE,
+	OP_GLOBAL_U24,
+	OP_GLOBAL_U24_LOAD,
+	OP_GLOBAL_U24_STORE,
+	OP_PUSH_CONST_U24,
+	OP_SWITCH,
+	OP_STRING,
+	OP_STRINGHASH,
+	OP_TEXT_LABEL_ASSIGN_STRING,
+	OP_TEXT_LABEL_ASSIGN_INT,
+	OP_TEXT_LABEL_APPEND_STRING,
+	OP_TEXT_LABEL_APPEND_INT,
+	OP_TEXT_LABEL_COPY,
+	OP_CATCH,
+	OP_THROW,
+	OP_CALLINDIRECT,
+	OP_PUSH_CONST_M1,
+	OP_PUSH_CONST_0,
+	OP_PUSH_CONST_1,
+	OP_PUSH_CONST_2,
+	OP_PUSH_CONST_3,
+	OP_PUSH_CONST_4,
+	OP_PUSH_CONST_5,
+	OP_PUSH_CONST_6,
+	OP_PUSH_CONST_7,
+	OP_PUSH_CONST_FM1,
+	OP_PUSH_CONST_F0,
+	OP_PUSH_CONST_F1,
+	OP_PUSH_CONST_F2,
+	OP_PUSH_CONST_F3,
+	OP_PUSH_CONST_F4,
+	OP_PUSH_CONST_F5,
+	OP_PUSH_CONST_F6,
+	OP_PUSH_CONST_F7,
+	OP_IS_BIT_SET
+};
+enum class eKickReason : uint8_t {
+	VotedOut,
+	PeerComplaints,
+	ConnectionError,
+	NatType,
+	SocialClub_Admin,
+	SocialClub_AdminBlacklist,
+	NumberOfReasons
 };
 enum class eNetMessage : uint32_t {
-	CMsgInvalid = 0xFFFFF,
+	MsgInvalid = 0xFFFFF,
+	//Known Messages
 	CMsgSessionAcceptChat = 0x62,
-	CMsgStartMatchCmd = 0x2D,
+	snMMsgStartMatchCmd = 0x2D,
 	CMsgSetInvitableCmd = 0x1F,
 	CMsgSessionMemberIds = 0x23,
 	CMsgRequestGamerInfo = 0x54,
-	CMsgRemoveGamersFromSessionCmd = 0x53,
+	snMsgRemoveGamersFromSessionCmd = 0x53,
 	CMsgNotMigrating = 0x35,
 	CMsgMigrateHostResponse = 0x12,
 	CMsgMigrateHostRequest = 0x66,
@@ -28,7 +301,7 @@ enum class eNetMessage : uint32_t {
 	CMsgConfigResponse = 0x5F,
 	CMsgConfigRequest = 0x48,
 	CMsgChangeSessionAttributesCmd = 0x5A,
-	CMsgAddGamerToSessionCmd = 0x64, // this is where send net info to lobby is called, among other things
+	snMsgAddGamerToSessionCmd = 0x64, //This is where send net info to lobby is called, among other things
 	CMsgReassignResponse = 0x10,
 	CMsgReassignNegotiate = 0x01,
 	CMsgReassignConfirm = 0x26,
@@ -52,20 +325,20 @@ enum class eNetMessage : uint32_t {
 	CMsgScriptHostRequest = 0x67,
 	CMsgScriptHandshakeAck = 0x5B,
 	CMsgScriptHandshake = 0x57,
-	CMsgScriptBotLeave = 0x2B, // unused?
-	CMsgScriptBotJoinAck = 0x63, // unused?
-	CMsgScriptBotJoin = 0x1C, // unused?
-	CMsgScriptBotHandshakeAck = 0x31, // unused?
-	CMsgScriptBotHandshake = 0x4B, // unused?
+	CMsgScriptBotLeave = 0x2B, //Unused?
+	CMsgScriptBotJoinAck = 0x63, //Unused?
+	CMsgScriptBotJoin = 0x1C, //Unused?
+	CMsgScriptBotHandshakeAck = 0x31, //Unused?
+	CMsgScriptBotHandshake = 0x4B, //Unused?
 	CMsgPartyLeaveGame = 0x3D,
 	CMsgPartyEnterGame = 0x1E,
-	CMsgCloneSync = 0x4E, // aka clone_create, clone_sync etc.
-	CMsgActivateNetworkBot = 0x65, // unused?
+	CMsgCloneSync = 0x4E, //AKA, CloneSync, CloneRemove, etc.
+	CMsgActivateNetworkBot = 0x65, //Unused?
 	CMsgRequestObjectIds = 0x29,
 	CMsgInformObjectIds = 0x09,
-	CMsgTextMessage = 0x24, // this one is for chat
+	CMsgTextMessage = 0x24, //fwuiInputMessageBase
 	CMsgPlayerIsTyping = 0x61,
-	CMsgPackedEvents = 0x4F, // aka received_event
+	CMsgPackedEvents = 0x4F, //ProcessPackedEvents (ReceivedEvent) constructor
 	CMsgPackedEventReliablesCMsgs = 0x20,
 	CMsgRequestKickFromHost = 0x0D,
 	CMsgTransitionToGameStart = 0x50,
@@ -77,7 +350,7 @@ enum class eNetMessage : uint32_t {
 	CMsgTransitionLaunchNotify = 0x1B,
 	CMsgTransitionLaunch = 0x19,
 	CMsgTransitionGamerInstruction = 0x14,
-	CMsgTextMessage2 = 0x0A, // this one is for phone message
+	CMsgTextMessage2 = 0x0A, //CMsgTestMessage (Should've been the name of this, and CMsgTextMessage should've been "CMsgChatMessage")
 	CMsgSessionEstablishedRequest = 0x52,
 	CMsgSessionEstablished = 0x07,
 	CMsgRequestTransitionParameters = 0x42,
@@ -86,8 +359,8 @@ enum class eNetMessage : uint32_t {
 	CMsgPlayerCardSync = 0x3A,
 	CMsgPlayerCardRequest = 0x6A,
 	CMsgLostConnectionToHost = 0x81,
-	CMsgKickPlayer = 0x34, // host kick
-	CMsgDebugStall = 0x7E, // unused?
+	CMsgKickPlayer = 0x34, //Host kick
+	CMsgDebugStall = 0x7E, //Unused?
 	CMsgCheckQueuedJoinRequestReply = 0x59,
 	CMsgCheckQueuedJoinRequest = 0x51,
 	CMsgBlacklist = 0x0C,
@@ -101,121 +374,29 @@ enum class eNetMessage : uint32_t {
 	CMsgTextChatStatus = 0x00,
 	CMsgJoinResponse2 = 0x08,
 	CMsgJoinRequest2 = 0x68,
-	CMsgNetTimeSync = 0x38, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 37
-	CMsgNetComplaint = 0x55, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 54
-	CMsgNetLagPing = 0x27, // unused? ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 26
-	CMsgSearchResponse = 0x6B, // unused? ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 6A
-	CMsgSearchRequest = 0x05, // unused?
-	CMsgQosProbeResponse = 0x2C, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 2B
-	CMsgQosProbeRequest = 0x1D, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 1C
-	CMsgCxnRelayAddressChanged = 0x49, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 48
-	CMsgCxnRequestRemoteTimeout = 0x2F, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 2E
-	CMsgSessionDetailRequest = 0x22, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 21
-	CMsgSessionDetailResponse = 0x13, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 12
-	CMsgKeyExchangeOffer = 0x0F, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 0E (last result)
-	CMsgKeyExchangeAnswer = 0x44, // ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 43
-	CMsg_0x87 = 0x87,
-	CMsg_0x88 = 0x88,
-	CMsg_0x80 = 0x80,
-	CMsg_0x28 = 0x28,
-	CMsg_0x11 = 0x11,
-	CMsg_0x45 = 0x45,
-	CMsg_0x89 = 0x89,
-	CMsg_0x86 = 0x86,
-};
-enum eScriptEvents : int32_t {
-	CEO_BAN = -764524031,
-	CEO_KICK = 248967238,
-	CEO_MONEY = 1890277845,
-	SET_BOUNTY = 1294995624,
-	CLEAR_WANTED = -91354030,
-	FAKE_DEOPOSIT = 677240627,
-	FORCE_MISSION = 2020588206,
-	GTA_BANNER = 1572255940,
-	NET_BAIL = 1228916411,
-	PERSONAL_VEH_DESTORY = 802133775,
-	REMOTE_OFFRADAR = -391633760,
-	ROTATE_CAM = 801199324,
-	ROTATE_CAM2 = 869796886,
-	SEND_TO_CUSTSCENE = 1068259786,
-	SEND_TO_ISLAND = -621279188,
-	SOUND_SPAM = 1132878564,
-	SPECTATE = -1113591308,
-	TELEPORT = 603406648,
-	TRANSACTION_ERR = -1704141512,
-	VEH_KICK = 578856274,
-	STOLEN_MONEY = -2106994199,
-	BANKED_MONEY = 1990572980,
-	REMOVED_MONEY = 689178114,
-	KICK = 163598572,
-	KICK2 = 998716537,
-	KICK3 = -1501164935,
-	CRASH = 2112408256,
-};
-enum eObjType : int16_t {
-	carObjType = 0,
-	bikeObjType = 1,
-	boatObjType = 2,
-	doorObjType = 3,
-	heliObjType = 4,
-	objType = 5,
-	pedObjType = 6,
-	pickupObjType = 7,
-	pickupPlacementObjType = 8,
-	planeObjType = 9,
-	submarineObjType = 10,
-	playerObjType = 11,
-	trailerObjType = 12,
-	trainObjType = 13,
-	unkObjType = -1
-};
-enum class eSyncReturnTypes : int64_t {
-	notInRoamingBubble = 1,
-	wrongObjOwner = 2,
-	unkRet3 = 3,
-	noNetObjData = 4,
-	noGameObjData = 6,
-	unkRet5 = 5,
-	networkClosed = 7,
-	successfullSync = 8,
-	invalidSync = -1,
-};
-enum eAudioFlag {
-	AudioFlagActivateSwitchWheelAudio,
-	AudioFlagAllowCutsceneOverScreenFade,
-	AudioFlagAllowForceRadioAfterRetune,
-	AudioFlagAllowPainAndAmbientSpeechToPlayDuringCutscene,
-	AudioFlagAllowPlayerAIOnMission,
-	AudioFlagAllowPoliceScannerWhenPlayerHasNoControl,
-	AudioFlagAllowRadioDuringSwitch,
-	AudioFlagAllowRadioOverScreenFade,
-	AudioFlagAllowScoreAndRadio,
-	AudioFlagAllowScriptedSpeechInSlowMo,
-	AudioFlagAvoidMissionCompleteDelay,
-	AudioFlagDisableAbortConversationForDeathAndInjury,
-	AudioFlagDisableAbortConversationForRagdoll,
-	AudioFlagDisableBarks,
-	AudioFlagDisableFlightMusic,
-	AudioFlagDisableReplayScriptStreamRecording,
-	AudioFlagEnableHeadsetBeep,
-	AudioFlagForceConversationInterrupt,
-	AudioFlagForceSeamlessRadioSwitch,
-	AudioFlagForceSniperAudio,
-	AudioFlagFrontendRadioDisabled,
-	AudioFlagHoldMissionCompleteWhenPrepared,
-	AudioFlagIsDirectorModeActive,
-	AudioFlagIsPlayerOnMissionForSpeech,
-	AudioFlagListenerReverbDisabled,
-	AudioFlagLoadMPData,
-	AudioFlagMobileRadioInGame,
-	AudioFlagOnlyAllowScriptTriggerPoliceScanner,
-	AudioFlagPlayMenuMusic,
-	AudioFlagPoliceScannerDisabled,
-	AudioFlagScriptedConvListenerMaySpeak,
-	AudioFlagSpeechDucksScore,
-	AudioFlagSuppressPlayerScubaBreathing,
-	AudioFlagWantedMusicDisabled,
-	AudioFlagWantedMusicOnMission
+	//Interesting Messages
+	CMsgNetTimeSync = 0x38, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 37
+	CMsgNetComplaint = 0x55, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 54
+	CMsgNetLagPing = 0x27, //Unused? Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 26
+	CMsgSearchResponse = 0x6B, // unused? Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 6A
+	CMsgSearchRequest = 0x05, //Unused?
+	CMsgQosProbeResponse = 0x2C, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 2B
+	CMsgQosProbeRequest = 0x1D, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 1C
+	CMsgCxnRelayAddressChanged = 0x49, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 48
+	CMsgCxnRequestRemoteTimeout = 0x2F, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 2E
+	CMsgSessionDetailRequest = 0x22, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 21
+	CMsgSessionDetailResponse = 0x13, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 12
+	CMsgKeyExchangeOffer = 0x0F, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 0E (last result)
+	CMsgKeyExchangeAnswer = 0x44, //Ctor 40 53 48 83 EC 20 BA ? ? ? ? 4C 8D 0D ? ? ? ? 48 8B D9 44 8D 42 43
+	//Unknown Messages
+	Msg_0x87 = 0x87,
+	Msg_0x88 = 0x88,
+	Msg_0x80 = 0x80,
+	Msg_0x28 = 0x28,
+	Msg_0x11 = 0x11,
+	Msg_0x45 = 0x45,
+	Msg_0x89 = 0x89,
+	Msg_0x86 = 0x86,
 };
 enum class eNetworkEvents : uint16_t {
 	CObjectIdFreedEvent,
@@ -306,6 +487,89 @@ enum class eNetworkEvents : uint16_t {
 	CActivateVehicleSpecialAbilityEvent,
 	CBlockWeaponSelection,
 	CNetworkCheckCatalogCrc
+};
+enum class eSessionTypes : int {
+	Unknown = -1,
+	InviteOnly,
+	FriendsOnly,
+	CrewOnly,
+	CrewSession,
+	Solo,
+	Public
+};
+enum class eCloneSyncType : int64_t {
+	NotInBubble,
+	WrongOwner,
+	NoNetObj,
+	NoGameObj,
+	NetClosed,
+	Success,
+	Invalid = -1,
+};
+enum eObjType : int16_t {
+	carObjType = 0,
+	bikeObjType = 1,
+	boatObjType = 2,
+	doorObjType = 3,
+	heliObjType = 4,
+	objType = 5,
+	pedObjType = 6,
+	pickupObjType = 7,
+	pickupPlacementObjType = 8,
+	planeObjType = 9,
+	submarineObjType = 10,
+	playerObjType = 11,
+	trailerObjType = 12,
+	trainObjType = 13,
+	unkObjType = -1
+};
+enum class eSyncReturnTypes : int64_t {
+	notInRoamingBubble = 1,
+	wrongObjOwner = 2,
+	unkRet3 = 3,
+	noNetObjData = 4,
+	noGameObjData = 6,
+	unkRet5 = 5,
+	networkClosed = 7,
+	successfullSync = 8,
+	invalidSync = -1,
+};
+enum eAudioFlag {
+	AudioFlagActivateSwitchWheelAudio,
+	AudioFlagAllowCutsceneOverScreenFade,
+	AudioFlagAllowForceRadioAfterRetune,
+	AudioFlagAllowPainAndAmbientSpeechToPlayDuringCutscene,
+	AudioFlagAllowPlayerAIOnMission,
+	AudioFlagAllowPoliceScannerWhenPlayerHasNoControl,
+	AudioFlagAllowRadioDuringSwitch,
+	AudioFlagAllowRadioOverScreenFade,
+	AudioFlagAllowScoreAndRadio,
+	AudioFlagAllowScriptedSpeechInSlowMo,
+	AudioFlagAvoidMissionCompleteDelay,
+	AudioFlagDisableAbortConversationForDeathAndInjury,
+	AudioFlagDisableAbortConversationForRagdoll,
+	AudioFlagDisableBarks,
+	AudioFlagDisableFlightMusic,
+	AudioFlagDisableReplayScriptStreamRecording,
+	AudioFlagEnableHeadsetBeep,
+	AudioFlagForceConversationInterrupt,
+	AudioFlagForceSeamlessRadioSwitch,
+	AudioFlagForceSniperAudio,
+	AudioFlagFrontendRadioDisabled,
+	AudioFlagHoldMissionCompleteWhenPrepared,
+	AudioFlagIsDirectorModeActive,
+	AudioFlagIsPlayerOnMissionForSpeech,
+	AudioFlagListenerReverbDisabled,
+	AudioFlagLoadMPData,
+	AudioFlagMobileRadioInGame,
+	AudioFlagOnlyAllowScriptTriggerPoliceScanner,
+	AudioFlagPlayMenuMusic,
+	AudioFlagPoliceScannerDisabled,
+	AudioFlagScriptedConvListenerMaySpeak,
+	AudioFlagSpeechDucksScore,
+	AudioFlagSuppressPlayerScubaBreathing,
+	AudioFlagWantedMusicDisabled,
+	AudioFlagWantedMusicOnMission
 };
 enum eBlipColor {
 	BlipColorWhite = 0,

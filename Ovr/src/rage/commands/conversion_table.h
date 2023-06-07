@@ -2,7 +2,7 @@
 #include <cstdint>
 
 struct table { uint64_t o{}, u{}; };
-inline constexpr table g_table[]{
+inline constexpr table g_table[] {
 	{ 0x4EDE34FBADD967A6, 0x4EDE34FBADD967A6 },
 	{ 0xE81651AD79516E48, 0xE81651AD79516E48 },
 	{ 0xB8BA7F44DF1575E1, 0xB8BA7F44DF1575E1 },

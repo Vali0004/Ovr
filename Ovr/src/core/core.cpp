@@ -31,7 +31,7 @@ namespace core {
 		}
 	}
 	void create() {
-		REGISTER_LOG("Ovr | Developer (0.00.1)");
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1)");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		pointers::doPatches();
@@ -46,7 +46,6 @@ namespace core {
 		g_manager.add("script", &script::onTick);
 		g_manager.add("features", &features::onTick);
 		engine::createThread(&g_manager);
-		LOG(FOREGROUND_WHITE, "Debug", "Hello, {}", util::network::socialclub::getString("gtag"));
 	}
 	void destroy() {
 		engine::cleanupThreads();
@@ -58,6 +57,6 @@ namespace core {
 		g_patches.reset();
 		features::g_manager.clear();
 		exceptions::uninitExceptionHandler();
-		DESTROY_LOG();
+		g_logger.reset();
 	}
 }

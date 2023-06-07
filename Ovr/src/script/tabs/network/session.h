@@ -7,7 +7,7 @@
 
 namespace tabs::network::session {
 	inline void tab() {
-		elements::tabItem("Session", [] {
+		elements::tabItem("Session (" + gsTypeToString(g_sessionType) + ")", [] {
 			elements::tabBar("Session", [] {
 				session::starter();
 				session::browser();

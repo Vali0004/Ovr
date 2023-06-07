@@ -1,6 +1,12 @@
 #pragma once
 #include "abstract.h"
 
+enum class eProtectionState : u8 {
+	Disabled,
+	Notify,
+	Block,
+	BlockAndNotify
+};
 namespace features {
 	class toggleFeature : public abstractFeature {
 	public:
@@ -202,6 +208,140 @@ namespace features {
 		}
 	private:
 		fnptr<void(actionFeature*)> m_callback{};
+	};
+	class protectionFeature : public abstractFeature {
+	public:
+		protectionFeature(std::string id, std::string name, std::string description) :
+			abstractFeature(id, name, description, {}, eFeatureType::ProtectionFeature, false) {
+		}
+		protectionFeature(std::string id, std::string name) :
+			protectionFeature(id, name, {}) {
+		}
+		protectionFeature(std::string id) :
+			protectionFeature(id, {}) {
+		}
+		~protectionFeature() {
+			abstractFeature::~abstractFeature();
+		}
+		void init() override {
+			push_value(m_value);
+			abstractFeature::init();
+		}
+		void run() override {
+			abstractFeature::run();
+		}
+		eProtectionState state() {
+			switch (rage::joaat(m_value.m_value.string)) {
+			case "Disabled"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Disable"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Disabl"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Disab"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Disa"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Dis"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Di"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "D"_joaat: {
+				return eProtectionState::Disabled;
+			} break;
+			case "Notify"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "Notif"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "Noti"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "Not"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "No"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "N"_joaat: {
+				return eProtectionState::Notify;
+			} break;
+			case "Block"_joaat: {
+				return eProtectionState::Block;
+			} break;
+			case "Bloc"_joaat: {
+				return eProtectionState::Block;
+			} break;
+			case "Blo"_joaat: {
+				return eProtectionState::Block;
+			} break;
+			case "Bl"_joaat: {
+				return eProtectionState::Block;
+			} break;
+			case "B"_joaat: {
+				return eProtectionState::Block;
+			} break;
+			case "BlockAndNotify"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAndNotif"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAndNoti"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAndNot"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAndNo"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAndN"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAnd"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockAn"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BlockA"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndNotify"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndNotif"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndNoti"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndNot"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndNo"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAndN"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			case "BAN"_joaat: {
+				return eProtectionState::BlockAndNotify;
+			} break;
+			}
+			return eProtectionState::Disabled;
+		}
+	private:
+		typedValue m_value{};
 	};
 	class variadicFeature : public abstractFeature {
 	public:

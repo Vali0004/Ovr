@@ -42,6 +42,9 @@ namespace util {
 			clipboard.set();
 			return clipboard;
 		}
+		std::string& str() {
+			return m_buffer;
+		}
 	private:
 		bool getData() {
 			m_handle = GetClipboardData(CF_TEXT);

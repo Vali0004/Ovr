@@ -1,5 +1,6 @@
 #pragma once
 #include "pch/pch.h"
+#include "core/logger.h"
 #include "disassembler.h"
 
 namespace exceptions {
@@ -45,14 +46,14 @@ namespace exceptions {
 		}
 	public:
 		void printRegisters() {
-			LOG(FOREGROUND_RED, "Registers", "RAX: 0x{:X} || RSI: 0x{:X}", m_context.Rax, m_context.Rsi);
-			LOG(FOREGROUND_RED, "Registers", "RBX: 0x{:X} || RDI: 0x{:X}", m_context.Rbx, m_context.Rdi);
-			LOG(FOREGROUND_RED, "Registers", "RCX: 0x{:X} || RBP: 0x{:X}", m_context.Rcx, m_context.Rbp);
-			LOG(FOREGROUND_RED, "Registers", "RDX: 0x{:X} || RSP: 0x{:X}", m_context.Rdx, m_context.Rsp);
-			LOG(FOREGROUND_RED, "Registers", "R8: 0x{:X}  || R9: 0x{:X}", m_context.R8, m_context.R9);
-			LOG(FOREGROUND_RED, "Registers", "R10: 0x{:X} || R11: 0x{:X}", m_context.R10, m_context.R11);
-			LOG(FOREGROUND_RED, "Registers", "R12: 0x{:X} || R13: 0x{:X}", m_context.R12, m_context.R13);
-			LOG(FOREGROUND_RED, "Registers", "R14: 0x{:X} || R15: 0x{:X}", m_context.R14, m_context.R15);
+			LOG(Registers, "RAX: 0x{:X} || RSI: 0x{:X}", m_context.Rax, m_context.Rsi);
+			LOG(Registers, "RBX: 0x{:X} || RDI: 0x{:X}", m_context.Rbx, m_context.Rdi);
+			LOG(Registers, "RCX: 0x{:X} || RBP: 0x{:X}", m_context.Rcx, m_context.Rbp);
+			LOG(Registers, "RDX: 0x{:X} || RSP: 0x{:X}", m_context.Rdx, m_context.Rsp);
+			LOG(Registers, "R8: 0x{:X}  || R9: 0x{:X}", m_context.R8, m_context.R9);
+			LOG(Registers, "R10: 0x{:X} || R11: 0x{:X}", m_context.R10, m_context.R11);
+			LOG(Registers, "R12: 0x{:X} || R13: 0x{:X}", m_context.R12, m_context.R13);
+			LOG(Registers, "R14: 0x{:X} || R15: 0x{:X}", m_context.R14, m_context.R15);
 		}
 	public:
 		uint32_t m_code{};

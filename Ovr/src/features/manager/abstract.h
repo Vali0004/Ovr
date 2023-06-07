@@ -60,7 +60,8 @@ namespace features {
 		ToggleIntFeature,
 		ToggleFloatFeature,
 		ActionFeature,
-		VariadicFeature,
+		ProtectionFeature,
+		VariadicFeature
 	};
 	class abstractFeature {
 	public:

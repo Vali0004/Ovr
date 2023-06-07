@@ -3,7 +3,7 @@
 #include "features/shv/scripthookv.h"
 
 FARPROC hooks::getProcAddress(HMODULE hModule, LPCSTR lpProcName) {
-	if (hModule == (HMODULE)"Ovr__dummy_module"_joaat) {
+	if (hModule == (HMODULE)BRAND"__dummy_module"_joaat) {
 		printf("[SHV Redirected Export Engine]: Export for %s requested\n", lpProcName);
 		switch (rage::joaat(lpProcName)) {
 		case "createTexture"_joaat: { return FARPROC(&shv::exports::createTexture); } break;

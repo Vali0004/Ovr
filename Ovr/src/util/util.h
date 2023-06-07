@@ -1,6 +1,7 @@
 #pragma once
 #include "pch/pch.h"
 #include "memory/pointers.h"
+#include "rage/classes.h"
 
 namespace util {
 	namespace classes {
@@ -33,6 +34,12 @@ namespace util {
 		}
 	}
 	namespace network {
+		inline CNetworkPlayerMgr* getNetworkPlayerMgr() {
+			return *pointers::g_networkPlayerMgr;
+		}
+		inline Network* get() {
+			return *pointers::g_network;
+		}
 		namespace friends {
 			inline FriendRegistry* getRegistry() {
 				return pointers::g_friendRegistry;
@@ -43,11 +50,11 @@ namespace util {
 			inline FriendInfo* getFriends() {
 				return getList()->m_friends;
 			}
-			inline uint32_t getFriendCount() {
+			inline u32 getFriendCount() {
 				return getRegistry()->m_friend_count;
 			}
-			inline void iterateFriends(std::function<void(uint32_t, bool, FriendInfo*)> cb) {
-				for (uint32_t i{}; i != getFriendCount(); ++i) {
+			inline void iterateFriends(std::function<void(u32, bool, FriendInfo*)> cb) {
+				for (u32 i{}; i != getFriendCount(); ++i) {
 					if (auto fr{ &getFriends()[i] }; fr) {
 						cb(i, fr->m_is_joinable, fr);
 					}
@@ -64,7 +71,7 @@ namespace util {
 			inline std::string authorizationHeader() {
 				return "Authorization: SCAUTH val=\"" + getTicket() + "\"";
 			}
-			inline ScGame getInfo(const char* id) {
+			inline ScGame getInfo(ccp id) {
 				s32 index{ pointers::g_scGetGameInfoIndex(id, pointers::g_scGameInfo->getGamesAddress(), pointers::g_scGameInfo->m_id) };
 				u64 address{ pointers::g_scGameInfo->getGamesAddress() + (index * 0x148i64) };
 				ScGame game;
@@ -78,8 +85,18 @@ namespace util {
 				return table.m_string;
 			}
 		}
-		inline CNetworkPlayerMgr* getNetworkPlayerMgr() {
-			return *pointers::g_networkPlayerMgr;
+		namespace session {
+			inline rage::snSession* get() {
+				return network::get()->m_game_session_ptr;
+			}
+			inline rage::snSession* getTransition() {
+				return network::get()->m_transition_session_ptr;
+			}
+			namespace peer {
+				inline rage::snPeer* getViaConnectionId(uint8_t conId) {
+					return session::get()->m_peers[conId];
+				}
+			}
 		}
 		inline CNetGamePlayer* getLocalNetGamePlayer() {
 			return getNetworkPlayerMgr()->m_local_net_player;
@@ -90,15 +107,15 @@ namespace util {
 		inline rage::rlGamerInfo* getNetworkRlGamerInfo() {
 			return getLocalNetGamePlayer()->GetGamerInfo();
 		}
-		inline uint16_t getPlayerCount() {
+		inline u16 getPlayerCount() {
 			return getNetworkPlayerMgr()->m_player_count;
 		}
 		inline bool isOnline() {
 			return pointers::g_networkPlayerMgr && getNetworkPlayerMgr() && getLocalNetGamePlayer() && getPlayerCount();
 		}
-		inline bool iteratePlayers(std::function<bool(uint16_t, CNetGamePlayer*)> cb) {
+		inline bool iteratePlayers(std::function<bool(u16, CNetGamePlayer*)> cb) {
 			if (isOnline()) {
-				for (uint16_t i{}; i != getPlayerCount(); ++i) {
+				for (u16 i{}; i != getPlayerCount(); ++i) {
 					if (auto& player{ getPlayers()[i] }; player && player->IsConnected()) {
 						if (cb(i, player))
 							break;
@@ -108,8 +125,68 @@ namespace util {
 			}
 			return false;
 		}
-		inline Network* get() {
-			return *pointers::g_network;
+		inline CNetGamePlayer* getPlayerViaPeerAddress(u64 peerAddress) {
+			CNetGamePlayer* player{};
+			iteratePlayers([&](u16, CNetGamePlayer* p) {
+				if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; peerAddress == gamerInfo->m_peer_address) {
+					player = p;
+					return true;
+				}
+				return false;
+			});
+			return player;
+		}
+		inline CNetGamePlayer* getPlayerViaPlatformData(u64 platformData) {
+			CNetGamePlayer* player{};
+			iteratePlayers([&](u16, CNetGamePlayer* p) {
+				if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; platformData == gamerInfo->m_platform_data) {
+					player = p;
+					return true;
+				}
+				return false;
+			});
+			return player;
+		}
+		inline CNetGamePlayer* getPlayerFromNetPacket(rage::netConnection::InFrame* packetFrame) {
+			CNetGamePlayer* player{};
+			if (rage::snPlayer* snPlayer{ session::get()->get_player_via_platform_data(packetFrame->m_peer.m_platform_data) }) {
+				if (u64 peerAddress{ snPlayer->m_gamer_info.m_peer_address }) {
+					iteratePlayers([&](u16, CNetGamePlayer* p) {
+						if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; peerAddress == gamerInfo->m_peer_address) {
+							player = p;
+							return true;
+						}
+						return false;
+					});
+				}
+			}
+			return player;
+		}
+		inline bool deserialiseNetMessage(enum eNetMessage& msg, class rage::datBitBuffer& buffer) {
+			#define RET_DEAD() { \
+				msg = eNetMessage::MsgInvalid; \
+				return false; \
+			}
+			if (buffer.m_flagBits & 2)
+				RET_DEAD();
+			u32 pos{ (buffer.m_flagBits & 1) == 0 ? buffer.m_curBit : buffer.m_maxBit };
+			u32 magic{};
+			u32 extended{};
+			if (buffer.m_bitsRead + 15 > pos)
+				RET_DEAD();
+			if (!buffer.ReadDword(&magic, 14))
+				RET_DEAD();
+			if (magic != 0x3246)
+				RET_DEAD();
+			if (!buffer.ReadDword(&extended, 1))
+				RET_DEAD();
+			u32 length{ extended ? 16u : 8u };
+			pos = (buffer.m_flagBits & 1) == 0 ? buffer.m_curBit : buffer.m_maxBit;
+			if (length + buffer.m_bitsRead <= pos) {
+				if (buffer.ReadDword((u32*)&msg, length))
+					return true;
+			}
+			return false;
 		}
 	}
 	inline void iteratorFilesInPath(fs::path path, std::string ext, std::function<void(fs::path, std::string)> cb) {
@@ -126,7 +203,7 @@ namespace util {
 		}
 	}
 	template <typename t>
-	inline int getPoolObjects(int type, int* arr, int arrSize) {
+	inline int getPoolObjects(s32 type, s32* arr, s32 arrSize) {
 		std::vector<uint64_t> objects{};
 		t* inf{};
 		switch (type) {
@@ -171,5 +248,59 @@ namespace util {
 	}
 	inline std::wstring strToWstr(std::string str) {
 		return fs::path(str).wstring();
+	}
+	inline std::string time(std::string format) {
+		char timeBuf[256]{};
+		s64 timeSinceEpoch{ std::time(nullptr) };
+		tm localtime{};
+		localtime_s(&localtime, &timeSinceEpoch);
+		strftime(timeBuf, sizeof(timeBuf), format.c_str(), &localtime);
+		return timeBuf;
+	}
+	inline constexpr char const* g_advertisementStrings[]{
+		"qq",
+		"www.",
+		".gg",
+		".c",
+		"http",
+		"/Menu",
+		"Money/",
+		"Money\\",
+		"--->",
+		"shopgta5",
+		"<b>",
+		"P888",
+		"gtacash",
+		"\xE5\xBE\xAE\xE4\xBF\xA1", //"wechat" - Chinese
+		"<font s",
+		"sellix.io",
+		"plano inicial", //"initial plan" - Spanish
+		"rep +",
+		"l55.me",
+		"\xE5\xBA\x97", //"shop" - Chinese
+		"\xE9\x92\xB1", //"money" - Chinese
+		"\xE5\x88\xB7", //"make(money)" - Chinese
+		"\xE8\x90\x9D\xE8\x8E\x89", //"cute girl" - Chinese
+		"\xE5\xA6\x88", //"mother" - Chinese
+		"\xE7\xBE\x8E\xE5\xA5\xB3", //"sexy girl" - Chinese
+		"\xE5\xBC\xBA\xE5\xA5\xB8", //"rape" - Chinese
+		"\xE8\x90\x9D", //"loli" - Chinese
+		"\xE6\x8C\x82", //"hack" - Chinese
+		"\xE5\x85\x83", //Yen sign
+		//Known advertisers
+		"wavy",
+		"krutka",
+		"ItzGoated",
+		"warlord",
+		"doit#",
+		"OrangeMango",
+		"Faynx"
+	};
+	inline bool isSpamMessage(std::string message) {
+		for (auto& string : g_advertisementStrings) {
+			if (message.find(string) != std::string::npos)
+				return true;
+		}
+		return false;
 	}
 }

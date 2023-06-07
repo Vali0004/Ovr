@@ -12,13 +12,13 @@ void invoker::end(rage::scrNativeHash hash) {
 	if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
 		rage::scrCmd cmd{ p->second };
 		if (!cmd) {
-			LOG(FOREGROUND_RED, "Fatal", "Failed to get 0x{:X}'s command from entries", hash);
+			LOG(Fatal, "Failed to get 0x{:X}'s command from entries", hash);
 			return;
 		}
 		spoofCall(pointers::g_jmpRbxRegister, cmd, dynamic_cast<rage::scrNativeCallContext*>(&m_context));
 		m_context.VectorSpace.CopyReferencedParametersOut();
 	}
 	else {
-		LOG(FOREGROUND_RED, "Fatal", "Failed to get 0x{:X}'s command from cache", hash);
+		LOG(Fatal, "Failed to get 0x{:X}'s command from cache", hash);
 	}
 }

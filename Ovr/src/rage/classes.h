@@ -80,16 +80,23 @@ namespace rage {
 		uint16_t m_port; //0x0004
 	};
 	static_assert(sizeof(netSocketAddress) == 0x08);
+	#pragma pack(push, 8)
 	class rlGamerHandle {
 	public:
-		rlGamerHandle() : m_rockstar_id(NULL), m_platform(3) {}
-		rlGamerHandle(uint64_t rockstar_id) : m_rockstar_id(rockstar_id), m_platform(3) {}
+		rlGamerHandle(uint64_t rockstar_id, uint8_t platform) : m_rockstar_id(rockstar_id), m_platform(platform), m_flag(0) {}
+		rlGamerHandle(uint64_t rockstar_id) : rlGamerHandle(0, 3) {}
+		rlGamerHandle() : rlGamerHandle(0) {}
 	public:
 		uint64_t m_rockstar_id; //0x0000
-		uint64_t m_platform; //0x0008
+		uint8_t m_platform; //0x0008
+		uint8_t m_flag; //0x0009
+	public:
+		bool deserialize(datBitBuffer& buf);
+		bool serialize(datBitBuffer& buf);
 	}; //Size: 0x0010
 	static_assert(sizeof(rlGamerHandle) == 0x10);
-#pragma pack(push, 8)
+	#pragma pack(pop)
+	#pragma pack(push, 8)
 	class rlPeerInfo {
 	public:
 		char m_certificate[96]; //0x0000
@@ -104,7 +111,7 @@ namespace rage {
 		uint32_t unk_00B9; //0x00B9
 	}; //Size: 0x00C0
 	static_assert(sizeof(rage::rlPeerInfo) == 0xC0);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class rlGamerInfo : public rlPeerInfo {
 	public:
 		uint64_t m_peer_address; //0x00C0
@@ -141,7 +148,7 @@ namespace rage {
 	}; //Size: 0x00A0
 	static_assert(sizeof(netPlayer) == 0xA0);
 	#pragma pack(pop)
-#pragma pack(push, 8)
+	#pragma pack(push, 8)
 	class netPlayerMgrBase {
 	public:
 		virtual ~netPlayerMgrBase();
@@ -165,8 +172,8 @@ namespace rage {
 		char pad_0290[1618]; //0x0290
 	}; //Size: 0x08E0
 	static_assert(sizeof(netPlayerMgrBase) == 0x8E0);
-#pragma pack(pop)
-#pragma pack(push, 4)
+	#pragma pack(pop)
+	#pragma pack(push, 4)
 	class fwDrawData {
 	public:
 		uint64_t unk_000; //0x0000
@@ -178,7 +185,7 @@ namespace rage {
 		uint32_t unk_0028; //0x0028
 	}; //Size: 0x002C
 	static_assert(sizeof(fwDrawData) == 0x2C);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class pgBase {
 	public:
 		virtual ~pgBase() = default;
@@ -240,7 +247,7 @@ namespace rage {
 		}
 	}; //Size: 0x0020
 	static_assert(sizeof(fwExtensibleBase) == 0x20);
-#pragma pack(push, 1)
+	#pragma pack(push, 1)
 	class CBaseModelInfo {
 	public:
 		char pad_0000[24]; //0x0000
@@ -257,8 +264,8 @@ namespace rage {
 		}
 	}; //Size: 0x00A4
 	static_assert(sizeof(CBaseModelInfo) == 0xA4);
-#pragma pack(pop)
-#pragma pack(push, 1)
+	#pragma pack(pop)
+	#pragma pack(push, 1)
 	class fwEntity : public fwExtensibleBase {
 	public:
 		DEFINE_AT_RTTI(fwEntity)
@@ -338,7 +345,7 @@ namespace rage {
 #pragma pack(pop)
 	class datBitBuffer {
 	public:
-		datBitBuffer(uint8_t* data, uint32_t size, bool flagBitsToWrite = false) {
+		datBitBuffer(u8* data, u32 size, bool flagBitsToWrite = false) {
 			m_data = data;
 			m_bitOffset = 0;
 			m_maxBit = size * 8;
@@ -356,21 +363,21 @@ namespace rage {
 				m_flagBits |= 1u;
 			}
 		}
-		datBitBuffer(void* data, uint32_t size, bool flagBitsToWrite = false) : datBitBuffer((uint8_t*)data, size, flagBitsToWrite) {}
-		datBitBuffer(bool flagBitsToWrite = false) : datBitBuffer((uint8_t*)nullptr, NULL, flagBitsToWrite) {}
+		datBitBuffer(void* data, u32 size, bool flagBitsToWrite = false) : datBitBuffer((u8*)data, size, flagBitsToWrite) {}
+		datBitBuffer(bool flagBitsToWrite = false) : datBitBuffer((u8*)nullptr, NULL, flagBitsToWrite) {}
 
-		bool IsFlagSet(uint8_t flag) {
+		bool IsFlagSet(u8 flag) {
 			return (m_flagBits & flag) != NULL;
 		}
-		uint32_t GetPosition() {
+		u32 GetPosition() {
 			return m_bitsRead;
 		}
-		uint32_t GetMaxPossibleBit() {
+		u32 GetMaxPossibleBit() {
 			return (m_highestBitsRead + 7) >> 3;
 		}
-		bool Seek(uint32_t bits) {
+		bool Seek(u32 bits) {
 			if (bits >= 0) {
-				uint32_t length = IsFlagSet(1) ? m_maxBit : m_curBit;
+				u32 length{ IsFlagSet(1) ? m_maxBit : m_curBit };
 				if (bits <= length) {
 					m_bitsRead = bits;
 					return true;
@@ -378,34 +385,34 @@ namespace rage {
 			}
 			return false;
 		}
-		int64_t SeekCur(uint32_t bits) {
-			m_bitsRead += static_cast<uint32_t>(bits);
+		s64 SeekCur(u32 bits) {
+			m_bitsRead += static_cast<u32>(bits);
 			if (m_bitsRead > m_curBit)
 				m_curBit = m_bitsRead;
 			return m_bitsRead;
 		}
-		int64_t AddNumberOfBits(uint32_t bits) {
-			m_bitsRead += static_cast<uint32_t>(bits);
+		s64 AddNumberOfBits(u32 bits) {
+			m_bitsRead += static_cast<u32>(bits);
 			if (m_bitsRead > m_highestBitsRead)
 				m_highestBitsRead = m_bitsRead;
 			return m_bitsRead;
 		}
-		uint32_t GetDataLength() {
-			uint32_t leftoverBit{ (m_curBit % 8u) ? 1u : 0u };
+		u32 GetDataLength() {
+			u32 leftoverBit{ (m_curBit % 8u) ? 1u : 0u };
 			return (m_curBit / 8u) + leftoverBit;
 		}
-		uint32_t GetMaxDataLength() {
+		u32 GetMaxDataLength() {
 			return (m_flagBits & 1) != NULL ? m_maxBit : m_curBit;
 		}
-		bool EnsureBitData(uint32_t bits) {
+		bool EnsureBitData(u32 bits) {
 			if (IsFlagSet(2) || m_bitsRead + bits > GetMaxDataLength())
 				return false;
 			return true;
 		}
-		uint64_t WriteBitsSingle(uint32_t value, int32_t bits) {
+		u64 WriteBitsSingle(u32 value, s32 bits) {
 			return pointers::g_writeBitsSingle(m_data, value, bits, m_bitsRead + m_bitOffset);
 		}
-		uint32_t ReadBitsSingle(uint32_t numBits) {
+		u32 ReadBitsSingle(u32 numBits) {
 			auto const totalBits = (m_flagBits & 1) ? m_maxBit : m_curBit;
 			if ((m_flagBits & 2) || m_bitsRead + numBits > totalBits)
 				return 0;
@@ -414,7 +421,8 @@ namespace rage {
 			auto const start = &((uint8_t*)m_data)[bufPos / 8];
 			auto const next = &start[1];
 			auto result = (start[0] << initialBitOffset) & 0xff;
-			for (auto i = 0; i < ((numBits - 1) / 8); i++) {
+			for (auto i = 0; i < ((numBits - 1) / 8); i++)
+			{
 				result <<= 8;
 				result |= next[i] << initialBitOffset;
 			}
@@ -426,52 +434,88 @@ namespace rage {
 			return result >> ((8 - numBits) % 8);
 		}
 		template <typename t>
-		bool Write(t value, uint32_t bits = 0) {
+		bool Write(t value, u32 bits = 0) {
 			uint32_t bitsToWrite{ bits ? bits : sizeof(t) };
-			bool res{ WriteBitsSingle((uint32_t)value, bitsToWrite) ? true : false };
+			bool res{ WriteBitsSingle((u32)value, bitsToWrite) ? true : false };
 			SeekCur(bitsToWrite);
 			return res;
 		}
 		template <typename t>
-		t Read(uint32_t bits) {
+		void WriteSigned(t value, s32 bits) {
+			s32 sign{ value < 0 };
+			u32 signEx{ sign ? 0xFFFFFFFF : 0 };
+			u32 d{ value ^ signEx };
+			Write<s32>(1, sign);
+			Write<s32>(bits - 1, d);
+		}
+		void WriteFloat(s32 length, fp divisor, fp value) {
+			s32 max{ (1 << length) - 1 };
+			s32 integer{ (s32)((value / divisor) * max) };
+			Write<s32>(length, integer);
+		}
+		void WriteSignedFloat(s32 length, fp divisor, fp value) {
+			s32 max{ (1 << (length - 1)) - 1 };
+			s32 integer{ (s32)((value / divisor) * max) };
+			WriteSigned<s32>(length, integer);
+		}
+		template <typename t>
+		t Read(u32 bits) {
 			if (bits <= 32) {
 				return t(ReadBitsSingle(bits));
 			}
 			else {
-				uint32_t Low{ ReadBitsSingle(bits - 32u) };
-				uint32_t High{ ReadBitsSingle(32u) };
-				return t(High | (Low << 32));
+				u32 Low{ ReadBitsSingle(bits - 32u) };
+				u32 High{ ReadBitsSingle(32u) };
+				return t(High | ((u64)Low << 32));
 			}
 		}
 		template <typename t>
-		t ReadSigned(uint32_t bits) {
-			int32_t sign{ Read<int>(1) };
-			int32_t data{ Read<int>(bits - 1) };
-			return t(sign + (data ^ -sign));
+		t ReadSigned(u32 bits) {
+			s32 sign{ Read<s32>(1) };
+			s32 data{ Read<s32>(bits - 1) };
+			return t((s64)sign + (data ^ -sign));
 		}
-		bool ReadPeerId(uint64_t* value) {
+		fp ReadFloat(s32 length, fp divisor) {
+			s32 integer{ Read<s32>(length) };
+			s32 max{ (1 << length) - 1 };
+			return ((fp)integer / max) * divisor;
+		}
+		fp ReadSignedFloat(s32 length, fp divisor) {
+			s32 integer{ ReadSigned<s32>(length) };
+			s32 max{ (1 << (length - 1)) - 1 };
+			return ((fp)integer / max) * divisor;
+		}
+		bool ReadPeerId(u64* value) {
 			if (!EnsureBitData(0x20))
 				return false;
-			*value = Read<uint64_t>(0x20);
+			*value = Read<u64>(0x20);
 			return true;
 		}
-		bool WriteString(char* string, int length) {
-			auto extended = Write<bool>(length > m_maxBit ? true : false, 1);
-			auto len = Write<int32_t>(extended ? 15 : 7);
-			if (len > length)
+		bool WriteString(char* string, u32 length) {
+			bool extended{ Write<bool>(length > m_maxBit ? true : false, 1) };
+			u32 len{ Write<u32>(extended ? 15 : 7) };
+			if (len > length ? true : false)
 				return false;
 			WriteArray(string, len * 8);
 			return true;
 		}
-		bool ReadString(char* string, int length) {
-			auto extended = Read<bool>(1);
-			auto len = Read<int32_t>(extended ? 15 : 7);
-			if (len > length)
+		template <u32 length>
+		bool WriteString(char(&string)[length]) {
+			return WriteString(string, length);
+		}
+		bool ReadString(char* string, u32 length) {
+			bool extended{ Read<bool>(1) };
+			u32 len{ Write<u32>(extended ? 15 : 7) };
+			if (len > length ? true : false)
 				return false;
 			ReadArray(string, len * 8);
 			if (string[len - 1] != '\0')
 				return false;
 			return true;
+		}
+		template <u32 length>
+		bool ReadString(char(&string)[length]) {
+			return ReadString(string, length);
 		}
 		bool ReadBool(bool* boolean) {
 			if (!EnsureBitData(1))
@@ -482,46 +526,46 @@ namespace rage {
 		bool WriteBool(bool value) {
 			return Write<bool>(value);
 		}
-		bool ReadByte(uint8_t* integer, int bits) {
+		bool ReadByte(u8* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<uint8_t>(bits);
+			*integer = Read<u8>(bits);
 			return true;
 		}
-		bool WriteByte(uint8_t value, int bits) {
-			return Write<uint8_t>(value, bits);
+		bool WriteByte(u8 value, int bits) {
+			return Write<u8>(value, bits);
 		}
-		bool ReadWord(uint16_t* integer, int bits) {
+		bool ReadWord(u16* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<uint16_t>(bits);
+			*integer = Read<u16>(bits);
 			return true;
 		}
-		bool WriteWord(uint16_t value, int bits) {
-			return Write<uint16_t>(value, bits);
+		bool WriteWord(u16 value, int bits) {
+			return Write<u16>(value, bits);
 		}
-		bool ReadDword(uint32_t* integer, int bits) {
+		bool ReadDword(u32* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<uint32_t>(bits);
+			*integer = Read<u32>(bits);
 			return true;
 		}
 		bool WriteDword(uint32_t value, int bits) {
 			return Write<uint32_t>(value, bits);
 		}
-		bool ReadInt32(int32_t* integer, int bits) {
+		bool ReadInt32(s32* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = ReadSigned<int32_t>(bits);
+			*integer = ReadSigned<s32>(bits);
 			return true;
 		}
-		bool ReadQword(uint64_t* integer, int bits) {
+		bool ReadQword(u64* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<uint64_t>(bits);
+			*integer = Read<u64>(bits);
 			return true;
 		}
-		bool WriteQword(uint64_t value, int bits) {
+		bool WriteQword(u64 value, int bits) {
 			if (bits <= 32) {
 				if (IsFlagSet(1))
 					return false;
@@ -539,39 +583,39 @@ namespace rage {
 				if ((m_bitsRead + 32) > m_maxBit)
 					return false;
 				if (!IsFlagSet(2)) {
-					Write<uint32_t>(value, 32);
+					Write<u32>(value, 32);
 				}
 				if (IsFlagSet(1) || (bits - 32) + m_bitsRead > m_maxBit) {
 					return false;
 				}
 				else {
 					if (!IsFlagSet(2)) {
-						Write<uint32_t>(SHIDWORD(value), bits - 32);
+						Write<u32>(SHIDWORD(value), bits - 32);
 					}
 				}
 			}
 			return true;
 		}
-		bool ReadInt64(int64_t* integer, int bits) {
+		bool ReadInt64(s64* integer, s32 bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = ReadSigned<int64_t>(bits);
+			*integer = ReadSigned<s64>(bits);
 			return true;
 		}
-		bool WriteArray(void* array, int size) {
+		bool WriteArray(void* array, s32 size) {
 			return false;
 		}
-		bool ReadArray(void* array, int size) {
+		bool ReadArray(void* array, s32 size) {
 			return pointers::g_readBitbufArray(this, array, size, 0);
 		}
 	public:
-		uint8_t* m_data; //0x0000
-		uint32_t m_bitOffset; //0x0008
-		uint32_t m_maxBit; //0x000C
-		uint32_t m_bitsRead; //0x0010
-		uint32_t m_curBit; //0x0014
-		uint32_t m_highestBitsRead; //0x0018
-		uint8_t m_flagBits; //0x001C
+		u8* m_data; //0x0000
+		u32 m_bitOffset; //0x0008
+		u32 m_maxBit; //0x000C
+		u32 m_bitsRead; //0x0010
+		u32 m_curBit; //0x0014
+		u32 m_highestBitsRead; //0x0018
+		u8 m_flagBits; //0x001C
 	}; //Size: 0x0020
 	static_assert(sizeof(datBitBuffer) == 0x20);
 	class netGameEvent {
@@ -579,7 +623,7 @@ namespace rage {
 		virtual ~netGameEvent() = default;
 		virtual const char* get_name() { return 0; };
 		virtual bool is_in_scope(netPlayer* player) { return 0; };
-		virtual bool time_to_resend(std::uint32_t time) { return 0; };
+		virtual bool time_to_resend(uint32_t time) { return 0; };
 		virtual bool can_change_scope() { return 0; };
 		virtual void prepare_data(datBitBuffer* buffer, netPlayer* source_player, netPlayer* target_player) {};
 		virtual void handle_data(datBitBuffer* buffer, netPlayer* source_player, netPlayer* target_player) {};
@@ -588,32 +632,28 @@ namespace rage {
 		virtual void handle_reply(datBitBuffer* buffer, netPlayer* souce_player) {};
 		virtual void prepare_extra_data(datBitBuffer* buffer, bool is_reply, netPlayer* player, netPlayer* player2) {};
 		virtual void handle_extra_data(datBitBuffer* buffer, bool is_reply, netPlayer* player, netPlayer* player2) {};
-	private:
-		virtual void unk_0x60() {};
-		virtual void unk_0x68() {};
-		virtual void unk_0x70() {};
-		virtual void unk_0x78() {};
-	public:
+		virtual void unk_0060() {};
+		virtual void unk_0068() {};
+		virtual void unk_0070() {};
+		virtual void unk_0078() {};
 		virtual bool operator==(netGameEvent const& other) { return 0; };
 		virtual bool operator!=(netGameEvent const& other) { return 0; };
 		virtual bool must_persist() { return 0; };
 		virtual bool must_persist_when_out_of_scope() { return 0; };
 		virtual bool has_timed_out() { return 0; };
-		std::uint16_t m_id;          // 0x08
-		bool m_requires_reply;       // 0x0A
-	private:
-		char m_padding1[0x05];       // 0x0B
-	public:
-		netPlayer* m_source_player;  // 0x10
-		netPlayer* m_target_player;  // 0x18
-		std::uint32_t m_resend_time; // 0x20
-	private:
-		std::uint16_t m_0x24;        // 0x24
-		std::uint8_t m_0x26;         // 0x26
-		std::uint8_t m_0x27;         // 0x27
-		std::uint32_t m_0x28;        // 0x28
-		char m_padding2[0x04];
-	};
+
+		uint16_t m_id; //0x0008
+		bool m_requires_reply; //0x000A
+		char pad_000B[5]; //0x000B
+		netPlayer* m_source_player; //0x0010
+		netPlayer* m_target_player; //0x0018
+		uint32_t m_resend_time; //0x0020
+		uint16_t unk_0024; //0x0024
+		uint8_t unk_0026; //0x0026
+		uint8_t unk_0027; //0x0027
+		uint32_t unk_0028; //0x0028
+		char pad_002C[4]; //0x002C
+	}; //Size: 0x0030
 	template <typename T>
 	class atArray {
 	public:
@@ -623,41 +663,45 @@ namespace rage {
 		const T* end() const { return m_data + m_size; }
 		T* data() { return m_data; }
 		const T* data() const { return m_data; }
-		std::uint16_t size() const { return m_size; }
-		std::uint16_t capacity() const { return m_capacity; }
-		T& operator[](std::uint16_t index) { return m_data[index]; }
-		const T& operator[](std::uint16_t index) const { return m_data[index]; }
+		uint16_t size() const { return m_size; }
+		uint16_t capacity() const { return m_capacity; }
+		T& operator[](uint16_t index) { return m_data[index]; }
+		const T& operator[](uint16_t index) const { return m_data[index]; }
 	private:
-		T* m_data;
-		std::uint16_t m_size;
-		std::uint16_t m_capacity;
-	};
+		T* m_data; //0x0000
+		uint16_t m_size; //0x0008
+		uint16_t m_capacity; //0x0010
+	}; //Size: 0x0010
+	static_assert(sizeof(rage::atArray<void*>) == 0x10);
+	#pragma pack(push, 8)
 	class scrProgram : public pgBase {
 	public:
-		std::uint8_t** m_code_blocks;  // 0x10
-		std::uint32_t m_hash;          // 0x18
-		std::uint32_t m_code_size;     // 0x1C
-		std::uint32_t m_arg_count;     // 0x20
-		std::uint32_t m_local_count;   // 0x24
-		std::uint32_t m_global_count;  // 0x28
-		std::uint32_t m_native_count;  // 0x2C
-		void* m_local_data;            // 0x30
-		std::int64_t** m_global_data;  // 0x38
-		void** m_native_entrypoints;   // 0x40
-		char m_padding6[0x10];         // 0x48
-		std::uint32_t m_name_hash;     // 0x58
-		char m_padding7[0x04];         // 0x5C
-		const char* m_name;            // 0x60
-		const char** m_strings_data;   // 0x68
-		std::uint32_t m_strings_count; // 0x70
-		char m_padding8[0x0C];         // 0x74
+		uint8_t** m_code_blocks; //0x0010
+		uint32_t m_hash; //0x0018
+		uint32_t m_code_size; //0x001C
+		uint32_t m_arg_count; //0x0020
+		uint32_t m_local_count; //0x0024
+		uint32_t m_global_count; //0x0028
+		uint32_t m_native_count; //0x002C
+		void* m_local_data; //0x0030
+		int64_t** m_global_data; //0x0038
+		void** m_native_entrypoints; //0x0040
+		uint32_t m_proc_count; //0x0048
+		const char** m_proc_names; //0x0050
+		uint32_t m_name_hash; //0x0058
+		uint32_t m_ref_count; //0x005C
+		const char* m_name; //0x0060
+		const char** m_strings_data; //0x0068
+		uint32_t m_strings_count; //0x0070
+		char m_breakpoints[12]; //0x0074 - rage::atMap<uint8_t>
+
 		bool is_valid() const {
 			return m_code_size != 0;
 		}
-		std::uint32_t get_num_code_pages() const {
+		uint32_t get_num_code_pages() const {
 			return (m_code_size + 0x3FFF) >> 14;
 		}
-		std::uint32_t get_code_page_size(std::uint32_t page) const {
+		uint32_t get_code_page_size(uint32_t page) const {
 			auto num = get_num_code_pages();
 			if (page < num) {
 				if (page == num - 1)
@@ -666,7 +710,7 @@ namespace rage {
 			}
 			return 0;
 		}
-		std::uint32_t get_full_code_size() const {
+		uint32_t get_full_code_size() const {
 			auto numPages = get_num_code_pages();
 			if (!numPages)
 				return 0;
@@ -674,55 +718,55 @@ namespace rage {
 				--numPages;
 			return (numPages * 0x4000) + (m_code_size & 0x3FFF);
 		}
-		std::uint8_t* get_code_page(std::uint32_t page) const {
+		uint8_t* get_code_page(std::uint32_t page) const {
 			return m_code_blocks[page];
 		}
-		std::uint8_t* get_code_address(std::uint32_t index) const {
+		uint64_t get_string_page(uint64_t index) const {
+			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_strings_data)) + index * 8;
+		}
+		uint8_t* get_code_address(uint32_t index) const {
 			if (index < m_code_size)
 				return &m_code_blocks[index >> 14][index & 0x3FFF];
 			return nullptr;
 		}
-		const char* get_string(std::uint32_t index) const {
+		const char* get_string(uint32_t index) const {
 			if (index < m_strings_count)
 				return &m_strings_data[index >> 14][index & 0x3FFF];
 			return nullptr;
 		}
 		void** get_address_of_native_entrypoint(void* entrypoint) {
-			for (std::uint32_t i = 0; i < m_native_count; ++i)
-				if (m_native_entrypoints[i] == entrypoint)
+			for (uint32_t i{}; i != m_native_count; ++i) {
+				if (m_native_entrypoints[i] == entrypoint) {
 					return m_native_entrypoints + i;
+				}
+			}
 			return nullptr;
 		}
-	};
+		uint64_t* get_native_table() {
+			return *reinterpret_cast<uint64_t**>(uintptr_t(this) + offsetof(scrProgram, m_native_entrypoints));
+		}
+	}; //Size: 0x0080
+	static_assert(sizeof(scrProgram) == 0x80);
+	#pragma pack(pop)
 	class scrProgramTableEntry {
 	public:
-		scrProgram* m_program;     // 0x00
-		char m_Pad1[0x04];         // 0x08
-		uint32_t m_hash;           // 0x0C
-	};
+		scrProgram* m_program; //0x0000
+		char pad_0008[4]; //0x0008
+		joaat_t m_hash; //0x000C
+	}; //Size: 0x0010
+	static_assert(sizeof(scrProgramTableEntry) == 0x10);
 	class scrProgramTable {
 	public:
-		scrProgramTableEntry* m_data;    // 0x00
-		char m_padding[0x10];            // 0x08
-		std::uint32_t m_size;            // 0x18
-		std::list<uint32_t> all_script_hashes() {
-			std::list<uint32_t> hash;
-			for (uint32_t i = 0; i < m_size; ++i)
-				if (m_data[i].m_program != nullptr && m_data[i].m_program->m_name != nullptr)
-					hash.push_back(m_data[i].m_hash);
-			return hash;
-		}
-		std::list<std::string> all_script_names() {
-			std::list<std::string> hash;
-			for (uint32_t i = 0; i < m_size; ++i)
-				if (m_data[i].m_program != nullptr && m_data[i].m_program->m_name != nullptr)
-					hash.push_back(m_data[i].m_program->m_name);
-			return hash;
-		}
-		scrProgram* find_script(uint32_t hash) {
-			for (std::uint32_t i = 0; i < m_size; ++i)
-				if (m_data[i].m_hash == hash)
+		scrProgramTableEntry* m_data; //0x0000
+		char pad_0008[16]; //0x0008
+		uint32_t m_size; //0x0018
+
+		scrProgram* find_script(joaat_t hash) {
+			for (uint32_t i{}; i != m_size; ++i) {
+				if (m_data[i].m_hash == hash) {
 					return m_data[i].m_program;
+				}
+			}
 			return nullptr;
 		}
 		scrProgramTableEntry* begin() {
@@ -731,7 +775,7 @@ namespace rage {
 		scrProgramTableEntry* end() {
 			return m_data + m_size;
 		}
-	};
+	}; //Size: 0x001C
 	//Thread
 	//Thread State
 	enum class eThreadState : uint32_t {
@@ -742,33 +786,6 @@ namespace rage {
 		breakpoint
 	};
 	//Thread
-#pragma pack(push, 8)
-	class scrThreadContext {
-	public:
-		uint32_t m_thread_id; //0x0000
-		uint32_t m_script_hash; //0x0004
-		eThreadState m_state; //0x0008
-		uint32_t m_pointer_count; //0x000C
-		uint32_t m_frame_pointer; //0x0010
-		uint32_t m_stack_pointer; //0x0014
-		float m_timer_a; //0x0018
-		float m_timer_b; //0x001C
-		float m_wait; //0x0020
-		int32_t m_min_pc; //0x0024
-		int32_t m_max_pc; //0x0028
-		char m_tls[36]; //0x002C
-		uint32_t m_stack_size; //0x0050
-		uint32_t m_catch_pointer_count; //0x0054
-		uint32_t m_catch_frame_pointer; //0x0058
-		uint32_t m_catch_stack_pointer; //0x005C
-		uint32_t m_priority; //0x0060
-		uint8_t m_call_depth; //0x0060
-		uint8_t unk_0061; //0x0061
-		uint16_t unk_0062; //0x0062
-		char m_callstack[16]; //0x0068
-	}; //Size: 0x0078
-	static_assert(sizeof(scrThreadContext) == 0x78);
-#pragma pack(pop)
 	class tlsContext {
 	public:
 		char pad_0000[180]; //0x0000
@@ -798,12 +815,39 @@ namespace rage {
 			return Int == val.Int;
 		}
 	};
+#pragma pack(push, 8)
+	class scrThreadSerialised {
+	public:
+		uint32_t m_thread_id; //0x0000
+		uint32_t m_script_hash; //0x0004
+		eThreadState m_state; //0x0008
+		uint32_t m_pointer_count; //0x000C
+		uint32_t m_frame_pointer; //0x0010
+		uint32_t m_stack_pointer; //0x0014
+		float m_timer_a; //0x0018
+		float m_timer_b; //0x001C
+		float m_wait; //0x0020
+		int32_t m_min_pc; //0x0024
+		int32_t m_max_pc; //0x0028
+		char m_tls[36]; //0x002C
+		uint32_t m_stack_size; //0x0050
+		uint32_t m_catch_pointer_count; //0x0054
+		uint32_t m_catch_frame_pointer; //0x0058
+		uint32_t m_catch_stack_pointer; //0x005C
+		uint32_t m_priority; //0x0060
+		uint8_t m_call_depth; //0x0060
+		uint8_t unk_0061; //0x0061
+		uint16_t unk_0062; //0x0062
+		char m_callstack[16]; //0x0068
+	}; //Size: 0x0078
+	static_assert(sizeof(scrThreadSerialised) == 0x78);
+#pragma pack(pop)
 	class scrThread {
 	public:
 		virtual ~scrThread() = default;                   //0 (0x00)
-		virtual eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) { return m_context.m_state; }     //1 (0x08)
-		virtual eThreadState run() { return m_context.m_state; }                //2 (0x10)
-		virtual eThreadState tick(uint32_t ops_to_execute) { return m_context.m_state; }          //3 (0x18)
+		virtual eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) { return m_serialised.m_state; }     //1 (0x08)
+		virtual eThreadState run() { return m_serialised.m_state; }                //2 (0x10)
+		virtual eThreadState tick(uint32_t ops_to_execute) { return m_serialised.m_state; }          //3 (0x18)
 		virtual void kill() {}                //4 (0x20)
 		static scrThread** getPointer() {
 			auto tls = uint64_t(rage::tlsContext::get());
@@ -813,15 +857,7 @@ namespace rage {
 			return rage::tlsContext::get()->m_script_thread;
 		}
 	public:
-		scrThreadContext* getContext() {
-			return &m_context;
-		}
-		void setScriptName(const char* name) {
-			strncpy_s(m_name, name, sizeof(m_name) - 1);
-			m_name[sizeof(m_name) - 1] = '\0';
-		}
-	public:
-		class scrThreadContext m_context; //0x0000
+		scrThreadSerialised m_serialised; //0x0000
 		char unk_0078[48]; //0x0078
 		scrValue* m_stack; //0x00B0
 		uint32_t unk_00B8; //0x00B8
@@ -880,38 +916,30 @@ namespace rage {
 	};
 	class scriptIdBase {
 	public:
-		virtual ~scriptIdBase() = default;                            // 0 (0x00)
-		//Assumes the script thread's identity.
-		virtual void assume_thread_identity(scrThread*) {};           // 1 (0x08)
-		//Returns whether the hash of the script id is valid.
-		virtual bool is_valid() {};                                   // 2 (0x10)
-		//Gets the hash of the script id.
-		virtual uint32_t* get_hash(uint32_t* out) {};                 // 3 (0x18)
-		//Gets an unknown value from the script id.
-		virtual std::uint32_t* get_hash2(std::uint32_t* out) {};      // 4 (0x20)
-		//Gets the name of the script id.
-		virtual const char* get_name() {};                            // 5 (0x28)
-		//Serializes the script id from the buffer.
-		virtual void deserialize(datBitBuffer* buffer) {};            // 6 (0x30)
-		//Serializes the script id to the buffer.
-		virtual void serialize(datBitBuffer* buffer) {};              // 7 (0x38)
-		//Calculates some information with the position hash & instance id.
-		virtual std::uint32_t _0x40() {};                             // 8 (0x40)
-		//Calls _0x40 and returns it's value added to another value.
-		virtual std::uint32_t _0x48() {};                             // 9 (0x48)
-		//Logs some information about the script id.
-		virtual void log_information(void* logger) {}; // 10 (0x50)
-		//Copies the information of other to this object.
-		virtual void copy_data(scriptIdBase* other) {}                // 11 (0x58)
-		//Returns whether the other script id is equal.
-		virtual bool operator==(scriptIdBase*) {};                    // 12 (0x60)
-		virtual bool _0x68(void*) {};                                 // 13 (0x68)
-	};
+		virtual ~scriptIdBase();
+		virtual void assume_thread_identity(scrThread* thread);
+		virtual bool is_valid();
+		virtual joaat_t* get_hash(joaat_t* out);
+		virtual joaat_t* get_hash2(joaat_t* out);
+		virtual const char* get_name();
+		virtual void deserialize(datBitBuffer* buffer);
+		virtual void serialize(datBitBuffer* buffer);
+		virtual uint32_t _0x40();
+		virtual uint32_t _0x48();
+		virtual void log_information(void* logger);
+		virtual void copy_data(scriptIdBase* other);
+		virtual bool operator==(scriptIdBase*);
+		virtual bool _0x68(void*);
+	}; //Size: 0x0008
+	static_assert(sizeof(scriptIdBase) == 0x8);
+	#pragma pack(push, 1)
 	class scriptId : public scriptIdBase {
 	public:
-		uint32_t m_hash;          // 0x08
-		char m_name[0x20];        // 0x0C
-	};
+		uint32_t m_hash; //0x0008
+		char m_name[32]; //0x000C
+	}; //Size: 0x002C
+	static_assert(sizeof(scriptId) == 0x2C);
+	#pragma pack(pop)
 	class scriptResource {
 	public:
 		virtual ~scriptResource() = default;
@@ -947,22 +975,58 @@ namespace rage {
 		virtual void _0x90() = 0;                                                                             // 18 (0x90)
 		virtual void _0x98() = 0;                                                                             // 19 (0x98)
 	public:
-		void* m_0x08;                                // 0x08
-		void* m_0x10;                                // 0x10
-		scrThread* m_script_thread;                  // 0x18
-		atDList<atDScriptObjectNode> m_objects;      // 0x20
-		scriptResource* m_resource_list_head;        // 0x30
-		scriptResource* m_resource_list_tail;        // 0x38
-		void* m_0x40;                                // 0x40
-		scriptHandlerNetComponent* m_net_component;  // 0x48
-		std::uint32_t m_0x50;                        // 0x50
-		std::uint32_t m_0x54;                        // 0x54
-		std::uint32_t m_0x58;                        // 0x58
-		std::uint32_t m_0x60;                        // 0x5C
-	};
+		void* unk_0008; //0x0008
+		void* unk_0010; //0x0010
+		scrThread* m_script_thread; //0x0018
+		atDList<atDScriptObjectNode> m_objects; //0x0020
+		scriptResource* m_resource_list_head; //0x0030
+		scriptResource* m_resource_list_tail; //0x0038
+		void* unk_0040; //0x0040
+		scriptHandlerNetComponent* m_net_component; //0x0048
+		uint32_t unk_0050; //0x0050
+		uint32_t unk_0054; //0x0054
+		uint32_t unk_0058; //0x0058
+		uint32_t unk_005C; //0x005C
+	}; //Size: 0x0060
+	static_assert(sizeof(scriptHandler) == 0x60);
 	class scriptHandlerNetComponent {
 	public:
 		virtual ~scriptHandlerNetComponent() = default;
+		virtual bool _0x08(void*) = 0;
+		virtual void _0x10(CNetGamePlayer*) = 0; //creates a scriptId?
+		virtual void* player_left(CNetGamePlayer * player) = 0;
+		virtual void* send_host_migration_event(CNetGamePlayer * player) = 0;
+		virtual void* player_joined(void**, void* msg_ctx) = 0;
+		virtual void* player_joined_ack(void**, void* msg_ctx) = 0;
+		virtual bool _0x38(void*, void*) = 0; //join_script?
+		virtual void* _0x40(void*, void*) = 0;
+		virtual void* _0x48(void*, void*, void*) = 0;
+		virtual void* _0x50(void*, void*) = 0;
+		virtual void* _0x58(void*, void*) = 0;
+		virtual void* _0x60(void*, void*) = 0;
+		virtual void* _0x68(void*, void*) = 0;
+		virtual void _0x70(void*, void*) = 0;
+		virtual void _0x78(void*, void*) = 0;
+		virtual short _0x80(void*, void*) = 0;
+		virtual void* _0x88(void*, void*) = 0;
+		virtual void* _0x90(void*, void*) = 0; //HOST_MIGRATION_FAILED
+		virtual bool _0x98(void*, void*) = 0;
+		virtual void* _0xA0(void*, void*) = 0;
+		virtual void* _0xA8(void*, void*) = 0;
+		virtual short _0xB0(void*, void*) = 0;
+		virtual bool register_host_broadcast_data(int* data, int size, char* debugString) = 0;
+		virtual bool register_player_broadcast_data(int data, int size, bool sync) = 0;
+		virtual bool _0xC8() = 0; // something to do to joining session
+		virtual bool _0xD0() = 0;
+		virtual bool add_player_to_script(CNetGamePlayer * player, short* outParticipantID, short* outSlot, int* outFailReason) = 0;
+		virtual bool add_player_to_script_internal(CNetGamePlayer * player, short participantID, short slot) = 0; // player aka participant
+		virtual bool remove_player_from_script(CNetGamePlayer * player) = 0;
+		virtual void* player_left_impl(CNetGamePlayer*, bool) = 0;
+		virtual bool do_host_migration(CNetGamePlayer * player, short host_token, bool unk) = 0; // aka _0xF8
+		virtual void* leave_from_script() = 0; // calls above function with player = nullptr
+		virtual bool _0x108() = 0;
+		virtual void* _0x110() = 0;
+		virtual bool _0x118() = 0; // related to above function
 	public:
 		scriptHandler* m_script_handler; // 0x08
 	};
@@ -1497,17 +1561,18 @@ namespace rage {
 #pragma pack(push, 8)
 	class netConnectionPeer {
 	public:
-		netSocketAddress m_internal_address; //0x0000
-		netSocketAddress m_external_address; //0x0008
-		uint64_t m_peer_id; //0x0010
-		uint32_t unk_0018; //0x0018
-		uint16_t unk_001C; //0x001C
-		uint8_t m_platform; //0x001E
-	}; //Size: 0x0020
-	static_assert(sizeof(netConnectionPeer) == 0x20);
-#pragma pack(pop)
+		uint32_t m_platform_data; //0x0000
+		netSocketAddress m_internal_address; //0x0004
+		netSocketAddress m_external_address; //0x000C
+		uint64_t m_peer_id; //0x0018
+		uint32_t unk_0020; //0x0020
+		uint16_t unk_0024; //0x0024
+		uint8_t m_platform; //0x0026
+	}; //Size: 0x0028
+	static_assert(sizeof(netConnectionPeer) == 0x28);
+	#pragma pack(pop)
 	namespace netConnection {
-#pragma pack(push, 1)
+		#pragma pack(push, 1)
 		class InFrame {
 		public:
 			virtual ~InFrame() = default;
@@ -1521,19 +1586,19 @@ namespace rage {
 			uint32_t m_msg_id; //0x0040
 			uint32_t m_connection_identifier; //0x0044
 			InFrame* m_this; //0x0048
-			uint32_t m_platform_data; //0x0050
-			char pad_0050[44]; //0x0058
+			netConnectionPeer m_peer; //0x0050
+			char pad_0070[8]; //0x0084
 			uint32_t m_length; //0x0080
 			char pad_007C[4]; //0x0084
 			void* m_data; //0x0088
 		}; //Size: 0x0090
-		static_assert(sizeof(rage::netConnection::InFrame) == 0x90);
-#pragma pack(pop)
+		static_assert(sizeof(InFrame) == 0x90);
+		#pragma pack(pop)
 	}
 	class netConMgr {
 	public:
-		char pad_0000[200];
-	};
+		char pad_0000[0x1280];
+	}; //Size: 0x1280
 	class snPlayer {
 	public:
 		uint64_t m_msg_id; //0x0000
@@ -1600,28 +1665,28 @@ namespace rage {
 		char m_join_key[64]; //0x3E2C
 		char pad_3E6C[4]; //0x3E6C
 
-		rage::snPlayer* getPlayerByPeerAddress(uint64_t peerAddress) {
+		rage::snPlayer* get_player_via_peer(uint64_t peer_address) {
 			for (uint32_t i{}; i != m_player_count; ++i) {
 				if (auto snPlayer = m_players[i]; snPlayer) {
-					if (snPlayer->m_gamer_info.m_peer_address == peerAddress)
+					if (snPlayer->m_gamer_info.m_peer_address == peer_address)
 						return snPlayer;
 				}
 			}
 			return nullptr;
 		}
-		rage::snPlayer* getPlayerByPlatformData(uint64_t platformData) {
+		rage::snPlayer* get_player_via_platform_data(uint64_t platform_data) {
 			for (uint32_t i{}; i != m_player_count; ++i) {
 				if (auto snPlayer = m_players[i]; snPlayer) {
-					if (snPlayer->m_gamer_info.m_platform_data == platformData)
+					if (snPlayer->m_gamer_info.m_platform_data == platform_data)
 						return snPlayer;
 				}
 			}
 			return nullptr;
 		}
-		rage::snPlayer* getPlayerByMsgId(uint32_t msgId) {
+		rage::snPlayer* get_player_via_msd_id(uint32_t msg_id) {
 			for (uint32_t i{}; i != m_player_count; ++i) {
 				if (auto snPlayer = m_players[i]; snPlayer) {
-					if (snPlayer->m_msg_id == msgId)
+					if (snPlayer->m_msg_id == msg_id)
 						return snPlayer;
 				}
 			}
@@ -1722,6 +1787,272 @@ namespace rage {
 		void* pad4;
 		UpdateFunctionList* m_update_function_list;
 	};
+	enum class grcLockFlags : int32_t {
+		Read = 1,
+		Write = 2,
+		Unknown = 4,
+		WriteDiscard = 8,
+		NoOverwrite = 16
+	};
+	class grcLockedTexture {
+	public:
+		int32_t m_level; //0x0000
+		void* m_bits; //0x0004
+		int32_t m_pitch; //0x000C
+		int32_t m_pad; //0x0010
+		uint32_t m_width; //0x0014
+		uint32_t m_height; //0x0018
+		int32_t m_format; //0x001C
+		int32_t m_num_sub_levels; //0x0020
+	}; //Size: 0x0028
+	static_assert(sizeof(grcLockedTexture) == 0x28);
+	struct grcTextureStored {
+		char* m_name;
+		ID3D11Resource* m_texture;
+		ID3D11ShaderResourceView* m_shader;
+		uint16_t m_width;
+		uint16_t m_height;
+		uint16_t m_depth;
+	};
+	class grcTexture {
+	public:
+		virtual ~grcTexture() = NULL;
+		virtual bool unk_0008() = NULL;
+		virtual int unk_0010() = NULL;
+		virtual void unk_0018() = NULL;
+		virtual int unk_0020() = NULL;
+		virtual uint16_t GetWidth() = NULL;
+		virtual uint16_t GetHeight() = NULL;
+		virtual uint16_t GetDepth() = NULL;
+		virtual uint8_t GetLevels() = NULL;
+		virtual void unk_0048() = NULL;
+		virtual bool unk_0050() = NULL;
+		virtual void unk_0058(int64_t) = NULL;
+		virtual void unk_0060(void*) = NULL;
+		virtual void unk_0068(void*) = NULL;
+		virtual void unk_0070() = NULL;
+		virtual rage::grcTexture* unk_0078() = NULL;
+		virtual rage::grcTexture* unk_0080() = NULL;
+		virtual bool unk_0088() = NULL;
+		virtual int unk_0090() = NULL;
+		virtual int unk_0098() = NULL;
+		virtual int unk_00A0() = NULL;
+		virtual int unk_00A8() = NULL;
+		virtual int unk_00B0() = NULL;
+		virtual int unk_00B8() = NULL;
+		virtual int unk_00C0() = NULL;
+		virtual bool Map(int numSubLevels, int subLevel, grcLockedTexture* lockedTexture, grcLockFlags flags) = NULL;
+
+		char pad_0008[32]; //0x0008
+		char* m_name; //0x0028
+		uint16_t m_ref_count; //0x0030
+		uint8_t m_resource_type; //0x0032
+		uint8_t m_layers; //0x0033
+		char pad_0034[4]; //0x0034
+		ID3D11Resource* m_texture; //0x0038
+		uint32_t m_physical_size; //0x0040
+		uint32_t m_handle; //0x0044
+		uint32_t m_flags; //0x0048
+		char pad_004C[4]; //0x004C
+		uint16_t m_width; //0x0050
+		uint16_t m_height; //0x0052
+		uint16_t m_depth; //0x0054
+		uint16_t m_mip_stride; //0x0056
+		uint32_t m_format; //0x0058
+		uint8_t m_image_type; //0x005C
+		uint8_t m_mip_count; //0x005D
+		uint8_t m_cut_mip_levels; //0x005E
+		bool m_is_srgb; //0x005F
+		grcTexture* m_previous; //0x0060
+		grcTexture* m_next; //0x0068
+		void* m_backing; //0x0070
+		ID3D11ShaderResourceView* m_shader; //0x0078
+		char pad_0080[40]; //0x0080
+	public:
+		void Set(std::string file, ID3D11ShaderResourceView* shader, rage::vector2 size) {
+			m_name = new char[file.length() + 1]; //Yes, I know this is never deleted. The game will handle it, so hush...
+			strcpy(m_name, file.c_str());
+			m_shader = shader;
+			m_shader->GetResource(&m_texture);
+			m_width = size.x;
+			m_height = size.y;
+			m_depth = 1;
+		}
+		void Swap(grcTexture* texure, bool retainOrginialSizes = false) {
+			m_texture = texure->m_texture;
+			m_shader = texure->m_shader;
+			if (!retainOrginialSizes) {
+				m_width = texure->m_width;
+				m_height = texure->m_height;
+				m_depth = texure->m_depth;
+			}
+		}
+		void Swap(grcTextureStored texure, bool retainOrginialSizes = false) {
+			m_texture = texure.m_texture;
+			m_shader = texure.m_shader;
+			m_width = texure.m_width;
+			m_height = texure.m_height;
+			m_depth = texure.m_depth;
+		}
+		grcTextureStored CreateCopy() {
+			grcTextureStored data{};
+			data.m_name = m_name;
+			data.m_texture = m_texture;
+			data.m_shader = m_shader;
+			data.m_width = m_width;
+			data.m_height = m_height;
+			data.m_depth = m_depth;
+			return data;
+		}
+	}; //Size: 0x00A8
+	static_assert(sizeof(grcTexture) == 0xA8);
+	class grcRenderTarget : public grcTexture {
+	public:
+	}; //Size: 0x00A8
+	static_assert(sizeof(grcRenderTarget) == 0xA8);
+	class grcTextureFactory {
+	public:
+		virtual ~grcTextureFactory() = default;
+		virtual grcTexture* unk_0008() = NULL;
+		virtual grcTexture* CreateManualTexture() = NULL;
+		virtual grcTexture* unk_0018() = NULL;
+		virtual grcTexture* CreateTexture(const char* name, int32_t id) = NULL;
+		virtual void unk_0028() = NULL;
+		virtual void unk_0030() = NULL;
+		virtual int TranslateFormatToParamFormat(int32_t format) = NULL;
+		virtual void unk_0040() = NULL;
+		virtual void unk_0048() = NULL;
+		virtual void unk_0050() = NULL;
+		virtual void unk_0058() = NULL;
+		virtual void unk_0060() = NULL;
+		virtual void unk_0068() = NULL;
+		virtual void unk_0070() = NULL;
+		virtual void unk_0078() = NULL;
+		virtual void unk_0080() = NULL;
+		virtual void unk_0088() = NULL;
+		virtual grcTexture* CreateFromNativeTexture(const char* name, ID3D11Resource* nativeResource, void* a3) = NULL;
+		virtual void unk_00A0() = NULL;
+		virtual void PushRenderTarget(void* a1, grcRenderTarget* target, void* a3, int a4, bool a5, bool a6) = NULL;
+		virtual void PopRenderTarget(void* a1, grcRenderTarget* target) = NULL;
+	public:
+		char pad_0008[8]; //0x0008
+	}; //Size: 0x0010
+	static_assert(sizeof(grcTextureFactory) == 0x10);
+	template <typename T>
+	class pgDictionary {
+	public:
+		virtual ~pgDictionary() = default;
+		uint64_t unk_0008; //0x0008
+		uint64_t unk_0010; //0x0010
+		uint32_t unk_0018; //0x0018
+		uint32_t unk_001C; //0x001C
+		uint64_t unk_0020; //0x0020
+		int16_t m_count; //0x0028
+		int16_t unk_002A; //0x002A
+		char pad_002C[4]; //0x002C
+		T** m_items; //0x0030
+		uint32_t unk_0038; //0x0038
+
+		bool AddElement(T* element) {
+			m_items[m_count] = element;
+			m_count++;
+			return m_items && m_items[m_count - 1] && IsElementValid(m_count - 1);
+		}
+		bool IsElementValid(uint32_t index) {
+			if (!m_items)
+				return false;
+			if (index >= m_count)
+				return false;
+			return m_items[index];
+		}
+		T* GetElement(uint32_t index) {
+			if (IsElementValid(index)) {
+				if (m_items[index]) {
+					return m_items[index];
+				}
+			}
+			return nullptr;
+		}
+	}; //Size: 0x003C
+	template <typename T>
+	class pgDictionaryPool {
+	public:
+		pgDictionary<T>* m_dictionary; //0x0000
+		uint32_t m_capacity; //0x0008
+		uint32_t m_dictionary_hash; //0x000C
+		char pad_0010[8]; //0x0010
+	}; //Size: 0x0018
+	class grcTextureStore {
+	public:
+		char pad_0000[56]; //0x0000
+		pgDictionaryPool<grcTexture>* m_pool; //0x0038
+		uint8_t* m_mask; //0x0040
+		uint32_t m_count; //0x0048
+		uint32_t m_size; //0x0052
+	public:
+		auto BitshiftMask(uint32_t index, uint8_t amount) { return m_mask[index] >> amount; }
+		bool IsElementValid(uint32_t index) {
+			if (!m_mask)
+				return false;
+			if (index >= m_count)
+				return false;
+			return ~BitshiftMask(index, 7) & 1;
+		}
+		pgDictionaryPool<grcTexture>* GetElement(uint32_t index) {
+			if (IsElementValid(index)) {
+				if (m_pool[index].m_dictionary) {
+					return &m_pool[index];
+				}
+			}
+			return nullptr;
+		}
+		pgDictionary<grcTexture>* FindDictionary(uint32_t hash) {
+			for (decltype(m_count) i{ m_count }; i; --i) {
+				if (auto element = GetElement(i); element) {
+					if (element->m_dictionary_hash == hash) {
+						return element->m_dictionary;
+					}
+				}
+			}
+			return nullptr;
+		}
+		std::map<uint32_t, pgDictionary<grcTexture>*> GetAllDictionaries() {
+			std::map<uint32_t, pgDictionary<grcTexture>*> elements{};
+			for (decltype(m_count) i{ m_count }; i; --i) {
+				if (auto element{ GetElement(i) }; element) {
+					if (element->m_dictionary_hash) {
+						elements.insert({ element->m_dictionary_hash, element->m_dictionary });
+					}
+				}
+			}
+			return elements;
+		}
+		grcTexture* FindTexture(std::string dictionary, std::string name) {
+			uint32_t hash{ rage::joaat(dictionary) };
+			uint32_t textureHash{ rage::joaat("platform:/textures/" + dictionary) };
+			if (auto pgDictionary{ FindDictionary(hash) }) {
+				for (decltype(pgDictionary->m_count) i{ pgDictionary->m_count }; i; --i) {
+					if (auto element{ pgDictionary->GetElement(i) }; element && !name.compare(element->m_name)) {
+						return element;
+					}
+				}
+			}
+			if (auto pgDictionary{ FindDictionary(textureHash) }) {
+				for (decltype(pgDictionary->m_count) i{ pgDictionary->m_count }; i; --i) {
+					if (auto element{ pgDictionary->GetElement(i) }; element && !name.compare(element->m_name)) {
+						return element;
+					}
+				}
+			}
+			return nullptr;
+		}
+	}; //Size: 0x0056
+	class netTextMsg {
+	public:
+		char m_message[256]; //0x0000
+		rage::rlGamerHandle m_handle; //0x0100
+	}; //Size: 0x0110
+	static_assert(sizeof(netTextMsg) == 0x110);
 }
 class CObject : public rage::fwEntity {};
 #pragma pack(push, 8)
@@ -1831,6 +2162,23 @@ inline Vector3 rage::vector3::serialize() {
 }
 inline Vector4 rage::vector4::serialize() {
 	return { x, y, z, w };
+}
+inline bool rage::rlGamerHandle::deserialize(rage::datBitBuffer& buf) {
+	if ((m_platform = buf.Read<u8>(8)) != 3)
+		return false;
+	buf.ReadInt64((s64*)&m_rockstar_id, 64);
+	m_flag = buf.Read<uint8_t>(8);
+	return true;
+}
+inline bool rage::rlGamerHandle::serialize(rage::datBitBuffer& buf) {
+	if (!buf.Write<u8>(u8(m_platform), 8))
+		return false;
+	if (m_platform == 3) {
+		buf.WriteQword(m_rockstar_id, 0x40);
+		buf.Write<u8>(m_flag, 8);
+		return true;
+	}
+	return false;
 }
 #pragma pack(push, 1)
 class FriendInfo {
@@ -2925,7 +3273,89 @@ public:
 	char pad_0030[16]; //0x0030
 }; //Size: 0x0040
 
-class CGameScriptHandlerMgr : public rage::scriptHandlerMgr {};
+class CGameScriptHandlerMgr : public rage::scriptHandlerMgr {
+public:
+};
+class CScriptParticipant {
+public:
+	char pad_0000[16]; //0x0000
+	class CNetGamePlayer* m_net_game_player; //0x0010
+	char pad_0018[2]; //0x0018
+	int16_t m_participant_index; //0x001A
+	char pad_001C[12]; //0x001C
+}; //Size: 0x0028
+static_assert(sizeof(CScriptParticipant) == 0x28);
+class CGameScriptHandlerNetComponent : public rage::scriptHandlerNetComponent {
+public:
+	char pad_0010[32]; //0x0010
+	class CScriptParticipant* m_host; //0x0030
+	int16_t m_local_participant_index; //0x0038
+	char pad_003A[6]; //0x003A
+	uint32_t m_participant_bitset; //0x0040
+	char pad_0044[36]; //0x0044
+	class CScriptParticipant* m_participants[32]; //0x0068
+	char pad_0168[12]; //0x0168
+	int16_t m_num_participants; //0x0174
+	char pad_0176[28]; //0x0176
+	uint8_t m_host_migration_flags; //0x0192
+	char pad_0193[29]; //0x0193
+	int get_participant_index(CNetGamePlayer* player) {
+		if (player == (*pointers::g_networkPlayerMgr)->m_local_net_player)
+			return m_local_participant_index;
+		if (m_num_participants <= 1)
+			return -1;
+		for (decltype(m_num_participants) i{}; i != m_num_participants - 1; ++i) {
+			if (m_participants[i] && m_participants[i]->m_net_game_player == player)
+				return m_participants[i]->m_participant_index;
+		}
+		return -1;
+	}
+	bool is_player_a_participant(CNetGamePlayer* player) {
+		return m_participant_bitset & (1 << player->m_player_id);
+	}
+	bool is_local_player_host() {
+		if (!m_host)
+			return true;
+
+		return m_host->m_participant_index == m_local_participant_index;
+	}
+	bool is_player_host(CNetGamePlayer* player) {
+		return m_host->m_participant_index == get_participant_index(player);
+	}
+	CNetGamePlayer* get_host() {
+		if (!m_host)
+			return nullptr;
+
+		return m_host->m_net_game_player;
+	}
+	void block_host_migration(bool toggle) {
+		if (toggle)
+			m_host_migration_flags |= (1 << 7);
+		else
+			m_host_migration_flags &= ~(1 << 7);
+	}
+	bool force_host() {
+		if (auto& cNetworkPlayerMgr = *pointers::g_networkPlayerMgr; cNetworkPlayerMgr) {
+			for (int32_t i{}; !is_local_player_host(); ++i) {
+				if (i > 200)
+					return false;
+
+				send_host_migration_event(cNetworkPlayerMgr->m_local_net_player);
+				send_host_migration_event(cNetworkPlayerMgr->m_local_net_player);
+			}
+			return is_local_player_host();
+		}
+		return false;
+	}
+	bool give_host(CNetGamePlayer* player) {
+		if (!force_host())
+			return false;
+		send_host_migration_event(player);
+		do_host_migration(player, NULL, true);
+		return is_player_host(player);
+	}
+}; //Size: 0x01B0
+static_assert(sizeof(CGameScriptHandlerNetComponent) == 0x1B0);
 
 class CScriptedGameEvent : public rage::netGameEvent {
 public:
@@ -3299,3 +3729,27 @@ public:
 }; //Size: 0x38650
 static_assert(sizeof(Network) == 0x38650);
 #pragma pack(pop)
+#pragma pack(push, 1)
+class CMsgTextMessage {
+public:
+	char m_message[256]; //0x0000
+	uint64_t m_peer_id; //0x0100
+	bool m_is_team; //0x0108
+}; //Size: 0x0109
+static_assert(sizeof(CMsgTextMessage) == 0x109);
+#pragma pack(pop)
+#pragma pack(push, 1)
+class CMsgTextMessage2 {
+public:
+	char m_message[256]; //0x0000
+	uint64_t m_peer_id; //0x0100
+}; //Size: 0x0108
+static_assert(sizeof(CMsgTextMessage2) == 0x108);
+#pragma pack(pop)
+class PresenceData {
+public:
+	virtual ~PresenceData() = default;
+	virtual bool UpdateAttributeInt(int ProfileIndex, char* Attribute, u64 Value) = 0;
+	virtual bool UpdateAttributeUnk(int ProfileIndex, char* Attribute, u64 Value) = 0;
+	virtual bool UpdateAttributeString(int ProfileIndex, char* Attribute, char* Value) = 0;
+};

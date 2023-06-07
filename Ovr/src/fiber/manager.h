@@ -9,13 +9,13 @@ public:
 		std::lock_guard lck(m_mutex);
 		m_fibers.insert({ id, std::make_unique<fiber>(fn, stackSize) });
 		if (log)
-			LOG(FOREGROUND_WHITE, "Info", "Created fiber {}", id);
+			LOG(Info, "Created fiber {}", id);
 	}
 	void add(char const* id, int count, fnptr<void()> fn, std::optional<std::size_t> stackSize = std::nullopt) {
 		for (int32_t i{ count }; i; --i) {
 			add(std::format("{}_{}", id, i).c_str(), fn, false, stackSize);
 		}
-		LOG(FOREGROUND_WHITE, "Info", "Created fiber group '{}' with {} fibers", id, count);
+		LOG(Info, "Created fiber group '{}' with {} fibers", id, count);
 	}
 	void remove(char const* id) {
 		std::lock_guard lck(m_mutex);

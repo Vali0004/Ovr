@@ -1,6 +1,5 @@
 #pragma once
 #include "features/manager/types.h"
-#define ONCE(a) do a while (false)
 
 namespace features {
 	class manager {
@@ -59,6 +58,9 @@ inline features::toggleFloatFeature* operator ""_TFF(const char* str, size_t) {
 }
 inline features::actionFeature* operator ""_AF(const char* str, size_t) {
 	return features::g_manager.getFeature<features::actionFeature>(str);
+}
+inline features::protectionFeature* operator ""_PF(const char* str, size_t) {
+	return features::g_manager.getFeature<features::protectionFeature>(str);
 }
 inline features::variadicFeature* operator ""_VF(const char* str, size_t) {
 	return features::g_manager.getFeature<features::variadicFeature>(str);

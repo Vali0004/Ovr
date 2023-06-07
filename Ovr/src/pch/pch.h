@@ -7,21 +7,12 @@
 #pragma comment(lib, "src\\curl\\libcurl.lib")
 
 #include "framework.h"
+#include "rage/enums.h"
+#define BRAND "Ovr"
 
-#define FOREGROUND_WHITE FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY
-#define LOG(c, t, fmt, ...) \
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), static_cast<uint16_t>(c)); \
-	std::cout << t << " | " << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl;
-#define REGISTER_LOG(n) \
-	if (!AttachConsole(GetCurrentProcessId())) \
-		AllocConsole(); \
-	SetConsoleTitleA(n); \
-	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
-#define DESTROY_LOG() \
-	FreeConsole(); \
-	fclose(stdout);
 #define SIZEOF(a) sizeof(a) / sizeof(std::remove_pointer_t<decltype(a)>)
 #define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
+#define ONCE(a) do a while (false)
 #define PI 3.141592653589793238462643383279502884L
 	
 template <typename t>
@@ -57,6 +48,7 @@ namespace defines {
 	inline u16 g_selectedPlayer{};
 	inline u32 g_selectedFriend{};
 	inline std::string g_selectedAsi{};
+	inline eSessionTypes g_sessionType{};
     inline bool isNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c) == 0)
@@ -69,6 +61,16 @@ namespace defines {
                 return true;
         return false;
     }
+	inline std::string gsTypeToString(eSessionTypes gstype) {
+		switch (gstype) {
+		case eSessionTypes::InviteOnly: { return "Invite-Only"; } break;
+		case eSessionTypes::FriendsOnly: { return "Friends-Only"; } break;
+		case eSessionTypes::CrewOnly: { return "Crew-Only"; } break;
+		case eSessionTypes::CrewSession: { return "Crew"; } break;
+		case eSessionTypes::Public: { return "Public"; } break;
+		}
+		return "Offline";
+	}
     inline auto g_splitStr = [](std::string str, char split) -> std::vector<std::string> {
         std::vector<std::string> fields{};
         std::string field{};

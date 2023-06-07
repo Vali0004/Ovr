@@ -7,9 +7,9 @@ hooking::hooking() :
 	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor),
 	m_runAsyncModuleRequest("RAMS", pointers::g_runAsyncModuleRequest, &hooks::runAsyncModuleRequest),
 	m_hasIntervalElapsed("HIE", pointers::g_hasIntervalElapsed, &hooks::hasIntervalElapsed),
-	m_gameSkeletonRunUpdate("GSRU", pointers::g_gameSkeletonRunUpdate, &hooks::gameSkeletonRunUpdate),
-	m_gameSkeletonUpdateBaseRunGroup("GSUBRG", pointers::g_gameSkeletonUpdateBaseRunGroup, &hooks::gameSkeletonUpdateBaseRunGroup),
 	m_dispatchEvent("DE", pointers::g_dispatchEvent, &hooks::dispatchEvent),
+	m_scriptVm("SV", pointers::g_scriptVm, &hooks::scriptVm),
+	m_updateAttributeInt("SV", pointers::g_presenceData[g_updateAttributeIntIndex], &hooks::updateAttributeInt),
 	m_convertThreadToFiber("CTTF", *dynamicFunctionParser{ "kernel32.dll", "ConvertThreadToFiber" }, &hooks::convertThreadToFiber),
 	m_getProcAddress("GPA", &GetProcAddress, &hooks::getProcAddress),
 	m_DX(

@@ -33,7 +33,7 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 	u64 maxShift{ bytes.size() };
 	u64 maxIdx{ maxShift - 1 };
 	//Get wildcard index, and store max shifable byte count
-	u64 wildCardIdx{ size_t(-1) };
+	u64 wildCardIdx{ u64(-1) };
 	for (s32 i{ s32(maxIdx - 1) }; i >= 0; --i) {
 		if (!bytes[i]) {
 			maxShift = maxIdx - i;
@@ -48,8 +48,8 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 	for (u64 i{ wildCardIdx + 1 }; i != maxIdx; ++i)
 		shiftTable[*bytes[i]] = maxIdx - i;
 	//Loop data
-	for (size_t curIdx{}; curIdx != module.m_size - bytes.size();) {
-		for (size_t sigIdx = maxIdx; sigIdx >= 0; --sigIdx) {
+	for (u64 curIdx{}; curIdx != module.m_size - bytes.size();) {
+		for (u64 sigIdx = maxIdx; sigIdx >= 0; --sigIdx) {
 			if (bytes[sigIdx] && *module.m_begin.add(curIdx + sigIdx).as<u8*>() != *bytes[sigIdx]) {
 				curIdx += shiftTable[*module.m_begin.add(curIdx + maxIdx).as<u8*>()];
 				break;
@@ -69,10 +69,10 @@ struct scanner {
 	mem get() {
 		mem res{ findPatternBoyerMooreHorspool(m_elements, m_module) };
 		if (res) {
-			LOG(FOREGROUND_INTENSITY, "Info", "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.m_begin.as<u64>());
+			LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.m_begin.as<u64>());
 		}
 		else {
-			LOG(FOREGROUND_INTENSITY, "Info", "Failed to find {}", m_name);
+			LOG(Info, "Failed to find {}", m_name);
 		}
 		return res;
 	}

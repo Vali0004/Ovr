@@ -125,6 +125,8 @@ namespace features {
 	}
 	namespace commands {
 		extern void copyText(variadicFeature* feature);
+		extern void copyScString(variadicFeature* feature);
+		extern void printCliboard(actionFeature* feature);
 	}
 	extern void onTick();
 }

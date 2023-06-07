@@ -9,7 +9,7 @@ namespace tabs::scripting {
 	inline void scriptHookV() {
 		elements::tabItem("ScriptHookV", [] {
 			elements::listBox("ScriptHookV", { 350.f, 0.f }, [] {
-				fs::path path{ fs::path(std::getenv("appdata")).append("Ovr").append("Scripts") };
+				fs::path path{ fs::path(std::getenv("appdata")).append(BRAND).append("Scripts") };
 				util::iteratorFilesInPath(path, ".asi", [](fs::path path, std::string filename) {
 					elements::selectable(path.stem().string(), g_selectedAsi == filename, [&] {
 						g_selectedAsi = path.filename().string();
@@ -33,11 +33,11 @@ namespace tabs::scripting {
 							FreeLibrary(g_shv);
 					});
 					elements::button("Load", [] {
-						LOG(FOREGROUND_WHITE, "Info", "ASI Name: {}", g_selectedAsi);
-						g_asi = LoadLibraryA(fs::path(std::getenv("appdata")).append("Ovr\\Scripts").append(g_selectedAsi).string().c_str());
+						LOG(Info, "ASI Name: {}", g_selectedAsi);
+						g_asi = LoadLibraryA(fs::path(std::getenv("appdata")).append(BRAND"\\Scripts").append(g_selectedAsi).string().c_str());
 					});
 					elements::button("Load module", [] {
-						g_shv = LoadLibraryA(fs::path(std::getenv("appdata")).append("Ovr\\Modules\\ScriptHookV.dll").string().c_str());
+						g_shv = LoadLibraryA(fs::path(std::getenv("appdata")).append(BRAND"\\Modules\\ScriptHookV.dll").string().c_str());
 					});
 				});
 			}

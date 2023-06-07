@@ -23,7 +23,7 @@ namespace shv {
 	};
 	class asiModule : public dynamicLoader {
 	public:
-		asiModule(std::string name) : dynamicLoader(m_path.append(std::getenv("appdata")).append("Ovr\\Scripts").append(name)), m_name(name) {}
+		asiModule(std::string name) : dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Scripts").append(name)), m_name(name) {}
 		~asiModule() {}
 	public:
 		void load() override {
@@ -52,7 +52,7 @@ namespace shv {
 	};
 	class shvLoader : public dynamicLoader {
 	public:
-		shvLoader() : dynamicLoader(m_path.append("Ovr\\Modules").append("ScriptHookV.dll")) {}
+		shvLoader() : dynamicLoader(m_path.append(BRAND"\\Modules").append("ScriptHookV.dll")) {}
 		~shvLoader() {}
 	private:
 		fs::path m_path{ std::getenv("appdata") };

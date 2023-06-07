@@ -16,12 +16,13 @@ namespace pointers {
         g_cTaskFallConstructor = scan("CTFC", "E8 ? ? ? ? B3 04 08 98 A0").call().as<decltype(g_cTaskFallConstructor)>();
         g_runAsyncModuleRequest = scan("RAMS", "48 89 5C 24 ? 57 48 83 EC ? 8B FA 8B D9 FF 15").as<decltype(g_runAsyncModuleRequest)>();
         g_hasIntervalElapsed = scan("HIE", "48 89 5C 24 ? 57 48 83 EC ? 0F B6 99").as<decltype(g_hasIntervalElapsed)>();
-        g_gameSkeletonRunUpdate = scan("GSRU", "48 8D 0D ? ? ? ? BA 02 00 00 00 84 DB 75 05").sub(17).call().as<decltype(g_gameSkeletonRunUpdate)>();
-        g_gameSkeletonUpdateBaseRunGroup = scan("GSUBRG", "40 53 48 83 EC 20 48 8B 59 20 EB 0D 48 8B 03 48").as<decltype(g_gameSkeletonUpdateBaseRunGroup)>();
         g_dispatchEvent = scan("DE", "48 83 EC 20 4C 8B 71 50 33 ED").sub(0x19).as<decltype(g_dispatchEvent)>();
+        g_scriptVm = scan("SV", "4A 89 3C 39").sub(0x27).call().as<decltype(g_scriptVm)>();
         g_scGetGameInfoIndex = scan("SGGII", "E8 ? ? ? ? 85 C0 78 27 3B 47 14 7D 1E 48 98 48 8B D6 48 69 C8", { "socialclub.dll" }).call().as<decltype(g_scGetGameInfoIndex)>();
+        g_joinBySessionInfo = scan("JBSI", "E8 ? ? ? ? 0F B6 CB 84 C0 41 0F 44 CD").call().as<decltype(g_joinBySessionInfo)>();
 
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
+        g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
         g_friendRegistry = scan("FR", "41 8B F4 3B C5").sub(0xB).lea().as<decltype(g_friendRegistry)>();
         g_scInfo = scan("SI", "48 8D 05 ? ? ? ? 48 63 D1").mov().as<decltype(g_scInfo)>();
         g_networkPlayerMgr = scan("NPM", "48 8B 0D ? ? ? ? 8A D3 48 8B 01 FF 50 ? 4C 8B 07 48 8B CF").mov().as<decltype(g_networkPlayerMgr)>();

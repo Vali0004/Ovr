@@ -11,15 +11,15 @@ namespace engine {
 		}
 		virtual void do_run() = 0;
 		virtual rage::eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) {
-			RtlZeroMemory(&m_context, sizeof(m_context));
-			m_context.m_state = rage::eThreadState::sleeping;
-			m_context.m_script_hash = script_hash;
-			m_context.m_min_pc = -1;
-			m_context.m_max_pc = -1;
-			m_context.m_priority = 1;
+			RtlZeroMemory(&m_serialised, sizeof(m_serialised));
+			m_serialised.m_state = rage::eThreadState::sleeping;
+			m_serialised.m_script_hash = script_hash;
+			m_serialised.m_min_pc = -1;
+			m_serialised.m_max_pc = -1;
+			m_serialised.m_priority = 1;
 			init();
 			m_exit_message = "Normal exit";
-			return m_context.m_state;
+			return m_serialised.m_state;
 		}
 		virtual rage::eThreadState run() {
 			auto tls{ rage::tlsContext::get() };
@@ -29,11 +29,11 @@ namespace engine {
 			}
 			auto ogThr = tls->m_script_thread;
 			tls->m_script_thread = this;
-			if (m_context.m_state != rage::eThreadState::killed) {
+			if (m_serialised.m_state != rage::eThreadState::killed) {
 				do_run();
 			}
 			tls->m_script_thread = ogThr;
-			return m_context.m_state;
+			return m_serialised.m_state;
 		}
 		virtual rage::eThreadState tick(uint32_t ops_to_execute) {
 			return pointers::g_scrThreadTick(this, ops_to_execute);
@@ -63,15 +63,15 @@ namespace engine {
 		int slot{};
 		//Get slot
 		for (auto& thr : collection) {
-			auto& ctx{ thr->m_context };
-			if (!ctx.m_thread_id)
+			auto& ser{ thr->m_serialised };
+			if (!ser.m_thread_id)
 				break;
 			slot++;
 		}
 		bool didWeGetSlot{ slot != collection.size() };
 		if (didWeGetSlot) {
 			std::string name{ std::format("thr_{}", count + 1) };
-			auto& ctx{ thread->m_context };
+			auto& ser{ thread->m_serialised };
 			strcpy_s(thread->m_name, name.c_str());
 			thread->m_script_hash = rage::joaat(thread->m_name);
 			thread->reset(thread->m_script_hash, nullptr, 0);
@@ -79,14 +79,13 @@ namespace engine {
 			if (!id) {
 				id++;
 			}
-			ctx.m_thread_id = id;
+			ser.m_thread_id = id;
 			count++;
 			id++;
 			auto og{ collection[slot] };
 			collection[slot] = thread;
 			g_ownedThreads.push_back(std::make_pair(thread, og));
-			LOG(FOREGROUND_INTENSITY, "Info", "Successfully created thread '{}' at id {}", thread->m_name, ctx.m_thread_id);
-			LOG(FOREGROUND_INTENSITY, "Info", "Yoinked {}'s thread slot ({})", og->m_name, ctx.m_thread_id);
+			LOG(Info, "Successfully created the GtaThread thread '{}'", thread->m_name);
 		}
 	}
 	inline void cleanupThreads() {

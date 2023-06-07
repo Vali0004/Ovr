@@ -181,6 +181,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\logger.h" />
     <ClInclude Include="src\features\manager\command_engine.h" />
     <ClInclude Include="src\rage\commands\conversion_table.h" />
     <ClInclude Include="src\rage\commands\invoker\call_context.h" />
@@ -267,7 +268,7 @@
     <ClInclude Include="src\rage\classes.h" />
     <ClInclude Include="src\rage\engine.h" />
     <ClInclude Include="src\rage\enums.h" />
-    <ClInclude Include="src\framework.h" />
+    <ClInclude Include="src\pch\framework.h" />
     <ClInclude Include="src\memory\mem.h" />
     <ClInclude Include="src\memory\module.h" />
     <ClInclude Include="src\pch\pch.h" />
@@ -286,6 +287,15 @@
     <ClInclude Include="src\script\tabs\network\session\all_players.h" />
     <ClInclude Include="src\script\tabs\network\session\browser.h" />
     <ClInclude Include="src\script\tabs\network\tunables.h" />
+    <ClInclude Include="src\script\tabs\protections\crashes.h" />
+    <ClInclude Include="src\script\tabs\protections\kicks.h" />
+    <ClInclude Include="src\script\tabs\protections\network_events.h" />
+    <ClInclude Include="src\script\tabs\protections\reactions.h" />
+    <ClInclude Include="src\script\tabs\protections\reactions\crash.h" />
+    <ClInclude Include="src\script\tabs\protections\reactions\kick.h" />
+    <ClInclude Include="src\script\tabs\protections\reactions\network_event.h" />
+    <ClInclude Include="src\script\tabs\protections\reactions\script_event.h" />
+    <ClInclude Include="src\script\tabs\protections\script_events.h" />
     <ClInclude Include="src\util\clipboard.h" />
     <ClInclude Include="src\script\tabs\network\session\players.h" />
     <ClInclude Include="src\script\tabs\network\session\players\selected_player.h" />
@@ -316,7 +326,10 @@
     <ClInclude Include="src\util\util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
+    <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
     <ClCompile Include="src\features\manager\command_engine.cpp" />
+    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
     <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\core\core.cpp" />
     <ClCompile Include="src\directx\AlphaTestEffect.cpp" />
@@ -366,8 +379,6 @@
     <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\dispatch_event.cpp" />
-    <ClCompile Include="src\hooking\hooks\game_skeleton_run_base_run_group.cpp" />
-    <ClCompile Include="src\hooking\hooks\game_skeleton_run_update.cpp" />
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp" />
     <ClCompile Include="src\hooking\hooks\has_interval_elapsed.cpp" />
     <ClCompile Include="src\hooking\hooks\present.cpp" />

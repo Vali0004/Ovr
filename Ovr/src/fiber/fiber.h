@@ -1,5 +1,6 @@
 #pragma once
 #include "pch/pch.h"
+#include "core/logger.h"
 
 class fiber {
 public:
@@ -35,7 +36,7 @@ public:
 			f->m_func();
 		}
 		catch (std::exception& except) {
-			LOG(FOREGROUND_WHITE, "Exception", "Caught exception {} in a fiber", except.what());
+			LOG(Exception, "Caught exception {} in a fiber", except.what());
 		}
 		while (true) {
 			f->sleep();

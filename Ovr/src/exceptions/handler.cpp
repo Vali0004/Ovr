@@ -35,15 +35,15 @@ namespace exceptions {
 			case EXCEPTION_ACCESS_VIOLATION: {
 				auto exceptionTypeStr = getExceptionType(ctx.m_type);
 				auto exceptionName = g_exceptionErrorReasons[ctx.m_code]() ? g_exceptionErrorReasons[ctx.m_code].what() : std::format("0x{:X}", ctx.m_code);
-				LOG(FOREGROUND_RED, "Exception", "The game suffered an fatal exception, you may need to restart the game. ({} at {}, reason of {} was {}{})", exceptionName, ctx.m_fileoffset, exceptionName, exceptionTypeStr, ctx.m_type != 8 && exceptionName != "unknown" ? "" : std::format("0x{:X}", ctx.m_deathAddress));
+				LOG(Exception, "The game suffered an fatal exception, you may need to restart the game. ({} at {}, reason of {} was {}{})", exceptionName, ctx.m_fileoffset, exceptionName, exceptionTypeStr, ctx.m_type != 8 && exceptionName != "unknown" ? "" : std::format("0x{:X}", ctx.m_deathAddress));
 			} break;
 			default: {
 				auto exceptionName = g_exceptionErrorReasons[ctx.m_code]() ? g_exceptionErrorReasons[ctx.m_code].what() : std::format("0x{:X}", ctx.m_code);
-				LOG(FOREGROUND_RED, "Exception", "The game suffered a exception of unknown severity, you may need to restart the game. ({} at {}, reason of exception is unknown)", exceptionName, ctx.m_fileoffset);
+				LOG(Exception, "The game suffered a exception of unknown severity, you may need to restart the game. ({} at {}, reason of exception is unknown)", exceptionName, ctx.m_fileoffset);
 			}
 			}
 		}
-		LOG(FOREGROUND_RED, "Exception", "Dumping registers...");
+		LOG(Exception, "Dumping registers...");
 		ctx.printRegisters();
 		sw.ShowCallstack(GetCurrentThread(), &ctx.m_context);
 		if (attemptStackRecovery(exceptionInfo)) {
