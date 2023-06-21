@@ -9,7 +9,7 @@ namespace tabs::network::session {
 					auto& session{ tables::g_sessions[i] };
 					static auto name{ session.name };
 					elements::selectable(name, false, [] {
-						features::cmd::g_engine.primitiveExecute("go {}", name);
+						commands::g_engine.primitiveExecute("go {}", name);
 					});
 				}
 				elements::selectable("bail"_AF->m_name, false, [] {

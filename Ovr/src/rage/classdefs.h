@@ -17,6 +17,27 @@
 	public:
 
 class CNavigation;
+class CGameScriptObjInfo;
+class CGameScriptId;
+class NodeCommonDataOperations;
+class CProjectBaseSyncDataNode;
+class CSyncDataNodeFrequent;
+class CSyncDataNodeInfrequent;
+class CSectorPositionDataNode;
+class CSectorDataNode;
+class CTrainGameStateDataNode;
+class CObjectCreationDataNode;
+class CPickupCreationDataNode;
+class CDoorCreationDataNode;
+class CPedCreationDataNode;
+class CVehicleCreationDataNode;
+class CPlayerCreationDataNode;
+class CPlayerGameStateDataNode;
+class CPhysicalAttachDataNode;
+class CPedAttachDataNode;
+class CPedComponents;
+class CPlayerAppearanceDataNode;
+class CVehicleProximityMigrationDataNode;
 class CObject;
 class Vector2;
 class Vector3;
@@ -53,7 +74,6 @@ class CPickup;
 class CPickupHandle;
 class CPickupList;
 class CPickupInterface;
-class CObject;
 class CObjectHandle;
 class CObjectList;
 class CObjectInterface;
@@ -88,7 +108,7 @@ class CNetBlacklist;
 class RemotePlayerData;
 class InvitedGamer;
 class InvitedGamers;
-class Network;
+class CNetwork;
 class CMsgTextMessage;
 class CMsgTextMessage2;
 class PresenceData;
@@ -153,7 +173,6 @@ namespace rage {
 	class rlSessionByGamerTaskResult;
 	class rlPresenceEventInviteAccepted;
 	class netSyncTree;
-	class netSyncTreeNode;
 	class netObject;
 	class netObjectMgrBase;
 	class CEntityDrawHandler;
@@ -182,6 +201,7 @@ namespace rage {
 		class InFrame;
 	}
 	class netConMgr;
+	class netEventMgr;
 	class snPlayer;
 	class snPeer;
 	class rlRemoteGamer;
@@ -207,4 +227,7 @@ namespace rage {
 	class pgDictionaryPool;
 	class grcTextureStore;
 	class netTextMsg;
+	class netSyncNodeBase;
+	class netSyncDataNode;
+	class netSyncData;
 }

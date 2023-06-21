@@ -1,7 +1,7 @@
 #pragma once
-#include "features/manager/manager.h"
+#include "commands/manager/manager.h"
 
-namespace features::cmd {
+namespace commands {
 	class player {
 	public:
 		std::string m_name{};
@@ -13,23 +13,21 @@ namespace features::cmd {
 	class engine {
 	public:
 		player getPlayerForCommandArgument(std::string arg);
-		void executeWithFeature(abstractFeature*& feature, std::string context);
-		void execute(std::string& string);
+		void executeWithCommand(abstractCommand*& Command, std::string context);
+		bool execute(std::string& string);
 		template <typename ...T>
-		void primitiveExecute(std::string fmt, T... args) {
+		bool primitiveExecute(std::string fmt, T... args) {
 			std::string buf{ std::vformat(fmt, std::make_format_args(args...)) };
-			execute(buf);
+			return execute(buf);
 		}
-		void replaceFeature(abstractFeature* feature);
-	public:
+		void replaceCommand(abstractCommand* command);
+		std::vector<abstractCommand*> findMatches(std::string command);
+		abstractCommand* getCommand(std::string search);
+		template <typename t>
+		t convertData(std::string str);
 		bool m_useDirectMatchResults{ true };
 		bool m_autoComplete{ true };
 		bool m_useFirstResultOnTooManyResults{};
-	private:
-		std::vector<abstractFeature*> findMatches(std::string feature);
-		abstractFeature* getFeature(std::string search);
-		template <typename t>
-		t convertData(std::string str);
 	};
 	inline engine g_engine{};
 }

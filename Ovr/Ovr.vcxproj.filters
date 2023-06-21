@@ -136,14 +136,14 @@
     <ClInclude Include="src\script\tabs\includes.h">
       <Filter>src\script\tabs</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\features.h">
-      <Filter>src\features</Filter>
+    <ClInclude Include="src\commands\features.h">
+      <Filter>src\commands</Filter>
     </ClInclude>
     <ClInclude Include="src\script\elements.h">
       <Filter>src\script</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\math.h">
-      <Filter>src\features</Filter>
+    <ClInclude Include="src\commands\math.h">
+      <Filter>src\commands</Filter>
     </ClInclude>
     <ClInclude Include="src\exceptions\disassembler.h">
       <Filter>src\exceptions</Filter>
@@ -316,11 +316,11 @@
     <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h">
       <Filter>src\renderer\dxtk</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\shv\scripthookv.h">
-      <Filter>src\features\shv</Filter>
+    <ClInclude Include="src\shv\scripthookv.h">
+      <Filter>src\shv</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\shv\dynamic_loader.h">
-      <Filter>src\features\shv</Filter>
+    <ClInclude Include="src\shv\dynamic_loader.h">
+      <Filter>src\shv</Filter>
     </ClInclude>
     <ClInclude Include="src\util\global.h">
       <Filter>src\util</Filter>
@@ -361,17 +361,14 @@
     <ClInclude Include="src\memory\patch.h">
       <Filter>src\memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\manager\types.h">
-      <Filter>src\features\manager</Filter>
+    <ClInclude Include="src\commands\manager\types.h">
+      <Filter>src\commands\manager</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\manager\manager.h">
-      <Filter>src\features\manager</Filter>
+    <ClInclude Include="src\commands\manager\manager.h">
+      <Filter>src\commands\manager</Filter>
     </ClInclude>
-    <ClInclude Include="src\features\manager\abstract.h">
-      <Filter>src\features\manager</Filter>
-    </ClInclude>
-    <ClInclude Include="src\features\manager\command_engine.h">
-      <Filter>src\features\manager</Filter>
+    <ClInclude Include="src\commands\manager\abstract.h">
+      <Filter>src\commands\manager</Filter>
     </ClInclude>
     <ClInclude Include="src\script\tabs\settings\commands.h">
       <Filter>src\script\tabs\settings</Filter>
@@ -427,7 +424,21 @@
     <ClInclude Include="src\pch\framework.h">
       <Filter>src\pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\logger.h" />
+    <ClInclude Include="src\core\logger.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\commands.h">
+      <Filter>src\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\engine\engine.h">
+      <Filter>src\commands\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\gui\gui.h">
+      <Filter>src\commands\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hooking\methods\native.h">
+      <Filter>src\hooking\methods</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -493,8 +504,8 @@
     <ClCompile Include="src\script\script.cpp">
       <Filter>src\script</Filter>
     </ClCompile>
-    <ClCompile Include="src\features\features.cpp">
-      <Filter>src\features</Filter>
+    <ClCompile Include="src\commands\features.cpp">
+      <Filter>src\commands</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
@@ -625,8 +636,8 @@
     <ClCompile Include="src\directx\WICTextureLoader.cpp">
       <Filter>src\directx</Filter>
     </ClCompile>
-    <ClCompile Include="src\features\shv\scripthookv.cpp">
-      <Filter>src\features\shv</Filter>
+    <ClCompile Include="src\shv\scripthookv.cpp">
+      <Filter>src\shv</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp">
       <Filter>src\hooking\hooks</Filter>
@@ -643,11 +654,8 @@
     <ClCompile Include="src\hooking\hooks\run_async_module_request.cpp">
       <Filter>src\hooking\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\features\manager\manager.cpp">
-      <Filter>src\features\manager</Filter>
-    </ClCompile>
-    <ClCompile Include="src\features\manager\command_engine.cpp">
-      <Filter>src\features\manager</Filter>
+    <ClCompile Include="src\commands\manager\manager.cpp">
+      <Filter>src\commands\manager</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\dispatch_event.cpp">
       <Filter>src\hooking\hooks</Filter>
@@ -663,6 +671,24 @@
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp">
       <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\can_apply_data.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\engine\engine.cpp">
+      <Filter>src\commands\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\gui\gui.cpp">
+      <Filter>src\commands\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\commands.cpp">
+      <Filter>src\commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -723,9 +749,6 @@
     <Filter Include="src\script\tabs\settings">
       <UniqueIdentifier>{8534549b-47ca-4ef0-9487-a9ed5f1fc97f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\features">
-      <UniqueIdentifier>{969b8493-73db-4c8b-af4d-b12a40c328a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\script\tabs\weapon">
       <UniqueIdentifier>{1a35e8cd-a477-4d7d-8619-37270855d8d1}</UniqueIdentifier>
     </Filter>
@@ -768,12 +791,6 @@
     <Filter Include="src\script\tabs\network\session\all_players">
       <UniqueIdentifier>{43751a40-4ef2-4e53-a4a2-13616abfa9c5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\features\manager">
-      <UniqueIdentifier>{111f5a30-54e3-49ec-b439-0fa6f44ce859}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\features\shv">
-      <UniqueIdentifier>{e92b33cc-3672-4bbf-9ccb-e0aea59c17bb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\rage\commands">
       <UniqueIdentifier>{249371e8-9078-468c-b367-dc61cd28fe80}</UniqueIdentifier>
     </Filter>
@@ -791,6 +808,21 @@
     </Filter>
     <Filter Include="src\script\tabs\protections\reactions">
       <UniqueIdentifier>{124209a6-035e-4e62-8864-95d36bc4c59c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\shv">
+      <UniqueIdentifier>{e92b33cc-3672-4bbf-9ccb-e0aea59c17bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\commands">
+      <UniqueIdentifier>{969b8493-73db-4c8b-af4d-b12a40c328a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\commands\manager">
+      <UniqueIdentifier>{111f5a30-54e3-49ec-b439-0fa6f44ce859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\commands\gui">
+      <UniqueIdentifier>{25e769e7-b176-401a-aa9e-1e06c1101e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\commands\engine">
+      <UniqueIdentifier>{5ee1f297-fd72-465d-8521-614dc3b4e47f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

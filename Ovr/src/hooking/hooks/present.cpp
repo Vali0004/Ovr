@@ -1,11 +1,13 @@
 #include "hooking/hooking.h"
 #include "renderer/renderer.h"
-#include "features/shv/scripthookv.h"
+#include "shv/scripthookv.h"
+#include "commands/gui/gui.h"
 
 HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags) {
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
+	commands::gui::g_box.draw();
 	g_renderer->onPresent();
 	ImGui::EndFrame();
 	ImGui::Render();

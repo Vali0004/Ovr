@@ -1,6 +1,6 @@
 #pragma once
 #include "script/tabs/includes.h"
-#include "features/manager/command_engine.h"
+#include "commands/engine/engine.h"
 
 namespace tabs::settings {
 	inline void ui() {

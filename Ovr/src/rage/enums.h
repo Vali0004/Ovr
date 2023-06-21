@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <map>
+
 enum class eVehicleType : uint32_t {
 	Car,
 	Plane,
@@ -134,12 +135,28 @@ enum class eGameState : int32_t {
 	Unknown_2,
 	Legals,
 	Unknown_4,
-	MainMenu,
+	LandingPage,
 	Transition,
 	Unknown_7,
 	Unknown_8,
 	Unknown_9,
 	SessionStartLeave
+};
+enum class eNetObjectType {
+	Automobile,
+	Bike,
+	Boat,
+	Door,
+	Heli,
+	Object,
+	Ped,
+	Pickup,
+	PickupPlacement,
+	Plane,
+	Submarine,
+	Player,
+	Trailer,
+	Train
 };
 enum scrOpcode {
 	OP_NOP,
@@ -287,7 +304,7 @@ enum class eNetMessage : uint32_t {
 	MsgInvalid = 0xFFFFF,
 	//Known Messages
 	CMsgSessionAcceptChat = 0x62,
-	snMMsgStartMatchCmd = 0x2D,
+	snMsgStartMatchCmd = 0x2D,
 	CMsgSetInvitableCmd = 0x1F,
 	CMsgSessionMemberIds = 0x23,
 	CMsgRequestGamerInfo = 0x54,
@@ -398,7 +415,7 @@ enum class eNetMessage : uint32_t {
 	Msg_0x89 = 0x89,
 	Msg_0x86 = 0x86,
 };
-enum class eNetworkEvents : uint16_t {
+enum class ePackedEvents : uint16_t {
 	CObjectIdFreedEvent,
 	CObjectIdRequestEvent,
 	CArrayDataVerifyEvent,
@@ -487,6 +504,40 @@ enum class eNetworkEvents : uint16_t {
 	CActivateVehicleSpecialAbilityEvent,
 	CBlockWeaponSelection,
 	CNetworkCheckCatalogCrc
+};
+enum class eScriptEntityChangeType {
+	BlockingOfNonTemporaryEvents,
+	SettingOfPedRelationshipGroupHash,
+	SettingOfDriveTaskCruiseSpeed,
+	SettingOfLookAtEntity,
+	SettingOfPlaneMinHeightAboveTerrain,
+	SetPedRagdollBlockFlag,
+	SettingOfTaskVehicleTempAction,
+	SetPedFacialIdleAnimOverride,
+	SetVehicleLockState,
+	SetVehicleExclusiveDriver
+};
+enum class eAckCode : uint32_t {
+	Success,
+	Fail,
+	WrongOwner,
+	OutOfSequence,
+	NoObject,
+	TooManyObjects,
+	CannotApplyData,
+	MatchNotStarted,
+	None
+};
+enum class eWorldStateDataType {
+	CarGen,
+	EntityArea,
+	PopGroupOverride,
+	PopMultiplierArea,
+	PTFX,
+	RoadNode,
+	Rope,
+	ScenarioBlockingArea,
+	VehiclePlayerLocking
 };
 enum class eSessionTypes : int {
 	Unknown = -1,

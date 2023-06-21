@@ -3,7 +3,7 @@
 
 namespace tabs::protections::reactions {
 	inline void kick() {
-		elements::tabBar("Kick", [] {
+		elements::tabItem("Kick", [] {
 
 		});
 	}

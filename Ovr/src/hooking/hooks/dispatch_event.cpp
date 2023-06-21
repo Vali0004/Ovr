@@ -1,5 +1,5 @@
 #include "hooking/hooking.h"
-#include "features/manager/manager.h"
+#include "commands/manager/manager.h"
 #include "util/util.h"
 
 bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent) {
@@ -10,41 +10,6 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 		buffer.m_flagBits = 1;
 		if (eNetMessage type{}; player && util::network::deserialiseNetMessage(type, buffer)) {
 			switch (type) {
-			case eNetMessage::snMsgRemoveGamersFromSessionCmd: {
-				rage::snMsgRemoveGamersFromSessionCmd cmd{};
-				buffer.ReadQword(&cmd.m_session_id, 64);
-				buffer.ReadDword(&cmd.m_num_peers, 6);
-				for (uint32_t i{}; i != cmd.m_num_peers; ++i) {
-					buffer.ReadQword(&cmd.m_peer_ids[i], 64);
-				}
-				if (player && cmd.m_num_peers == 1 && pEvent->m_msg_id == -1) {
-					CNetGamePlayer* receiver{};
-					if (auto snPeer = util::network::session::peer::getViaConnectionId(0); snPeer) {
-						auto rlGamerInfo = snPeer->m_gamer_data;
-						if (cmd.m_peer_ids[0] == rlGamerInfo.m_peer_id) {
-							receiver = util::network::getPlayerViaPeerAddress(rlGamerInfo.m_peer_address);
-						}
-					}
-					if (receiver && receiver->m_player_id != player->m_player_id) {
-						switch ("breakupKickProtection"_PF->state()) {
-						case eProtectionState::Notify: {
-							LOG(Session, "B{} kick from {} sent to {}", 0, player->GetName(), receiver->GetName());
-						} break;
-						case eProtectionState::Block: {
-							if (localPlayer->IsNetworkHost()) {
-								return true;
-							}
-						} break;
-						case eProtectionState::BlockAndNotify: {
-							LOG(Session, "B{} kick from {} sent to {}", 0, player->GetName(), receiver->GetName());
-							if (localPlayer->IsNetworkHost()) {
-								return true;
-							}
-						} break;
-						}
-					}
-				}
-			} break;
 			case eNetMessage::CMsgLostConnectionToHost: {
 				uint64_t sessionId{};
 				buffer.ReadQword(&sessionId, 64);
@@ -67,7 +32,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 			} break;
 			case eNetMessage::CMsgNetComplaint: {
 				if (!localPlayer->IsNetworkHost()) {
-					if (Network* network{ util::network::get() }) {
+					if (CNetwork* network{ util::network::get() }) {
 						int kickType{};
 						CNetComplaintMgr& complaintMgr{ network->m_game_complaint_mgr };
 						uint64_t peerAddress;
@@ -83,34 +48,34 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 									LOG(Session, "D{} kick from {}", kickType, player->GetName());
 								} break;
 								case eProtectionState::Block: {
-									complaintMgr.remove_complaint(arrayElement);
+									complaintMgr.Remove(arrayElement);
 									buffer.Seek(0);
 									return false;
 								} break;
 								case eProtectionState::BlockAndNotify: {
 									LOG(Session, "D{} from {}", kickType, player->GetName());
-									complaintMgr.remove_complaint(arrayElement);
+									complaintMgr.Remove(arrayElement);
 									buffer.Seek(0);
 									return false;
 								} break;
 								}
 							}
 						}
-						if (complaintMgr.num_of_tokens_complainted() < 1)
+						if (complaintMgr.Count() < 1)
 							kickType = 1;
 						else
 							kickType = 2;
-						switch ("desyncKick"_PF->state()) {
+						switch ("desyncKickProtection"_PF->state()) {
 						case eProtectionState::Notify: {
 							LOG(Session, "D{} from {}", kickType, player->GetName());
 						} break;
 						case eProtectionState::Block: {
-							complaintMgr.remove_all_complaints();
+							complaintMgr.RemoveAll();
 							return false;
 						} break;
 						case eProtectionState::BlockAndNotify: {
 							LOG(Session, "D{} from {}", kickType, player->GetName());
-							complaintMgr.remove_all_complaints();
+							complaintMgr.RemoveAll();
 							return false;
 						} break;
 						}
@@ -140,8 +105,20 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
 				buffer.ReadBool(&msg.m_is_team);
-				if (util::isSpamMessage(msg.m_message))
-					return true;
+				if (util::isSpamMessage(msg.m_message)) {
+					switch ("chatSpam"_PF->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} is a chat spammer", player->GetName());
+					} break;
+					case eProtectionState::Block: {
+						return true;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						LOG(Session, "{} is a chat spammer", player->GetName());
+						return true;
+					} break;
+					}
+				}
 				std::string label{ std::format("MP_CHAT_{}", msg.m_is_team ? "TEAM" : "ALL") };
 				LOG_DIRECT(White, "Chat", "{} [{}]: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(label.c_str()), player->GetName(), msg.m_message);
 			} break;
@@ -149,8 +126,20 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				CMsgTextMessage2 msg{};
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
-				if (util::isSpamMessage(msg.m_message))
-					return true;
+				if (util::isSpamMessage(msg.m_message)) {
+					switch ("chatSpam"_PF->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} is a text message spammer", player->GetName());
+					} break;
+					case eProtectionState::Block: {
+						return true;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						LOG(Session, "{} is a text message spammer", player->GetName());
+						return true;
+					} break;
+					}
+				}
 				LOG_DIRECT(White, "Text", "{}: {}", player->GetName(), msg.m_message);
 			} break;
 			}

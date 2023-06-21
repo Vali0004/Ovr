@@ -34,10 +34,13 @@ namespace util {
 		}
 	}
 	namespace network {
-		inline CNetworkPlayerMgr* getNetworkPlayerMgr() {
+		inline CNetworkPlayerMgr* getPlayerMgr() {
 			return *pointers::g_networkPlayerMgr;
 		}
-		inline Network* get() {
+		inline CNetworkObjectMgr* getObjectMgr() {
+			return *pointers::g_networkObjectMgr;
+		}
+		inline CNetwork* get() {
 			return *pointers::g_network;
 		}
 		namespace friends {
@@ -72,8 +75,8 @@ namespace util {
 				return "Authorization: SCAUTH val=\"" + getTicket() + "\"";
 			}
 			inline ScGame getInfo(ccp id) {
-				s32 index{ pointers::g_scGetGameInfoIndex(id, pointers::g_scGameInfo->getGamesAddress(), pointers::g_scGameInfo->m_id) };
-				u64 address{ pointers::g_scGameInfo->getGamesAddress() + (index * 0x148i64) };
+				i32 index{ pointers::g_scGetGameInfoIndex(id, pointers::g_scGameInfo->GetGamesAddress(), pointers::g_scGameInfo->m_id) };
+				u64 address{ pointers::g_scGameInfo->GetGamesAddress() + (index * 0x148i64) };
 				ScGame game;
 				memcpy(game.pad_0000, (void*)address, sizeof(game.pad_0000));
 				game.m_string = (char*)(address + 0x40);
@@ -99,19 +102,19 @@ namespace util {
 			}
 		}
 		inline CNetGamePlayer* getLocalNetGamePlayer() {
-			return getNetworkPlayerMgr()->m_local_net_player;
+			return getPlayerMgr()->m_local_net_player;
 		}
 		inline CNetGamePlayer** getPlayers() {
-			return getNetworkPlayerMgr()->m_player_list;
+			return getPlayerMgr()->m_player_list;
 		}
 		inline rage::rlGamerInfo* getNetworkRlGamerInfo() {
 			return getLocalNetGamePlayer()->GetGamerInfo();
 		}
 		inline u16 getPlayerCount() {
-			return getNetworkPlayerMgr()->m_player_count;
+			return getPlayerMgr()->m_player_count;
 		}
 		inline bool isOnline() {
-			return pointers::g_networkPlayerMgr && getNetworkPlayerMgr() && getLocalNetGamePlayer() && getPlayerCount();
+			return pointers::g_networkPlayerMgr && getPlayerMgr() && getLocalNetGamePlayer() && getPlayerCount();
 		}
 		inline bool iteratePlayers(std::function<bool(u16, CNetGamePlayer*)> cb) {
 			if (isOnline()) {
@@ -149,7 +152,7 @@ namespace util {
 		}
 		inline CNetGamePlayer* getPlayerFromNetPacket(rage::netConnection::InFrame* packetFrame) {
 			CNetGamePlayer* player{};
-			if (rage::snPlayer* snPlayer{ session::get()->get_player_via_platform_data(packetFrame->m_peer.m_platform_data) }) {
+			if (rage::snPlayer* snPlayer{ session::get()->GetPlayerByPlatformData(packetFrame->m_peer.m_platform_data) }) {
 				if (u64 peerAddress{ snPlayer->m_gamer_info.m_peer_address }) {
 					iteratePlayers([&](u16, CNetGamePlayer* p) {
 						if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; peerAddress == gamerInfo->m_peer_address) {
@@ -189,6 +192,23 @@ namespace util {
 			return false;
 		}
 	}
+	inline bool pressed(i8 key) {
+		if (GetForegroundWindow() == pointers::g_hwnd) {
+			if (GetAsyncKeyState(key) & 0x1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	inline bool onPress(i8 key, std::function<void()> cb = {}) {
+		if (pressed(key)) {
+			if (cb) {
+				cb();
+			}
+			return true;
+		}
+		return false;
+	}
 	inline void iteratorFilesInPath(fs::path path, std::string ext, std::function<void(fs::path, std::string)> cb) {
 		if (fs::exists(path)) {
 			fs::directory_iterator iterator{ path.string() };
@@ -203,7 +223,7 @@ namespace util {
 		}
 	}
 	template <typename t>
-	inline int getPoolObjects(s32 type, s32* arr, s32 arrSize) {
+	inline int getPoolObjects(i32 type, i32* arr, i32 arrSize) {
 		std::vector<uint64_t> objects{};
 		t* inf{};
 		switch (type) {
@@ -251,7 +271,7 @@ namespace util {
 	}
 	inline std::string time(std::string format) {
 		char timeBuf[256]{};
-		s64 timeSinceEpoch{ std::time(nullptr) };
+		i64 timeSinceEpoch{ std::time(nullptr) };
 		tm localtime{};
 		localtime_s(&localtime, &timeSinceEpoch);
 		strftime(timeBuf, sizeof(timeBuf), format.c_str(), &localtime);
@@ -299,6 +319,17 @@ namespace util {
 	inline bool isSpamMessage(std::string message) {
 		for (auto& string : g_advertisementStrings) {
 			if (message.find(string) != std::string::npos)
+				return true;
+		}
+		return false;
+	}
+	inline bool isInVehicle(CPed* ped, CVehicle* vehicle) {
+		if (!ped || !vehicle)
+			return false;
+		if (vehicle->m_driver == ped)
+			return true;
+		for (u8 i{}; i != 15; ++i) {
+			if (vehicle->m_passengers[i] == ped)
 				return true;
 		}
 		return false;

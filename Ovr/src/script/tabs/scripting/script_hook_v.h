@@ -1,7 +1,7 @@
 #pragma once
 #include "script/tabs/includes.h"
 #include "util/util.h"
-#include "features/shv/dynamic_loader.h"
+#include "shv/dynamic_loader.h"
 
 namespace tabs::scripting {
 	inline HMODULE g_shv{};

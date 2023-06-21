@@ -2,7 +2,7 @@
 #include "pch/pch.h"
 #include "rage/classes.h"
 
-namespace features {
+namespace commands {
 	union value {
 		const char* string;
 		bool toggle;
@@ -52,31 +52,31 @@ namespace features {
 		void add_hotkey(int key);
 		bool pressed();
 	};
-	enum class eFeatureType : uint8_t {
-		AbstractFeature,
-		ToggleFeature,
-		IntFeature,
-		FloatFeature,
-		ToggleIntFeature,
-		ToggleFloatFeature,
-		ActionFeature,
-		ProtectionFeature,
-		VariadicFeature
+	enum class eCommandType : uint8_t {
+		AbstractCommand,
+		ToggleCommand,
+		IntCommand,
+		FloatCommand,
+		ToggleIntCommand,
+		ToggleFloatCommand,
+		ActionCommand,
+		ProtectionCommand,
+		VariadicCommand
 	};
-	class abstractFeature {
+	class abstractCommand {
 	public:
-		abstractFeature(std::string id, std::string name, std::string description, hotkey hotkey, eFeatureType type, bool looped) :
+		abstractCommand(std::string id, std::string name, std::string description, hotkey hotkey, eCommandType type, bool looped) :
 			m_id(id), m_name(name), m_description(description), m_lookupId(rage::joaat(m_id)), m_hotkey(hotkey), m_type(type), m_looped(looped)
 		{}
-		abstractFeature(std::string id, std::string name, std::string description, eFeatureType type, bool looped) : abstractFeature(id, name, description, {}, type, looped) {}
-		abstractFeature(std::string id, std::string name, eFeatureType type, bool looped) : abstractFeature(id, name, {}, type, looped) {}
-		abstractFeature(std::string id, eFeatureType type, bool looped) : abstractFeature(id, {}, type, looped) {}
-		virtual ~abstractFeature() {
+		abstractCommand(std::string id, std::string name, std::string description, eCommandType type, bool looped) : abstractCommand(id, name, description, {}, type, looped) {}
+		abstractCommand(std::string id, std::string name, eCommandType type, bool looped) : abstractCommand(id, name, {}, type, looped) {}
+		abstractCommand(std::string id, eCommandType type, bool looped) : abstractCommand(id, {}, type, looped) {}
+		virtual ~abstractCommand() {
 			deallocate();
 		}
 		virtual void init() {
 			if (!m_looped) {
-				if (m_type != eFeatureType::AbstractFeature && m_type != eFeatureType::IntFeature && m_type != eFeatureType::FloatFeature && m_type != eFeatureType::ActionFeature)
+				if (m_type != eCommandType::AbstractCommand && m_type != eCommandType::IntCommand && m_type != eCommandType::FloatCommand && m_type != eCommandType::ActionCommand)
 					m_looped = true;
 			}
 			m_intialized = true;
@@ -111,7 +111,7 @@ namespace features {
 			return m_values.size();
 		}
 	public:
-		eFeatureType m_type{};
+		eCommandType m_type{};
 		std::string m_id{};
 		std::string m_name{};
 		std::string m_description{};

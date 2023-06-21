@@ -3,7 +3,7 @@
 
 namespace tabs::protections {
 	inline void scriptEvents() {
-		elements::tabBar("Script Events", [] {
+		elements::tabItem("Script Events", [] {
 
 		});
 	}

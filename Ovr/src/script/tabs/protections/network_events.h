@@ -3,8 +3,14 @@
 
 namespace tabs::protections {
 	inline void networkEvents() {
-		elements::tabBar("Network Events", [] {
-
+		elements::tabItem("Network Events", [] {
+			elements::protectionToggle("freezeProtection");
+			elements::protectionToggle("ragdollProtection");
+			elements::protectionToggle("requestControlProtection");
+			elements::protectionToggle("giveWeaponProtection");
+			elements::protectionToggle("removeWeaponProtection");
+			elements::protectionToggle("removeAllWeaponsProtection");
+			elements::protectionToggle("voteKickProtection");
 		});
 	}
 }

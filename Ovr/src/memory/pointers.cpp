@@ -11,6 +11,7 @@ namespace pointers {
         g_pointerToHandle = scan("PTH", "48 8D 1C F8 48 8B CB").add(7).call().as<decltype(g_pointerToHandle)>();
         g_readBitbufArray = scan("RBA", "48 89 5C 24 ? 57 48 83 EC 30 41 8B F8 4C").as<decltype(g_readBitbufArray)>();
         g_writeBitbufArray = scan("WBA", "E8 ? ? ? ? 01 7E 08").call().as<decltype(g_writeBitbufArray)>();
+        g_readBitsSingle = scan("RBS", "48 8D 54 24 ? 41 C1 E1 03").add(0xF).call().as<decltype(g_readBitsSingle)>();
         g_writeBitsSingle = scan("WBS", "E8 ? ? ? ? 01 6B 10").call().as<decltype(g_writeBitsSingle)>();
         g_cTaskJumpConstructor = scan("CTJC", "48 89 5C 24 ? 89 54 24 10 57 48 83 EC 30 0F 29 74 24").as<decltype(g_cTaskJumpConstructor)>();
         g_cTaskFallConstructor = scan("CTFC", "E8 ? ? ? ? B3 04 08 98 A0").call().as<decltype(g_cTaskFallConstructor)>();
@@ -20,13 +21,22 @@ namespace pointers {
         g_scriptVm = scan("SV", "4A 89 3C 39").sub(0x27).call().as<decltype(g_scriptVm)>();
         g_scGetGameInfoIndex = scan("SGGII", "E8 ? ? ? ? 85 C0 78 27 3B 47 14 7D 1E 48 98 48 8B D6 48 69 C8", { "socialclub.dll" }).call().as<decltype(g_scGetGameInfoIndex)>();
         g_joinBySessionInfo = scan("JBSI", "E8 ? ? ? ? 0F B6 CB 84 C0 41 0F 44 CD").call().as<decltype(g_joinBySessionInfo)>();
+        g_proccessPackedEvents = scan("PPE", "66 41 83 F9 ? 0F 83").as<decltype(g_proccessPackedEvents)>();
+        g_sendEventAck = scan("SEA", "48 8B DA 44 8B CD").add(0x13).call().as<decltype(g_sendEventAck)>();
+        g_getNetObject = scan("GNO", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 40 4C 8B EA").add(0x109).call().as<decltype(g_getNetObject)>();
+        g_receiveCloneSync = scan("RCS", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 40 4C 8B EA").as<decltype(g_receiveCloneSync)>();
+        g_receiveCloneCreate = scan("RCC", "48 8B C4 66 44 89 48").as<decltype(g_receiveCloneCreate)>();
+        g_canApplyData = scan("CAD", "E8 ? ? ? ? 84 C0 0F 84 AF 01 00 00 48 8B 03").call().as<decltype(g_canApplyData)>();
+        g_getSyncTreeForType = scan("GSTFT", "0F B7 CA 83 F9 07").as<decltype(g_getSyncTreeForType)>();
+        g_getEntityAttachedTo = scan("GEAT", "48 83 EC 28 48 8B 51 50 48 85 D2 74 04").as<decltype(g_getEntityAttachedTo)>();
 
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
         g_friendRegistry = scan("FR", "41 8B F4 3B C5").sub(0xB).lea().as<decltype(g_friendRegistry)>();
         g_scInfo = scan("SI", "48 8D 05 ? ? ? ? 48 63 D1").mov().as<decltype(g_scInfo)>();
         g_networkPlayerMgr = scan("NPM", "48 8B 0D ? ? ? ? 8A D3 48 8B 01 FF 50 ? 4C 8B 07 48 8B CF").mov().as<decltype(g_networkPlayerMgr)>();
-        g_network = scan("N", "48 8B 0D ? ? ? ? 48 8D 05 ? ? ? ? 45 33 C9").mov().as<decltype(g_network)>();
+        g_networkObjectMgr = scan("NOM", "48 8B 0D ? ? ? ? 45 33 C0 E8 ? ? ? ? 33 FF 4C 8B F0").mov().as<decltype(g_networkObjectMgr)>();
+        g_network = scan("N", "48 8B 0D ? ? ? ? 48 8B D7 E8 ? ? ? ? 84 C0 75 17 48 8B 0D ? ? ? ? 48 8B D7").mov().as<decltype(g_network)>();
         g_pedFactory = scan("PF", "48 8B 05 ? ? ? ? 8A D1").mov().as<decltype(g_pedFactory)>();
         g_replayInterface = scan("RI", "0F B7 44 24 ? 66 89 44 4E").add(0x1C).mov().as<decltype(g_replayInterface)>();
         g_scriptHandlerMgr = scan("SHM", "74 17 48 8B C8 E8 ? ? ? ? 48 8D 0D").add(0xA).mov().as<decltype(g_scriptHandlerMgr)>();

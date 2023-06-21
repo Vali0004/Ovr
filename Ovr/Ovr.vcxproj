@@ -181,8 +181,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\commands\commands.h" />
+    <ClInclude Include="src\commands\gui\gui.h" />
     <ClInclude Include="src\core\logger.h" />
-    <ClInclude Include="src\features\manager\command_engine.h" />
+    <ClInclude Include="src\commands\engine\engine.h" />
+    <ClInclude Include="src\hooking\methods\native.h" />
     <ClInclude Include="src\rage\commands\conversion_table.h" />
     <ClInclude Include="src\rage\commands\invoker\call_context.h" />
     <ClInclude Include="src\rage\commands\invoker\spoof\call_spoof.h" />
@@ -233,11 +236,11 @@
     <ClInclude Include="src\directx\WICTextureLoader.h" />
     <ClInclude Include="src\exceptions\disassembler.h" />
     <ClInclude Include="src\exceptions\handler.h" />
-    <ClInclude Include="src\features\features.h" />
-    <ClInclude Include="src\features\manager\abstract.h" />
-    <ClInclude Include="src\features\manager\manager.h" />
-    <ClInclude Include="src\features\manager\types.h" />
-    <ClInclude Include="src\features\math.h" />
+    <ClInclude Include="src\commands\features.h" />
+    <ClInclude Include="src\commands\manager\abstract.h" />
+    <ClInclude Include="src\commands\manager\manager.h" />
+    <ClInclude Include="src\commands\manager\types.h" />
+    <ClInclude Include="src\commands\math.h" />
     <ClInclude Include="src\fiber\fiber.h" />
     <ClInclude Include="src\fiber\manager.h" />
     <ClInclude Include="src\fiber\pool.h" />
@@ -317,8 +320,8 @@
     <ClInclude Include="src\script\tabs\weapon.h" />
     <ClInclude Include="src\script\tabs\weapon\ammo.h" />
     <ClInclude Include="src\script\tabs\weapon\loadout.h" />
-    <ClInclude Include="src\features\shv\dynamic_loader.h" />
-    <ClInclude Include="src\features\shv\scripthookv.h" />
+    <ClInclude Include="src\shv\dynamic_loader.h" />
+    <ClInclude Include="src\shv\scripthookv.h" />
     <ClInclude Include="src\stackwalker\stackwalker.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
@@ -326,9 +329,14 @@
     <ClInclude Include="src\util\util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\commands\commands.cpp" />
+    <ClCompile Include="src\commands\gui\gui.cpp" />
+    <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
+    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />
+    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp" />
     <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
     <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
-    <ClCompile Include="src\features\manager\command_engine.cpp" />
+    <ClCompile Include="src\commands\engine\engine.cpp" />
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
     <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\core\core.cpp" />
@@ -372,8 +380,8 @@
     <ClCompile Include="src\directx\VertexTypes.cpp" />
     <ClCompile Include="src\directx\WICTextureLoader.cpp" />
     <ClCompile Include="src\exceptions\handler.cpp" />
-    <ClCompile Include="src\features\features.cpp" />
-    <ClCompile Include="src\features\manager\manager.cpp" />
+    <ClCompile Include="src\commands\features.cpp" />
+    <ClCompile Include="src\commands\manager\manager.cpp" />
     <ClCompile Include="src\fiber\pool.cpp" />
     <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp" />
     <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp" />
@@ -407,7 +415,7 @@
     </ClCompile>
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\script\script.cpp" />
-    <ClCompile Include="src\features\shv\scripthookv.cpp" />
+    <ClCompile Include="src\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
   </ItemGroup>
   <ItemGroup>

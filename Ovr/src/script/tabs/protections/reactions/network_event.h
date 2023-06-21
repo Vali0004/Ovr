@@ -3,7 +3,7 @@
 
 namespace tabs::protections::reactions {
 	inline void networkEvent() {
-		elements::tabBar("Network Event", [] {
+		elements::tabItem("Network Event", [] {
 
 		});
 	}

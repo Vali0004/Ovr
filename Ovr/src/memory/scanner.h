@@ -3,13 +3,16 @@
 #include "mem.h"
 #include "module.h"
 
+inline u16 g_foundSigCount{};
+inline u16 g_totalSigCount{};
+inline u16 g_failedSigCount{};
 inline std::optional<u8> charToHex(cc c) {
 	if (c >= 'a' && c <= 'f')
-		return static_cast<u8>(static_cast<s32>(c) - 87);
+		return static_cast<u8>(static_cast<i32>(c) - 87);
 	if (c >= 'A' && c <= 'F')
-		return static_cast<u8>(static_cast<s32>(c) - 55);
+		return static_cast<u8>(static_cast<i32>(c) - 55);
 	if (c >= '0' && c <= '9')
-		return static_cast<u8>(static_cast<s32>(c) - 48);
+		return static_cast<u8>(static_cast<i32>(c) - 48);
 	return {};
 }
 inline std::vector<std::optional<u8>> createBytesFromString(std::string ptr) {
@@ -34,7 +37,7 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 	u64 maxIdx{ maxShift - 1 };
 	//Get wildcard index, and store max shifable byte count
 	u64 wildCardIdx{ u64(-1) };
-	for (s32 i{ s32(maxIdx - 1) }; i >= 0; --i) {
+	for (i32 i{ i32(maxIdx - 1) }; i >= 0; --i) {
 		if (!bytes[i]) {
 			maxShift = maxIdx - i;
 			wildCardIdx = i;
@@ -67,14 +70,24 @@ struct scanner {
 	{
 	}
 	mem get() {
-		mem res{ findPatternBoyerMooreHorspool(m_elements, m_module) };
-		if (res) {
-			LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.m_begin.as<u64>());
+		g_totalSigCount++;
+		try {
+			mem res{ findPatternBoyerMooreHorspool(m_elements, m_module) };
+			if (res) {
+				g_foundSigCount++;
+				LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.m_begin.as<u64>());
+			}
+			else {
+				g_failedSigCount++;
+				LOG(Info, "Failed to find {}", m_name);
+			}
+			return res;
 		}
-		else {
-			LOG(Info, "Failed to find {}", m_name);
+		catch (std::exception& ex) {
+			g_failedSigCount++;
+			LOG(Fatal, "Failed to find {} (Exception {})", m_name, ex.what());
 		}
-		return res;
+		return {};
 	}
 	std::string m_name{};
 	std::string m_pattern{};

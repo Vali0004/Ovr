@@ -57,10 +57,18 @@ namespace elements {
 	inline void setNextItemWidth(float width) {
 		ImGui::SetNextItemWidth(width);
 	}
+	inline void separator() {
+		ImGui::Separator();
+	}
 	template <typename ...t>
 	inline void text(std::string fmt, t... args) {
 		std::string str{ std::vformat(fmt, std::make_format_args(args...)) };
 		ImGui::Text(str.c_str());
+	}
+	template <typename ...t>
+	inline void textUnformatted(std::string fmt, t... args) {
+		std::string str{ std::vformat(fmt, std::make_format_args(args...)) };
+		ImGui::TextUnformatted(str.c_str());
 	}
 	inline void window(std::string title, bool& value, std::function<void()> cb = {}, ImGuiWindowFlags flags = NULL) {
 		if (ImGui::Begin(title.c_str(), &value, flags)) {
@@ -184,7 +192,7 @@ namespace elements {
 		sameLine();
 		floatSlider(label, value, min, max);
 	}
-	template <size_t size>
+	template <u64 size>
 	inline void inputText(std::string label, char(&output)[size], float width = -1.f, std::function<void()> cb = {}, bool hidden = false) {
 		setNextItemWidth(width);
 		setStyleVars({ { ImGuiStyleVar_FramePadding, { 10.f, 8.f } }, { ImGuiStyleVar_FrameRounding, { 4.f, 0.f } } }, [&] {
@@ -194,5 +202,41 @@ namespace elements {
 				}
 			}
 		});
+	}
+	inline void popup(std::string id, std::function<void()> cb = {}) {
+		if (ImGui::BeginPopup(id.c_str())) {
+			if (cb) {
+				cb();
+			}
+			ImGui::EndPopup();
+		}
+	}
+	inline void openPopup(std::string id) {
+		ImGui::OpenPopup(id.c_str());
+	}
+	inline void popupButton(std::string name, std::string id, bool continueLine = false) {
+		button(name, [&] {
+			openPopup(id);
+		});
+		if (continueLine)
+			sameLine();
+	}
+	template <u64 size>
+	inline void selectionPopup(std::string id, std::string hint, int& index, ccp(&data)[size]) {
+		textUnformatted(index == -1 ? (data ? data[0] : "No Data") : data[index]);
+		popup(id, [&] {
+			textUnformatted(hint);
+			separator();
+			for (u64 i{}; i != size; ++i) {
+				selectable(data[i], index == i, [&] {
+					index = i;
+				});
+			}
+		});
+	}
+	inline void protectionToggle(ccp id) {
+		static auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
+		popupButton(cmd->m_name, id, true);
+		selectionPopup(id, "State", (int&)cmd->m_accessibleState, g_protectionStates);
 	}
 }

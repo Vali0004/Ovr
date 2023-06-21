@@ -5,7 +5,7 @@
 #include "rage/commands/invoker/invoker.h"
 #include "fiber/pool.h"
 #include "script/script.h"
-#include "features/features.h"
+#include "commands/features.h"
 #include "exceptions/handler.h"
 
 namespace core {

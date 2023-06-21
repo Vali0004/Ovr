@@ -24,7 +24,7 @@ namespace util {
 				return false;
 			if (open() && empty()) {
 				//why the fuck am I missing a character? because MicroDick is retarded.
-				// Why should the developer account for a 2 extra characters because of their shit code?
+				// Why should the developer account for an extra 2 characters because of their shit code?
 				// What the fuck...
 				if (allocate(m_buffer.size() + 1)) {
 					memcpy(lock(), m_buffer.c_str(), m_buffer.size());
@@ -53,7 +53,7 @@ namespace util {
 		bool setData() {
 			return SetClipboardData(CF_TEXT, m_handle);
 		}
-		bool allocate(int size) {
+		bool allocate(size_t size) {
 			m_handle = GlobalAlloc(GMEM_MOVEABLE, size);
 			return m_handle;
 		}

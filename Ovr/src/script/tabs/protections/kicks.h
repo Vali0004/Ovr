@@ -3,10 +3,10 @@
 
 namespace tabs::protections {
 	inline void kicks() {
-		elements::tabBar("Kicks", [] {
-			elements::combo("Breakup", "Disabled", [] {
-				
-			});
+		elements::tabItem("Kicks", [] {
+			elements::protectionToggle("desyncKickProtection");
+			elements::protectionToggle("lostConnectionKickProtection");
+			elements::protectionToggle("arrayOverrunKickProtection");
 		});
 	}
 }

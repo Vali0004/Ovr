@@ -1,4 +1,4 @@
-#include "features/shv/scripthookv.h"
+#include "shv/scripthookv.h"
 #include "util/util.h"
 #include "util/global.h"
 #include "fiber/manager.h"

@@ -1,6 +1,6 @@
 #include "hooking/hooking.h"
 #include "rage/joaat.h"
-#include "features/shv/scripthookv.h"
+#include "shv/scripthookv.h"
 
 FARPROC hooks::getProcAddress(HMODULE hModule, LPCSTR lpProcName) {
 	if (hModule == (HMODULE)BRAND"__dummy_module"_joaat) {

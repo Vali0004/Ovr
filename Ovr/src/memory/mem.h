@@ -4,7 +4,7 @@
 class mem {
 public:
 	mem(void* p = nullptr) : m_ptr(p) {}
-	mem(uintptr_t p) : mem((void*)p) {}
+	mem(u64 p) : mem((void*)p) {}
 public:
 	template <typename t>
 	std::enable_if_t<std::is_pointer_v<t>, t> as() {
@@ -15,14 +15,14 @@ public:
 		return *static_cast<std::add_pointer_t<std::remove_reference_t<t>>>(m_ptr);
 	}
 	template <typename t>
-	std::enable_if_t<std::is_same_v<t, uintptr_t>, t> as() {
+	std::enable_if_t<std::is_same_v<t, u64>, t> as() {
 		return (t)m_ptr;
 	}
-	mem add(int v) {
-		return mem(as<uintptr_t>() + v);
+	mem add(u64 v) {
+		return mem(as<u64>() + v);
 	}
-	mem sub(int v) {
-		return mem(as<uintptr_t>() - v);
+	mem sub(u64 v) {
+		return mem(as<u64>() - v);
 	}
 	mem rip() {
 		return add(as<int32_t&>()).add(4);
@@ -47,7 +47,7 @@ private:
 };
 
 template <typename t>
-inline uintptr_t getMemberTypeCall(t function) {
+inline u64 getMemberTypeCall(t function) {
 	return ((u64(*)(t))u64(function))(function);
 }
 template <typename c, typename m>

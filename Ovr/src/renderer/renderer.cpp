@@ -1,7 +1,7 @@
 #include "renderer.h"
 #include "script/script.h"
 #include "util/util.h"
-#include "features/shv/scripthookv.h"
+#include "shv/scripthookv.h"
 
 renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	m_wndProc = WNDPROC(SetWindowLongPtrA(pointers::g_hwnd, GWLP_WNDPROC, LONG_PTR(&renderer::wndProc)));
@@ -17,7 +17,13 @@ renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	script::presentInit();
 	static auto&& io{ ImGui::GetIO() };
 	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 19).c_str(), 40);
-	m_arial = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 19.f, &m_fontCfg);
+	m_font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 19.f, &m_fontCfg);
+	strncpy_s(m_fontCfg.Name, "", 40);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Tahoma", 36).c_str(), 40);
+	m_tahoma = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 36.f, &m_fontCfg);
+	strncpy_s(m_fontCfg.Name, "", 40);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 40).c_str(), 40);
+	m_arial = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 40.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
 	io.FontAllowUserScaling = true;
 }

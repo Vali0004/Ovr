@@ -1,7 +1,8 @@
 #include "core/core.h"
 #include "util/util.h"
 #include "util/clipboard.h"
-#include "features/shv/dynamic_loader.h"
+#include "shv/dynamic_loader.h"
+#include "commands/commands.h"
 #include "memory/patch.h"
 #include <memory/scanner.h>
 
@@ -44,7 +45,7 @@ namespace core {
 		g_hooking = std::make_unique<hooking>();
 		g_hooking->enable();
 		g_manager.add("script", &script::onTick);
-		g_manager.add("features", &features::onTick);
+		g_manager.add("commands", &commands::onTick);
 		engine::createThread(&g_manager);
 	}
 	void destroy() {
@@ -55,7 +56,7 @@ namespace core {
 		g_renderer.reset();
 		g_hooking.reset();
 		g_patches.reset();
-		features::g_manager.clear();
+		commands::g_manager.clear();
 		exceptions::uninitExceptionHandler();
 		g_logger.reset();
 	}

@@ -3,7 +3,7 @@
 
 namespace tabs::protections::reactions {
 	inline void crash() {
-		elements::tabBar("Crash", [] {
+		elements::tabItem("Crash", [] {
 
 		});
 	}

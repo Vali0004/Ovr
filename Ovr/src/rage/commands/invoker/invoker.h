@@ -25,6 +25,17 @@ public:
 	t* getRetPointer() {
 		return reinterpret_cast<t*>(m_context.Return);
 	}
+	rage::scrCmd getNativeCmd(u64 hash) {
+		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
+			return p->second;
+		}
+		for (auto& p : g_table) {
+			if (p.o == hash) {
+				return pointers::g_nativeRegistrationTable->get_handler(p.u);
+			}
+		}
+		return nullptr;
+	}
 private:
 	std::map<rage::scrNativeHash, rage::scrCmd> m_cache{};
 	context m_context{};
