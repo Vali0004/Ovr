@@ -6,5 +6,10 @@ namespace commands {
 	extern void copyText(variadicCommand* command);
 	extern void copyScString(variadicCommand* command);
 	extern void printCliboard(actionCommand* command);
+	extern void useDirectMatchResult(toggleCommand* command);
+	extern void autoCompleteCommands(toggleCommand* command);
+	extern void useFirstCommandOnMultipleResults(toggleCommand* command);
+	extern void clearCommandBoxOnEnter(toggleCommand* command);
+	extern void print(variadicCommand* command);
 	extern void onTick();
 }

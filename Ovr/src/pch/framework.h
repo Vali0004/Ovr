@@ -80,7 +80,7 @@
 #include "imgui/backends/imgui_impl_win32.h"
 //cURL Includes
 #define CURL_STATICLIB
-#include "curl/curl.h"
+#include <curl\curl.h>
 //StackWalker Includes
 #include "stackwalker/stackwalker.h"
 //ImGui Defines

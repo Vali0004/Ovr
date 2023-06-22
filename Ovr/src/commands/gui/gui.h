@@ -63,7 +63,7 @@ namespace commands::gui {
 		void run();
 	public:
 		void draw();
-		void clear(bool ui = false);
+		void clear(bool ui = false, bool buffer = false);
 		void stop();
 		void alert(std::string reason = {});
 	public:
@@ -71,6 +71,8 @@ namespace commands::gui {
 		void addItem(std::string item);
 	public:
 		bool m_draw{};
+		bool m_lock{};
+		bool m_clearCommandBoxOnEnter{ true };
 	private:
 		i8 m_limit{ 5 };
 		i8 m_matchLimit{ 8 };

@@ -33,6 +33,7 @@ namespace pointers {
 		using canApplyData = bool(*)(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 		using getSyncTreeForType = rage::netSyncTree*(*)(CNetworkObjectMgr* pObjMgr, u16 SyncType);
 		using getEntityAttachedTo = rage::CDynamicEntity*(*)(rage::CDynamicEntity* Entity);
+		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* Result, i32 Unk, bool* Success, rage::rlTaskStatus* Status);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -59,6 +60,7 @@ namespace pointers {
 	inline types::canApplyData g_canApplyData{};
 	inline types::getSyncTreeForType g_getSyncTreeForType{};
 	inline types::getEntityAttachedTo g_getEntityAttachedTo{};
+	inline types::getGamerTaskResult g_getGamerTaskResult{};
 
 	inline ScGameInfo* g_scGameInfo{};
 	inline FriendRegistry* g_friendRegistry{};

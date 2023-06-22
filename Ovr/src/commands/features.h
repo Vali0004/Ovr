@@ -104,14 +104,17 @@ namespace commands::features {
 				extern bool isOnline(u64 rid);
 				extern u64 nameToRid(std::string name);
 				extern std::string ridToName(u64 rid);
+				extern void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess);
 			}
 			extern void ridToName(variadicCommand* command);
-			extern void scMessage(variadicCommand* command);
 			extern void nameToRid(variadicCommand* command);
+			extern void convert(variadicCommand* command);
+			extern void scMessage(variadicCommand* command);
 		}
 		namespace tunables {
 			extern void offRadar(toggleCommand* command);
 		}
+		extern void join(variadicCommand* command);
 		extern void bail(actionCommand* command);
 	}
 	namespace settings {

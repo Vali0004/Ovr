@@ -45,7 +45,7 @@ namespace commands {
 		}
 	}
 	void engine::executeWithCommand(abstractCommand*& command, std::string context) {
-		std::vector<std::string> arguments{ g_splitStr(context, ' ') };
+		std::vector<std::string> arguments{ splitString(context, ' ') };
 		size_t trueArgCount{ arguments.size() - 1 };
 		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
 			if (command->m_type != eCommandType::ToggleIntCommand && command->m_type != eCommandType::ToggleFloatCommand) {
@@ -142,6 +142,7 @@ namespace commands {
 				}
 				else {
 					command->m_buffer.clear();
+					command->m_context = context;
 					if (command->value_count() == 1) {
 						size_t index{ context.find(arguments[1]) };
 						command->m_buffer.push_back(context.substr(index));
@@ -173,7 +174,7 @@ namespace commands {
 			g_notifications.add("Commands", "Empty command string!");
 			return false;
 		}
-		std::vector<std::string> words{ g_splitStr(string, ' ') };
+		std::vector<std::string> words{ splitString(string, ' ') };
 		if (words.empty()) {
 			g_notifications.add("Commands", "No command!");
 			return false;

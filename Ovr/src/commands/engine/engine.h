@@ -25,8 +25,8 @@ namespace commands {
 		abstractCommand* getCommand(std::string search);
 		template <typename t>
 		t convertData(std::string str);
-		bool m_useDirectMatchResults{ true };
-		bool m_autoComplete{ true };
+		bool m_useDirectMatchResults{};
+		bool m_autoComplete{};
 		bool m_useFirstResultOnTooManyResults{};
 	};
 	inline engine g_engine{};

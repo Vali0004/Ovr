@@ -222,7 +222,7 @@ namespace commands::features {
 							}
 						}
 						if (!found) {
-							g_notifications.add("Session Starter", "Command 'go' accepts a string but there is no type '{}'", cid);
+							LOG(Commands, "Command 'go' accepts a string but there is no type '{}'", cid);
 							return;
 						}
 					}
@@ -280,11 +280,11 @@ namespace commands::features {
 								return json["Accounts"][0]["RockstarId"].get<u64>();
 							}
 							else {
-								g_notifications.add("Name To RID", "{} wasn't found. Please ensure there are no spelling mistakes", name);
+								LOG(Info, "{} wasn't found. Please ensure there are no spelling mistakes", name);
 							}
 						}
 						else {
-							g_notifications.add("Name To RID", "The character count cannot exceed 20, please shorten the value");
+							LOG(Info, "The character count cannot exceed 20, please shorten the value");
 						}
 						return 0;
 					}
@@ -302,30 +302,71 @@ namespace commands::features {
 					}
 					return {};
 				}
+				void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess) {
+					rage::rlGamerHandle handles[1]{ { rid } };
+					rage::rlSessionByGamerTaskResult result{};
+					bool success{};
+					rage::rlTaskStatus status{};
+					if (pointers::g_getGamerTaskResult(0, handles, SIZEOF(handles), &result, 1, &success, &status)) {
+						while (status.m_state == 1) {
+							fiber::current()->sleep();
+						}
+						if (status.m_state == 3 && success) {
+							onSuccess(result);
+						}
+					}
+				}
 			}
 			void ridToName(variadicCommand* command) {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
 			}
+			void nameToRid(variadicCommand* command) {
+				g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
+			}
+			void convert(variadicCommand* command) {
+				std::string str{ command->get(0).string };
+				if (str.empty()) {
+					LOG(Info, "Please provide an name or RID");
+					return;
+				}
+				if (!isNumber(str)) {
+					u64 rid{ backend::nameToRid(str) };
+					if (!rid) {
+						LOG(Info, "Failed to get {}'s RID", str);
+						return;
+					}
+					str = std::to_string(rid);
+				}
+				else {
+					u64 rid{ stoull(str) };
+					if (!rid) {
+						LOG(Info, "The RID cannot be 0!", str);
+						return;
+					}
+					str = backend::ridToName(rid);
+				}
+				g_engine.primitiveExecute("copyText {}", str);
+			}
 			void scMessage(variadicCommand* command) {
 				std::string strRid{ command->get(0).string };
 				if (strRid.empty()) {
-					g_notifications.add("Socialclub Message", "Please provide an name or RID");
+					LOG(Info, "Please provide an name or RID");
+					return;
 				}
 				if (!isNumber(strRid)) {
 					u64 rid{ backend::nameToRid(strRid) };
 					if (!rid) {
-						g_notifications.add("Socialclub Message", "Failed to get {}'s RID", strRid);
+						LOG(Info, "Failed to get {}'s RID", strRid);
+						return;
 					}
 					strRid = std::to_string(rid);
 				}
 				std::string msg{ command->get(1).string };
 				if (msg.empty()) {
-					g_notifications.add("Socialclub Message", "Please provide an messages");
+					LOG(Info, "Please provide an messages");
+					return;
 				}
-				backend::jRequest({ { "env", "prod" }, { "title", "gta5" }, { "version", 11 }, { "recipientRockstarId", strRid }, { "messageText", msg } }, "");
-			}
-			void nameToRid(variadicCommand* command) {
-				g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
+				backend::jRequest({ { "env", "prod" }, { "title", "gta5" }, { "version", 11 }, { "recipientRockstarId", strRid }, { "messageText", msg } }, "https://scui.rockstargames.com/api/messaging/sendmessage");
 			}
 		}
 		namespace tunables {
@@ -333,6 +374,23 @@ namespace commands::features {
 				//global(2657589).at(PLAYER::PLAYER_ID(), 466).at(210).value()->Int = command->get(0).toggle;
 				//global(2672505).at(57).value()->Int = NETWORK::GET_NETWORK_TIME() + (command->get(0).toggle ? 0xB8E10 : NULL);
 			}
+		}
+		void join(variadicCommand* command) {
+			std::string strRid{ command->get(0).string };
+			if (strRid.empty()) {
+				g_notifications.add("Join", "Please provide an name or RID");
+			}
+			if (!isNumber(strRid)) {
+				u64 rid{ socialclub::backend::nameToRid(strRid) };
+				if (!rid) {
+					g_notifications.add("Join", "Failed to get {}'s RID", strRid);
+				}
+				strRid = std::to_string(rid);
+			}
+			u64 rid{ stoull(strRid) };
+			socialclub::backend::getGamerTask(rid, [](rage::rlSessionByGamerTaskResult& result) {
+				printf("Gamer task success\n");
+			});
 		}
 		void bail(actionCommand* command) {
 			NETWORK::NETWORK_BAIL(0, 0, 16);
@@ -435,13 +493,15 @@ namespace commands::features {
 		//Network::Socialclub
 		g_manager.add(variadicCommand("nameToRid", "Name To Rockstar ID", "Converts a given name to an RID and copies it to clipboard", { { eValueType::String } }, network::socialclub::nameToRid, false));
 		g_manager.add(variadicCommand("ridToName", "Rockstar ID To Name", "Converts a given RID to an name and copies it to clipboard", { { eValueType::UInt64 } }, network::socialclub::ridToName, false));
-		g_manager.add(variadicCommand("scMessage", "Message", "Messages them on Socialclub", { { eValueType::String }, { eValueType::String } }, network::socialclub::ridToName, false));
+		g_manager.add(variadicCommand("scMessage", "Message", "Messages them on Socialclub", { { eValueType::String }, { eValueType::String } }, network::socialclub::scMessage, false));
+		g_manager.add(variadicCommand("convert", "Convert", "Converts a given name or RID to their counterpart and copies it to clipboard", { { eValueType::String } }, network::socialclub::convert, false));
 		//Network
+		g_manager.add(variadicCommand("join", "Join", "Join an player", { { eValueType::String } }, network::join, false));
 		g_manager.add(actionCommand("bail", "Bail", "Bail from online", network::bail));
 		//Protections::Kicks
 		g_manager.add(protectionCommand("desyncKickProtection", "Desync", "May cause an modder detction"));
 		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"));
-		g_manager.add(protectionCommand("arrayOverrunKickProtection", "ScriptVM Overrun Kick", "This protects against all script event kicks that cause a array overflow"));
+		g_manager.add(protectionCommand("arrayOverrunKickProtection", "ScriptVM Overrun Kick", "This protects against all script event kicks that cause an array overflow"));
 		//Protections::Crashes
 		g_manager.add(protectionCommand("invalidRemoveWeaponCrashProtection", "Invalid weapon remove"));
 		g_manager.add(protectionCommand("invalidObjectTypeCrashProtection", "Invalid object type"));
@@ -470,7 +530,7 @@ namespace commands::features {
 		g_manager.add(floatCommand("scale", "Scale", "Set the global UI scale", settings::ui::scale, true));
 		//Settings::Game
 		g_manager.add(toggleCommand("automp", "Auto Multiplayer", "Automatically load into multiplayer on startup", settings::game::autoMp));
-		g_manager.add(toggleCommand("exitInstantly", "Auto Multiplayer", "Automatically load into multiplayer on startup", settings::game::exitInstantly));
+		g_manager.add(toggleCommand("exitInstantly", "Exit Instantly", "Exits the game instantly when exit is requested", settings::game::exitInstantly));
 		g_manager.add(actionCommand("unload", "Unload", "Unload the module", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));
 	}

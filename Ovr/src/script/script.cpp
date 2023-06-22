@@ -61,7 +61,7 @@ namespace script {
 		#endif
 		init();
 		while (true) {
-			if (g_guiOpen || commands::gui::g_box.m_draw) {
+			if (g_guiOpen || commands::gui::g_box.m_lock) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}
 			fiber::current()->sleep();

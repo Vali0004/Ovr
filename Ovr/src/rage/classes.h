@@ -1616,7 +1616,7 @@ namespace rage {
 	static_assert(sizeof(rage::rlRemoteGamer) == 0x20);
 	class rlTaskStatus {
 	public:
-		int m_status; //0x0000
+		int m_state; //0x0000
 		int m_unk; //0x0004
 	}; //Size: 0x0008
 	static_assert(sizeof(rage::rlTaskStatus) == 0x8);

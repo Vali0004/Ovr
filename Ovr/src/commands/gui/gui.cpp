@@ -14,14 +14,8 @@ namespace commands::gui {
 			m_cmd = s;
 			return;
 		}
-		if (s[0] == ' ') {
-			return;
-		}
-		for (i32 i{}; i != s.size(); ++i) {
-			if (s[i] == ' ') {
-				m_cmd = s.substr(0, i);
-			}
-		}
+		std::vector<std::string> words{ splitString(s, ' ') };
+		m_cmd = words[0];
 	}
 	void box::input() {
 		elements::setWindow(CC({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase - m_padding }), CC({ m_width + 0.001f, 0.04f }));
@@ -51,9 +45,9 @@ namespace commands::gui {
 		}
 		for (auto& match : m_matches) {
 			if (match->m_description.size()) {
-				std::string text{};
-				if (elements::getTextSize(g_renderer->m_tahoma, text).x < m_width - 0.005f) {
-					addItem(std::format("{} - {}", match->m_name, match->m_description));
+				std::string text{ std::format("{} - {}", match->m_name, match->m_description) };
+				if (elements::getTextSize(g_renderer->m_tahoma, text).x < m_item.x - 0.005f) {
+					addItem(text);
 				}
 				else {
 					addItem(match->m_name);
@@ -83,11 +77,10 @@ namespace commands::gui {
 		if (!m_inputBuffer || m_inputBuffer == "") {
 			clear();
 		}
-		util::onPress('U', [this] { m_draw = true; });
+		util::onPress('U', [this] { m_draw = true; m_lock = true; });
 		if (m_draw) {
 			util::onPress(VK_ESCAPE, [this] { stop(); });
-			util::onPress(VK_BACK, [this] { if (m_context.empty()) { stop(); } });
-			util::onPress(VK_RETURN, [this] { run(); });
+			util::onPress(VK_RETURN, [this] { run(); clear(false, true); });
 			m_drawBase = m_pos.y;
 			elements::custom::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, WHITE(255));
 			elements::custom::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, BLACK(255));
@@ -117,26 +110,26 @@ namespace commands::gui {
 			}
 		}
 	}
-	void box::clear(bool ui) {
-		#define CLR(v) v.clear();
+	void box::clear(bool ui, bool buffer) {
+		#define CLR(v) if (v.size() && !v.empty()) { v = {}; v.clear(); }
 		if (!ui) {
-			if (m_context.size()) {
-				CLR(m_context);
-			}
-			if (m_cmd.size()) {
-				CLR(m_cmd);
-			}
+			CLR(m_context);
+			CLR(m_cmd);
 		}
-		if (m_matches.size()) {
-			CLR(m_matches);
-		}
-		if (m_items.size()) {
-			CLR(m_items);
+		CLR(m_matches);
+		CLR(m_items);
+		if (buffer) {
+			ZeroMemory(m_inputBuffer, sizeof(m_inputBuffer));
 		}
 	}
 	void box::stop() {
-		m_draw = false;
-		LOG(Info, "Command box closed");
+		g_fiberPool.add([this] {
+			m_draw = false;
+			clear(false, true);
+			fiber::current()->sleep(100ms);
+			m_lock = false;
+			LOG(Info, "Command box closed");
+		});
 	}
 	void box::alert(std::string reason) {
 		m_draw = false;

@@ -4,6 +4,7 @@
 #include "util/util.h"
 #include "util/clipboard.h"
 #include "features.h"
+#include "gui/gui.h"
 
 namespace commands {
 	void copyText(variadicCommand* command) {
@@ -18,13 +19,37 @@ namespace commands {
 		clipboard.get();
 		LOG_DIRECT(White, "Clipboard", "{}", clipboard.str());
 	}
+	void useDirectMatchResult(toggleCommand* command) {
+		g_engine.m_useDirectMatchResults = command->get(0).toggle;
+	}
+	void autoCompleteCommands(toggleCommand* command) {
+		g_engine.m_autoComplete = command->get(0).toggle;
+	}
+	void useFirstCommandOnMultipleResults(toggleCommand* command) {
+		g_engine.m_useFirstResultOnTooManyResults = command->get(0).toggle;
+	}
+	void clearCommandBoxOnEnter(toggleCommand* command) {
+		gui::g_box.m_clearCommandBoxOnEnter = command->get(0).toggle;
+	}
+	void print(variadicCommand* command) {
+		std::string str{ command->m_context.substr(command->m_context.find_first_of(' ') + 1) };
+		LOG(Info, str);
+	}
 	void onTick() {
-		g_manager.add(variadicCommand("copyText", "Copy Text", "Copies text to clipboard", { { eValueType::String } }, commands::copyText, false));
-		g_manager.add(variadicCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", { { eValueType::String } }, commands::copyScString, false));
-		g_manager.add(actionCommand("printClipboard", "Print Clipboard", "Prints your clipboard to log", commands::printCliboard));
+		g_manager.add(variadicCommand("copyText", "Copy Text", "Copies text to clipboard", { { eValueType::String } }, copyText, false));
+		g_manager.add(variadicCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", { { eValueType::String } }, copyScString, false));
+		g_manager.add(actionCommand("printClipboard", "Print Clipboard", "Prints your clipboard to log", printCliboard));
+		g_manager.add(toggleCommand("useDirectMatchResults", "Use Direct Match Results", "When an command is a direct match, it will use that when possible", useDirectMatchResult));
+		g_manager.add(toggleCommand("autoCompleteCommands", "Auto Complete Commands", "When a command is still being typed and there is no other results, it will auto complete the command", autoCompleteCommands));
+		g_manager.add(toggleCommand("useFirstCommandOnMultipleResults", "Use The First Command On Multiple Results", "When an command has multiple results, it will use the closet resembling command", useFirstCommandOnMultipleResults));
+		g_manager.add(toggleCommand("clearCommandBoxOnEnter", "Clear Command Box On Enter", clearCommandBoxOnEnter));
+		g_manager.add(variadicCommand("print", "Print", "Prints a string", { { eValueType::String } }, print, false));
 		features::init();
 		g_manager.init();
 		features::onInit();
+		"useDirectMatchResults"_TF->get(0).toggle = true;
+		"autoCompleteCommands"_TF->get(0).toggle = true;
+		"clearCommandBoxOnEnter"_TF->get(0).toggle = true;
 		while (true) {
 			features::onTick();
 			g_manager.tick();

@@ -119,6 +119,7 @@ namespace commands {
 		hotkey m_hotkey{};
 		bool m_looped{};
 		std::vector<std::string> m_buffer{};
+		std::string m_context{};
 	private:
 		bool m_intialized{};
 		std::vector<typedValue*> m_values{};

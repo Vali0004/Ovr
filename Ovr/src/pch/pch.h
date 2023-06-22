@@ -79,22 +79,24 @@ namespace defines {
         std::transform(t.begin(), t.end(), t.data(), [](char c) { return tolower(c); });
         return t;
     }
-    inline auto g_splitStr = [](std::string str, char split) -> std::vector<std::string> {
-        std::vector<std::string> fields{};
-        std::string field{};
-        for (int i = 0; i < str.length(); i++) {
-            if (str.at(i) == split) {
-                fields.push_back(field);
-                field.erase();
+    inline std::vector<std::string> splitString(std::string string, char split) {
+        std::vector<std::string> strings{};
+        std::string buffer{};
+        for (u64 i{}; i != string.size(); ++i) {
+            char& c{ string[i] };
+            if (c == split) {
+                strings.push_back(buffer);
+                buffer.erase();
             }
             else {
-                field += str.at(i);
-                if (i == str.length() - 1)
-                    fields.push_back(field);
+                buffer += c;
+                if (i == string.length() - 1) {
+                    strings.push_back(buffer);
+                }
             }
         }
-        return fields;
-    };
+        return strings;
+    }
 }
 using namespace defines;
 
