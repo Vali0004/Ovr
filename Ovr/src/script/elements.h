@@ -1,5 +1,7 @@
 #pragma once
 #include "pch/pch.h"
+#include "fiber/pool.h"
+#include "commands/manager/manager.h"
 #define feature_button(f, ...) elements::button(f->m_name, [] { f->run(); }, __VA_ARGS__);
 #define feature_checkbox(f, ...) elements::checkbox(f->m_name, f->v().toggle, __VA_ARGS__);
 #define feature_intSlider(f, ...) elements::intSlider(f->m_name, f->v().i32, __VA_ARGS__);
@@ -8,6 +10,9 @@
 #define feature_floatSlider(f, ...) elements::floatSlider(f->m_name, f->v().floating_point, __VA_ARGS__);
 
 namespace elements {
+	inline ImVec2 shift(ImVec2 value, float amount) {
+		return { value.x + amount, value.y + amount };
+	}
 	inline void dummy(ImVec2 size) {
 		ImGui::Dummy(size);
 	}
@@ -27,8 +32,20 @@ namespace elements {
 		setWindowPos(pos);
 		setWindowSize(size);
 	}
-	inline ImVec2 getWindowsPos() {
+	inline void setCursorPos(ImVec2 pos) {
+		ImGui::SetCursorPos(pos);
+	}
+	inline ImVec2 cursorPos() {
+		return ImGui::GetCursorPos();
+	}
+	inline ImVec2 windowPos() {
 		return ImGui::GetWindowPos();
+	}
+	inline ImVec2 windowSize() {
+		return ImGui::GetWindowSize();
+	}
+	inline float windowHeight() {
+		return windowSize().y;
 	}
 	inline ImGuiWindow* getWindow() {
 		return ImGui::GetCurrentWindow();
@@ -37,8 +54,15 @@ namespace elements {
 		return getWindow()->DrawList;
 	}
 	inline void addWindowRect(ImVec2 size, ImColor color) {
-		ImVec2 pos{ getWindowsPos() };
+		ImVec2 pos{ windowPos() };
 		getWindowDrawlist()->AddRectFilled(pos, pos + size, color);
+	}
+	inline void textWrap(float value, std::function<void()> cb = {}) {
+		ImGui::PushTextWrapPos(value);
+		if (cb) {
+			cb();
+		}
+		ImGui::PopTextWrapPos();
 	}
 	inline void setStyleVars(std::vector<std::pair<ImGuiStyleVar_, ImVec2>> vars, std::function<void()> cb = {}) {
 		for (auto& var : vars) {
@@ -69,6 +93,13 @@ namespace elements {
 	inline void textUnformatted(std::string fmt, t... args) {
 		std::string str{ std::vformat(fmt, std::make_format_args(args...)) };
 		ImGui::TextUnformatted(str.c_str());
+	}
+	inline void font(ImFont* f, std::function<void()> cb = {}) {
+		ImGui::PushFont(f);
+		if (cb) {
+			cb();
+		}
+		ImGui::PopFont();
 	}
 	inline void window(std::string title, bool& value, std::function<void()> cb = {}, ImGuiWindowFlags flags = NULL) {
 		if (ImGui::Begin(title.c_str(), &value, flags)) {
@@ -155,7 +186,7 @@ namespace elements {
 			ImGui::EndCombo();
 		}
 	}
-	inline void button(std::string label, std::function<void()> cb = {}, bool runUnderFiber = false) {
+	inline void button(std::string label, std::function<void()> cb = {}, bool continueLine = false, bool runUnderFiber = false) {
 		if (ImGui::Button(label.c_str())) {
 			if (cb) {
 				if (runUnderFiber) {
@@ -165,6 +196,8 @@ namespace elements {
 				cb();
 			}
 		}
+		if (continueLine)
+			sameLine();
 	}
 	inline void intSlider(std::string label, int& value, int min, int max, std::function<void()> cb = {}) {
 		if (ImGui::SliderInt(label.c_str(), &value, min, max)) {
@@ -217,26 +250,29 @@ namespace elements {
 	inline void popupButton(std::string name, std::string id, bool continueLine = false) {
 		button(name, [&] {
 			openPopup(id);
+		}, continueLine);
+	}
+	template <typename t>
+	inline void selectionPopup(std::string id, std::string hint, t& index, ccp* data, u8 size, std::function<void(int)> cb = {}, bool continueLine = false) {
+		textUnformatted(data[static_cast<u8>(index)]);
+		popup(id, [&] {
+			textUnformatted(hint);
+			separator();
+			for (u8 i{}; i != size; ++i) {
+				selectable(data[i], static_cast<u64>(index) == i, [&] {
+					index = static_cast<t>(i);
+					cb(i);
+				});
+			}
 		});
 		if (continueLine)
 			sameLine();
 	}
-	template <u64 size>
-	inline void selectionPopup(std::string id, std::string hint, int& index, ccp(&data)[size]) {
-		textUnformatted(index == -1 ? (data ? data[0] : "No Data") : data[index]);
-		popup(id, [&] {
-			textUnformatted(hint);
-			separator();
-			for (u64 i{}; i != size; ++i) {
-				selectable(data[i], index == i, [&] {
-					index = i;
-				});
-			}
-		});
-	}
-	inline void protectionToggle(ccp id) {
-		static auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
+	inline void protectionToggle(ccp id, bool continueLine = false) {
+		auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
 		popupButton(cmd->m_name, id, true);
-		selectionPopup(id, "State", (int&)cmd->m_accessibleState, g_protectionStates);
+		selectionPopup<eProtectionState>(id, "State", cmd->m_accessibleState, g_protectionStates, 4, [cmd](int idx) {
+			cmd->update(g_protectionStates[idx]);
+		}, continueLine);
 	}
 }

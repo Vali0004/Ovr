@@ -439,6 +439,93 @@
     <ClInclude Include="src\hooking\methods\native.h">
       <Filter>src\hooking\methods</Filter>
     </ClInclude>
+    <ClInclude Include="src\script\notifications\notifications.h">
+      <Filter>src\script\notifications</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Decoder.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\DecoderTypes.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Defines.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Disassembler.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Encoder.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Formatter.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\FormatterBuffer.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\MetaInfo.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Mnemonic.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Register.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Segment.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\SharedTypes.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\ShortString.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Status.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Utils.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\Zydis.h">
+      <Filter>src\zydis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\DecoderData.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\EncoderData.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\FormatterATT.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\FormatterBase.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\FormatterIntel.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\SharedData.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\internal\String.h">
+      <Filter>src\zydis\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\generated\EnumInstructionCategory.h">
+      <Filter>src\zydis\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\generated\EnumISAExt.h">
+      <Filter>src\zydis\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\generated\EnumISASet.h">
+      <Filter>src\zydis\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\generated\EnumMnemonic.h">
+      <Filter>src\zydis\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zydis\generated\EnumRegister.h">
+      <Filter>src\zydis\generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -690,6 +777,63 @@
     <ClCompile Include="src\commands\commands.cpp">
       <Filter>src\commands</Filter>
     </ClCompile>
+    <ClCompile Include="src\script\notifications\notifications.cpp">
+      <Filter>src\script\notifications</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Decoder.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\DecoderData.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Disassembler.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Encoder.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\EncoderData.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Formatter.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\FormatterATT.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\FormatterBase.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\FormatterBuffer.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\FormatterIntel.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\MetaInfo.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Mnemonic.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Register.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Segment.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\SharedData.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\String.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Utils.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zydis\Zydis.c">
+      <Filter>src\zydis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -823,6 +967,18 @@
     </Filter>
     <Filter Include="src\commands\engine">
       <UniqueIdentifier>{5ee1f297-fd72-465d-8521-614dc3b4e47f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\script\notifications">
+      <UniqueIdentifier>{ed46c74b-d969-4c78-960c-f7f397fbc013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\zydis">
+      <UniqueIdentifier>{fcba03fa-2c51-4bfe-ab1a-3044bc8a17f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\zydis\internal">
+      <UniqueIdentifier>{ec41231a-7ee5-45b3-ae3b-db7a769c9311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\zydis\generated">
+      <UniqueIdentifier>{c412be79-89f2-4874-821a-f7cb76a6aa12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1958,6 +2114,51 @@
     </None>
     <None Include="src\directx\shaders\ToneMap_VSQuad.pdb">
       <Filter>src\directx\shaders</Filter>
+    </None>
+    <None Include="src\zydis\generated\AccessedFlags.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\DecoderTables.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EncoderTables.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EnumInstructionCategory.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EnumISAExt.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EnumISASet.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EnumMnemonic.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\EnumRegister.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\FormatterStrings.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\GetRelInfo.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\InstructionDefinitions.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\InstructionEncodings.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\OperandDefinitions.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\RegisterClassLookup.inc">
+      <Filter>src\zydis\generated</Filter>
+    </None>
+    <None Include="src\zydis\generated\RegisterLookup.inc">
+      <Filter>src\zydis\generated</Filter>
     </None>
   </ItemGroup>
 </Project>

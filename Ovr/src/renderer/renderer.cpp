@@ -19,10 +19,13 @@ renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 19).c_str(), 40);
 	m_font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 19.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
-	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Tahoma", 36).c_str(), 40);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial Bold", 19).c_str(), 40);
+	m_fontBold = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\ArialBD.ttf", 19.f, &m_fontCfg);
+	strncpy_s(m_fontCfg.Name, "", 40);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Tahoma", 28).c_str(), 40);
 	m_tahoma = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 36.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
-	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 40).c_str(), 40);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 36).c_str(), 40);
 	m_arial = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 40.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
 	io.FontAllowUserScaling = true;

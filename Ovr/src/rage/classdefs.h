@@ -205,7 +205,7 @@ namespace rage {
 	class snPlayer;
 	class snPeer;
 	class rlRemoteGamer;
-	class rlRemoteGamer;
+	class rlTaskStatus;
 	class snSession;
 	class snMsgRemoveGamersFromSessionCmd;
 	class snMsgAddGamerToSessionCmd;

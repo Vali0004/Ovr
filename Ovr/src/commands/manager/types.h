@@ -1,7 +1,7 @@
 #pragma once
 #include "abstract.h"
 
-enum class eProtectionState : u8 {
+enum class eProtectionState : i8 {
 	Disabled,
 	Notify,
 	Block,
@@ -236,6 +236,11 @@ namespace commands {
 		void run() override {
 			abstractCommand::run();
 		}
+		void update(ccp n) {
+			m_value.m_value.string = n;
+			setState();
+			m_accessibleState = state();
+		}
 		void setState() {
 			switch (rage::joaat(m_value.m_value.string)) {
 			case "Disabled"_joaat: {
@@ -298,6 +303,9 @@ namespace commands {
 			case "BlockAndNotify"_joaat: {
 				m_state = eProtectionState::BlockAndNotify;
 			} break;
+			case "Block And Notify"_joaat: {
+				m_state = eProtectionState::BlockAndNotify;
+			} break;
 			case "BlockAndNotif"_joaat: {
 				m_state = eProtectionState::BlockAndNotify;
 			} break;
@@ -348,7 +356,7 @@ namespace commands {
 		eProtectionState state() {
 			return m_state;
 		}
-		eProtectionState m_accessibleState{};
+		eProtectionState m_accessibleState{ eProtectionState::Disabled };
 	private:
 		eProtectionState m_state{};
 		typedValue m_value{};

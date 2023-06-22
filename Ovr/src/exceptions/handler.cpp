@@ -1,10 +1,23 @@
 #include "handler.h"
+#include "minhook/hde/hde64.h"
+#include "zydis/Zydis.h"
 
 namespace exceptions {
 	uint8_t getInstructionLength(uint8_t* code) {
 		auto start = code;
-		if (x64::disassembleInstructionCode(code).isValid()) {
+		hde64s hde{};
+		if (uint8_t len = hde64_disasm((void*)code, &hde); len) {
+			return len;
+		}
+		else if (x64::disassembleInstructionCode(code).isValid()) {
 			return code - start;
+		}
+		else {
+			ZyanU64 opcodeAddress{ (uint64_t)code };
+			ZydisDisassembledInstruction instruction{};
+			if (ZYAN_SUCCESS(ZydisDisassembleIntel(ZYDIS_MACHINE_MODE_LONG_64, opcodeAddress, reinterpret_cast<void*>(opcodeAddress), 32, &instruction))) {
+				return instruction.info.length;
+			}
 		}
 		return NULL;
 	}

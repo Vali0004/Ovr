@@ -9,6 +9,9 @@
 #include "framework.h"
 #include "rage/enums.h"
 #define BRAND "Ovr"
+#define UPPER_BRAND "OVR"
+#define LOWER_BRAND "ovr"
+#define DEBUG
 
 #define SIZEOF(a) sizeof(a) / sizeof(std::remove_pointer_t<decltype(a)>)
 #define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
@@ -71,6 +74,11 @@ namespace defines {
 		}
 		return "Offline";
 	}
+    inline std::string lStr(std::string str) {
+        std::string t{ str };
+        std::transform(t.begin(), t.end(), t.data(), [](char c) { return tolower(c); });
+        return t;
+    }
     inline auto g_splitStr = [](std::string str, char split) -> std::vector<std::string> {
         std::vector<std::string> fields{};
         std::string field{};

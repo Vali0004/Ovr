@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "util/util.h"
+#include "script/notifications/notifications.h"
 
 namespace commands {
 	player engine::getPlayerForCommandArgument(std::string arg) {
@@ -7,7 +8,7 @@ namespace commands {
 		if (isNumber(arg)) {
 			u64 indexFromArg{ stoull(arg) };
 			if (indexFromArg > 30) {
-				LOG(Commands, "The index '{}' provided is out of range! Please provide a name or valid index.", indexFromArg);
+				g_notifications.add("Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", indexFromArg);
 				return {};
 			}
 			util::network::iteratePlayers([&](u16 index, CNetGamePlayer* player) {
@@ -33,7 +34,7 @@ namespace commands {
 					return true;
 				}
 				else if (std::string(player->GetName()).find(name) != -1) {
-					LOG(Commands, "The name '{}' isn't unique enough! Please try again", name);
+					g_notifications.add("Commands", "The name '{}' isn't unique enough! Please try again", name);
 					return true;
 				}
 				//A context box would be a pretty good idea. TODO ig
@@ -49,13 +50,13 @@ namespace commands {
 		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
 			if (command->m_type != eCommandType::ToggleIntCommand && command->m_type != eCommandType::ToggleFloatCommand) {
 				if (trueArgCount != 1) {
-					LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
+					g_notifications.add("Commands", "You provided {} arguments for a command that requires one argument.", trueArgCount);
 					return;
 				}
 			}
 			else {
 				if (trueArgCount != 2) {
-					LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
+					g_notifications.add("Commands", "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
 					return;
 				}
 			}
@@ -92,7 +93,7 @@ namespace commands {
 			if (command->has_value()) {
 				if (command->get_value(0)->m_type != eValueType::String) {
 					if (command->value_count() != trueArgCount) {
-						LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
+						g_notifications.add("Commands", "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
 						return;
 					}
 					for (size_t i{ 1 }; i != arguments.size(); ++i) {
@@ -169,16 +170,16 @@ namespace commands {
 	}
 	bool engine::execute(std::string& string) {
 		if (!string.size()) {
-			LOG(Commands, "Empty command string!");
+			g_notifications.add("Commands", "Empty command string!");
 			return false;
 		}
 		std::vector<std::string> words{ g_splitStr(string, ' ') };
 		if (words.empty()) {
-			LOG(Commands, "No command!");
+			g_notifications.add("Commands", "No command!");
 			return false;
 		}
 		if (isNumber(words[0])) {
-			LOG(Commands, "Provide a command!");
+			g_notifications.add("Commands", "Provide a command!");
 			return false;
 		}
 		abstractCommand* command{ getCommand(words[0]) };
@@ -190,7 +191,7 @@ namespace commands {
 				replaceCommand(command);
 			}
 			else if (command->m_type != eCommandType::ActionCommand) {
-				LOG(Commands, "You provided no arguments for a command that requires arguments!");
+				g_notifications.add("Commands", "You provided no arguments for a command that requires arguments!");
 				return false;
 			}
 			else {
@@ -215,15 +216,30 @@ namespace commands {
 		}
 	}
 	std::vector<abstractCommand*> engine::findMatches(std::string command) {
-		std::string lower{ command };
-		lower[0] = tolower(lower[0]);
+		std::string camel{ command };
+		camel[0] = tolower(camel[0]);
+		std::string lower{ lStr(command) };
 		std::vector<abstractCommand*> matches{};
 		for (auto& f : g_manager.getCommands()) {
-			if (f->m_id.find(command) != std::string::npos) {
-				matches.push_back(f);
-			}
-			else if (f->m_id.find(lower) != std::string::npos) {
-				matches.push_back(f);
+			if (f->m_id[0] == lower[0]) {
+				if (f->m_id.find(command) != std::string::npos) {
+					matches.push_back(f);
+				}
+				else if (f->m_id.find(camel) != std::string::npos) {
+					matches.push_back(f);
+				}
+				else if (f->m_id.find(lower) != std::string::npos) {
+					matches.push_back(f);
+				}
+				else if (lStr(f->m_id).find(command) != std::string::npos) {
+					matches.push_back(f);
+				}
+				else if (lStr(f->m_id).find(camel) != std::string::npos) {
+					matches.push_back(f);
+				}
+				else if (lStr(f->m_id).find(lower) != std::string::npos) {
+					matches.push_back(f);
+				}
 			}
 		}
 		return matches;
@@ -231,7 +247,7 @@ namespace commands {
 	abstractCommand* engine::getCommand(std::string search) {
 		auto matches{ findMatches(search) };
 		if (matches.empty()) {
-			LOG(Commands, "'{}' isn't a valid command.", search);
+			g_notifications.add("Commands", "'{}' isn't a valid command.", search);
 			return nullptr;
 		}
 		else {
@@ -240,19 +256,17 @@ namespace commands {
 				lower[0] = tolower(lower[0]);
 				for (auto& m : matches) {
 					if (m->m_id == search || m->m_id == lower) {
-						LOG(Commands, "{} found.", m->m_id);
 						return m;
 					}
 				}
 			}
 			if (matches.size() > 1) {
 				if (m_useFirstResultOnTooManyResults) {
-					LOG(Commands, "'{}' isn't unique enough. Using {} instead.", search, matches[0]->m_id);
+					g_notifications.add("Commands", "'{}' isn't unique enough. Using {} instead.", search, matches[0]->m_id);
 					return matches[0];
 				}
-				LOG(Commands, "'{}' isn't unique enough. Maybe you meant {}?", search, matches[0]->m_id);
-			}
-			LOG(Commands, "{} found.", matches[0]->m_id);
+				g_notifications.add("Commands", "'{}' isn't unique enough. Maybe you meant {}?", search, matches[0]->m_id);
+			};
 			return matches[0];
 		}
 		return nullptr;

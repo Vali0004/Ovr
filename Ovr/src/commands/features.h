@@ -106,6 +106,7 @@ namespace commands::features {
 				extern std::string ridToName(u64 rid);
 			}
 			extern void ridToName(variadicCommand* command);
+			extern void scMessage(variadicCommand* command);
 			extern void nameToRid(variadicCommand* command);
 		}
 		namespace tunables {

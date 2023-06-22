@@ -19,6 +19,7 @@ public:
 	void drawTexture(int id, int index, int level, int time, float sizeX, float sizeY, float centerX, float centerY, float posX, float posY, float rotation, float screenHeightScaleFactor, float r, float g, float b, float a);
 public:
 	ImFont* m_font{};
+	ImFont* m_fontBold{};
 	ImFont* m_tahoma{};
 	ImFont* m_arial{};
 	ImFontConfig m_fontCfg{};

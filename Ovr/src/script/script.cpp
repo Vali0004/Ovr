@@ -13,8 +13,15 @@
 #include "tabs/scripting.h"
 #include "tabs/settings.h"
 #include "elements.h"
+#include "commands/gui/gui.h"
 
 namespace script {
+	inline bool debug() {
+		#ifdef DEBUG
+			return true;
+		#endif
+		return false;
+	}
 	void onPresent() {
 		if (script::g_guiOpen) {
 			elements::window(BRAND, g_guiOpen, [] {
@@ -40,14 +47,21 @@ namespace script {
 		elements::primitiveWindow("Overlay", [] {
 			elements::setStyleColor({ { ImGuiCol_Border, {} } }, [] {
 				elements::addWindowRect({ 435.f, 2.f }, { 255, 192, 255, 255 });
-				elements::text("overseer.menu | FPS: {} | Date: {}", static_cast<u32>(ImGui::GetIO().Framerate / 1.5f), util::time("%c"));
+				std::string time{ util::time(debug() ? "%c" : "%T")};
+				elements::text("overseer.menu | FPS: {} | Date: {}", static_cast<u32>(ImGui::GetIO().Framerate / 1.5f), time);
 			});
 		});
 	}
 	void onTick() {
+		g_notifications.add("Welocme", "Welcome to Ovr! You are using version 0.00.1");
+		#ifdef DEBUG
+		g_notifications.add("User Checks", "Welcome, Vali!");
+		#else
+		g_notifications.add("User Checks", "Welcome, {}!", util::network::socialclub::getString("gtag"));
+		#endif
 		init();
 		while (true) {
-			if (g_guiOpen) {
+			if (g_guiOpen || commands::gui::g_box.m_draw) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}
 			fiber::current()->sleep();
@@ -118,7 +132,7 @@ namespace script {
 		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
 		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
-		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.19f, 0.59f, 0.99f, 1.00f);
 		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
 		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
 		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);

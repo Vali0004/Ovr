@@ -2,12 +2,14 @@
 #include "renderer/renderer.h"
 #include "shv/scripthookv.h"
 #include "commands/gui/gui.h"
+#include "script/notifications/notifications.h"
 
 HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags) {
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();
 	commands::gui::g_box.draw();
+	g_notifications.draw();
 	g_renderer->onPresent();
 	ImGui::EndFrame();
 	ImGui::Render();

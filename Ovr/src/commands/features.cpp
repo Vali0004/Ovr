@@ -222,7 +222,7 @@ namespace commands::features {
 							}
 						}
 						if (!found) {
-							LOG(Commands, "Command 'go' accepts a string but there is no type '{}'", cid);
+							g_notifications.add("Session Starter", "Command 'go' accepts a string but there is no type '{}'", cid);
 							return;
 						}
 					}
@@ -280,11 +280,11 @@ namespace commands::features {
 								return json["Accounts"][0]["RockstarId"].get<u64>();
 							}
 							else {
-								LOG(Info, "{} wasn't found. Please ensure there are no spelling mistakes", name);
+								g_notifications.add("Name To RID", "{} wasn't found. Please ensure there are no spelling mistakes", name);
 							}
 						}
 						else {
-							LOG(Info, "The character count cannot exceed 20, please shorten the value");
+							g_notifications.add("Name To RID", "The character count cannot exceed 20, please shorten the value");
 						}
 						return 0;
 					}
@@ -305,6 +305,24 @@ namespace commands::features {
 			}
 			void ridToName(variadicCommand* command) {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
+			}
+			void scMessage(variadicCommand* command) {
+				std::string strRid{ command->get(0).string };
+				if (strRid.empty()) {
+					g_notifications.add("Socialclub Message", "Please provide an name or RID");
+				}
+				if (!isNumber(strRid)) {
+					u64 rid{ backend::nameToRid(strRid) };
+					if (!rid) {
+						g_notifications.add("Socialclub Message", "Failed to get {}'s RID", strRid);
+					}
+					strRid = std::to_string(rid);
+				}
+				std::string msg{ command->get(1).string };
+				if (msg.empty()) {
+					g_notifications.add("Socialclub Message", "Please provide an messages");
+				}
+				backend::jRequest({ { "env", "prod" }, { "title", "gta5" }, { "version", 11 }, { "recipientRockstarId", strRid }, { "messageText", msg } }, "");
 			}
 			void nameToRid(variadicCommand* command) {
 				g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
@@ -417,6 +435,7 @@ namespace commands::features {
 		//Network::Socialclub
 		g_manager.add(variadicCommand("nameToRid", "Name To Rockstar ID", "Converts a given name to an RID and copies it to clipboard", { { eValueType::String } }, network::socialclub::nameToRid, false));
 		g_manager.add(variadicCommand("ridToName", "Rockstar ID To Name", "Converts a given RID to an name and copies it to clipboard", { { eValueType::UInt64 } }, network::socialclub::ridToName, false));
+		g_manager.add(variadicCommand("scMessage", "Message", "Messages them on Socialclub", { { eValueType::String }, { eValueType::String } }, network::socialclub::ridToName, false));
 		//Network
 		g_manager.add(actionCommand("bail", "Bail", "Bail from online", network::bail));
 		//Protections::Kicks

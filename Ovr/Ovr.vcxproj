@@ -282,6 +282,7 @@
     <ClInclude Include="src\memory\scanner.h" />
     <ClInclude Include="src\hooking\methods\vmt.h" />
     <ClInclude Include="src\script\elements.h" />
+    <ClInclude Include="src\script\notifications\notifications.h" />
     <ClInclude Include="src\script\script.h" />
     <ClInclude Include="src\script\tabs\includes.h" />
     <ClInclude Include="src\script\tabs\network.h" />
@@ -327,6 +328,34 @@
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\util.h" />
+    <ClInclude Include="src\zydis\Decoder.h" />
+    <ClInclude Include="src\zydis\DecoderTypes.h" />
+    <ClInclude Include="src\zydis\Defines.h" />
+    <ClInclude Include="src\zydis\Disassembler.h" />
+    <ClInclude Include="src\zydis\Encoder.h" />
+    <ClInclude Include="src\zydis\Formatter.h" />
+    <ClInclude Include="src\zydis\FormatterBuffer.h" />
+    <ClInclude Include="src\zydis\generated\EnumInstructionCategory.h" />
+    <ClInclude Include="src\zydis\generated\EnumISAExt.h" />
+    <ClInclude Include="src\zydis\generated\EnumISASet.h" />
+    <ClInclude Include="src\zydis\generated\EnumMnemonic.h" />
+    <ClInclude Include="src\zydis\generated\EnumRegister.h" />
+    <ClInclude Include="src\zydis\internal\DecoderData.h" />
+    <ClInclude Include="src\zydis\internal\EncoderData.h" />
+    <ClInclude Include="src\zydis\internal\FormatterATT.h" />
+    <ClInclude Include="src\zydis\internal\FormatterBase.h" />
+    <ClInclude Include="src\zydis\internal\FormatterIntel.h" />
+    <ClInclude Include="src\zydis\internal\SharedData.h" />
+    <ClInclude Include="src\zydis\internal\String.h" />
+    <ClInclude Include="src\zydis\MetaInfo.h" />
+    <ClInclude Include="src\zydis\Mnemonic.h" />
+    <ClInclude Include="src\zydis\Register.h" />
+    <ClInclude Include="src\zydis\Segment.h" />
+    <ClInclude Include="src\zydis\SharedTypes.h" />
+    <ClInclude Include="src\zydis\ShortString.h" />
+    <ClInclude Include="src\zydis\Status.h" />
+    <ClInclude Include="src\zydis\Utils.h" />
+    <ClInclude Include="src\zydis\Zydis.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp" />
@@ -414,9 +443,28 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\renderer\renderer.cpp" />
+    <ClCompile Include="src\script\notifications\notifications.cpp" />
     <ClCompile Include="src\script\script.cpp" />
     <ClCompile Include="src\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
+    <ClCompile Include="src\zydis\Decoder.c" />
+    <ClCompile Include="src\zydis\DecoderData.c" />
+    <ClCompile Include="src\zydis\Disassembler.c" />
+    <ClCompile Include="src\zydis\Encoder.c" />
+    <ClCompile Include="src\zydis\EncoderData.c" />
+    <ClCompile Include="src\zydis\Formatter.c" />
+    <ClCompile Include="src\zydis\FormatterATT.c" />
+    <ClCompile Include="src\zydis\FormatterBase.c" />
+    <ClCompile Include="src\zydis\FormatterBuffer.c" />
+    <ClCompile Include="src\zydis\FormatterIntel.c" />
+    <ClCompile Include="src\zydis\MetaInfo.c" />
+    <ClCompile Include="src\zydis\Mnemonic.c" />
+    <ClCompile Include="src\zydis\Register.c" />
+    <ClCompile Include="src\zydis\Segment.c" />
+    <ClCompile Include="src\zydis\SharedData.c" />
+    <ClCompile Include="src\zydis\String.c" />
+    <ClCompile Include="src\zydis\Utils.c" />
+    <ClCompile Include="src\zydis\Zydis.c" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="src\rage\commands\invoker\spoof\spoof.asm" />
@@ -798,6 +846,21 @@
     <None Include="src\directx\shaders\ToneMap_VSQuad.pdb" />
     <None Include="src\directx\SimpleMath.inl" />
     <None Include="src\directx\TeapotData.inc" />
+    <None Include="src\zydis\generated\AccessedFlags.inc" />
+    <None Include="src\zydis\generated\DecoderTables.inc" />
+    <None Include="src\zydis\generated\EncoderTables.inc" />
+    <None Include="src\zydis\generated\EnumInstructionCategory.inc" />
+    <None Include="src\zydis\generated\EnumISAExt.inc" />
+    <None Include="src\zydis\generated\EnumISASet.inc" />
+    <None Include="src\zydis\generated\EnumMnemonic.inc" />
+    <None Include="src\zydis\generated\EnumRegister.inc" />
+    <None Include="src\zydis\generated\FormatterStrings.inc" />
+    <None Include="src\zydis\generated\GetRelInfo.inc" />
+    <None Include="src\zydis\generated\InstructionDefinitions.inc" />
+    <None Include="src\zydis\generated\InstructionEncodings.inc" />
+    <None Include="src\zydis\generated\OperandDefinitions.inc" />
+    <None Include="src\zydis\generated\RegisterClassLookup.inc" />
+    <None Include="src\zydis\generated\RegisterLookup.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
