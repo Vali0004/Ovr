@@ -22,18 +22,18 @@ template <typename t>
 using comPtr = Microsoft::WRL::ComPtr<t>;
 template <typename t> requires std::is_function_v<t>
 using fnptr = std::add_pointer_t<t>;
-using u64 = uint64_t;
-using i64 = int64_t;
-using u32 = uint32_t;
-using i32 = int32_t;
-using u16 = uint16_t;
-using i16 = int16_t;
-using u8 = uint8_t;
-using i8 = int8_t;
+using u64 = unsigned long long;
+using i64 = signed long long;
+using u32 = unsigned int;
+using i32 = signed int;
+using u16 = unsigned short;
+using i16 = signed short;
+using u8 = unsigned char;
+using i8 = signed char;
 using cc = const char;
 using ccp = cc*;
-using fp = float_t;
-using db = double_t;
+using fp = float;
+using db = double;
 class stackWalker : public StackWalker {
 public:
 	stackWalker() : StackWalker() {}
@@ -42,7 +42,7 @@ public:
 	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion);
 	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName);
 	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr);
-	virtual void OnCallstackEntry(CallstackEntryType eType, CallstackEntry& entry);
+    virtual void OnCallstackEntry(CallstackEntryType eType, CallstackEntry& entry);
 };
 namespace defines {
 	inline bool g_running{ true };

@@ -9,6 +9,20 @@
 #include "exceptions/handler.h"
 
 namespace core {
+	struct scyllaHide {
+		void load() {
+			fs::path path{ std::getenv("appdata") };
+			path /= BRAND;
+			path /= "Modules"; 
+			path /= "ScyllaHide.dll";
+			m_hmodule = LoadLibraryA(path.string().c_str());
+		}
+		void unload() {
+			if (m_hmodule)
+				FreeLibrary(m_hmodule);
+		}
+		HMODULE m_hmodule{};
+	};
 	namespace thread {
 		extern void create(HMODULE hmodule);
 		extern void loop();

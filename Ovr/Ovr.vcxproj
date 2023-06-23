@@ -51,7 +51,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -170,7 +170,8 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <CallingConvention>FastCall</CallingConvention>
+      <CallingConvention>Cdecl</CallingConvention>
+      <DisableSpecificWarnings>4996;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,7 +189,6 @@
     <ClInclude Include="src\hooking\methods\native.h" />
     <ClInclude Include="src\rage\commands\conversion_table.h" />
     <ClInclude Include="src\rage\commands\invoker\call_context.h" />
-    <ClInclude Include="src\rage\commands\invoker\spoof\call_spoof.h" />
     <ClInclude Include="src\rage\commands\types.h" />
     <ClInclude Include="src\core\core.h" />
     <ClInclude Include="src\curl\curl.h" />
@@ -327,6 +327,7 @@
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\util\global.h" />
+    <ClInclude Include="src\util\player_mgr.h" />
     <ClInclude Include="src\util\util.h" />
     <ClInclude Include="src\zydis\Decoder.h" />
     <ClInclude Include="src\zydis\DecoderTypes.h" />
@@ -361,6 +362,7 @@
     <ClCompile Include="src\commands\commands.cpp" />
     <ClCompile Include="src\commands\gui\gui.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
+    <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp" />
     <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
@@ -447,6 +449,7 @@
     <ClCompile Include="src\script\script.cpp" />
     <ClCompile Include="src\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
+    <ClCompile Include="src\util\player_mgr.cpp" />
     <ClCompile Include="src\zydis\Decoder.c" />
     <ClCompile Include="src\zydis\DecoderData.c" />
     <ClCompile Include="src\zydis\Disassembler.c" />
@@ -465,9 +468,6 @@
     <ClCompile Include="src\zydis\String.c" />
     <ClCompile Include="src\zydis\Utils.c" />
     <ClCompile Include="src\zydis\Zydis.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="src\rage\commands\invoker\spoof\spoof.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.inc" />

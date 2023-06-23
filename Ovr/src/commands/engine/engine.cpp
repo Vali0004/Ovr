@@ -3,45 +3,30 @@
 #include "script/notifications/notifications.h"
 
 namespace commands {
-	player engine::getPlayerForCommandArgument(std::string arg) {
-		player p{};
+	util::network::player engine::getPlayerForCommandArgument(std::string arg) {
+		util::network::player p{};
 		if (isNumber(arg)) {
-			u64 indexFromArg{ stoull(arg) };
-			if (indexFromArg > 30) {
-				g_notifications.add("Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", indexFromArg);
+			u64 index{ stoull(arg) };
+			if (index > util::network::g_manager.m_playerCount) {
+				g_notifications.add("Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", index);
 				return {};
 			}
-			util::network::iteratePlayers([&](u16 index, CNetGamePlayer* player) {
-				if (index == indexFromArg) {
-					p.m_index = index;
-					p.m_name = player->GetName();
-					p.m_gamePlayer = player;
-					p.m_netPlayer = player;
-					p.m_gamerInfo = player->GetGamerInfo();
-					return true;
-				}
-			});
+			p = util::network::g_manager[index];
 		}
 		else {
 			std::string name{ arg };
-			util::network::iteratePlayers([&](u16 index, CNetGamePlayer* player) {
-				if (player->GetName() == name) {
-					p.m_index = index;
-					p.m_name = player->GetName();
-					p.m_gamePlayer = player;
-					p.m_netPlayer = player;
-					p.m_gamerInfo = player->GetGamerInfo();
-					return true;
+			for (auto& entry : util::network::g_manager) {
+				if (auto& player{ entry.second }; player.valid()) {
+					if (player.m_name == name) {
+						p = player;
+						break;
+					}
+					else if (player.m_name.find(name) != -1) {
+						g_notifications.add("Commands", "The name '{}' isn't unique enough! Please try again", name);
+						break;
+					}
 				}
-				else if (std::string(player->GetName()).find(name) != -1) {
-					g_notifications.add("Commands", "The name '{}' isn't unique enough! Please try again", name);
-					return true;
-				}
-				//A context box would be a pretty good idea. TODO ig
-				// This box would contain the players below instead of commands.
-				// Maybe write a wrapper for the command box GUI
-				//g_box.set_context_item?
-			});
+			}
 		}
 	}
 	void engine::executeWithCommand(abstractCommand*& command, std::string context) {
@@ -87,7 +72,7 @@ namespace commands {
 		} break;
 		case eCommandType::ProtectionCommand: {
 			command->get(0).string = arguments[1].c_str();
-			static_cast<protectionCommand*>(command)->setState();
+			static_cast<protectionCommand*>(command)->update(command->get(0).string);
 		} break;
 		case eCommandType::VariadicCommand: {
 			if (command->has_value()) {
@@ -105,34 +90,34 @@ namespace commands {
 							command->get(i).toggle = convertData<bool>(arguments[i]);
 						} break;
 						case eValueType::Int8: {
-							command->get(i).i8 = convertData<int16_t>(arguments[i]);
+							command->get(i).i8 = convertData<i8>(arguments[i]);
 						} break;
 						case eValueType::UInt8: {
-							command->get(i).u8 = convertData<uint16_t>(arguments[i]);
+							command->get(i).u8 = convertData<u8>(arguments[i]);
 						} break;
 						case eValueType::Int16: {
-							command->get(i).i16 = convertData<int16_t>(arguments[i]);
+							command->get(i).i16 = convertData<i16>(arguments[i]);
 						} break;
 						case eValueType::UInt16: {
-							command->get(i).u16 = convertData<uint16_t>(arguments[i]);
+							command->get(i).u16 = convertData<u16>(arguments[i]);
 						} break;
 						case eValueType::Int32: {
-							command->get(i).i32 = convertData<int32_t>(arguments[i]);
+							command->get(i).i32 = convertData<i32>(arguments[i]);
 						} break;
 						case eValueType::UInt32: {
-							command->get(i).u32 = convertData<uint32_t>(arguments[i]);
+							command->get(i).u32 = convertData<u32>(arguments[i]);
 						} break;
 						case eValueType::Int64: {
-							command->get(i).i64 = convertData<int64_t>(arguments[i]);
+							command->get(i).i64 = convertData<i64>(arguments[i]);
 						} break;
 						case eValueType::UInt64: {
-							command->get(i).u64 = convertData<uint64_t>(arguments[i]);
+							command->get(i).u64 = convertData<u64>(arguments[i]);
 						} break;
 						case eValueType::GamePlayer: {
-							command->get(i).game_player = getPlayerForCommandArgument(arguments[i]).m_gamePlayer;
+							command->get(i).game_player = getPlayerForCommandArgument(arguments[i]).m_netGamePlayer;
 						} break;
 						case eValueType::NetPlayer: {
-							command->get(i).net_player = getPlayerForCommandArgument(arguments[i]).m_netPlayer;
+							command->get(i).net_player = getPlayerForCommandArgument(arguments[i]).m_netGamePlayer;
 						} break;
 						case eValueType::GamerInfo: {
 							command->get(i).gamer_info = getPlayerForCommandArgument(arguments[i]).m_gamerInfo;
@@ -187,18 +172,21 @@ namespace commands {
 		if (!command)
 			return false;
 		if (words.size() == 1) {
-			if (command->m_type == eCommandType::ToggleCommand) {
+			switch (command->m_type) {
+			case eCommandType::ToggleIntCommand:
+			case eCommandType::ToggleFloatCommand:
+			case eCommandType::ToggleCommand: {
 				command->get(0).toggle ^= true;
 				replaceCommand(command);
-			}
-			else if (command->m_type != eCommandType::ActionCommand) {
-				g_notifications.add("Commands", "You provided no arguments for a command that requires arguments!");
-				return false;
-			}
-			else {
+				return true;
+			} break;
+			case eCommandType::ActionCommand: {
 				command->run();
+				return true;
+			} break;
 			}
-			return true;
+			g_notifications.add("Commands", "You provided no arguments for a command that requires arguments!");
+			return false;
 		}
 		else if (words.size() > 1) {
 			executeWithCommand(command, string.substr(string.find(words[0])));

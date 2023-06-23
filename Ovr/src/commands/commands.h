@@ -11,5 +11,7 @@ namespace commands {
 	extern void useFirstCommandOnMultipleResults(toggleCommand* command);
 	extern void clearCommandBoxOnEnter(toggleCommand* command);
 	extern void print(variadicCommand* command);
+	extern void init();
+	extern void onInit();
 	extern void onTick();
 }

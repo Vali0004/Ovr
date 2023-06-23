@@ -188,9 +188,9 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 bool hooks::canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject) {
 	static bool init{ ([] { storeNodeData(); }(), true) };
 	Player senderId{ pObject->m_owner_id };
-	CNetGamePlayer* sender{ util::network::getPlayers()[senderId] };
+	util::network::player sender{ util::network::g_manager[senderId] };
 	if (pSyncTree->m_child_node_count) {
-		if (checkNodes(pSyncTree->m_next_sync_node, sender, pObject)) {
+		if (checkNodes(pSyncTree->m_next_sync_node, sender.m_netGamePlayer, pObject)) {
 			return false;
 		}
 	}

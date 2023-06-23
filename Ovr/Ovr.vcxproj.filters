@@ -100,9 +100,6 @@
     <ClInclude Include="src\minhook\hde\table64.h">
       <Filter>src\minhook\hde</Filter>
     </ClInclude>
-    <ClInclude Include="src\rage\commands\invoker\spoof\call_spoof.h">
-      <Filter>src\rage\commands\invoker\spoof</Filter>
-    </ClInclude>
     <ClInclude Include="src\rage\commands\invoker\invoker.h">
       <Filter>src\rage\commands\invoker</Filter>
     </ClInclude>
@@ -526,6 +523,9 @@
     <ClInclude Include="src\zydis\generated\EnumRegister.h">
       <Filter>src\zydis\generated</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\player_mgr.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -834,6 +834,12 @@
     <ClCompile Include="src\zydis\Zydis.c">
       <Filter>src\zydis</Filter>
     </ClCompile>
+    <ClCompile Include="src\hooking\hooks\find_game_match.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\player_mgr.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -941,9 +947,6 @@
     <Filter Include="src\rage\commands\invoker">
       <UniqueIdentifier>{8501430d-f7d9-41e1-b25c-d2231959c142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\rage\commands\invoker\spoof">
-      <UniqueIdentifier>{f0ff0709-c39d-4726-b8d4-87c2969adb62}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\util\stackwalker">
       <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
     </Filter>
@@ -980,11 +983,6 @@
     <Filter Include="src\zydis\generated">
       <UniqueIdentifier>{c412be79-89f2-4874-821a-f7cb76a6aa12}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="src\rage\commands\invoker\spoof\spoof.asm">
-      <Filter>src\rage\commands\invoker\spoof</Filter>
-    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\directx\SimpleMath.inl">

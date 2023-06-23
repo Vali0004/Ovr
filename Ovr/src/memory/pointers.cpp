@@ -30,6 +30,7 @@ namespace pointers {
         g_getSyncTreeForType = scan("GSTFT", "0F B7 CA 83 F9 07").as<decltype(g_getSyncTreeForType)>();
         g_getEntityAttachedTo = scan("GEAT", "48 83 EC 28 48 8B 51 50 48 85 D2 74 04").as<decltype(g_getEntityAttachedTo)>();
         g_getGamerTaskResult = scan("GGTR", "E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 8B 05 ? ? ? ? 48 8D 4C 24").call().as<decltype(g_getGamerTaskResult)>();
+        g_findGameMatch = scan("FGM", "E8 ? ? ? ? 84 C0 0F 84 F6 FE FF FF").call().as<decltype(g_findGameMatch)>();
 
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
@@ -51,7 +52,6 @@ namespace pointers {
         g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
         g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
         g_reportModule = scan("RM", "48 8D 0D ? ? ? ? 88 05 ? ? ? ? 48 8D 05").mov().as<decltype(g_reportModule)>();
-        g_jmpRbxRegister = scan("JRR", "23 C3 C1 E0 0C").sub(1).as<decltype(g_jmpRbxRegister)>();
         g_hwnd = FindWindowA("grcWindow", nullptr);
     }
     void doPatches() {

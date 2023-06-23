@@ -6,16 +6,18 @@ namespace tabs::network::session::players {
 	inline void tab() {
 		elements::tabItem("Players", [] {
 			elements::listBox("Players", { 350.f, 0.f }, [] {
-				if (!util::network::iteratePlayers([](uint16_t id, CNetGamePlayer* player) {
-					elements::selectable(player->GetName(), g_selectedPlayer == id, [&] {
-						g_selectedPlayer = id;
-					});
-					return false;
-				})) {
+				for (auto& entry : util::network::g_manager) {
+					if (auto& player{ entry.second }; player.valid()) {
+						elements::selectable(player.m_name, g_selectedPlayer == player.m_index, [&] {
+							g_selectedPlayer = player.m_index;
+						});
+					}
+				}
+				if (!util::network::g_manager.online()) {
 					elements::text("You're in story mode! Please join a session.");
 				}
 			});
-			if (util::network::isOnline()) {
+			if (util::network::g_manager.online()) {
 				elements::sameLine();
 				elements::listBox("SelectedPlayer", { 350.f, 0.f }, [] {
 					selectedPlayer::tab();

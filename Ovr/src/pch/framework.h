@@ -51,7 +51,6 @@
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "wldap32")
 #pragma comment(lib, "crypt32")
-#pragma disable(warning : 4996)
 //DirectXTK Includes
 
 #include "directx/DirectXHelpers.h"

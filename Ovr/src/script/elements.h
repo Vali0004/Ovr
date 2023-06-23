@@ -76,7 +76,7 @@ namespace elements {
 			ImGui::PushStyleColor(var.first, var.second);
 		}
 		cb();
-		ImGui::PopStyleColor(vars.size());
+		ImGui::PopStyleColor((int)vars.size());
 	}
 	inline void setNextItemWidth(float width) {
 		ImGui::SetNextItemWidth(width);
@@ -271,7 +271,7 @@ namespace elements {
 	inline void protectionToggle(ccp id, bool continueLine = false) {
 		auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
 		popupButton(cmd->m_name, id, true);
-		selectionPopup<eProtectionState>(id, "State", cmd->m_accessibleState, g_protectionStates, 4, [cmd](int idx) {
+		selectionPopup<eProtectionState>(id, "State", cmd->m_accessibleState, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
 			cmd->update(g_protectionStates[idx]);
 		}, continueLine);
 	}

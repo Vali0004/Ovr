@@ -5,23 +5,23 @@
 
 class manager : public engine::thread {
 public:
-	void add(char const* id, fnptr<void()> fn, bool log = true, std::optional<std::size_t> stackSize = std::nullopt) {
+	void add(ccp id, fnptr<void()> fn, bool log = true, std::optional<u64> stackSize = std::nullopt) {
 		std::lock_guard lck(m_mutex);
 		m_fibers.insert({ id, std::make_unique<fiber>(fn, stackSize) });
 		if (log)
 			LOG(Info, "Created fiber {}", id);
 	}
-	void add(char const* id, int count, fnptr<void()> fn, std::optional<std::size_t> stackSize = std::nullopt) {
-		for (int32_t i{ count }; i; --i) {
+	void add(ccp id, u64 count, fnptr<void()> fn, std::optional<u64> stackSize = std::nullopt) {
+		for (u64 i{ count }; i; --i) {
 			add(std::format("{}_{}", id, i).c_str(), fn, false, stackSize);
 		}
 		LOG(Info, "Created fiber group '{}' with {} fibers", id, count);
 	}
-	void remove(char const* id) {
+	void remove(ccp id) {
 		std::lock_guard lck(m_mutex);
 		m_fibers.erase(id);
 	}
-	void removeBase(char const* baseId) {
+	void removeBase(ccp baseId) {
 		std::lock_guard lck(m_mutex);
 		for (auto& f : m_fibers) {
 			auto fbrId{ f.first };
@@ -44,6 +44,6 @@ public:
 	}
 private:
 	std::recursive_mutex m_mutex{};
-	std::map<char const*, std::unique_ptr<fiber>> m_fibers{};
+	std::map<ccp, std::unique_ptr<fiber>> m_fibers{};
 };
 inline manager g_manager{};

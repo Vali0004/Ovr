@@ -88,6 +88,43 @@ namespace commands::features {
 			extern void remove(variadicCommand* command);
 		}
 		namespace session {
+			namespace browser {
+				namespace backend {
+					class sessionBrowser {
+					public:
+						bool matchmake(std::optional<int> constraint = std::nullopt);
+					public:
+						struct sessionAttributes {
+							i32 discriminator{};
+							i32 playerCount{};
+							i32 region{};
+							i32 language{};
+						};
+						struct sessionData {
+							rage::rlSessionInfo info{};
+							sessionAttributes attributes{};
+							bool valid{};
+							operator bool() {
+								return valid;
+							}
+						};
+					public:
+						i32 count() { return m_count; }
+						sessionData* sessions() { return m_sessions; }
+					private:
+						constexpr static int MaxSessions{ 1063 };
+						int m_count{};
+						bool m_active{};
+						sessionData m_sessions[MaxSessions]{};
+					};
+					inline sessionBrowser g_browser{};
+				}
+				extern void matchmakingRegion(toggleIntCommand* command);
+				extern void matchmakingLanguage(toggleIntCommand* command);
+				extern void matchmakingPlayerCountMinimum(intCommand* command);
+				extern void matchmakingPlayerCountMaximum(intCommand* command);
+				extern void matchmakingType(toggleIntCommand* command);
+			}
 			namespace starter {
 				extern void go(variadicCommand* command);
 				extern void leave(actionCommand* command);

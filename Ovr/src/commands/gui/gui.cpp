@@ -37,10 +37,22 @@ namespace commands::gui {
 	void box::fetch() {
 		captureCmd(m_context, m_context.find(" ") != std::string::npos);
 		m_matches = g_engine.findMatches(m_cmd);
-		if (m_matches.size() > 1 && g_engine.m_useDirectMatchResults) {
-			if (m_matches[0]->m_id == m_cmd || m_matches[0]->m_name == m_cmd) {
-				addItem(m_matches[0]->m_name);
-				return;
+		if (m_matches.size() > 1) {
+			if (g_engine.m_useDirectMatchResults) {
+				for (auto& match : m_matches) {
+					if (match->m_id == m_cmd || match->m_name == m_cmd) {
+						m_items.clear();
+						addItem(match->m_name);
+						return;
+					}
+				}
+			}
+			else if (g_engine.m_useFirstResultOnTooManyResults) {
+				if (m_matches[0]->m_id == m_cmd || m_matches[0]->m_name == m_cmd) {
+					m_items.clear();
+					addItem(m_matches[0]->m_name);
+					return;
+				}
 			}
 		}
 		for (auto& match : m_matches) {
@@ -57,7 +69,6 @@ namespace commands::gui {
 				addItem(match->m_name);
 			}
 		}
-		return;
 	}
 	void box::run() {
 		if (m_matches.size() > m_matchLimit) {
@@ -71,13 +82,15 @@ namespace commands::gui {
 		}
 		fetch();
 		g_engine.execute(m_context);
+		stop();
+		m_draw = m_lock = true;
 	}
 
 	void box::draw() {
-		if (!m_inputBuffer || m_inputBuffer == "") {
+		if (!m_inputBuffer) {
 			clear();
 		}
-		util::onPress('U', [this] { m_draw = true; m_lock = true; });
+		util::onPress('U', [this] { m_draw = m_lock = true; });
 		if (m_draw) {
 			util::onPress(VK_ESCAPE, [this] { stop(); });
 			util::onPress(VK_RETURN, [this] { run(); clear(false, true); });
@@ -128,7 +141,6 @@ namespace commands::gui {
 			clear(false, true);
 			fiber::current()->sleep(100ms);
 			m_lock = false;
-			LOG(Info, "Command box closed");
 		});
 	}
 	void box::alert(std::string reason) {

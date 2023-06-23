@@ -32,11 +32,22 @@ namespace util {
 		inline rage::rlGamerInfo* getRlGamerInfo() {
 			return &getPlayerInfo()->m_gamer_info;
 		}
+		inline rage::atArray<GtaThread*>& getThreads() {
+			return *pointers::g_gtaThreads;
+		}
+		inline GtaThread* getGtaThread(u32 hash) {
+			for (GtaThread* thread : getThreads()) {
+				if (thread->m_script_hash == hash) {
+					return thread;
+				}
+			}
+			return nullptr;
+		}
+		inline CGameScriptHandlerNetComponent* getScriptHandlerNetComponet(GtaThread* thr) {
+			return thr->m_net_component;
+		}
 	}
 	namespace network {
-		inline CNetworkPlayerMgr* getPlayerMgr() {
-			return *pointers::g_networkPlayerMgr;
-		}
 		inline CNetworkObjectMgr* getObjectMgr() {
 			return *pointers::g_networkObjectMgr;
 		}
@@ -101,69 +112,13 @@ namespace util {
 				}
 			}
 		}
-		inline CNetGamePlayer* getLocalNetGamePlayer() {
-			return getPlayerMgr()->m_local_net_player;
-		}
-		inline CNetGamePlayer** getPlayers() {
-			return getPlayerMgr()->m_player_list;
-		}
-		inline rage::rlGamerInfo* getNetworkRlGamerInfo() {
-			return getLocalNetGamePlayer()->GetGamerInfo();
-		}
-		inline u16 getPlayerCount() {
-			return getPlayerMgr()->m_player_count;
-		}
-		inline bool isOnline() {
-			return pointers::g_networkPlayerMgr && getPlayerMgr() && getLocalNetGamePlayer() && getPlayerCount();
-		}
-		inline bool iteratePlayers(std::function<bool(u16, CNetGamePlayer*)> cb) {
-			if (isOnline()) {
-				for (u16 i{}; i != getPlayerCount(); ++i) {
-					if (auto& player{ getPlayers()[i] }; player && player->IsConnected()) {
-						if (cb(i, player))
-							break;
-					}
-				}
-				return true;
-			}
-			return false;
-		}
-		inline CNetGamePlayer* getPlayerViaPeerAddress(u64 peerAddress) {
-			CNetGamePlayer* player{};
-			iteratePlayers([&](u16, CNetGamePlayer* p) {
-				if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; peerAddress == gamerInfo->m_peer_address) {
-					player = p;
-					return true;
-				}
-				return false;
-			});
-			return player;
-		}
-		inline CNetGamePlayer* getPlayerViaPlatformData(u64 platformData) {
-			CNetGamePlayer* player{};
-			iteratePlayers([&](u16, CNetGamePlayer* p) {
-				if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; platformData == gamerInfo->m_platform_data) {
-					player = p;
-					return true;
-				}
-				return false;
-			});
-			return player;
-		}
-		inline CNetGamePlayer* getPlayerFromNetPacket(rage::netConnection::InFrame* packetFrame) {
-			CNetGamePlayer* player{};
-			if (rage::snPlayer* snPlayer{ session::get()->GetPlayerByPlatformData(packetFrame->m_peer.m_platform_data) }) {
-				if (u64 peerAddress{ snPlayer->m_gamer_info.m_peer_address }) {
-					iteratePlayers([&](u16, CNetGamePlayer* p) {
-						if (rage::rlGamerInfo* gamerInfo{ p->GetGamerInfo() }; peerAddress == gamerInfo->m_peer_address) {
-							player = p;
-							return true;
-						}
-						return false;
-					});
+		inline CNetGamePlayer* getHostNetGamePlayer() {
+			if (GtaThread* thr{ classes::getGtaThread("freemode"_joaat) }) {
+				if (CGameScriptHandlerNetComponent* netComponet{ classes::getScriptHandlerNetComponet(thr) }) {
+					return netComponet->get_host();
 				}
 			}
-			return player;
+			return nullptr;
 		}
 		inline bool deserialiseNetMessage(enum eNetMessage& msg, class rage::datBitBuffer& buffer) {
 			#define RET_DEAD() { \
@@ -223,7 +178,7 @@ namespace util {
 		}
 	}
 	template <typename t>
-	inline int getPoolObjects(i32 type, i32* arr, i32 arrSize) {
+	inline u64 getPoolObjects(i32 type, i32* arr, i32 arrSize) {
 		std::vector<uint64_t> objects{};
 		t* inf{};
 		switch (type) {

@@ -3,20 +3,12 @@
 #include "util/util.h"
 
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
-	g_lastScriptEventSender = Sender;
-	auto args{ pEvent->m_args };
-	auto arg{ args[0] };
-	switch (arg) {
-	default: {
+	g_statistics.m_lastScriptEventSender = Sender;
 
-	} break;
-	}
 	return false;
 }
 bool incrementStatEvent(CNetworkIncrementStatEvent* pEvent, CNetGamePlayer* Sender) {
-	auto stat{ pEvent->m_stat };
-	auto amount{ pEvent->m_amount };
-	switch (stat) {
+	switch (pEvent->m_stat) {
 	case "mpply_bad_crew_status"_joaat:
 	case "mpply_bad_crew_motto"_joaat:
 	case "mpply_bad_crew_name"_joaat:
@@ -49,6 +41,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 	ccp eventName{ *(ccp*)(u64(pEventMgr) + 8ui64 * Id + 0x3B6B0) };
 	if (eventName == nullptr || Sender == nullptr || Sender->m_player_id < 0 || Sender->m_player_id >= 32)
 		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
+	g_statistics.m_incomingNetworkEvents++;
 	switch (static_cast<ePackedEvents>(Id)) {
 	case ePackedEvents::CScriptedGameEvent: {
 		std::unique_ptr<CScriptedGameEvent> event{ std::make_unique<CScriptedGameEvent>() };
@@ -57,6 +50,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			Buffer->ReadArray(&event->m_args, 8 * event->m_args_size);
 		}
 		if (scriptedGameEvent(event.get(), Sender)) {
+			g_statistics.m_incomingNetworkEvents--;
 			return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 		}
 		Buffer->Seek(0);
@@ -66,6 +60,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		Buffer->ReadDword(&event->m_stat, 32);
 		Buffer->ReadDword(&event->m_amount, 32);
 		if (incrementStatEvent(event.get(), Sender)) {
+			g_statistics.m_incomingNetworkEvents--;
 			return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 		}
 		Buffer->Seek(0);
@@ -84,10 +79,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 					LOG(Session, "V{} from {}", 1, Sender->GetName());
 				} break;
 				case eProtectionState::Block: {
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				case eProtectionState::BlockAndNotify: {
 					LOG(Session, "V{} from {}", 1, Sender->GetName());
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				}
@@ -100,10 +97,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 				LOG(Session, "T{} crash from {}", 5, Sender->GetName());
 			} break;
 			case eProtectionState::Block: {
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			case eProtectionState::BlockAndNotify: {
 				LOG(Session, "T{} crash from {}", 5, Sender->GetName());
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			}
@@ -127,10 +126,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 					LOG(Session, "T{} crash from {}", 6, Sender->GetName());
 				} break;
 				case eProtectionState::Block: {
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				case eProtectionState::BlockAndNotify: {
 					LOG(Session, "T{} crash from {}", 6, Sender->GetName());
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				}
@@ -148,10 +149,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "Freeze from {}", Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "Freeze from {}", Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -170,10 +173,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "Ragdoll from {}", Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "Ragdoll from {}", Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -193,10 +198,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 							LOG(Session, "Request control from {}", Sender->GetName());
 						} break;
 						case eProtectionState::Block: {
+							g_statistics.m_incomingNetworkEvents--;
 							return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 						} break;
 						case eProtectionState::BlockAndNotify: {
 							LOG(Session, "Request control from {}", Sender->GetName());
+							g_statistics.m_incomingNetworkEvents--;
 							return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 						} break;
 						}
@@ -232,10 +239,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 					LOG(Session, "R{} crash from {}", 0, Sender->GetName());
 				} break;
 				case eProtectionState::Block: {
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				case eProtectionState::BlockAndNotify: {
 					LOG(Session, "R{} crash from {}", 0, Sender->GetName());
+					g_statistics.m_incomingNetworkEvents--;
 					return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 				} break;
 				}
@@ -252,10 +261,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "P{} crash from {}", 3, Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "P{} crash from {}", 3, Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -269,10 +280,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 				LOG(Session, "T{} crash from {}", 7, Sender->GetName());
 			} break;
 			case eProtectionState::Block: {
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			case eProtectionState::BlockAndNotify: {
 				LOG(Session, "T{} crash from {}", 7, Sender->GetName());
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			}
@@ -288,10 +301,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 				LOG(Session, "R{} crash from {}", 1, Sender->GetName());
 			} break;
 			case eProtectionState::Block: {
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			case eProtectionState::BlockAndNotify: {
 				LOG(Session, "R{} crash from {}", 1, Sender->GetName());
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			}
@@ -304,10 +319,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "Remove weapon from {}", Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "Remove weapon from {}", Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -326,10 +343,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "Give weapon from {}", Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "Give weapon from {}", Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -348,10 +367,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 						LOG(Session, "Remove all weapons from {}", Sender->GetName());
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "Remove all weapons from {}", Sender->GetName());
+						g_statistics.m_incomingNetworkEvents--;
 						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 					} break;
 					}
@@ -369,10 +390,12 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 				LOG(Session, "Vote kick from {}", Sender->GetName());
 			} break;
 			case eProtectionState::Block: {
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			case eProtectionState::BlockAndNotify: {
 				LOG(Session, "Vote kick from {}", Sender->GetName());
+				g_statistics.m_incomingNetworkEvents--;
 				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 			} break;
 			}
@@ -380,5 +403,6 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		Buffer->Seek(0);
 	} break;
 	}
+	g_statistics.m_incomingNetworkEvents--;
 	RET_CALL(proccessPackedEvents, pEventMgr, Sender, Receiver, Id, Index, HandledBitset, BufferSize, Buffer);
 }

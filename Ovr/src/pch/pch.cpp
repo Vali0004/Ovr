@@ -9,16 +9,35 @@ void stackWalker::OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD s
 	//StackWalker::OnLoadModule(img, mod, baseAddr, size, result, symType, pdbName, fileVersion);
 }
 void stackWalker::OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) {
-	StackWalker::OnSymInit(szSearchPath, symOptions, szUserName);
+	//StackWalker::OnSymInit(szSearchPath, symOptions, szUserName);
 }
 void stackWalker::OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) {
-	//StackWalker::OnDbgHelpErr(szFuncName, gle, addr);
+	LOG(Stackwalker, "Error ({}) in {} at 0x{:X}", gle, szFuncName, addr);
 }
 void stackWalker::OnCallstackEntry(CallstackEntryType eType, CallstackEntry& entry) {
+	std::string offsetStr{ std::format("{}.dll+0x{:X}", entry.moduleName, entry.offset) };
+#ifdef DEBUG
+	if (entry.lineFileName[0]) {
+		if (entry.name[0]) {
+			LOG(Stackwalker, "{} L{}: {} ({})", entry.lineFileName, entry.lineNumber, entry.name, offsetStr);
+		}
+	}
+	else {
+		if (entry.name[0]) {
+			LOG(Stackwalker, "{} ({})", entry.name, offsetStr);
+		}
+		else {
+			LOG(Stackwalker, "{}", offsetStr);
+		}
+	}
+#else
 	if (!entry.lineFileName[0]) {
 		if (entry.name[0]) {
-			LOG(Stackwalker, "{} (0x{:X}, {}.dll)", entry.name, uint64_t(entry.offset), entry.moduleName);
+			LOG(Stackwalker, "{} ({})", entry.name, offsetStr);
 		}
-		return;
+		else {
+			LOG(Stackwalker, "{}", offsetStr);
+		}
 	}
+#endif
 }

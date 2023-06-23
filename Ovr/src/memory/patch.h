@@ -3,7 +3,7 @@
 
 class patch {
 public:
-	patch(ccp id, u64* ptr, std::vector<u64> bytes) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes) {
+	patch(ccp id, u64* ptr, std::vector<i32> bytes) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes) {
 		memcpy(m_original.data(), m_ptr, m_original.size());
 	}
 	~patch() {
@@ -31,14 +31,14 @@ public:
 private:
 	ccp m_id{};
 	void* m_ptr{};
-	std::vector<u64> m_bytes{};
-	std::vector<u64> m_original{};
+	std::vector<i32> m_bytes{};
+	std::vector<i32> m_original{};
 };
 class patches {
 public:
 	template <typename t>
-	void add(ccp id, t ptr, std::vector<u64> bytes, bool apply = true) {
-		m_patches.push_back(std::make_unique<patch>(id, (u64*)ptr, bytes));
+	void add(ccp id, t ptr, std::vector<i32> bytes, bool apply = true) {
+		m_patches.push_back(std::make_unique<patch>(id, (i32*)ptr, bytes));
 		if (apply)
 			m_patches.back()->apply();
 	}

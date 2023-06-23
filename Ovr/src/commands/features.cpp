@@ -1,5 +1,6 @@
 #include "features.h"
 #include "script/script.h"
+#include "hooking/hooking.h"
 
 namespace commands::features {
 	namespace self {
@@ -189,6 +190,67 @@ namespace commands::features {
 			}
 		}		
 		namespace session {
+			namespace browser {
+				namespace backend {
+					bool sessionBrowser::matchmake(std::optional<int> constraint) {
+						for (auto& session : m_sessions) {
+							session.valid = true;
+						}
+						NetworkGameFilterMatchmakingComponent component{};
+						strcpy(component.m_filter_name, "Group");
+						component.m_game_mode = 0;
+						component.m_num_parameters = 0;
+						rage::rlTaskStatus status{};
+						static rage::rlSessionInfo sessions[MaxSessions]{};
+						m_active = true;
+						if (CALL(findGameMatch, 0, 1, &component, MaxSessions, sessions, &m_count, &status)) {
+							while (status.m_state == 1) {
+								fiber::current()->sleep();
+							}
+							if (status.m_state == 3) {
+								for (i32 i{}; i != m_count; ++i) {
+									sessionData s{ m_sessions[i] };
+									i32 d{ s.attributes.discriminator };
+									i32 pc{ s.attributes.playerCount };
+									i32 r{ s.attributes.region };
+									i32 l{ s.attributes.language };
+									if (constraint && pc >= 30) {
+										s.valid = false;
+									}
+									if ("matchmakingLanguage"_TIF->get(0).toggle && l != "matchmakingLanguage"_TIF->get(1).i32) {
+										s.valid = false;
+									}
+									if (pc < "matchmakingPlayerCountMinimum"_IF->get(0).i32 || pc > "matchmakingPlayerCountMaximum"_IF->get(0).i32) {
+										s.valid = false;
+									}
+									if ("matchmakingType"_TIF->get(0).toggle && ((d & (1 << 14)) == (1 << 14)) != (bool)"matchmakingType"_TIF->get(1).i32) {
+										s.valid = false;
+									}
+								}
+								m_active = false;
+								return true;
+							}
+						}
+						m_active = false;
+						return false;
+					}
+				}
+				void matchmakingRegion(toggleIntCommand* command) {
+
+				}
+				void matchmakingLanguage(toggleIntCommand* command) {
+
+				}
+				void matchmakingPlayerCountMinimum(intCommand* command) {
+
+				}
+				void matchmakingPlayerCountMaximum(intCommand* command) {
+
+				}
+				void matchmakingType(toggleIntCommand* command) {
+
+				}
+			}
 			namespace players {
 				namespace selected {
 
@@ -232,7 +294,7 @@ namespace commands::features {
 							global(1574589).at(2).value()->Int = -1;
 						}
 						else {
-							global(1575017).value()->Int = (int)type;
+							global(1575020).value()->Int = (int)type;
 						}
 						global(1574589).value()->Int = true;
 						fiber::current()->sleep(200ms);
@@ -487,6 +549,12 @@ namespace commands::features {
 		g_manager.add(variadicCommand("remove", "Remove friend", "Sends a SCAPI request to remove a friend", { { eValueType::String } }, network::friends::remove, false));
 		//Network::Tunables
 		g_manager.add(toggleCommand("offradar", "Off Radar", "Disappear like thin air", network::tunables::offRadar));
+		//Network::Session::Browser
+		g_manager.add(toggleIntCommand("matchmakingRegion", "Matchmaking Region", network::session::browser::matchmakingRegion));
+		g_manager.add(toggleIntCommand("matchmakingLanguage", "Matchmaking Language", network::session::browser::matchmakingLanguage));
+		g_manager.add(intCommand("matchmakingPlayerCountMinimum", "Matchmaking Player Count Minimum", network::session::browser::matchmakingPlayerCountMinimum));
+		g_manager.add(intCommand("matchmakingPlayerCountMaximum", "Matchmaking Player Count Maximum", network::session::browser::matchmakingPlayerCountMaximum));
+		g_manager.add(toggleIntCommand("matchmakingType", "Matchmaking Type", network::session::browser::matchmakingType));
 		//Network::Session::Starter
 		g_manager.add(variadicCommand("go", "Session Starter", "Join a session", { { eValueType::String } }, network::session::starter::go, false));
 		g_manager.add(actionCommand("leave", "Leave", "Leave from online", network::session::starter::leave));
@@ -535,7 +603,7 @@ namespace commands::features {
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));
 	}
 	void onInit() {
-		//These need to be after init because the values aren't created yet.
+		//These need to be after init because the values aren't created yet
 		//Self::Movement
 		"run"_TF->get(1).floating_point = 1.f;
 		"swim"_TF->get(1).floating_point = 1.f;
@@ -545,6 +613,9 @@ namespace commands::features {
 		"noClip"_TF->get(1).floating_point = 1.f;
 		//Self
 		"alpha"_IF->get(0).i32 = 255;
+		//Network::Session::Browser
+		"matchmakingPlayerCountMinimum"_IF->get(0).i32 = 0;
+		"matchmakingPlayerCountMaximum"_IF->get(0).i32 = 32;
 		//Settings::Ui
 		"scale"_FF->get(0).floating_point = 1.f;
 	}

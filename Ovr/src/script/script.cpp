@@ -64,6 +64,7 @@ namespace script {
 			if (g_guiOpen || commands::gui::g_box.m_lock) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}
+			util::network::g_manager.loop();
 			fiber::current()->sleep();
 		}
 	}

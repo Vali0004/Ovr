@@ -5,10 +5,10 @@ namespace tabs::network::session {
 	inline void starter() {
 		elements::tabItem("Starter", [] {
 			elements::listBox("Starter", { 350.f, 0.f }, [] {
-				for (int i{}; i != SIZEOF(tables::g_sessions); ++i) {
+				for (int i{}; i != COUNT(tables::g_sessions); ++i) {
 					auto& session{ tables::g_sessions[i] };
-					static auto name{ session.name };
-					elements::selectable(name, false, [] {
+					auto& name{ session.name };
+					elements::selectable(name, false, [name] {
 						commands::g_engine.primitiveExecute("go {}", name);
 					});
 				}

@@ -2,6 +2,8 @@
 #include "classes.h"
 #include "joaat.h"
 #include "memory/pointers.h"
+#include "rage/commands/list.h"
+#include "hooking/hooking.h"
 
 namespace engine {
 	class thread : public GtaThread {
@@ -29,8 +31,10 @@ namespace engine {
 			}
 			auto ogThr = tls->m_script_thread;
 			tls->m_script_thread = this;
-			if (m_serialised.m_state != rage::eThreadState::killed) {
+			if (m_serialised.m_state != rage::eThreadState::killed && g_statistics.m_frameCount != MISC::GET_FRAME_COUNT()) {
+				g_statistics.reset();
 				do_run();
+				g_statistics.m_frameCount = MISC::GET_FRAME_COUNT();
 			}
 			tls->m_script_thread = ogThr;
 			return m_serialised.m_state;

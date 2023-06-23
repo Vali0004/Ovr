@@ -4,7 +4,6 @@
 #include "rage/commands/conversion_table.h"
 #include "memory/pointers.h"
 #include "rage/classes.h"
-#include "spoof/call_spoof.h"
 #include "call_context.h"
 
 class invoker {

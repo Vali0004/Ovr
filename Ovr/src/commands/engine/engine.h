@@ -1,18 +1,11 @@
 #pragma once
 #include "commands/manager/manager.h"
+#include "util/player_mgr.h"
 
 namespace commands {
-	class player {
-	public:
-		std::string m_name{};
-		uint16_t m_index{};
-		CNetGamePlayer* m_gamePlayer{};
-		rage::netPlayer* m_netPlayer{};
-		rage::rlGamerInfo* m_gamerInfo{};
-	};
 	class engine {
 	public:
-		player getPlayerForCommandArgument(std::string arg);
+		util::network::player getPlayerForCommandArgument(std::string arg);
 		void executeWithCommand(abstractCommand*& Command, std::string context);
 		bool execute(std::string& string);
 		template <typename ...T>

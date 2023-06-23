@@ -35,7 +35,7 @@ namespace commands {
 		std::string str{ command->m_context.substr(command->m_context.find_first_of(' ') + 1) };
 		LOG(Info, str);
 	}
-	void onTick() {
+	void init() {
 		g_manager.add(variadicCommand("copyText", "Copy Text", "Copies text to clipboard", { { eValueType::String } }, copyText, false));
 		g_manager.add(variadicCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", { { eValueType::String } }, copyScString, false));
 		g_manager.add(actionCommand("printClipboard", "Print Clipboard", "Prints your clipboard to log", printCliboard));
@@ -46,10 +46,16 @@ namespace commands {
 		g_manager.add(variadicCommand("print", "Print", "Prints a string", { { eValueType::String } }, print, false));
 		features::init();
 		g_manager.init();
+	}
+	void onInit() {
 		features::onInit();
 		"useDirectMatchResults"_TF->get(0).toggle = true;
 		"autoCompleteCommands"_TF->get(0).toggle = true;
 		"clearCommandBoxOnEnter"_TF->get(0).toggle = true;
+	}
+	void onTick() {
+		init();
+		onInit();
 		while (true) {
 			features::onTick();
 			g_manager.tick();

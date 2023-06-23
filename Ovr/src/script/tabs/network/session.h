@@ -7,7 +7,7 @@
 
 namespace tabs::network::session {
 	inline void tab() {
-		elements::tabItem("Session (" + std::string(util::network::isOnline() ? gsTypeToString(g_sessionType) : "Offline") + ")", [] {
+		elements::tabItem("Session (" + g_statistics.m_gameType + ")", [] {
 			elements::tabBar("Session", [] {
 				session::starter();
 				session::browser();

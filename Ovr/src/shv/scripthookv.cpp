@@ -72,16 +72,16 @@ namespace shv {
 			g_presentCallbacks.erase(cb);
 		}
 		int worldGetAllVehicles(int* arr, int arrSize) {
-			return util::getPoolObjects<CVehicleInterface>(0, arr, arrSize);
+			return (int)util::getPoolObjects<CVehicleInterface>(0, arr, arrSize);
 		}
 		int worldGetAllPeds(int* arr, int arrSize) {
-			return util::getPoolObjects<CPedInterface>(1, arr, arrSize);
+			return (int)util::getPoolObjects<CPedInterface>(1, arr, arrSize);
 		}
 		int worldGetAllObjects(int* arr, int arrSize) {
-			return util::getPoolObjects<CObjectInterface>(2, arr, arrSize);
+			return (int)util::getPoolObjects<CObjectInterface>(2, arr, arrSize);
 		}
 		int worldGetAllPickups(int* arr, int arrSize) {
-			return util::getPoolObjects<CPickupInterface>(3, arr, arrSize);
+			return (int)util::getPoolObjects<CPickupInterface>(3, arr, arrSize);
 		}
 	}
 	void onPresent(renderer* renderer) {

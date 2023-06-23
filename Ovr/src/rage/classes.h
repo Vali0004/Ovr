@@ -172,7 +172,7 @@ namespace rage {
 		virtual ~netPlayerMgrBase();
 		virtual void Initialize();
 		virtual void Shutdown();
-		virtual void unk_018();
+		virtual void unk_0018();
 		virtual class CNetGamePlayer* RawAddPlayer(void* a1, void* a2, void* a3, class rlGamerInfo* gamer_info, class CNonPhysicalPlayerData* non_physical_player_data);
 		virtual void RemovePlayer(class CNetGamePlayer* net_game_player);
 		virtual void UpdatePlayerListsForPlayer(class CNetGamePlayer* net_game_player);
@@ -180,7 +180,7 @@ namespace rage {
 
 		char pad_0008[8]; //0x0008
 		uint64_t* m_network_bandwidth_manager; //0x0010
-		char pad_0018[208]; //0x0018
+		char pad_0018[216]; //0x0018
 		class CNetGamePlayer* m_local_net_player; //0x00E8
 		char pad_00F0[144]; //0x00F0
 		class CNetGamePlayer* m_player_list[32]; //0x0180
@@ -188,8 +188,8 @@ namespace rage {
 		char pad_0282[10]; //0x0282
 		uint16_t m_player_count; //0x028C
 		char pad_0290[1618]; //0x0290
-	}; //Size: 0x08E0
-	static_assert(sizeof(netPlayerMgrBase) == 0x8E0);
+	}; //Size: 0x08E8
+	static_assert(sizeof(netPlayerMgrBase) == 0x8E8);
 #pragma pack(pop)
 #pragma pack(push, 4)
 	class fwDrawData {
@@ -287,7 +287,7 @@ namespace rage {
 	class fwEntity : public fwExtensibleBase {
 	public:
 		DEFINE_AT_RTTI(fwEntity)
-			virtual void* _0x38(void*, void*) = 0;
+		virtual void* _0x38(void*, void*) = 0;
 		virtual void AddExtension(void* extension) = 0; // 0x40
 		virtual void _0x48() = 0; // not implemented
 		virtual void _0x50() = 0; // only implemented by CEntityBatch
@@ -479,13 +479,13 @@ namespace rage {
 		}
 		float ReadFloat(i32 length, float divisor) {
 			i32 integer{ Read<i32>(length) };
-			float max = (1 << length) - 1;
-			return ((float)integer / max) * divisor;
+			float max{ static_cast<float>((1 << length) - 1) };
+			return (static_cast<float>(integer) / max) * divisor;
 		}
 		float ReadSignedFloat(i32 length, float divisor) {
 			i32 integer{ ReadSigned<i32>(length) };
-			auto max = (1 << (length - 1)) - 1;
-			return ((float)integer / max) * divisor;
+			float max{ static_cast<float>((1 << (length - 1)) - 1) };
+			return (static_cast<float>(integer) / max) * divisor;
 		}
 		bool ReadPeerId(u64* value) {
 			if (!EnsureBitData(0x20))
@@ -870,7 +870,7 @@ namespace rage {
 		uint32_t unk_00D0; //0x00D0
 		char m_name[64]; //0x00D4
 		class scriptHandler* m_handler; //0x0110
-		class scriptHandlerNetComponent* m_net_component; //0x0118
+		class CGameScriptHandlerNetComponent* m_net_component; //0x0118
 	}; //Size: 0x0128
 	static_assert(sizeof(scrThread) == 0x128);
 	class sysMemAllocator : public atRTTI<sysMemAllocator> {
@@ -1427,7 +1427,7 @@ namespace rage {
 		bool m_initialized; //0x07FC
 
 		rage::scrCmd get_handler(uint64_t hash) {
-			for (auto entry = m_entries[(uint8_t)(hash & 0xFF)]; entry; entry = entry->get_next_registration()) {
+			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
 					if (auto entry_hash = entry->get_hash(i); entry_hash == hash) {
 						return entry->m_handlers[i];
@@ -1703,7 +1703,6 @@ namespace rage {
 		}
 	}; //Size: 0x3E70
 	static_assert(sizeof(rage::snSession) == 0x5488);
-#pragma pack(pop)
 	class snMsgRemoveGamersFromSessionCmd {
 	public:
 		uint64_t m_session_id; //0x0000
@@ -3850,7 +3849,7 @@ public:
 	uint32_t unk_B944; //0xB944
 	uint16_t unk_B948; //0xB948
 }; //Size: 0xB94A
-static_assert(sizeof(CNetworkPlayerMgr) == 0xD14A);
+static_assert(sizeof(CNetworkPlayerMgr) == 0xD152);
 #pragma pack(pop)
 class GtaThread : public rage::scrThread {
 public:

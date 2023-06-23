@@ -8,8 +8,9 @@
 #include "methods/detour.h"
 #include "shv/dynamic_loader.h"
 #include "rage/joaat.h"
-#define CALL(hk, ...) g_hooking->m_##hk##.getOg<pointers::types::##hk##>()(__VA_ARGS__);
-#define CALL_DECL(hk, ...) g_hooking->m_##hk##.getOg<decltype(&##hk)>()(__VA_ARGS__);
+#include "util/player_mgr.h"
+#define CALL(hk, ...) g_hooking->m_##hk##.getOg<pointers::types::##hk##>()(__VA_ARGS__)
+#define CALL_DECL(hk, ...) g_hooking->m_##hk##.getOg<decltype(&##hk)>()(__VA_ARGS__)
 #define RET_CALL(hk, ...) return CALL(hk, __VA_ARGS__);
 #define RET_CALL_DECL(hk, ...) return CALL_DECL(hk, __VA_ARGS__);
 #define VMT_CALL(vmt, hook, ...) g_hooking->m_##vmt##.getOg<decltype(&hooks::##hook)>(g_##hook##Index)(__VA_ARGS__);
@@ -18,7 +19,33 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
-inline CNetGamePlayer* g_lastScriptEventSender{};
+struct statistics {
+	int m_nativesInvoked{};
+	int m_nativesInvokedByUs{};
+	int m_playerCount{};
+	int m_incomingNetworkEvents{};
+	int m_frameCount{};
+	std::string m_gameType{};
+	CNetGamePlayer* m_lastScriptEventSender{};
+	CNetGamePlayer* m_host{};
+	void setGameType() {
+		if (util::network::g_manager.online()) {
+			std::string gstype{ gsTypeToString(g_sessionType) };
+			m_gameType = gstype.c_str();
+		}
+		else {
+			m_gameType = "Offline";
+		}
+	}
+	void reset() {
+		if (m_host != util::network::getHostNetGamePlayer())
+			m_host = util::network::getHostNetGamePlayer();
+		m_nativesInvoked = 0;
+		m_nativesInvokedByUs = 0;
+		m_incomingNetworkEvents = 0;
+	}
+};
+inline statistics g_statistics{};
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);
@@ -30,6 +57,7 @@ struct hooks {
 	static eAckCode receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, u16 ObjectId, rage::datBitBuffer* Buffer, u16 Unknown, u32 Timestamp);
 	static bool receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp);
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
+	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 	static LPVOID convertThreadToFiber(LPVOID param);
 	static FARPROC getProcAddress(HMODULE hModule, LPCSTR lpProcName);
 	static bool updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attribute, u64 Value);
@@ -75,6 +103,7 @@ public:
 	detour m_receiveCloneSync;
 	detour m_receiveCloneCreate;
 	detour m_canApplyData;
+	detour m_findGameMatch;
 	detour m_updateAttributeInt;
 	detour m_convertThreadToFiber;
 	detour m_getProcAddress;

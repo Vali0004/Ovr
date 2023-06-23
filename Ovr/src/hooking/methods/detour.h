@@ -59,24 +59,24 @@ public:
 };
 class detour {
 public:
-	detour(char const* name, void* ptr, void* dtr, bool hook = false) : m_name(name), m_ptr(ptr), m_dtr(dtr), m_hook(hook) {
-		if (!m_hook) {
+	detour(char const* name, void* ptr, void* dtr, bool hook = true) : m_name(name), m_ptr(ptr), m_og(ptr), m_dtr(dtr), m_hook(hook) {
+		if (m_hook) {
 			MinHook::Create(m_ptr, m_dtr, &m_og);
 		}
 	}
 	~detour() {
-		if (!m_hook) {
+		if (m_hook) {
 			MinHook::Destroy(m_ptr);
 		}
 	}
 public:
 	void enable() {
-		if (!m_hook) {
+		if (m_hook) {
 			MinHook::QueueEnable(m_ptr);
 		}
 	}
 	void disable() {
-		if (!m_hook) {
+		if ( m_hook) {
 			MinHook::QueueDisable(m_ptr);
 		}
 	}
@@ -90,12 +90,12 @@ public:
 public:
 	template <typename t>
 	t getOg() {
-		return t(m_og);
+		return static_cast<t>(m_og);
 	}
 public:
-	char const* m_name;
-	void* m_dtr;
-	void* m_ptr;
-	void* m_og;
-	bool m_hook;
+	ccp m_name{};
+	void* m_dtr{};
+	void* m_ptr{};
+	void* m_og{};
+	bool m_hook{};
 };

@@ -7,6 +7,7 @@
 #include <memory/scanner.h>
 
 namespace core {
+	scyllaHide g_scyllaHide{};
 	namespace thread {
 		void create(HMODULE hmodule) {
 			g_module = hmodule;
@@ -24,9 +25,11 @@ namespace core {
 			CloseHandle(g_thread);
 		}
 		DWORD entry(LPVOID paramater) {
+			g_scyllaHide.load();
 			core::create();
 			loop();
 			core::destroy();
+			g_scyllaHide.unload();
 			FreeLibraryAndExitThread(g_module, 0);
 			return 0;
 		}

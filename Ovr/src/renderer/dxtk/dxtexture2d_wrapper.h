@@ -21,7 +21,7 @@ public:
 		XMFLOAT2 xmPos{ position.x, position.y };
 		XMVECTOR xmCol{ m_color.x, m_color.y, m_color.z, m_color.w };
 		XMFLOAT2 origin{ m_center.x * m_desc.Width, m_center.x * m_desc.Height };
-		float scale{ imgScale(ImGui::GetIO().DisplaySize / m_desc.Width, m_size) };
+		float scale{ imgScale(ImGui::GetIO().DisplaySize / static_cast<float>(m_desc.Width), m_size) };
 		float rot{ m_rotation * 2 * static_cast<float>(PI) };
 		batch.Draw(m_view.Get(), xmPos, nullptr, xmCol, rot, origin, scale);
 		if (GetTickCount64() > m_disableTime)
@@ -55,8 +55,8 @@ private:
 	ImVec2 m_size{};
 	ImVec2 m_center{};
 	ImVec2 m_pos{};
-	float m_rotation;
-	float m_screenHeightScaleFactor;
+	float m_rotation{};
+	float m_screenHeightScaleFactor{};
 	ImVec4 m_color{};
 public:
 	bool m_enabled{};
@@ -67,10 +67,10 @@ public:
 	CD3D11_TEXTURE2D_DESC m_desc{};
 };
 struct scriptTex {
-	dxTexture2DWrapper tex;
-	int id;
+	dxTexture2DWrapper tex{};
+	int id{};
 };
 struct reloadTex {
-	int id;
-	std::wstring name;
+	int id{};
+	std::wstring name{};
 };
