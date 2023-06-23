@@ -90,6 +90,10 @@ namespace script {
 			if (g_guiOpen || commands::gui::g_box.m_lock) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}
+			if (g_sessionType != eSessionTypes::Offline && !util::network::g_manager.online()) {
+				g_sessionType = eSessionTypes::Offline;
+				g_statistics.setGameType();
+			}
 			util::network::g_manager.loop();
 			fiber::current()->sleep();
 		}
