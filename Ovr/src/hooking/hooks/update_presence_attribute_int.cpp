@@ -18,12 +18,17 @@ bool hooks::updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attri
 		std::string playerCount{ "no" };
 		if (g_statistics.m_playerCount)
 			playerCount = std::to_string(g_statistics.m_playerCount);
+		bool plural{};
+		if (!g_statistics.m_playerCount)
+			plural = true;
+		else if (g_statistics.m_playerCount > 1)
+			plural = true;
 		if (g_statistics.m_host && g_statistics.m_host->IsConnected()) {
 			std::string host{ g_statistics.m_host->GetName() };
-			LOG(Session, "Joined a new {} session with {} players hosted by {}", g_statistics.m_gameType, playerCount, host);
+			LOG(Session, "Joined a new {} session with {} player{} hosted by {}", g_statistics.m_gameType, playerCount, plural ? "s" : "", host);
 		}
 		else {
-			LOG(Session, "Joined a new {} session with {} players", g_statistics.m_gameType, playerCount);
+			LOG(Session, "Joined a new {} session with {} player{}", g_statistics.m_gameType, playerCount, plural ? "s" : "");
 		}
 	} break;
 	}
