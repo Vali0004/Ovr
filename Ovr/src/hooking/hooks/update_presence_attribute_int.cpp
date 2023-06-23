@@ -15,15 +15,15 @@ bool hooks::updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attri
 				LOG(Session, "Joined a {} from Story Mode", g_statistics.m_gameType);
 			}
 		}
-		std::string playerCount{ "an" };
+		std::string playerCount{ "no" };
 		if (g_statistics.m_playerCount)
 			playerCount = std::to_string(g_statistics.m_playerCount);
 		if (g_statistics.m_host && g_statistics.m_host->IsConnected()) {
 			std::string host{ g_statistics.m_host->GetName() };
-			LOG(Session, "Joined a new {} session with {} player{} hosted by {}", g_statistics.m_gameType, playerCount, g_statistics.m_playerCount == 1 ? "" : "s", host);
+			LOG(Session, "Joined a new {} session with {} players hosted by {}", g_statistics.m_gameType, playerCount, host);
 		}
 		else {
-			LOG(Session, "Joined a new {} session with {} player{}", g_statistics.m_gameType, playerCount, g_statistics.m_playerCount == 1 ? "" : "s");
+			LOG(Session, "Joined a new {} session with {} players", g_statistics.m_gameType, playerCount);
 		}
 	} break;
 	}
