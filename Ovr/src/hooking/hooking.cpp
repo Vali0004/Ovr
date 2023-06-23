@@ -14,7 +14,7 @@ hooking::hooking() :
 	m_receiveCloneSync("RCS", pointers::g_receiveCloneSync, &hooks::receiveCloneSync),
 	m_receiveCloneCreate("RCC", pointers::g_receiveCloneCreate, &hooks::receiveCloneCreate),
 	m_canApplyData("CAD", pointers::g_canApplyData, &hooks::canApplyData),
-	m_findGameMatch("FGM", pointers::g_findGameMatch, &hooks::findGameMatch, false),
+	m_findGameMatch("FGM", pointers::g_findGameMatch, &hooks::findGameMatch),
 	m_updateAttributeInt("SV", pointers::g_presenceData[g_updateAttributeIntIndex], &hooks::updateAttributeInt),
 	m_convertThreadToFiber("CTTF", *dynamicFunctionParser{ "kernel32.dll", "ConvertThreadToFiber" }, &hooks::convertThreadToFiber),
 	m_getProcAddress("GPA", &GetProcAddress, &hooks::getProcAddress),

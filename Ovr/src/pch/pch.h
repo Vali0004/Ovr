@@ -51,7 +51,7 @@ namespace defines {
 	inline u16 g_selectedPlayer{};
 	inline u32 g_selectedFriend{};
 	inline std::string g_selectedAsi{};
-	inline eSessionTypes g_sessionType{};
+	inline eSessionTypes g_sessionType{ eSessionTypes::Unknown };
     inline bool isNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c) == 0)
@@ -70,6 +70,7 @@ namespace defines {
 		case eSessionTypes::FriendsOnly: { return "Friends-Only"; } break;
 		case eSessionTypes::CrewOnly: { return "Crew-Only"; } break;
 		case eSessionTypes::CrewSession: { return "Crew"; } break;
+		case eSessionTypes::Solo: { return "Solo"; } break;
 		case eSessionTypes::Public: { return "Public"; } break;
 		}
 		return "Offline";

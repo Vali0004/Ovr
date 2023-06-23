@@ -52,6 +52,29 @@ namespace script {
 			});
 		});
 	}
+	void init() {
+		if (util::network::g_manager.online()) {
+			if (NETWORK::NETWORK_SESSION_IS_PRIVATE()) {
+				g_sessionType = eSessionTypes::InviteOnly;
+			}
+			else if (NETWORK::NETWORK_SESSION_IS_CLOSED_FRIENDS()) {
+				g_sessionType = eSessionTypes::FriendsOnly;
+			}
+			else if (NETWORK::NETWORK_SESSION_IS_CLOSED_CREW()) {
+				g_sessionType = eSessionTypes::CrewOnly;
+			}
+			else if (NETWORK::NETWORK_SESSION_IS_SOLO()) {
+				g_sessionType = eSessionTypes::Solo;
+			}
+			else if (NETWORK::NETWORK_SESSION_IS_VISIBLE()) {
+				g_sessionType = eSessionTypes::Public;
+			}
+			else {
+				g_sessionType = eSessionTypes::CrewSession;
+			}
+			g_statistics.setGameType();
+		}
+	}
 	void onTick() {
 		g_notifications.add("Welocme", "Welcome to Ovr! You are using version 0.00.1");
 		#ifdef DEBUG
@@ -139,8 +162,5 @@ namespace script {
 		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-	}
-	void init() {
-
 	}
 }
