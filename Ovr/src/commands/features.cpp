@@ -614,7 +614,7 @@ namespace commands::features {
 		//Self
 		"alpha"_IF->get(0).i32 = 255;
 		//Network::Session::Browser
-		"matchmakingPlayerCountMinimum"_IF->get(0).i32 = 0;
+		"matchmakingPlayerCountMinimum"_IF->get(0).i32 = 1;
 		"matchmakingPlayerCountMaximum"_IF->get(0).i32 = 32;
 		//Settings::Ui
 		"scale"_FF->get(0).floating_point = 1.f;
