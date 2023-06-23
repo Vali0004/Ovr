@@ -493,7 +493,7 @@ namespace commands::features {
 				g_running = false;
 			}
 			void exit(actionCommand* command) {
-				exit(0);
+				abort();
 			}
 		}
 		namespace ui {
