@@ -149,7 +149,7 @@
       <Filter>src\exceptions</Filter>
     </ClInclude>
     <ClInclude Include="src\stackwalker\stackwalker.h">
-      <Filter>src\util\stackwalker</Filter>
+      <Filter>src\stackwalker</Filter>
     </ClInclude>
     <ClInclude Include="src\rage\joaat.h">
       <Filter>src\rage</Filter>
@@ -389,7 +389,7 @@
       <Filter>src\script\tabs\network</Filter>
     </ClInclude>
     <ClInclude Include="src\json\json.h">
-      <Filter>src\util\json</Filter>
+      <Filter>src\json</Filter>
     </ClInclude>
     <ClInclude Include="src\script\tabs\protections\crashes.h">
       <Filter>src\script\tabs\protections</Filter>
@@ -601,7 +601,7 @@
       <Filter>src\exceptions</Filter>
     </ClCompile>
     <ClCompile Include="src\stackwalker\stackwalker.cpp">
-      <Filter>src\util\stackwalker</Filter>
+      <Filter>src\stackwalker</Filter>
     </ClCompile>
     <ClCompile Include="src\core\core.cpp">
       <Filter>src\core</Filter>
@@ -947,12 +947,6 @@
     <Filter Include="src\rage\commands\invoker">
       <UniqueIdentifier>{8501430d-f7d9-41e1-b25c-d2231959c142}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\util\stackwalker">
-      <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\util\json">
-      <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\script\tabs\protections\reactions">
       <UniqueIdentifier>{124209a6-035e-4e62-8864-95d36bc4c59c}</UniqueIdentifier>
     </Filter>
@@ -982,6 +976,12 @@
     </Filter>
     <Filter Include="src\zydis\generated">
       <UniqueIdentifier>{c412be79-89f2-4874-821a-f7cb76a6aa12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\stackwalker">
+      <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\json">
+      <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

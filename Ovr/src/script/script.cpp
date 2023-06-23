@@ -53,7 +53,7 @@ namespace script {
 		});
 	}
 	void init() {
-		if (util::network::g_manager.online()) {
+		if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
 			if (NETWORK::NETWORK_SESSION_IS_PRIVATE()) {
 				g_sessionType = eSessionTypes::InviteOnly;
 			}
