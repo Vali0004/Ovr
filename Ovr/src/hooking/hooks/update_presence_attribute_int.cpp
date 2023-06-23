@@ -8,7 +8,12 @@ bool hooks::updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attri
 		g_sessionType = static_cast<eSessionTypes>(Value);
 		g_statistics.setGameType();
 		if (previousType != g_sessionType) {
-			LOG(Session, "Changed session types ({} to {})", gsTypeToString(previousType), g_statistics.m_gameType);
+			if (previousType != eSessionTypes::Offline) {
+				LOG(Session, "Changed session types ({} to {})", gsTypeToString(previousType), g_statistics.m_gameType);
+			}
+			else {
+				LOG(Session, "Joined a {} from Story Mode", g_statistics.m_gameType);
+			}
 		}
 		std::string playerCount{ "no" };
 		if (g_statistics.m_playerCount)

@@ -72,8 +72,11 @@ namespace script {
 			else {
 				g_sessionType = eSessionTypes::CrewSession;
 			}
-			g_statistics.setGameType();
 		}
+		else {
+			g_sessionType = eSessionTypes::Offline;
+		}
+		g_statistics.setGameType();
 	}
 	void onTick() {
 		g_notifications.add("Welocme", "Welcome to Ovr! You are using version 0.00.1");

@@ -540,7 +540,7 @@ enum class eWorldStateDataType {
 	VehiclePlayerLocking
 };
 enum class eSessionTypes : int {
-	Unknown = -1,
+	Offline = -1,
 	InviteOnly,
 	FriendsOnly,
 	CrewOnly,

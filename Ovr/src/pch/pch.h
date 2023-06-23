@@ -51,7 +51,7 @@ namespace defines {
 	inline u16 g_selectedPlayer{};
 	inline u32 g_selectedFriend{};
 	inline std::string g_selectedAsi{};
-	inline eSessionTypes g_sessionType{ eSessionTypes::Unknown };
+	inline eSessionTypes g_sessionType{ eSessionTypes::Offline };
     inline bool isNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c) == 0)
