@@ -5,7 +5,6 @@
 #include "renderer/renderer.h"
 
 namespace commands::gui {
-	#define CC elements::convertCoordTypes
 	#define CMD_ALERT(fmt, ...) alert(std::format(fmt, __VA_ARGS__));
 	#define WHITE(A) { 255, 255, 255, A }
 	#define BLACK(A) { 0, 0, 0, A }
@@ -18,10 +17,10 @@ namespace commands::gui {
 		m_cmd = words[0];
 	}
 	void box::input() {
-		elements::setWindow(CC({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase - m_padding }), CC({ m_width + 0.001f, 0.04f }));
+		elements::setWindow(elements::convertCoordTypes({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase - m_padding }), elements::convertCoordTypes({ m_width + 0.001f, 0.04f }));
 		elements::window("Command Box Input", m_draw, [&] {
-			ImGui::SetNextItemWidth(CC({ m_width, 0.f }).x);
-			ImGui::SetKeyboardFocusHere(0);
+			elements::setNextItemWidth(elements::convertCoordTypes({ m_width, 0.f }).x);
+			elements::setKeyboardFocusHere();
 			elements::font(g_renderer->m_tahoma, [&] {
 				elements::setStyleColor({ { ImGuiCol_FrameBg, {} } }, [&] {
 					if (ImGui::InputText("##commandInput", m_inputBuffer, sizeof(m_inputBuffer))) {
@@ -102,8 +101,8 @@ namespace commands::gui {
 			util::onPress(VK_ESCAPE, [this] { stop(); });
 			util::onPress(VK_RETURN, [this] { run(); clear(false, true); });
 			m_drawBase = m_pos.y;
-			elements::custom::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, WHITE(255));
-			elements::custom::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, BLACK(255));
+			elements::custom::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, WHITE(255), false);
+			elements::custom::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, BLACK(255), elements::custom::eJustify::Left, 0.f, false);
 			m_drawBase += m_title.y;
 			m_drawBase += m_padding;
 			elements::custom::rect({ m_pos.x, m_drawBase + (m_inputBox.y / 2.f) }, m_inputBox, BLACK(190), false);

@@ -6,7 +6,7 @@ namespace commands {
 	util::network::player engine::getPlayerForCommandArgument(const std::string& arg) {
 		util::network::player p{};
 		if (isNumber(arg)) {
-			u64 index{ stoull(arg) };
+			u32 index{ stoul(arg) };
 			if (index > util::network::g_manager.m_playerCount) {
 				g_notifications.add("Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", index);
 				return {};

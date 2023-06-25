@@ -394,10 +394,12 @@ namespace commands::features {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
 			}
 			void nameToRid(variadicCommand* command) {
-				u64 rid{ backend::nameToRid(command->get(0).string) };
-				if (rid)
-					printf("RID: %lli\n", rid);
-				//g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
+				std::thread t([command] {
+					u64 rid{ backend::nameToRid(command->get(0).string) };
+					if (rid)
+						g_engine.primitiveExecute("copyText {}", rid);
+				});
+				t.detach();
 			}
 			void convert(variadicCommand* command) {
 				std::string str{ command->get(0).string };
@@ -510,13 +512,16 @@ namespace commands::features {
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
 					ONCE({ elements::openPopup("Close?"); });
 					ImVec2 center{ ImGui::GetMainViewport()->GetCenter() };
-					elements::setWindowPos(center, ImGuiCond_Appearing, { 0.5f, 0.5f });
-					elements::popupModal("Close?", [&] {
-						elements::text("The game will be closed.\nThis operation cannot be undone!\n\n");
-						elements::separator();
-						elements::button("OK", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 120.f, 28.f }, true);
-						elements::setItemDefaultFocus();
-						elements::button("Cancel", [&] { elements::closeCurrentPopup(); active = false; }, { 120.f, 28.f });
+					elements::setWindowPos(center, NULL, { 0.5f, 0.5f });
+					elements::setWindowSize({ 470.f, 235.f });
+					elements::font(g_renderer->m_tahoma, [&] {
+						elements::popupModal("Close?", [&] {
+							elements::text("Grand Theft Auto V will close.\nAre you sure you want to do this?\n\n");
+							elements::separator();
+							elements::button("Yes", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
+							elements::setItemDefaultFocus();
+							elements::button("No", [&] { elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f });
+						}, ImGuiWindowFlags_NoResize);
 					});
 				}));
 			}

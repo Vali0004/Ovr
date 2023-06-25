@@ -13,6 +13,15 @@ namespace elements {
 	inline ImVec2 shift(ImVec2 value, float amount) {
 		return { value.x + amount, value.y + amount };
 	}
+	inline ImVec2 getResolution() {
+		return { ImGui::GetIO().DisplaySize };
+	}
+	inline ImVec2 convertCoordTypes(ImVec2 pos, bool isDC = false) {
+		if (isDC) {
+			return pos / getResolution();
+		}
+		return pos * getResolution();
+	}
 	inline void dummy(ImVec2 size) {
 		ImGui::Dummy(size);
 	}
@@ -92,6 +101,9 @@ namespace elements {
 	}
 	inline void setItemDefaultFocus() {
 		ImGui::SetItemDefaultFocus();
+	}
+	inline void setKeyboardFocusHere() {
+		ImGui::SetKeyboardFocusHere();
 	}
 	template <typename ...t>
 	inline void text(std::string fmt, t... args) {

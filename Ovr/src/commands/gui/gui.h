@@ -8,15 +8,6 @@ namespace elements {
 		u8 r{}, g{}, b{}, a{};
 		inline u32 pack() { return a << 24 | b << 16 | g << 8 | r << 0; }
 	};
-	inline ImVec2 getResolution() {
-		return { ImGui::GetIO().DisplaySize };
-	}
-	inline ImVec2 convertCoordTypes(ImVec2 pos, bool isDC = false) {
-		if (isDC) {
-			return pos / getResolution();
-		}
-		return pos * getResolution();
-	}
 	inline ImVec2 getTextSize(ImFont* font, std::string text, float wrap = 0.f) {
 		ImVec2 textSize{ font->CalcTextSizeA(font->FontSize, FLT_MAX, wrap, text.c_str(), NULL) };
 		textSize.x = IM_FLOOR(textSize.x + 0.99999999999f);
@@ -35,8 +26,8 @@ namespace elements {
 			drawList->AddRectFilled(finalPos, finalPos + scaledSize, color.pack());
 		}
 		enum class eJustify : u8 { Left, Right, Center };
-		inline void text(ImFont* font, std::string text, ImVec2 pos, color color, eJustify justify = eJustify::Left, float wrap = 0.f) {
-			ImDrawList* drawList{ ImGui::GetForegroundDrawList() };
+		inline void text(ImFont* font, std::string text, ImVec2 pos, color color, eJustify justify = eJustify::Left, float wrap = 0.f, bool foreground = true) {
+			ImDrawList* drawList{ foreground ? ImGui::GetForegroundDrawList() : ImGui::GetBackgroundDrawList() };
 			ImVec2 scaledWrap{ convertCoordTypes({ wrap, wrap }) };
 			switch (justify) {
 			case eJustify::Right: {
