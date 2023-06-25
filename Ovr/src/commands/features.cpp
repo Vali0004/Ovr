@@ -1,6 +1,8 @@
 #include "features.h"
 #include "script/script.h"
 #include "hooking/hooking.h"
+#include <renderer/renderer.h>
+#include <script/elements.h>
 
 namespace commands::features {
 	namespace self {
@@ -153,6 +155,14 @@ namespace commands::features {
 			void infiniteClip(toggleCommand* command) {
 				cPed->m_inventory->m_infinite_clip = command->get(0).toggle;
 			}
+			void infiniteStickyBombs(toggleCommand* command) {
+				if (command->get(0).toggle)
+					cPed->m_fired_sticky_bombs = 0;
+			}
+			void infiniteFlares(toggleCommand* command) {
+				if (command->get(0).toggle)
+					cPed->m_fired_flares = 0;
+			}
 			void refill(actionCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
 				WEAPON::REFILL_AMMO_INSTANTLY(ped);
@@ -288,6 +298,7 @@ namespace commands::features {
 							return;
 						}
 					}
+					LOG(Info, "Go command called with type {}", (i32)type);
 					g_fiberPool.add([] {
 						global(2695915).value()->Int = type == tables::eSessionType::SCTV;
 						if (type == tables::eSessionType::Leave) {
@@ -311,10 +322,10 @@ namespace commands::features {
 			namespace backend {
 				nlohmann::json jRequest(nlohmann::json body, std::string endpoint) {
 					curlWrapper curl{};
-					std::vector<std::string> headers{
+					std::vector<const char*> headers{
 						"X-Requested-With: XMLHttpRequest",
 						"Content-Type: application/json; charset=utf-8",
-						util::network::socialclub::authorizationHeader()
+						util::network::socialclub::authorizationHeader().c_str()
 					};
 					std::string response{ curl.post(endpoint, body.dump(), headers) };
 					nlohmann::json j{ nlohmann::json::parse(response) };
@@ -383,7 +394,10 @@ namespace commands::features {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
 			}
 			void nameToRid(variadicCommand* command) {
-				g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
+				u64 rid{ backend::nameToRid(command->get(0).string) };
+				if (rid)
+					printf("RID: %lli\n", rid);
+				//g_engine.primitiveExecute("copyText {}", backend::nameToRid(command->get(0).string));
 			}
 			void convert(variadicCommand* command) {
 				std::string str{ command->get(0).string };
@@ -493,7 +507,18 @@ namespace commands::features {
 				g_running = false;
 			}
 			void exit(actionCommand* command) {
-				abort();
+				g_renderer->m_callbacks.push_back(callback([](bool& active) {
+					ONCE({ elements::openPopup("Close?"); });
+					ImVec2 center{ ImGui::GetMainViewport()->GetCenter() };
+					elements::setWindowPos(center, ImGuiCond_Appearing, { 0.5f, 0.5f });
+					elements::popupModal("Close?", [&] {
+						elements::text("The game will be closed.\nThis operation cannot be undone!\n\n");
+						elements::separator();
+						elements::button("OK", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 120.f, 28.f }, true);
+						elements::setItemDefaultFocus();
+						elements::button("Cancel", [&] { elements::closeCurrentPopup(); active = false; }, { 120.f, 28.f });
+					});
+				}));
 			}
 		}
 		namespace ui {
@@ -541,6 +566,8 @@ namespace commands::features {
 		//Weapon::Ammo
 		g_manager.add(toggleCommand("infiniteAmmo", "Infinite Ammo", "Pretty self explanitory", weapon::ammo::infinite));
 		g_manager.add(toggleCommand("infiniteClip", "Infinite Clip", "Makes it so you never reload", weapon::ammo::infiniteClip));
+		g_manager.add(toggleCommand("infiniteStickyBombs", "Infinite Sticky Bombs", "Removes the limit on C4s", weapon::ammo::infiniteStickyBombs));
+		g_manager.add(toggleCommand("infiniteFlares", "Infinite Flares", "Removes the limit on flares", weapon::ammo::infiniteFlares));
 		g_manager.add(actionCommand("refillAmmo", "Refill", "Refills all your ammo", weapon::ammo::refill));
 		//Network::Friends::Selected
 		g_manager.add(actionCommand("copyFriendRid", "Copy RID", "Copies their RID to your clipboard", network::friends::selected::copyRid));
@@ -599,7 +626,7 @@ namespace commands::features {
 		//Settings::Game
 		g_manager.add(toggleCommand("automp", "Auto Multiplayer", "Automatically load into multiplayer on startup", settings::game::autoMp));
 		g_manager.add(toggleCommand("exitInstantly", "Exit Instantly", "Exits the game instantly when exit is requested", settings::game::exitInstantly));
-		g_manager.add(actionCommand("unload", "Unload", "Unload the module", settings::game::unload));
+		g_manager.add(actionCommand("unload", "Unload", "Removes " BRAND " from the game", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));
 	}
 	void onInit() {
@@ -620,6 +647,8 @@ namespace commands::features {
 		"scale"_FF->get(0).floating_point = 1.f;
 	}
 	void onTick() {
+		Vector3 coords{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), !PLAYER::IS_PLAYER_DEAD(PLAYER::PLAYER_ID())) };
+		LOG(Info, "Coords: {}, {}, {}", coords.x, coords.y, coords.z);
 		cPed = util::classes::getPed();
 		cPedWeaponManager = cPed->m_weapon_manager;
 		cWeaponInfo = cPedWeaponManager->m_weapon_info;

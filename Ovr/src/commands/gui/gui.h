@@ -74,7 +74,7 @@ namespace commands::gui {
 		bool m_lock{};
 		bool m_clearCommandBoxOnEnter{ true };
 	private:
-		i8 m_limit{ 5 };
+		i8 m_limit{ 3 };
 		i8 m_matchLimit{ 8 };
 		std::string m_cmd{};
 		std::string m_context{};
@@ -82,9 +82,9 @@ namespace commands::gui {
 		std::vector<std::string> m_items{};
 	private:
 		char m_inputBuffer[256]{};
-		ImVec2 m_pos{ 0.5f, 0.05f };
+		ImVec2 m_pos{ 0.5f, 0.06f };
 		float m_drawBase{};
-		float m_width{ 0.27f };
+		float m_width{ 0.28f };
 		ImVec2 m_title{ m_width, 0.025f };
 		float m_padding{ 0.005f };
 		float m_itemPadding{ 0.003f };

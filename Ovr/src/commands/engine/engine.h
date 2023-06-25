@@ -5,19 +5,19 @@
 namespace commands {
 	class engine {
 	public:
-		util::network::player getPlayerForCommandArgument(std::string arg);
-		void executeWithCommand(abstractCommand*& Command, std::string context);
+		util::network::player getPlayerForCommandArgument(const std::string& arg);
+		void executeWithCommand(abstractCommand*& Command, const std::string& context);
 		bool execute(std::string& string);
 		template <typename ...T>
-		bool primitiveExecute(std::string fmt, T... args) {
+		bool primitiveExecute(const std::string fmt, T... args) {
 			std::string buf{ std::vformat(fmt, std::make_format_args(args...)) };
 			return execute(buf);
 		}
 		void replaceCommand(abstractCommand* command);
-		std::vector<abstractCommand*> findMatches(std::string command);
-		abstractCommand* getCommand(std::string search);
+		std::vector<abstractCommand*> findMatches(const std::string& command);
+		abstractCommand* getCommand(const std::string& search);
 		template <typename t>
-		t convertData(std::string str);
+		t convertData(const std::string& str);
 		bool m_useDirectMatchResults{};
 		bool m_autoComplete{};
 		bool m_useFirstResultOnTooManyResults{};

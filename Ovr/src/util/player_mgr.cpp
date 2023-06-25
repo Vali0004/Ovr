@@ -1,11 +1,12 @@
 #include "player_mgr.h"
 
 namespace util::network {
-	void player::update(CNetGamePlayer* netGamePlayer, rage::snPlayer* player, rage::snPeer* peer) {
+	void player::update(CNetGamePlayer* netGamePlayer) {
+		const rage::snSession* session{ util::network::session::get() };
 		m_netGamePlayer = netGamePlayer;
-		m_snPlayer = player;
-		m_snPeer = peer;
 		if (valid()) {
+			m_snPlayer = session->m_players[m_netGamePlayer->m_player_id];
+			m_snPeer = session->m_peers[m_netGamePlayer->m_player_id];
 			m_index = m_netGamePlayer->m_player_id;
 			m_gamerInfo = m_netGamePlayer->GetGamerInfo();
 			m_name = m_netGamePlayer->GetName();
@@ -44,8 +45,8 @@ namespace util::network {
 		if (mgr()) {
 			m_playerCount = mgr()->m_player_count;
 			m_playerLimit = mgr()->m_player_limit;
-			for (u8 i{ m_playerCount }; i; --i) {
-				m_players[i].update(getPlayer(i), session::get()->m_players[i], session::get()->m_peers[i]);
+			for (u16 i{ m_playerCount }; i; --i) {
+				m_players[i].update(getPlayer(i));
 			}
 		}
 		else {

@@ -2,7 +2,32 @@
 #include "script/script.h"
 #include "util/util.h"
 #include "shv/scripthookv.h"
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/image.h"
+#include "stb/image_write.h"
 
+namespace stb {
+	namespace memory {
+		imageData write(vec2& size, int comp, const void* data, int strideBytes, uint32_t delay) {
+			int imageSize;
+			stbi_uc* image{ stbi_write_png_to_mem((const unsigned char*)data, strideBytes, size.x.i32, size.y.i32, comp, &imageSize) };
+			RETURN_IF_VALID(image, imageSize, delay)
+		}
+		image read(imageData data) {
+			vec2 size{};
+			stbi_uc* image{ stbi_load_from_memory(data.bytes, data.size, &size.x.i32, &size.y.i32, NULL, 0) };
+			RETURN_IF_VALID(image, size)
+		}
+	}
+	namespace file {
+		image readImage(fs::path path) {
+			vec2 size{};
+			stbi_uc* image{ stbi_load(path.string().c_str(), &size.x.i32, &size.y.i32, NULL, 4) };
+			RETURN_IF_VALID(image, size)
+		}
+	}
+}
 renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	m_wndProc = WNDPROC(SetWindowLongPtrA(pointers::g_hwnd, GWLP_WNDPROC, LONG_PTR(&renderer::wndProc)));
 	if (FAILED(m_swapchain->GetDevice(__uuidof(ID3D11Device), (void**)m_device.GetAddressOf())))
@@ -47,8 +72,10 @@ void renderer::onPresent() {
 	io.FontAllowUserScaling = true;
 	io.DisplayFramebufferScale = { script::g_scale, script::g_scale };
 	io.FontGlobalScale = style.MouseCursorScale = script::g_scale;
-	io.MouseDrawCursor = script::g_guiOpen;
+	io.MouseDrawCursor = script::g_guiOpen || hasActiveCallback();
 	script::onPresent();
+	for (auto& c : m_callbacks)
+		c.invoke();
 }
 
 LRESULT renderer::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -61,6 +88,23 @@ LRESULT renderer::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return CallWindowProcA(g_renderer->m_wndProc, hWnd, uMsg, wParam, lParam);
 	}
 	return -1;
+}
+
+std::pair<shaderData, vec2> renderer::createTexture(fs::path path) {
+	image image{ stb::file::readImage(path) };
+	return std::make_pair(createShaderData(image), image.size);
+}
+shaderData renderer::createShaderData(image image) {
+	IS_VALID(image.data);
+	ID3D11ShaderResourceView* resourceView{};
+	ID3D11Texture2D* texture{};
+	D3D11_TEXTURE2D_DESC desc{ image.size.x.u32, image.size.y.u32, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, { 1 }, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0 };
+	D3D11_SUBRESOURCE_DATA subResource{ image.data, desc.Width * 4, 0 };
+	m_device->CreateTexture2D(&desc, &subResource, &texture);
+	IS_VALID(texture);
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{ DXGI_FORMAT_R8G8B8A8_UNORM, D3D11_SRV_DIMENSION_TEXTURE2D, { 0, desc.MipLevels } };
+	m_device->CreateShaderResourceView(texture, &srvDesc, std::add_pointer_t<decltype(resourceView)>(&resourceView));
+	RETURN_IF_VALID(texture, resourceView);
 }
 
 void renderer::createTextures() {

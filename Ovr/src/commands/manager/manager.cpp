@@ -38,7 +38,7 @@ namespace commands {
 					f->run();
 				}
 				else if (f->m_hotkey.pressed()) {
-					ONCE({ f->run(); }); //big brain
+					ONCE({ f->run(); });
 				}
 			}
 			else {

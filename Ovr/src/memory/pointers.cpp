@@ -31,7 +31,9 @@ namespace pointers {
         g_getEntityAttachedTo = scan("GEAT", "48 83 EC 28 48 8B 51 50 48 85 D2 74 04").as<decltype(g_getEntityAttachedTo)>();
         g_getGamerTaskResult = scan("GGTR", "E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 8B 05 ? ? ? ? 48 8D 4C 24").call().as<decltype(g_getGamerTaskResult)>();
         g_findGameMatch = scan("FGM", "E8 ? ? ? ? 84 C0 0F 84 F6 FE FF FF").call().as<decltype(g_findGameMatch)>();
+        g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
 
+        g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
         g_friendRegistry = scan("FR", "41 8B F4 3B C5").sub(0xB).lea().as<decltype(g_friendRegistry)>();

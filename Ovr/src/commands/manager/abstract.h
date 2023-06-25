@@ -98,9 +98,6 @@ namespace commands {
 		value& get(size_t index) {
 			return get_value(index)->m_value;
 		}
-		value& v() {
-			return get(0);
-		}
 		void add_hotkey(int key) {
 			m_hotkey.add_hotkey(key);
 		}

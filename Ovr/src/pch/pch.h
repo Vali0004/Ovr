@@ -80,11 +80,11 @@ namespace defines {
         std::transform(t.begin(), t.end(), t.data(), [](char c) { return tolower(c); });
         return t;
     }
-    inline std::vector<std::string> splitString(std::string string, char split) {
+    inline std::vector<std::string> splitString(const std::string& string, char split) {
         std::vector<std::string> strings{};
         std::string buffer{};
         for (u64 i{}; i != string.size(); ++i) {
-            char& c{ string[i] };
+            char c{ string[i] };
             if (c == split) {
                 strings.push_back(buffer);
                 buffer.erase();

@@ -17,8 +17,12 @@
 	public:
 
 class CNavigation;
-class CGameScriptObjInfo;
+class CNetShopTransactionBase;
+class CNetShopTransaction;
+class CNetShopTransactionNode;
+class CNetShopTransactionMgr;
 class CGameScriptId;
+class CGameScriptObjInfo;
 class NodeCommonDataOperations;
 class CProjectBaseSyncDataNode;
 class CSyncDataNodeFrequent;

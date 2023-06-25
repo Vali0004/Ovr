@@ -71,6 +71,8 @@ namespace commands::features {
 			}
 			extern void infinite(toggleCommand* command);
 			extern void infiniteClip(toggleCommand* command);
+			extern void infiniteStickyBombs(toggleCommand* command);
+			extern void infiniteFlares(toggleCommand* command);
 			extern void refill(actionCommand* command);
 		}
 	}

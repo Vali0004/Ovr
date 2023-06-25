@@ -16,17 +16,17 @@ inline ccp g_protectionStates[4]{
 namespace commands {
 	class toggleCommand : public abstractCommand {
 	public:
-		toggleCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(toggleCommand*)> callback) :
+		toggleCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(toggleCommand*)> callback) :
 			abstractCommand(id, name, description, hotkey, eCommandType::ToggleCommand, true),
 			m_callback(callback) {
 		}
-		toggleCommand(std::string id, std::string name, std::string description, fnptr<void(toggleCommand*)> callback) :
+		toggleCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(toggleCommand*)> callback) :
 			toggleCommand(id, name, description, {}, callback) {
 		}
-		toggleCommand(std::string id, std::string name, fnptr<void(toggleCommand*)> callback) :
+		toggleCommand(const std::string& id, const std::string& name, fnptr<void(toggleCommand*)> callback) :
 			toggleCommand(id, name, {}, callback) {
 		}
-		toggleCommand(std::string id, fnptr<void(toggleCommand*)> callback) :
+		toggleCommand(const std::string& id, fnptr<void(toggleCommand*)> callback) :
 			toggleCommand(id, {}, callback) {
 		}
 		~toggleCommand() {
@@ -50,17 +50,17 @@ namespace commands {
 	};
 	class intCommand : public abstractCommand {
 	public:
-		intCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(intCommand*)> callback, bool looped = false) :
+		intCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(intCommand*)> callback, bool looped = false) :
 			abstractCommand(id, name, description, hotkey, eCommandType::IntCommand, looped),
 			m_callback(callback) {
 		}
-		intCommand(std::string id, std::string name, std::string description, fnptr<void(intCommand*)> callback, bool looped = false) :
+		intCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(intCommand*)> callback, bool looped = false) :
 			intCommand(id, name, description, {}, callback, looped) {
 		}
-		intCommand(std::string id, std::string name, fnptr<void(intCommand*)> callback, bool looped = false) :
+		intCommand(const std::string& id, const std::string& name, fnptr<void(intCommand*)> callback, bool looped = false) :
 			intCommand(id, name, {}, callback, looped) {
 		}
-		intCommand(std::string id, fnptr<void(intCommand*)> callback, bool looped = false) :
+		intCommand(const std::string& id, fnptr<void(intCommand*)> callback, bool looped = false) :
 			intCommand(id, {}, callback, looped) {
 		}
 		~intCommand() {
@@ -82,17 +82,17 @@ namespace commands {
 	};
 	class toggleIntCommand : public abstractCommand {
 	public:
-		toggleIntCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(toggleIntCommand*)> callback) :
+		toggleIntCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(toggleIntCommand*)> callback) :
 			abstractCommand(id, name, description, hotkey, eCommandType::ToggleIntCommand, true),
 			m_callback(callback) {
 		}
-		toggleIntCommand(std::string id, std::string name, std::string description, fnptr<void(toggleIntCommand*)> callback) :
+		toggleIntCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(toggleIntCommand*)> callback) :
 			toggleIntCommand(id, name, description, {}, callback) {
 		}
-		toggleIntCommand(std::string id, std::string name, fnptr<void(toggleIntCommand*)> callback) :
+		toggleIntCommand(const std::string& id, const std::string& name, fnptr<void(toggleIntCommand*)> callback) :
 			toggleIntCommand(id, name, {}, callback) {
 		}
-		toggleIntCommand(std::string id, fnptr<void(toggleIntCommand*)> callback) :
+		toggleIntCommand(const std::string& id, fnptr<void(toggleIntCommand*)> callback) :
 			toggleIntCommand(id, {}, callback) {
 		}
 		~toggleIntCommand() {
@@ -119,17 +119,17 @@ namespace commands {
 	};
 	class floatCommand : public abstractCommand {
 	public:
-		floatCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(floatCommand*)> callback, bool looped = false) :
+		floatCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(floatCommand*)> callback, bool looped = false) :
 			abstractCommand(id, name, description, hotkey, eCommandType::FloatCommand, looped),
 			m_callback(callback) {
 		}
-		floatCommand(std::string id, std::string name, std::string description, fnptr<void(floatCommand*)> callback, bool looped = false) :
+		floatCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(floatCommand*)> callback, bool looped = false) :
 			floatCommand(id, name, description, {}, callback, looped) {
 		}
-		floatCommand(std::string id, std::string name, fnptr<void(floatCommand*)> callback, bool looped = false) :
+		floatCommand(const std::string& id, const std::string& name, fnptr<void(floatCommand*)> callback, bool looped = false) :
 			floatCommand(id, name, {}, callback, looped) {
 		}
-		floatCommand(std::string id, fnptr<void(floatCommand*)> callback, bool looped = false) :
+		floatCommand(const std::string& id, fnptr<void(floatCommand*)> callback, bool looped = false) :
 			floatCommand(id, {}, callback, looped) {
 		}
 		~floatCommand() {
@@ -151,17 +151,17 @@ namespace commands {
 	};
 	class toggleFloatCommand : public abstractCommand {
 	public:
-		toggleFloatCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(toggleFloatCommand*)> callback) :
+		toggleFloatCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(toggleFloatCommand*)> callback) :
 			abstractCommand(id, name, description, hotkey, eCommandType::ToggleFloatCommand, true),
 			m_callback(callback) {
 		}
-		toggleFloatCommand(std::string id, std::string name, std::string description, fnptr<void(toggleFloatCommand*)> callback) :
+		toggleFloatCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(toggleFloatCommand*)> callback) :
 			toggleFloatCommand(id, name, description, {}, callback) {
 		}
-		toggleFloatCommand(std::string id, std::string name, fnptr<void(toggleFloatCommand*)> callback) :
+		toggleFloatCommand(const std::string& id, const std::string& name, fnptr<void(toggleFloatCommand*)> callback) :
 			toggleFloatCommand(id, name, {}, callback) {
 		}
-		toggleFloatCommand(std::string id, fnptr<void(toggleFloatCommand*)> callback) :
+		toggleFloatCommand(const std::string& id, fnptr<void(toggleFloatCommand*)> callback) :
 			toggleFloatCommand(id, {}, callback) {
 		}
 		~toggleFloatCommand() {
@@ -188,17 +188,17 @@ namespace commands {
 	};
 	class actionCommand : public abstractCommand {
 	public:
-		actionCommand(std::string id, std::string name, std::string description, hotkey hotkey, fnptr<void(actionCommand*)> callback) :
+		actionCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(actionCommand*)> callback) :
 			abstractCommand(id, name, description, hotkey, eCommandType::ActionCommand, false),
 			m_callback(callback) {
 		}
-		actionCommand(std::string id, std::string name, std::string description, fnptr<void(actionCommand*)> callback) :
+		actionCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(actionCommand*)> callback) :
 			actionCommand(id, name, description, {}, callback) {
 		}
-		actionCommand(std::string id, std::string name, fnptr<void(actionCommand*)> callback) :
+		actionCommand(const std::string& id, const std::string& name, fnptr<void(actionCommand*)> callback) :
 			actionCommand(id, name, {}, callback) {
 		}
-		actionCommand(std::string id, fnptr<void(actionCommand*)> callback) :
+		actionCommand(const std::string& id, fnptr<void(actionCommand*)> callback) :
 			actionCommand(id, {}, callback) {
 		}
 		~actionCommand() {
@@ -217,13 +217,13 @@ namespace commands {
 	};
 	class protectionCommand : public abstractCommand {
 	public:
-		protectionCommand(std::string id, std::string name, std::string description) :
+		protectionCommand(const std::string& id, const std::string& name, const std::string& description) :
 			abstractCommand(id, name, description, {}, eCommandType::ProtectionCommand, false) {
 		}
-		protectionCommand(std::string id, std::string name) :
+		protectionCommand(const std::string& id, const std::string& name) :
 			protectionCommand(id, name, {}) {
 		}
-		protectionCommand(std::string id) :
+		protectionCommand(const std::string& id) :
 			protectionCommand(id, {}) {
 		}
 		~protectionCommand() {
@@ -363,11 +363,11 @@ namespace commands {
 	};
 	class variadicCommand : public abstractCommand {
 	public:
-		variadicCommand(std::string id, std::string name, std::string description, std::vector<typedValue> values, fnptr<void(variadicCommand*)> callback, bool looped) :
+		variadicCommand(const std::string& id, const std::string& name, const std::string& description, std::vector<typedValue> values, fnptr<void(variadicCommand*)> callback, bool looped) :
 			abstractCommand(id, name, description, {}, eCommandType::VariadicCommand, looped),
 			m_callback(callback), m_values(values), m_loop(looped) {
 		}
-		variadicCommand(std::string id, std::string name, std::vector<typedValue> values, fnptr<void(variadicCommand*)> callback, bool looped) :
+		variadicCommand(const std::string& id, const std::string& name, std::vector<typedValue> values, fnptr<void(variadicCommand*)> callback, bool looped) :
 			variadicCommand(id, name, {}, values, callback, looped) {
 		}
 		void init() override {

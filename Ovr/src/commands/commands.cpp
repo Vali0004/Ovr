@@ -35,6 +35,9 @@ namespace commands {
 		std::string str{ command->m_context.substr(command->m_context.find_first_of(' ') + 1) };
 		LOG(Info, str);
 	}
+	void forceQuitToSp(actionCommand* command) {
+		NETWORK::SHUTDOWN_AND_LOAD_MOST_RECENT_SAVE();
+	}
 	void init() {
 		g_manager.add(variadicCommand("copyText", "Copy Text", "Copies text to clipboard", { { eValueType::String } }, copyText, false));
 		g_manager.add(variadicCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", { { eValueType::String } }, copyScString, false));
@@ -44,6 +47,7 @@ namespace commands {
 		g_manager.add(toggleCommand("useFirstCommandOnMultipleResults", "Use The First Command On Multiple Results", "When an command has multiple results, it will use the closet resembling command", useFirstCommandOnMultipleResults));
 		g_manager.add(toggleCommand("clearCommandBoxOnEnter", "Clear Command Box On Enter", clearCommandBoxOnEnter));
 		g_manager.add(variadicCommand("print", "Print", "Prints a string", { { eValueType::String } }, print, false));
+		g_manager.add(actionCommand("forceQuitToSp", "Force Quit To Story Mode", "Forcefully quits to SP", forceQuitToSp));
 		features::init();
 		g_manager.init();
 	}

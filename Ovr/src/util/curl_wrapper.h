@@ -21,9 +21,9 @@ public:
         headers = curl_slist_append(headers, header.c_str());
         return curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers) == CURLE_OK;
     }
-    bool setHeaders(const std::vector<std::string>& hdrs) {
+    bool setHeaders(const std::vector<const char*>& hdrs) {
         for (const auto& header : hdrs) {
-            headers = curl_slist_append(headers, header.c_str());
+            headers = curl_slist_append(headers, header);
         }
         return curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers) == CURLE_OK;
     }
@@ -43,7 +43,7 @@ public:
     CURLcode perform() {
         return curl_easy_perform(curl);
     }
-    std::string post(const std::string& url, const std::string& data, const std::vector<std::string>& headers = {}) {
+    std::string post(const std::string& url, const std::string& data, const std::vector<const char*>& headers = {}) {
         setUrl(url);
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         setFollowLocation(true);

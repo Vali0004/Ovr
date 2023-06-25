@@ -3,7 +3,7 @@
 #include "util/util.h"
 
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
-	g_statistics.m_lastScriptEventSender = Sender;
+	g_statistics.m_lastScriptEventSender.update(Sender);
 
 	return false;
 }

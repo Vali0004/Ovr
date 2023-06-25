@@ -22,6 +22,22 @@ namespace script {
 		#endif
 		return false;
 	}
+	ID3D11ShaderResourceView* getPlayerIcon(std::string name) {
+		std::string url{ std::format("https://a.rsg.sc/n/{}/n", name) };
+		imageData* data{};
+		curlWrapper curl{};
+		curl.setFollowLocation(true);
+		curl.setUrl(url);
+		curl.setWriteData(data);
+		curl.setWriteFunction([](char* ptr, size_t size, size_t nmemb, void* data) -> size_t {
+			size_t numBytes = size * nmemb;
+			auto response = reinterpret_cast<imageData*>(data);
+			response->size = numBytes;
+			response->bytes = (unsigned char*)ptr;
+			return numBytes;
+		});
+		return g_renderer->createShaderData(stb::memory::read(*data)).resourceView;
+	}
 	void onPresent() {
 		if (script::g_guiOpen) {
 			elements::window(BRAND, g_guiOpen, [] {
@@ -87,7 +103,7 @@ namespace script {
 		#endif
 		init();
 		while (true) {
-			if (g_guiOpen || commands::gui::g_box.m_lock) {
+			if (g_guiOpen || commands::gui::g_box.m_lock || g_renderer->hasActiveCallback()) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}
 			if (g_sessionType != eSessionTypes::Offline && !util::network::g_manager.online()) {

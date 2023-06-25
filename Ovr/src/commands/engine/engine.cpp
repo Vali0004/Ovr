@@ -3,7 +3,7 @@
 #include "script/notifications/notifications.h"
 
 namespace commands {
-	util::network::player engine::getPlayerForCommandArgument(std::string arg) {
+	util::network::player engine::getPlayerForCommandArgument(const std::string& arg) {
 		util::network::player p{};
 		if (isNumber(arg)) {
 			u64 index{ stoull(arg) };
@@ -29,7 +29,7 @@ namespace commands {
 			}
 		}
 	}
-	void engine::executeWithCommand(abstractCommand*& command, std::string context) {
+	void engine::executeWithCommand(abstractCommand*& command, const std::string& context) {
 		std::vector<std::string> arguments{ splitString(context, ' ') };
 		size_t trueArgCount{ arguments.size() - 1 };
 		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
@@ -49,13 +49,13 @@ namespace commands {
 		//Handle argument parsing
 		switch (command->m_type) {
 		case eCommandType::ToggleCommand: {
-			command->v().toggle = convertData<bool>(arguments[1]);
+			command->get(0).toggle = convertData<bool>(arguments[1]);
 		} break;
 		case eCommandType::IntCommand: {
-			command->v().i32 = convertData<int>(arguments[1]);
+			command->get(0).i32 = convertData<int>(arguments[1]);
 		} break;
 		case eCommandType::FloatCommand: {
-			command->v().floating_point = convertData<float>(arguments[1]);
+			command->get(0).floating_point = convertData<float>(arguments[1]);
 		} break;
 		case eCommandType::ToggleIntCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
@@ -189,6 +189,26 @@ namespace commands {
 			return false;
 		}
 		else if (words.size() > 1) {
+			if (words.size() == 2) {
+				switch (command->m_type) {
+				case eCommandType::ToggleIntCommand: {
+					if (containsANumber(words[1]) || isNumber(words[1]))
+						command->get(1).i32 = convertData<i32>(words[1]);
+					else
+						command->get(0).toggle = convertData<bool>(words[1]);
+					replaceCommand(command);
+					return true;
+				} break;
+				case eCommandType::ToggleFloatCommand: {
+					if (containsANumber(words[1]) || isNumber(words[1]))
+						command->get(1).floating_point = convertData<fp>(words[1]);
+					else
+						command->get(0).toggle = convertData<bool>(words[1]);
+					replaceCommand(command);
+					return true;
+				} break;
+				}
+			}
 			executeWithCommand(command, string.substr(string.find(words[0])));
 			string = m_autoComplete ? command->m_id : string;
 			replaceCommand(command);
@@ -204,7 +224,7 @@ namespace commands {
 			}
 		}
 	}
-	std::vector<abstractCommand*> engine::findMatches(std::string command) {
+	std::vector<abstractCommand*> engine::findMatches(const std::string& command) {
 		std::string camel{ command };
 		camel[0] = tolower(camel[0]);
 		std::string lower{ lStr(command) };
@@ -233,7 +253,7 @@ namespace commands {
 		}
 		return matches;
 	}
-	abstractCommand* engine::getCommand(std::string search) {
+	abstractCommand* engine::getCommand(const std::string& search) {
 		auto matches{ findMatches(search) };
 		if (matches.empty()) {
 			g_notifications.add("Commands", "'{}' isn't a valid command.", search);
@@ -261,7 +281,7 @@ namespace commands {
 		return nullptr;
 	}
 	template <typename t>
-	t engine::convertData(std::string str) {
+	t engine::convertData(const std::string& str) {
 		if (isNumber(str)) {
 			return (t)stod(str);
 		}

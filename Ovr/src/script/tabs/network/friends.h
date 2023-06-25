@@ -21,7 +21,7 @@ namespace tabs::network {
 						name += " [Offline]";
 					} break;
 					}
-					elements::selectable(name, g_selectedPlayer == id, [&] {
+					elements::selectable(name, g_selectedFriend == id, [&] {
 						g_selectedFriend = id;
 					});
 				});

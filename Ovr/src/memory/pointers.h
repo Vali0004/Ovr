@@ -35,6 +35,7 @@ namespace pointers {
 		using getEntityAttachedTo = rage::CDynamicEntity*(*)(rage::CDynamicEntity* Entity);
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
 		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
+		using addItemToBasket = bool(*)(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -63,7 +64,9 @@ namespace pointers {
 	inline types::getEntityAttachedTo g_getEntityAttachedTo{};
 	inline types::getGamerTaskResult g_getGamerTaskResult{};
 	inline types::findGameMatch g_findGameMatch{};
+	inline types::addItemToBasket g_addItemToBasket{};
 
+	inline rage::grcTextureStore* g_textureStore{};
 	inline ScGameInfo* g_scGameInfo{};
 	inline FriendRegistry* g_friendRegistry{};
 	inline ScInfo* g_scInfo{};

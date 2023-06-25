@@ -300,6 +300,8 @@
     <ClInclude Include="src\script\tabs\protections\reactions\network_event.h" />
     <ClInclude Include="src\script\tabs\protections\reactions\script_event.h" />
     <ClInclude Include="src\script\tabs\protections\script_events.h" />
+    <ClInclude Include="src\stb\image.h" />
+    <ClInclude Include="src\stb\image_write.h" />
     <ClInclude Include="src\util\clipboard.h" />
     <ClInclude Include="src\script\tabs\network\session\players.h" />
     <ClInclude Include="src\script\tabs\network\session\players\selected_player.h" />
@@ -361,6 +363,7 @@
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp" />
     <ClCompile Include="src\commands\gui\gui.cpp" />
+    <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
     <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />

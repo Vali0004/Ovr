@@ -26,8 +26,10 @@ struct statistics {
 	int m_incomingNetworkEvents{};
 	int m_frameCount{};
 	std::string m_gameType{};
-	CNetGamePlayer* m_lastScriptEventSender{};
-	CNetGamePlayer* m_host{};
+	util::network::player m_lastScriptEventSender{};
+	util::network::player m_host{};
+	util::network::player m_local{};
+	util::network::player m_scriptHost{};
 	void setGameType() {
 		if (util::network::g_manager.online()) {
 			std::string gstype{ gsTypeToString(g_sessionType) };
@@ -38,8 +40,12 @@ struct statistics {
 		}
 	}
 	void reset() {
-		if (m_host != util::network::getHostNetGamePlayer())
-			m_host = util::network::getHostNetGamePlayer();
+		if (m_host.m_netGamePlayer != util::network::g_manager.host().m_netGamePlayer)
+			m_host = util::network::g_manager.host();
+		if (m_local.m_netGamePlayer != util::network::g_manager.local().m_netGamePlayer)
+			m_local = util::network::g_manager.local();
+		if (m_scriptHost.m_netGamePlayer != util::network::g_manager.scriptHost().m_netGamePlayer)
+			m_scriptHost = util::network::g_manager.scriptHost();
 		m_nativesInvoked = 0;
 		m_nativesInvokedByUs = 0;
 		m_incomingNetworkEvents = 0;
@@ -58,6 +64,7 @@ struct hooks {
 	static bool receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp);
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
+	static bool addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
 	static LPVOID convertThreadToFiber(LPVOID param);
 	static FARPROC getProcAddress(HMODULE hModule, LPCSTR lpProcName);
 	static bool updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attribute, u64 Value);
@@ -104,6 +111,7 @@ public:
 	detour m_receiveCloneCreate;
 	detour m_canApplyData;
 	detour m_findGameMatch;
+	detour m_addItemToBasket;
 	detour m_updateAttributeInt;
 	detour m_convertThreadToFiber;
 	detour m_getProcAddress;

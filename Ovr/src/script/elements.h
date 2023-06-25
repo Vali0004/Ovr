@@ -3,11 +3,11 @@
 #include "fiber/pool.h"
 #include "commands/manager/manager.h"
 #define feature_button(f, ...) elements::button(f->m_name, [] { f->run(); }, __VA_ARGS__);
-#define feature_checkbox(f, ...) elements::checkbox(f->m_name, f->v().toggle, __VA_ARGS__);
-#define feature_intSlider(f, ...) elements::intSlider(f->m_name, f->v().i32, __VA_ARGS__);
-#define feature_toggleIntSlider(f, ...) elements::toggleIntSlider(f->m_name, f->v().toggle, f->get(1).i32, __VA_ARGS__);
-#define feature_toggleFloatSlider(f, ...) elements::toggleFloatSlider(f->m_name, f->v().toggle, f->get(1).floating_point, __VA_ARGS__);
-#define feature_floatSlider(f, ...) elements::floatSlider(f->m_name, f->v().floating_point, __VA_ARGS__);
+#define feature_checkbox(f, ...) elements::checkbox(f->m_name, f->get(0).toggle, __VA_ARGS__);
+#define feature_intSlider(f, ...) elements::intSlider(f->m_name, f->get(0).i32, __VA_ARGS__);
+#define feature_toggleIntSlider(f, ...) elements::toggleIntSlider(f->m_name, f->get(0).toggle, f->get(1).i32, __VA_ARGS__);
+#define feature_toggleFloatSlider(f, ...) elements::toggleFloatSlider(f->m_name, f->get(0).toggle, f->get(1).floating_point, __VA_ARGS__);
+#define feature_floatSlider(f, ...) elements::floatSlider(f->m_name, f->get(0).floating_point, __VA_ARGS__);
 
 namespace elements {
 	inline ImVec2 shift(ImVec2 value, float amount) {
@@ -22,11 +22,11 @@ namespace elements {
 	inline void sameLine() {
 		ImGui::SameLine();
 	}
-	inline void setWindowPos(ImVec2 value) {
-		ImGui::SetNextWindowPos(value);
+	inline void setWindowPos(ImVec2 value, ImGuiCond condition = NULL, ImVec2 pivot = {}) {
+		ImGui::SetNextWindowPos(value, condition, pivot);
 	}
-	inline void setWindowSize(ImVec2 value) {
-		ImGui::SetNextWindowSize(value);
+	inline void setWindowSize(ImVec2 value, ImGuiCond condition = NULL) {
+		ImGui::SetNextWindowSize(value, condition);
 	}
 	inline void setWindow(ImVec2 pos, ImVec2 size) {
 		setWindowPos(pos);
@@ -84,6 +84,15 @@ namespace elements {
 	inline void separator() {
 		ImGui::Separator();
 	}
+	inline void openPopup(std::string id) {
+		ImGui::OpenPopup(id.c_str());
+	}
+	inline void closeCurrentPopup() {
+		ImGui::CloseCurrentPopup();
+	}
+	inline void setItemDefaultFocus() {
+		ImGui::SetItemDefaultFocus();
+	}
 	template <typename ...t>
 	inline void text(std::string fmt, t... args) {
 		std::string str{ std::vformat(fmt, std::make_format_args(args...)) };
@@ -109,7 +118,15 @@ namespace elements {
 			ImGui::End();
 		}
 	}
-	inline void primitiveWindow(std::string title, std::function<void()> cb = {}) {
+	inline void popupModal(std::string title, std::function<void()> cb = {}, ImGuiWindowFlags flags = NULL) {
+		if (ImGui::BeginPopupModal(title.c_str(), NULL, flags)) {
+			if (cb) {
+				cb();
+			}
+			ImGui::EndPopup();
+		}
+	}
+	inline void primitiveWindow(std::string title, std::function<void()> cb = {}, ImGuiWindowFlags flags = NULL) {
 		static bool t{ true };
 		window(title, t, cb, ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
 	}
@@ -186,8 +203,8 @@ namespace elements {
 			ImGui::EndCombo();
 		}
 	}
-	inline void button(std::string label, std::function<void()> cb = {}, bool continueLine = false, bool runUnderFiber = false) {
-		if (ImGui::Button(label.c_str())) {
+	inline void button(std::string label, std::function<void()> cb = {}, ImVec2 size = {}, bool continueLine = false, bool runUnderFiber = false) {
+		if (ImGui::Button(label.c_str(), size)) {
 			if (cb) {
 				if (runUnderFiber) {
 					g_fiberPool.add(cb);
@@ -244,13 +261,10 @@ namespace elements {
 			ImGui::EndPopup();
 		}
 	}
-	inline void openPopup(std::string id) {
-		ImGui::OpenPopup(id.c_str());
-	}
 	inline void popupButton(std::string name, std::string id, bool continueLine = false) {
 		button(name, [&] {
 			openPopup(id);
-		}, continueLine);
+		}, {}, continueLine);
 	}
 	template <typename t>
 	inline void selectionPopup(std::string id, std::string hint, t& index, ccp* data, u8 size, std::function<void(int)> cb = {}, bool continueLine = false) {

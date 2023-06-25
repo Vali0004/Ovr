@@ -15,9 +15,6 @@ namespace core {
 		}
 		void loop() {
 			while (g_running) {
-				if (GetAsyncKeyState(VK_END)) {
-					g_running = false;
-				}
 				std::this_thread::sleep_for(100ms);
 			}
 		}

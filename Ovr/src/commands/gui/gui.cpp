@@ -6,7 +6,7 @@
 
 namespace commands::gui {
 	#define CC elements::convertCoordTypes
-	#define CMD_ALERT(fmt, ...) alert(std::vformat(fmt, std::make_format_args(__VA_ARGS__)));
+	#define CMD_ALERT(fmt, ...) alert(std::format(fmt, __VA_ARGS__));
 	#define WHITE(A) { 255, 255, 255, A }
 	#define BLACK(A) { 0, 0, 0, A }
 	void box::captureCmd(std::string s, bool hasSpace) {
@@ -55,18 +55,25 @@ namespace commands::gui {
 				}
 			}
 		}
+		std::string biggestStr{};
 		for (auto& match : m_matches) {
-			if (match->m_description.size()) {
-				std::string text{ std::format("{} - {}", match->m_name, match->m_description) };
-				if (elements::getTextSize(g_renderer->m_tahoma, text).x < m_item.x - 0.005f) {
-					addItem(text);
+			if (match->m_name.size() > biggestStr.size())
+				biggestStr = match->m_name;
+		}
+		if (m_matches.size() < m_limit) {
+			for (auto& match : m_matches) {
+				if (match->m_description.size()) {
+					std::string text{ std::format("{} - {}", match->m_name, match->m_description) };
+					if (elements::getTextSize(g_renderer->m_tahoma, text).x < m_item.x - 0.005f) {
+						addItem(text);
+					}
+					else {
+						addItem(match->m_name);
+					}
 				}
 				else {
 					addItem(match->m_name);
 				}
-			}
-			else {
-				addItem(match->m_name);
 			}
 		}
 	}

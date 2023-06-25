@@ -112,7 +112,7 @@ namespace util {
 				}
 			}
 		}
-		inline CNetGamePlayer* getHostNetGamePlayer() {
+		inline CNetGamePlayer* getScriptHostNetGamePlayer() {
 			if (GtaThread* thr{ classes::getGtaThread("freemode"_joaat) }) {
 				if (CGameScriptHandlerNetComponent* netComponet{ classes::getScriptHandlerNetComponet(thr) }) {
 					return netComponet->get_host();

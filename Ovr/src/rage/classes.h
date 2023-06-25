@@ -2094,6 +2094,51 @@ namespace rage {
 	static_assert(sizeof(netSyncDataNode) == 0xB0);
 #pragma pack(pop)
 }
+#pragma pack(push, 1)
+class CNetShopTransactionBase {
+public:
+	uint32_t m_id; //0x0000
+	uint32_t m_variation; //0x0004
+	uint32_t m_price; //0x0008
+	uint32_t m_multiplier; //0x000C
+	uint32_t m_value; //0x0010
+}; //Size: 0x0014
+static_assert(sizeof(CNetShopTransactionBase) == 0x14);
+class CNetShopTransaction {
+public:
+	char pad_0000[8]; //0x0000
+	uint32_t m_transaction_id; //0x0008
+	char pad_000C[12]; //0x000C
+	uint32_t m_category; //0x0018
+	char pad_001C[8]; //0x001C
+	uint32_t m_action; //0x0020
+	uint32_t m_target; //0x0024
+	char pad_0002C[180]; //0x0002C
+	class CNetShopTransactionBase m_transactions[71]; //0x00E0
+	uint32_t m_transaction_count; //0x066C
+}; //Size: 0x0670
+static_assert(sizeof(CNetShopTransaction) == 0x670);
+class CNetShopTransactionNode {
+public:
+	char pad_0000[8]; //0x0000
+	class CNetShopTransaction* m_transaction_basket; //0x0008
+	class CNetShopTransactionNode* m_next; //0x0010
+}; //Size: 0x0018
+static_assert(sizeof(CNetShopTransactionNode) == 0x18);
+class CNetShopTransactionMgr {
+public:
+	char pad_0000[32]; //0x0000
+	class CNetShopTransactionNode* m_first; //0x0020
+	class CNetShopTransactionNode* m_last; //0x0028
+	char pad_0030[9]; //0x0030
+	bool m_is_busy1; //0x0039
+	char pad_003A[14]; //0x003A
+	bool m_is_busy2; //0x0048
+	char pad_0049[7]; //0x0049
+	bool m_is_busy3; //0x0050
+}; //Size: 0x0051
+static_assert(sizeof(CNetShopTransactionMgr) == 0x51);
+#pragma pack(pop)
 class CGameScriptId : public rage::scriptId {
 public:
 	char pad_002C[4]; //0x002C

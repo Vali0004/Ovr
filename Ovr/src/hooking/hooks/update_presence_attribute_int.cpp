@@ -23,8 +23,8 @@ bool hooks::updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attri
 			plural = true;
 		else if (g_statistics.m_playerCount > 1)
 			plural = true;
-		if (g_statistics.m_host && g_statistics.m_host->IsConnected()) {
-			std::string host{ g_statistics.m_host->GetName() };
+		if (g_statistics.m_host) {
+			std::string host{ g_statistics.m_host.m_name };
 			LOG(Session, "Joined a new {} session with {} player{} hosted by {}", g_statistics.m_gameType, playerCount, plural ? "s" : "", host);
 		}
 		else {

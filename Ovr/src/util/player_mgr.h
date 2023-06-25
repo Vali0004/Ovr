@@ -7,7 +7,7 @@
 namespace util::network {
 	class player {
 	public:
-		void update(CNetGamePlayer* netGamePlayer, rage::snPlayer* player, rage::snPeer* peer);
+		void update(CNetGamePlayer* netGamePlayer);
 	public:
 		bool valid() {
 			return m_netGamePlayer && m_netGamePlayer->IsConnected() && m_netGamePlayer->m_player_id != UINT8_MAX;
@@ -74,7 +74,7 @@ namespace util::network {
 	public:
 		void loop();
 	public:
-		player& get(u8 index) {
+		player& get(u16 index) {
 			return m_players[index];
 		}
 		player getByPeerAddress(u64 peerAddress) {
@@ -120,19 +120,28 @@ namespace util::network {
 			return {};
 		}
 		player host() {
-			CNetGamePlayer* player{ getHostNetGamePlayer() };
+			for (auto& entry : m_players) {
+				auto& player{ entry.second };
+				if (player.m_host) {
+					return player;
+				}
+			}
+			return {};
+		}
+		player scriptHost() {
+			CNetGamePlayer* player{ getScriptHostNetGamePlayer() };
 			if (player)
 				return get(player->m_player_id);
 			return {};
 		}
 	public:
-		player& operator[](u8 index) {
+		player& operator[](u16 index) {
 			return get(index);
 		}
-		std::map<u8, player>::iterator begin() {
+		std::map<u16, player>::iterator begin() {
 			return m_players.begin();
 		}
-		std::map<u8, player>::iterator end() {
+		std::map<u16, player>::iterator end() {
 			return m_players.end();
 		}
 	public:
@@ -140,9 +149,9 @@ namespace util::network {
 			return pointers::g_networkPlayerMgr && mgr() && getLocalPlayer();
 		}
 	public:
-		std::map<u8, player> m_players{};
-		u8 m_playerCount{};
-		u8 m_playerLimit{};
+		std::map<u16, player> m_players{};
+		u16 m_playerCount{};
+		u16 m_playerLimit{};
 	private:
 		CNetworkPlayerMgr* mgr() {
 			return *pointers::g_networkPlayerMgr;

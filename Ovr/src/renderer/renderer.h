@@ -3,7 +3,57 @@
 #include "memory/pointers.h"
 #include "rage/commands/list.h"
 #include "renderer/dxtk/state_saver.h"
+#define RETURN(...) return { __VA_ARGS__ };
+#define RETURN_DEFAULT return {};
+#define IS_VALID(check) \
+	if (!check) { \
+		RETURN_DEFAULT; \
+	}
+#define RETURN_IF_VALID(check, ...) IS_VALID(check) RETURN(check, __VA_ARGS__)
 
+class callback {
+public:
+	callback(bool active, std::function<void(bool&)> fn) : m_active(active), m_fn(fn) {}
+	callback(std::function<void(bool&)> fn) : callback(true, fn) {}
+public:
+	void invoke() {
+		if (m_fn) {
+			if (m_active) {
+				m_fn(m_active);
+			}
+		}
+	}
+	operator bool() {
+		return m_active;
+	}
+private:
+	bool m_active{};
+	std::function<void(bool&)> m_fn{};
+};
+struct vec2 {
+	union vectorCordValue {
+		int16_t i16;
+		uint16_t u16;
+		int32_t i32;
+		uint32_t u32;
+		int32_t i64;
+		uint32_t u64;
+		float fPoint;
+	};
+	vectorCordValue x{}, y{};
+};
+struct image { unsigned char* data; vec2 size; };
+struct imageData { unsigned char* bytes; int size; uint32_t delay; };
+struct shaderData { ID3D11Resource* resource{}; ID3D11ShaderResourceView* resourceView{}; };
+namespace stb {
+	namespace memory {
+		extern imageData write(vec2& size, int comp, const void* data, int strideBytes, uint32_t delay);
+		extern image read(imageData data);
+	}
+	namespace file {
+		extern image readImage(fs::path path);
+	}
+}
 class renderer {
 public:
 	renderer();
@@ -11,6 +61,9 @@ public:
 public:
 	void onPresent();
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+public:
+	std::pair<shaderData, vec2> createTexture(fs::path path);
+	shaderData createShaderData(image image);
 public:
 	//SHV fuckery
 	void createTextures();
@@ -24,6 +77,15 @@ public:
 	ImFont* m_arial{};
 	ImFontConfig m_fontCfg{};
 public:
+	bool hasActiveCallback() {
+		for (auto& c : m_callbacks) {
+			if (c) {
+				return true;
+			}
+		}
+		return false;
+	}
+	std::vector<callback> m_callbacks{};
 	bool m_stateSaved{};
 	std::unique_ptr<stateSaver> m_stateSaver{};
 	std::unique_ptr<DirectX::CommonStates> m_commonState{};

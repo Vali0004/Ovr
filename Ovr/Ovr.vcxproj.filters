@@ -526,6 +526,12 @@
     <ClInclude Include="src\util\player_mgr.h">
       <Filter>src\util</Filter>
     </ClInclude>
+    <ClInclude Include="src\stb\image_write.h">
+      <Filter>src\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb\image.h">
+      <Filter>src\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -840,6 +846,9 @@
     <ClCompile Include="src\util\player_mgr.cpp">
       <Filter>src\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -982,6 +991,9 @@
     </Filter>
     <Filter Include="src\json">
       <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\stb">
+      <UniqueIdentifier>{851d4248-f913-404e-b6f3-b79401bd440f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
