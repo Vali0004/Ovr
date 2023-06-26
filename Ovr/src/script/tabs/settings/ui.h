@@ -5,7 +5,7 @@
 namespace tabs::settings {
 	inline void ui() {
 		elements::tabItem("UI", [] {
-			feature_floatSlider("scale"_FC, 0.5f, 4.f);
+			cfloatSlider("scale"_FC, 0.5f, 4.f);
 		});
 	}
 }

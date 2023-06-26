@@ -2,12 +2,12 @@
 #include "pch/pch.h"
 #include "fiber/pool.h"
 #include "commands/manager/manager.h"
-#define feature_button(f, ...) elements::button(f->m_name, [] { f->run(); }, __VA_ARGS__);
-#define feature_checkbox(f, ...) elements::checkbox(f->m_name, f->get(0).toggle, __VA_ARGS__);
-#define feature_intSlider(f, ...) elements::intSlider(f->m_name, f->get(0).i32, __VA_ARGS__);
-#define feature_toggleIntSlider(f, ...) elements::toggleIntSlider(f->m_name, f->get(0).toggle, f->get(1).i32, __VA_ARGS__);
-#define feature_toggleFloatSlider(f, ...) elements::toggleFloatSlider(f->m_name, f->get(0).toggle, f->get(1).floating_point, __VA_ARGS__);
-#define feature_floatSlider(f, ...) elements::floatSlider(f->m_name, f->get(0).floating_point, __VA_ARGS__);
+#define cbutton(f, ...) elements::button(f->m_name, [] { f->run(); }, __VA_ARGS__);
+#define ccheckbox(f, ...) elements::checkbox(f->m_name, f->get(0).toggle, __VA_ARGS__);
+#define cintSlider(f, ...) elements::intSlider(f->m_name, f->get(0).i32, __VA_ARGS__);
+#define ctoggleIntSlider(f, ...) elements::toggleIntSlider(f->m_name, f->get(0).toggle, f->get(1).i32, __VA_ARGS__);
+#define ctoggleFloatSlider(f, ...) elements::toggleFloatSlider(f->m_name, f->get(0).toggle, f->get(1).floating_point, __VA_ARGS__);
+#define cfloatSlider(f, ...) elements::floatSlider(f->m_name, f->get(0).floating_point, __VA_ARGS__);
 
 namespace elements {
 	inline ImVec2 shift(ImVec2 value, float amount) {

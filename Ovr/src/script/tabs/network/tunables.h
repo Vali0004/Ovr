@@ -4,7 +4,7 @@
 namespace tabs::network {
 	inline void tunables() {
 		elements::tabItem("Tunables", [] {
-			feature_checkbox("offradar"_TC);
+			ccheckbox("offradar"_TC);
 		});
 	}
 }

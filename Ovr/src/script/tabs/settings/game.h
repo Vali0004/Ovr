@@ -5,10 +5,10 @@
 namespace tabs::settings {
 	inline void game() {
 		elements::tabItem("Game", [] {
-			feature_checkbox("automp"_TC);
-			feature_button("unload"_AC);
+			ccheckbox("automp"_TC);
+			cbutton("unload"_AC);
 			elements::sameLine();
-			feature_button("exit"_AC);
+			cbutton("exit"_AC);
 		});
 	}
 }

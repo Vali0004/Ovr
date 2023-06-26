@@ -31,8 +31,8 @@ namespace tabs::network {
 				static FriendInfo& info{ util::network::friends::getFriends()[g_selectedFriend] };
 				elements::text("Name: {}", info.m_name);
 				elements::text("RID: {}", info.m_rockstar_id);
-				feature_button("copyFriendRid"_AC);
-				feature_button("copyFriendName"_AC);
+				cbutton("copyFriendRid"_AC);
+				cbutton("copyFriendName"_AC);
 			});
 		});
 	}

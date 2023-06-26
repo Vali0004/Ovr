@@ -5,11 +5,11 @@ namespace tabs::weapon {
 	inline void ammo() {
 		elements::tabItem("Ammo", [] {
 			elements::section("Special Ammo", [] {
-				feature_checkbox("explosiveAmmo"_TC);
+				ccheckbox("explosiveAmmo"_TC);
 			});
-			feature_checkbox("infiniteAmmo"_TC);
-			feature_checkbox("infiniteClip"_TC);
-			feature_button("refillAmmo"_AC);
+			ccheckbox("infiniteAmmo"_TC);
+			ccheckbox("infiniteClip"_TC);
+			cbutton("refillAmmo"_AC);
 		});
 	}
 }
