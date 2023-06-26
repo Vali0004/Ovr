@@ -56,15 +56,15 @@ public:
 }; //Size: 0x0060
 static_assert(sizeof(CNavigation) == 0x5C);
 namespace rage {
-	#pragma pack(push, 8)
-	class scrVector {
+	class alignas(16) scrVector {
 	public:
-		scrVector() : x(0.f), y(0.f), z(0.f) {}
+		scrVector() = default;
 		scrVector(float x, float y, float z) : x(x), y(y), z(z) {}
 	public:
-		float x, y, z;
+		alignas(8) float x{};
+		alignas(8) float y{};
+		alignas(8) float z{};
 	};
-	#pragma pack(pop)
 	class netLoggingInterface {
 	public:
 	};
@@ -2680,13 +2680,13 @@ public:
 static_assert(sizeof(CVehicleProximityMigrationDataNode) == 0x288);
 #pragma pack(pop)
 class CObject : public rage::fwEntity {};
-#pragma pack(push, 8)
 class Vector2 final {
 public:
-	Vector2() : x(0.f), y(0.f) {}
+	Vector2() = default;
 	Vector2(float x, float y) : x(x), y(y) {}
 public:
-	float x, y;
+	alignas(8) float x{};
+	alignas(8) float y{};
 	rage::vector2 deserialize() {
 		return { x, y };
 	}
@@ -2759,7 +2759,6 @@ public:
 		return *this;
 	}
 };
-#pragma pack(pop)
 class Vector3 : public rage::scrVector {
 public:
 	Vector3() : rage::scrVector() {}
@@ -2845,13 +2844,15 @@ public:
 		return *this;
 	}
 };
-#pragma pack(push, 8)
 class Vector4 final {
 public:
 	Vector4() = default;
 	Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 public:
-	float x, y, z, w;
+	alignas(8) float x{};
+	alignas(8) float y{};
+	alignas(8) float z{};
+	alignas(8) float w{};
 	rage::vector4 deserialize() {
 		return { x, y, z, w };
 	}
@@ -2939,7 +2940,6 @@ public:
 		return *this;
 	}
 };
-#pragma pack(pop)
 inline Vector2 rage::vector2::serialize() {
 	return { x, y };
 }

@@ -827,8 +827,6 @@ namespace commands::features {
 		"scale"_FC->get(0).floating_point = 1.f;
 	}
 	void onTick() {
-		Vector3 coords{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), !PLAYER::IS_PLAYER_DEAD(PLAYER::PLAYER_ID())) };
-		LOG(Info, "Coords: {}, {}, {}", coords.x, coords.y, coords.z);
 		cPed = util::classes::getPed();
 		cPedWeaponManager = cPed->m_weapon_manager;
 		cWeaponInfo = cPedWeaponManager->m_weapon_info;
