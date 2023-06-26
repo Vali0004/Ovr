@@ -159,7 +159,7 @@ namespace util::network {
 		CNetGamePlayer** players() {
 			return mgr()->m_player_list;
 		}
-		CNetGamePlayer* getPlayer(u8 index) {
+		CNetGamePlayer* getPlayer(u16 index) {
 			if (m_playerCount > index && mgr()) {
 				return players()[index];
 			}
