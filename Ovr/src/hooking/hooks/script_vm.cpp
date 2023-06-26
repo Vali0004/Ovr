@@ -125,9 +125,9 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrNativeCallContext curInfo(returnSize ? &Stack[Serialised->m_stack_pointer - paramCount] : 0, paramCount, &Stack[Serialised->m_stack_pointer - paramCount]);
 				if (cmd == pointers::g_nativeRegistrationTable->get_handler(0xEE8559BBFC27701B)) {
 					cmd = [](rage::scrNativeCallContext* ctx) {
-						Entity entity{ ctx->getArg<Entity>(0) };
-						const char* propertyName{ ctx->getArg<const char*>(1) };
-						int value{ ctx->getArg<int>(2) };
+						Entity entity{ ctx->Args[1].Int };
+						const char* propertyName{ ctx->Args[1].String };
+						int value{ ctx->Args[1].Int };
 						DECORATOR::DECOR_SET_INT(entity, propertyName, value);
 						printf("call for DSI\n");
 					};

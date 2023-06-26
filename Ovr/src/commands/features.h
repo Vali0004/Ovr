@@ -156,6 +156,9 @@ namespace commands::features {
 		extern void join(variadicCommand* command);
 		extern void bail(actionCommand* command);
 	}
+	namespace protections {
+
+	}
 	namespace settings {
 		namespace game {
 			extern void autoMp(toggleCommand* command);

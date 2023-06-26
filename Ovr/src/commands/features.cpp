@@ -67,7 +67,10 @@ namespace commands::features {
 
 			}
 			void superJump(toggleCommand* command) {
-
+				Player player{ PLAYER::PLAYER_ID() };
+				if (command->get(0).toggle) {
+					MISC::SET_SUPER_JUMP_THIS_FRAME(player);
+				}
 			}
 			void gracefulLanding(toggleCommand* command) {
 

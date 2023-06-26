@@ -56,7 +56,7 @@ public:
 }; //Size: 0x0060
 static_assert(sizeof(CNavigation) == 0x5C);
 namespace rage {
-#pragma pack(push, 8)
+	#pragma pack(push, 8)
 	class scrVector {
 	public:
 		scrVector() : x(0.f), y(0.f), z(0.f) {}
@@ -64,7 +64,7 @@ namespace rage {
 	public:
 		float x, y, z;
 	};
-#pragma pack(pop)
+	#pragma pack(pop)
 	class netLoggingInterface {
 	public:
 	};
@@ -1336,6 +1336,8 @@ namespace rage {
 	public:
 		void Reset() {
 			BufferCount = 0;
+			memset(Orig, NULL, sizeof(Orig));
+			memset(Buffer, NULL, sizeof(Buffer));
 		}
 		void CopyReferencedParametersOut() {
 			while (BufferCount--) {
@@ -1353,29 +1355,6 @@ namespace rage {
 		void reset() {
 			ArgCount = 0;
 			VectorSpace.Reset();
-		}
-		template <typename t>
-		void pushArg(t&& value) {
-			static_assert(sizeof(t) <= sizeof(std::uint64_t));
-			*reinterpret_cast<std::remove_cv_t<std::remove_reference_t<t>>*>(reinterpret_cast<std::uint64_t*>(Args) + (ArgCount++)) = std::forward<t>(value);
-		}
-		template <typename t>
-		t& getArg(std::size_t index) {
-			static_assert(sizeof(t) <= sizeof(std::uint64_t));
-			return *reinterpret_cast<t*>(reinterpret_cast<std::uint64_t*>(Args) + index);
-		}
-		template <typename t>
-		void setArg(std::size_t index, t&& value) {
-			static_assert(sizeof(t) <= sizeof(std::uint64_t));
-			*reinterpret_cast<std::remove_cv_t<std::remove_reference_t<t>>*>(reinterpret_cast<std::uint64_t*>(Args) + index) = std::forward<t>(value);
-		}
-		template <typename t>
-		t* getRetValue() {
-			return reinterpret_cast<t*>(Return);
-		}
-		template <typename t>
-		void setRetValue(t value) {
-			*reinterpret_cast<std::remove_cv_t<std::remove_reference_t<t>>*>(Return) = value;
 		}
 	public:
 		scrValue* Return; //0x0000

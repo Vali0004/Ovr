@@ -45,7 +45,7 @@ public:
 	template <typename t>
 	void remove(ccp id) {
 		if (patch* p = get<t>(id); p) {
-			p->resore();
+			p->restore();
 		}
 	}
 	patch* get(ccp id) {
