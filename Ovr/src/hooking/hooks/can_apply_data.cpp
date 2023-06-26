@@ -73,7 +73,7 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 		case "CPedAttachDataNode"_joaat: {
 			const auto node{ (CPedAttachDataNode*)(pNode) };
 			if (node->m_attached && node->m_attached_to == Object->m_object_id) {
-				switch ("pedAttachCrashProtection"_PF->state()) {
+				switch ("pedAttachCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "P{} crash from {}", 1, Sender->GetName());
 				} break;
@@ -100,7 +100,7 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 			const auto node{ (CSectorDataNode*)(pNode) };
 			auto Pos{ node->m_pos };
 			if (Pos.x == 712 || Pos.y == 712 || Pos.z == 712) {
-				switch ("invalidSectorPositionCrashProtection"_PF->state()) {
+				switch ("invalidSectorPositionCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "P{} crash from {}", 0, Sender->GetName());
 				} break;
@@ -117,7 +117,7 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 		case "CTrainGameStateDataNode"_joaat: {
 			const auto node{ (CTrainGameStateDataNode*)(pNode) };
 			if (node->m_track_id < 0 || node->m_track_id >= 27) {
-				switch ("invalidTrainTrackIndexCrashProtection"_PF->state()) {
+				switch ("invalidTrainTrackIndexCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "T{} crash from {}", 0, Sender->GetName());
 				} break;
@@ -140,7 +140,7 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 						if (CVehicle* vehicle{ ped->m_vehicle }) {
 							if (util::isInVehicle(ped, vehicle)) {
 								if (Object->m_object_id == objectId) {
-									switch ("vehicleKickProtection"_PF->state()) {
+									switch ("vehicleKickProtection"_PC->state()) {
 									case eProtectionState::Notify: {
 										LOG(Session, "Vehicle kick from {}", Sender->GetName());
 									} break;
@@ -162,7 +162,7 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 						) {
 							for (u8 i{}; i != 16; ++i) {
 								if (node->m_has_occupants[i] && node->m_occupants[i] == objectId) {
-									switch ("remoteTeleportProtecton"_PF->state()) {
+									switch ("remoteTeleportProtecton"_PC->state()) {
 									case eProtectionState::Notify: {
 										LOG(Session, "Remote teleport from {}", Sender->GetName());
 									} break;

@@ -61,6 +61,7 @@ namespace commands {
 		ToggleFloatCommand,
 		ActionCommand,
 		ProtectionCommand,
+		SectionProtectionCommand,
 		VariadicCommand
 	};
 	class abstractCommand {

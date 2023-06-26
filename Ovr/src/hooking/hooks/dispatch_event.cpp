@@ -16,7 +16,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				rage::rlGamerHandle handle{ 0 };
 				handle.deserialize(buffer);
 				if (player.m_rid == handle.m_rockstar_id) {
-					switch ("lostConnectionKickProtection"_PF->state()) {
+					switch ("lostConnectionKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "H{} kick from {}", 0, player.m_name);
 					} break;
@@ -43,7 +43,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 							uint64_t arrayElement{};
 							buffer.ReadQword(&arrayElement, 64);
 							if (arrayElement != NULL) {
-								switch ("desyncKickProtection"_PF->state()) {
+								switch ("desyncKickProtection"_PC->state()) {
 								case eProtectionState::Notify: {
 									LOG(Session, "D{} kick from {}", kickType,  player.m_name);
 								} break;
@@ -65,7 +65,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 							kickType = 1;
 						else
 							kickType = 2;
-						switch ("desyncKickProtection"_PF->state()) {
+						switch ("desyncKickProtection"_PC->state()) {
 						case eProtectionState::Notify: {
 							LOG(Session, "D{} from {}", kickType,  player.m_name);
 						} break;
@@ -106,7 +106,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				buffer.ReadPeerId(&msg.m_peer_id);
 				buffer.ReadBool(&msg.m_is_team);
 				if (util::isSpamMessage(msg.m_message)) {
-					switch ("chatSpam"_PF->state()) {
+					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "{} is a chat spammer",  player.m_name);
 					} break;
@@ -127,7 +127,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
 				if (util::isSpamMessage(msg.m_message)) {
-					switch ("chatSpam"_PF->state()) {
+					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "{} is a text message spammer",  player.m_name);
 					} break;

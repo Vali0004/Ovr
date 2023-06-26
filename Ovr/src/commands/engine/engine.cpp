@@ -74,6 +74,11 @@ namespace commands {
 			command->get(0).string = arguments[1].c_str();
 			static_cast<protectionCommand*>(command)->update(command->get(0).string);
 		} break;
+		case eCommandType::SectionProtectionCommand: {
+			command->get(0).string = arguments[1].c_str();
+			static_cast<sectionProtectionCommand*>(command)->update(command->get(0).string);
+			command->run();
+		} break;
 		case eCommandType::VariadicCommand: {
 			if (command->has_value()) {
 				if (command->get_value(0)->m_type != eValueType::String) {

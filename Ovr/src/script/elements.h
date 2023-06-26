@@ -301,4 +301,11 @@ namespace elements {
 			cmd->update(g_protectionStates[idx]);
 		}, continueLine);
 	}
+	inline void sectionProtectionToggle(ccp id, bool continueLine = false) {
+		auto cmd{ commands::g_manager.getCommand<commands::sectionProtectionCommand>(id) };
+		popupButton(cmd->m_name, id, true);
+		selectionPopup<eProtectionState>(id, "State", cmd->m_state, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
+			cmd->update(g_protectionStates[idx]);
+		}, continueLine);
+	}
 }

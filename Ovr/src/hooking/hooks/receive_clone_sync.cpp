@@ -3,7 +3,7 @@
 
 eAckCode hooks::receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, u16 ObjectId, rage::datBitBuffer* Buffer, u16 Unknown, u32 Timestamp) {
 	if (ObjectType < eNetObjectType::Automobile || ObjectType > eNetObjectType::Train) {
-		switch ("invalidObjectTypeCrashProtection"_PF->state()) {
+		switch ("invalidObjectTypeCrashProtection"_PC->state()) {
 		case eProtectionState::Notify: {
 			LOG(Session, "T{} crash from {}", 3, Sender->GetName());
 		} break;
@@ -18,7 +18,7 @@ eAckCode hooks::receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sen
 	}
 	if (rage::netObject* netObject{ pointers::g_getNetObject(pObjMgr, ObjectId, true) }) {
 		if (netObject->m_object_type != (i16)ObjectType) {
-			switch ("mismatchObjectTypeCrashProtection"_PF->state()) {
+			switch ("mismatchObjectTypeCrashProtection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "T{} crash from {}", 4, Sender->GetName());
 			} break;

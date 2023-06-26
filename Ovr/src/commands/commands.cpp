@@ -5,6 +5,7 @@
 #include "util/clipboard.h"
 #include "features.h"
 #include "gui/gui.h"
+#include "renderer/renderer.h"
 
 namespace commands {
 	void copyText(variadicCommand* command) {
@@ -53,9 +54,9 @@ namespace commands {
 	}
 	void onInit() {
 		features::onInit();
-		"useDirectMatchResults"_TF->get(0).toggle = true;
-		"autoCompleteCommands"_TF->get(0).toggle = true;
-		"clearCommandBoxOnEnter"_TF->get(0).toggle = true;
+		"useDirectMatchResults"_TC->get(0).toggle = true;
+		"autoCompleteCommands"_TC->get(0).toggle = true;
+		"clearCommandBoxOnEnter"_TC->get(0).toggle = true;
 	}
 	void onTick() {
 		init();

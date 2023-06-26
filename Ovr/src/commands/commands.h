@@ -12,6 +12,7 @@ namespace commands {
 	extern void clearCommandBoxOnEnter(toggleCommand* command);
 	extern void print(variadicCommand* command);
 	extern void forceQuitToSp(actionCommand* command);
+	extern void setup(actionCommand* command);
 	extern void init();
 	extern void onInit();
 	extern void onTick();

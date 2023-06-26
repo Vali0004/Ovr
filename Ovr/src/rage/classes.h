@@ -605,10 +605,10 @@ namespace rage {
 			return true;
 		}
 		bool WriteArray(void* array, i32 size) {
-			return  pointers::g_writeBitbufArray(this, array, size, 0);
+			return pointers::g_writeBitbufArray(this, array, size, 0);
 		}
 		bool ReadArray(void* array, i32 size) {
-			return  pointers::g_readBitbufArray(this, array, size, 0);
+			return pointers::g_readBitbufArray(this, array, size, 0);
 		}
 	public:
 		u8* m_data; //0x0000
@@ -865,7 +865,7 @@ namespace rage {
 		uint32_t unk_00B8; //0x00B8
 		uint32_t m_arg_size; //0x00BC
 		uint32_t m_arg_loc; //0x00C0
-		uint32_t unk_00C4; //0x00C4 - Some sort of arg
+		uint32_t unk_00C4; //0x00C4
 		const char* m_exit_message; //0x00C8
 		uint32_t unk_00D0; //0x00D0
 		char m_name[64]; //0x00D4

@@ -41,6 +41,7 @@ namespace commands::features {
 			namespace armor {
 				extern void maxAmount(actionCommand* command);
 			}
+			extern void autoHeal(toggleCommand* command);
 			extern void suicide(actionCommand* command);
 		}
 		namespace movement {
@@ -157,7 +158,35 @@ namespace commands::features {
 		extern void bail(actionCommand* command);
 	}
 	namespace protections {
-
+		namespace kicks {
+			namespace reactions {
+				extern void kick(toggleCommand* command);
+				extern void crash(toggleCommand* command);
+			}
+			extern void allKickProtections(sectionProtectionCommand* command);
+		}
+		namespace crashes {
+			namespace reactions {
+				extern void kick(toggleCommand* command);
+				extern void crash(toggleCommand* command);
+			}
+			extern void allCrashProtections(sectionProtectionCommand* command);
+		}
+		namespace networkEvents {
+			namespace reactions {
+				extern void kick(toggleCommand* command);
+				extern void crash(toggleCommand* command);
+			}
+			extern void allNetworkEventProtections(sectionProtectionCommand* command);
+		}
+		namespace scriptEvents {
+			namespace reactions {
+				extern void redirect(toggleCommand* command);
+				extern void kick(toggleCommand* command);
+				extern void crash(toggleCommand* command);
+			}
+			extern void allScriptEventProtections(sectionProtectionCommand* command);
+		}
 	}
 	namespace settings {
 		namespace game {

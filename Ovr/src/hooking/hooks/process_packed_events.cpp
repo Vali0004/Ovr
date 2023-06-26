@@ -1,10 +1,116 @@
 #include "hooking/hooking.h"
 #include "commands/manager/manager.h"
 #include "util/util.h"
+#define PROT_CHECK(c) switch (c##_PC->state()) { \
+	case eProtectionState::Notify: { \
+		LOG(Session, "{} from {}", c##_PC->m_name, Sender->GetName()); \
+	} break; \
+	case eProtectionState::Block: { \
+		return true; \
+	} break; \
+	case eProtectionState::BlockAndNotify: { \
+		LOG(Session, "{} from {}", c##_PC->m_name, Sender->GetName()); \
+		return true; \
+	} break; \
+}
+#define EVNT_PROT_CHECK(c) switch (c##_PC->state()) { \
+	case eProtectionState::Notify: { \
+		LOG(Session, "{} from {}", c##_PC->m_name, Sender->GetName()); \
+	} break; \
+	case eProtectionState::Block: { \
+		g_statistics.m_incomingNetworkEvents--; \
+		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset); \
+	} break; \
+	case eProtectionState::BlockAndNotify: { \
+		LOG(Session, "{} from {}", c##_PC->m_name, Sender->GetName()); \
+		g_statistics.m_incomingNetworkEvents--; \
+		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset); \
+	} break; \
+}
 
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	g_statistics.m_lastScriptEventSender.update(Sender);
-
+	#define CASE(e, n) case eScriptEvents::##e: { PROT_CHECK(n); } break
+	switch (static_cast<eScriptEvents>(pEvent->m_args[0])) {
+	CASE(ScriptEventGbDisableGoonMembership, "ceoBanProtection");
+	CASE(ScriptEventGbBossStartedUsingSctv, "ceoKickProtection");
+	CASE(ScriptEventBeenPaidGoonCash, "ceoMoneyProtection");
+	CASE(ScriptEventRemoveWantedLevel, "clearWantedLevelProtection");
+	CASE(ScriptEventBossShouldLaunchWvm, "forceMissionProtection");
+	CASE(ScriptEventCollectibleCollected, "giveCollectableProtection");
+	CASE(ScriptEventFmDeliverableDelivery, "gtaBannerProtection");
+	CASE(ScriptEventBailMeForSctv, "networkBailProtection");
+	CASE(ScriptEventCarInsurance, "personalVehicleDestroyedProtection");
+	CASE(ScriptEventOffTheRadar, "remoteOffRadarProtection");
+	CASE(ScriptEventCasinoPlayHeistCutscene, "sendToCutsceneProtection");
+	CASE(ScriptEventInviteToHeistIslandBeachParty, "sendToIslandProtection");
+	CASE(ScriptEventHeistIslandWarpTransition, "sendToLocationProtection");
+	CASE(ScriptEventInviteToApartment, "soundSpamProtection");
+	CASE(TickerEventSpectatorStart, "spectateProtection");
+	CASE(ScriptEventInviteNearbyPlayersIntoApartment, "teleportProtection");
+	CASE(ScriptEventWarpToQuickTravelDestination, "teleportToWarehouseProtection");
+	CASE(ScriptEventLeaveVehicle, "gentleVehicleKickProtection");
+	CASE(ScriptEventGroupWarp, "mcTeleportProtection");
+	CASE(ScriptEventGbNonBossChallengeRequest, "startActivityProtection");
+	CASE(ScriptEventHuntTheBeastUpdateGlobal, "markPlayerBeastProtection");
+	CASE(ScriptEventTriggerExitAllFromSimpleInterior, "kickFromInteriorProtection");
+	CASE(ScriptEventPlayersWarpInsideSimpleInterior, "interiorControlProtection");
+	CASE(ScriptEventSendBasicText, "sendTextLabelSMSProtection");
+	CASE(ScriptEventTextMessageUsingLiteral, "sendTextMessageProtection");
+	CASE(ScriptEventGeneral, "tseCommandProtection");
+	CASE(GeneralEventHeistPreplanExitGuestMode, "tseCommandRotateCamProtection");
+	CASE(ScriptEventTickerMessage, "notificationProtection");
+	CASE(ScriptEventTickerMessageCustom, "customNotificationProtection");
+	CASE(TickerEventTeamCashBanked, "moneyBankedNotificationProtection");
+	CASE(TickerEventTeamCashStolen, "moneyStolenNotificationProtection");
+	CASE(TickerEventTeamCashRemoved, "moneyRemovedNotificationProtection");
+	CASE(ScriptEventPersonalVehicleStolen, "destoryPersonalVehicleProtection");
+	CASE(ScriptEventGbTriggerDefendMission, "triggerCeoRaidProtection");
+	CASE(ScriptEventConfirmationLaunchMission, "startScriptBeginProtection");
+	CASE(ScriptEventForcePlayerOntoMission, "startScriptProceedProtection");
+	case eScriptEvents::ScriptEventIslandBackupHeliLaunch: {
+		switch ("scriptEventIslandHeliLaunchCrashProtection"_PC->state()) {
+		case eProtectionState::Notify: {
+			LOG(Session, "S{} from {}", 0, Sender->GetName());
+		} break;
+		case eProtectionState::Block: {
+			return true;
+		} break;
+		case eProtectionState::BlockAndNotify: {
+			LOG(Session, "S{} from {}", 0, Sender->GetName());
+			return true;
+		} break;
+		}
+	} break;
+	case eScriptEvents::ScriptEventRequestToSpawnVehicle: {
+		switch ("scriptEventSyncedIntractionCrashProtection"_PC->state()) {
+		case eProtectionState::Notify: {
+			LOG(Session, "S{} from {}", 1, Sender->GetName());
+		} break;
+		case eProtectionState::Block: {
+			return true;
+		} break;
+		case eProtectionState::BlockAndNotify: {
+			LOG(Session, "S{} from {}", 1, Sender->GetName());
+			return true;
+		} break;
+		}
+	} break;
+	case eScriptEvents::ScriptEventLaunchSyncedInteraction: {
+		switch ("scriptEventSyncedIntractionCrashProtection"_PC->state()) {
+		case eProtectionState::Notify: {
+			LOG(Session, "S{} from {}", 2, Sender->GetName());
+		} break;
+		case eProtectionState::Block: {
+			return true;
+		} break;
+		case eProtectionState::BlockAndNotify: {
+			LOG(Session, "S{} from {}", 2, Sender->GetName());
+			return true;
+		} break;
+		}
+	} break;
+	}
 	return false;
 }
 bool incrementStatEvent(CNetworkIncrementStatEvent* pEvent, CNetGamePlayer* Sender) {
@@ -19,18 +125,7 @@ bool incrementStatEvent(CNetworkIncrementStatEvent* pEvent, CNetGamePlayer* Send
 	case "mpply_tc_hate"_joaat:
 	case "mpply_vc_annoyingme"_joaat:
 	case "mpply_vc_hate"_joaat: {
-		switch ("reportProtection"_PF->state()) {
-		case eProtectionState::Notify: {
-			LOG(Session, "Report from {}", Sender->GetName());
-		} break;
-		case eProtectionState::Block: {
-			return true;
-		} break;
-		case eProtectionState::BlockAndNotify: {
-			LOG(Session, "Report from {}", Sender->GetName());
-			return true;
-		} break;
-		}
+		PROT_CHECK("reportProtection");
 	} break;
 	}
 	return false;
@@ -74,7 +169,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			u16 ped{ Buffer->Read<u16>(13) };
 			u16 action{ Buffer->Read<u16>(8) };
 			if ((action >= 15 && action <= 18) || action == 33) {
-				switch ("vehicleTempActionCrashProtection"_PF->state()) {
+				switch ("vehicleTempActionCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "V{} from {}", 1, Sender->GetName());
 				} break;
@@ -92,7 +187,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		} break;
 		}
 		if (static_cast<u32>(type) > 9 || static_cast<u32>(type) < 0) {
-			switch ("invalidTempActionCrashProtection"_PF->state()) {
+			switch ("invalidTempActionCrashProtection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "T{} crash from {}", 5, Sender->GetName());
 			} break;
@@ -121,7 +216,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			eNetObjectType objectType{ Buffer->Read<eNetObjectType>(4) };
 			i32 migrationType{ Buffer->Read<i32>(3) };
 			if (objectType < eNetObjectType::Automobile || objectType > eNetObjectType::Train) {
-				switch ("giveControlCrashProtection"_PF->state()) {
+				switch ("giveControlCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "T{} crash from {}", 6, Sender->GetName());
 				} break;
@@ -144,20 +239,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (rage::netObject* netObject{ ped->m_net_object }) {
 				if (netObject->m_object_id == networkId) {
-					switch ("freezeProtection"_PF->state()) {
-					case eProtectionState::Notify: {
-						LOG(Session, "Freeze from {}", Sender->GetName());
-					} break;
-					case eProtectionState::Block: {
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					case eProtectionState::BlockAndNotify: {
-						LOG(Session, "Freeze from {}", Sender->GetName());
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					}
+					EVNT_PROT_CHECK("freezeProtection");
 				}
 			}
 		}
@@ -168,20 +250,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (rage::netObject* netObject{ ped->m_net_object }) {
 				if (netObject->m_object_id == networkId) {
-					switch ("ragdollProtection"_PF->state()) {
-					case eProtectionState::Notify: {
-						LOG(Session, "Ragdoll from {}", Sender->GetName());
-					} break;
-					case eProtectionState::Block: {
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					case eProtectionState::BlockAndNotify: {
-						LOG(Session, "Ragdoll from {}", Sender->GetName());
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					}
+					EVNT_PROT_CHECK("ragdollProtection");
 				}
 			}
 		}
@@ -193,20 +262,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			if (CVehicle* vehicle{ ped->m_vehicle }) {
 				if (rage::netObject* netObject{ vehicle->m_net_object }) {
 					if (netObject->m_object_id == networkId && vehicle->m_driver == ped) {
-						switch ("requestControlProtection"_PF->state()) {
-						case eProtectionState::Notify: {
-							LOG(Session, "Request control from {}", Sender->GetName());
-						} break;
-						case eProtectionState::Block: {
-							g_statistics.m_incomingNetworkEvents--;
-							return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-						} break;
-						case eProtectionState::BlockAndNotify: {
-							LOG(Session, "Request control from {}", Sender->GetName());
-							g_statistics.m_incomingNetworkEvents--;
-							return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-						} break;
-						}
+						EVNT_PROT_CHECK("requestControlProtection");
 					}
 				}
 			}
@@ -234,7 +290,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			float initialLength{ Buffer->Read<float>(16) };
 			float minLength{ Buffer->Read<float>(16) };
 			if (type == 0 || initialLength < minLength) {
-				switch ("ropeCrashProtection"_PF->state()) {
+				switch ("ropeCrashProtection"_PC->state()) {
 				case eProtectionState::Notify: {
 					LOG(Session, "R{} crash from {}", 0, Sender->GetName());
 				} break;
@@ -256,7 +312,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 			i32 percentage{ Buffer->Read<i32>(7) };
 			if (popGroup == 0) {
 				if (percentage == 0 || percentage == 103) {
-					switch ("invalidPopGroupCrashProtection"_PF->state()) {
+					switch ("invalidPopGroupCrashProtection"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "P{} crash from {}", 3, Sender->GetName());
 					} break;
@@ -275,7 +331,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		} break;
 		}
 		if (static_cast<u32>(Type) > 9 || static_cast<u32>(Type) < 0) {
-			switch ("invalidWordStateCrashProection"_PF->state()) {
+			switch ("invalidWordStateCrashProection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "T{} crash from {}", 7, Sender->GetName());
 			} break;
@@ -296,7 +352,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		i32 networkId{ Buffer->Read<i32>(13) };
 		u32 Hash{ Buffer->Read<u32>(32) };
 		if (Hash == "weapon_unarmed"_joaat) {
-			switch ("invalidRemoveWeaponCrashProtection"_PF->state()) {
+			switch ("invalidRemoveWeaponCrashProtection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "R{} crash from {}", 1, Sender->GetName());
 			} break;
@@ -314,20 +370,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (rage::netObject* netObject{ ped->m_net_object }) {
 				if (netObject->m_object_id == networkId) {
-					switch ("removeWeaponProtection"_PF->state()) {
-					case eProtectionState::Notify: {
-						LOG(Session, "Remove weapon from {}", Sender->GetName());
-					} break;
-					case eProtectionState::Block: {
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					case eProtectionState::BlockAndNotify: {
-						LOG(Session, "Remove weapon from {}", Sender->GetName());
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					}
+					EVNT_PROT_CHECK("removeWeaponProtection");
 				}
 			}
 		}
@@ -338,20 +381,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (rage::netObject* netObject{ ped->m_net_object }) {
 				if (netObject->m_object_id == networkId) {
-					switch ("giveWeaponProtection"_PF->state()) {
-					case eProtectionState::Notify: {
-						LOG(Session, "Give weapon from {}", Sender->GetName());
-					} break;
-					case eProtectionState::Block: {
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					case eProtectionState::BlockAndNotify: {
-						LOG(Session, "Give weapon from {}", Sender->GetName());
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					}
+					EVNT_PROT_CHECK("giveWeaponProtection");
 				}
 			}
 		}
@@ -362,20 +392,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (rage::netObject* netObject{ ped->m_net_object }) {
 				if (netObject->m_object_id == networkId) {
-					switch ("removeAllWeaponsProtection"_PF->state()) {
-					case eProtectionState::Notify: {
-						LOG(Session, "Remove all weapons from {}", Sender->GetName());
-					} break;
-					case eProtectionState::Block: {
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					case eProtectionState::BlockAndNotify: {
-						LOG(Session, "Remove all weapons from {}", Sender->GetName());
-						g_statistics.m_incomingNetworkEvents--;
-						return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-					} break;
-					}
+					EVNT_PROT_CHECK("removeAllWeaponsProtection");
 				}
 			}
 		}
@@ -385,20 +402,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		uint32_t bitset{};
 		Buffer->ReadDword(&bitset, 0x20);
 		if (bitset & (1 << Receiver->m_player_id)) {
-			switch ("voteKickProtection"_PF->state()) {
-			case eProtectionState::Notify: {
-				LOG(Session, "Vote kick from {}", Sender->GetName());
-			} break;
-			case eProtectionState::Block: {
-				g_statistics.m_incomingNetworkEvents--;
-				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-			} break;
-			case eProtectionState::BlockAndNotify: {
-				LOG(Session, "Vote kick from {}", Sender->GetName());
-				g_statistics.m_incomingNetworkEvents--;
-				return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-			} break;
-			}
+			EVNT_PROT_CHECK("voteKickProtection");
 		}
 		Buffer->Seek(0);
 	} break;

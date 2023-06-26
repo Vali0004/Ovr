@@ -3,7 +3,7 @@
 
 bool hooks::receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp) {
 	if (ObjectType < eNetObjectType::Automobile || ObjectType > eNetObjectType::Train) {
-		switch ("invalidObjectTypeCrashProtection"_PF->state()) {
+		switch ("invalidObjectTypeCrashProtection"_PC->state()) {
 		case eProtectionState::Notify: {
 			LOG(Session, "T{} crash from {}", 1, Sender->GetName());
 		} break;
@@ -18,7 +18,7 @@ bool hooks::receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sende
 	}
 	if (rage::netObject* netObject{ pointers::g_getNetObject(pObjMgr, ObjectId, true) }) {
 		if (netObject->m_object_type != (i16)ObjectType) {
-			switch ("mismatchObjectTypeCrashProtection"_PF->state()) {
+			switch ("mismatchObjectTypeCrashProtection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "T{} crash from {}", 2, Sender->GetName());
 			} break;

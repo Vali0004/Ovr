@@ -12,8 +12,8 @@ namespace tabs::network::session {
 						commands::g_engine.primitiveExecute("go {}", name);
 					});
 				}
-				elements::selectable("bail"_AF->m_name, false, [] {
-					"bail"_AF->run();
+				elements::selectable("bail"_AC->m_name, false, [] {
+					"bail"_AC->run();
 				});
 			});
 		});

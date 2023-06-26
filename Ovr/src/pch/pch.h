@@ -14,7 +14,7 @@
 #define DEBUG
 
 #define SIZEOF(a) sizeof(a) / sizeof(std::remove_pointer_t<decltype(a)>)
-#define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
+#define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((u64)(!(sizeof(a) % sizeof(0[a])))))
 #define ONCE(a) do a while (false)
 #define PI 3.141592653589793238462643383279502884L
 	
@@ -79,6 +79,14 @@ namespace defines {
         std::string t{ str };
         std::transform(t.begin(), t.end(), t.data(), [](char c) { return tolower(c); });
         return t;
+    }
+    inline std::vector<std::string> lSArr(std::vector<std::string> sArr) {
+        std::vector<std::string> tArr{ sArr };
+        for (auto& str : tArr) {
+            std::string t{ str };
+            std::transform(t.begin(), t.end(), t.data(), [](char c) { return tolower(c); });
+        }
+        return tArr;
     }
     inline std::vector<std::string> splitString(const std::string& string, char split) {
         std::vector<std::string> strings{};

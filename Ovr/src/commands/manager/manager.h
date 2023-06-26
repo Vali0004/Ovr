@@ -38,30 +38,33 @@ namespace commands {
 	};
 	inline manager g_manager{};
 }
-inline commands::abstractCommand* operator ""_ABF(const char* str, size_t) {
+inline commands::abstractCommand* operator ""_ABC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::abstractCommand>(str);
 }
-inline commands::toggleCommand* operator ""_TF(const char* str, size_t) {
+inline commands::toggleCommand* operator ""_TC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::toggleCommand>(str);
 }
-inline commands::intCommand* operator ""_IF(const char* str, size_t) {
+inline commands::intCommand* operator ""_IC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::intCommand>(str);
 }
-inline commands::toggleIntCommand* operator ""_TIF(const char* str, size_t) {
+inline commands::toggleIntCommand* operator ""_TIC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::toggleIntCommand>(str);
 }
-inline commands::floatCommand* operator ""_FF(const char* str, size_t) {
+inline commands::floatCommand* operator ""_FC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::floatCommand>(str);
 }
-inline commands::toggleFloatCommand* operator ""_TFF(const char* str, size_t) {
+inline commands::toggleFloatCommand* operator ""_TFC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::toggleFloatCommand>(str);
 }
-inline commands::actionCommand* operator ""_AF(const char* str, size_t) {
+inline commands::actionCommand* operator ""_AC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::actionCommand>(str);
 }
-inline commands::protectionCommand* operator ""_PF(const char* str, size_t) {
+inline commands::protectionCommand* operator ""_PC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::protectionCommand>(str);
 }
-inline commands::variadicCommand* operator ""_VF(const char* str, size_t) {
+inline commands::sectionProtectionCommand* operator ""_SPC(const char* str, size_t) {
+	return commands::g_manager.getCommand<commands::sectionProtectionCommand>(str);
+}
+inline commands::variadicCommand* operator ""_VC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::variadicCommand>(str);
 }

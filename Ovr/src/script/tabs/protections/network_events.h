@@ -4,6 +4,7 @@
 namespace tabs::protections {
 	inline void networkEvents() {
 		elements::tabItem("Network Events", [] {
+			elements::sectionProtectionToggle("allNetworkEventProtections");
 			elements::protectionToggle("freezeProtection", true);
 			elements::protectionToggle("ragdollProtection");
 			elements::protectionToggle("requestControlProtection", true);

@@ -14,6 +14,33 @@ inline ccp g_protectionStates[4]{
 	"Block And Notify"
 };
 namespace commands {
+	inline bool strSearch(std::string string, std::string value, std::vector<std::string> custom, bool tryLower = false, bool skipSpaces = false) {
+		if (skipSpaces) {
+			for (std::string s{ string }; s[0] == ' ' && s.size() != string.size(); s = s.substr(1)) {}
+		}
+		if (string.find(value) != std::string::npos) {
+			return true;
+		}
+		for (auto& s : custom) {
+			if (string.find(s) != std::string::npos) {
+				return true;
+			}
+		}
+		if (tryLower) {
+			std::string stringLower{ lStr(string) };
+			std::string valueLower{ lStr(string) };
+			std::vector<std::string> customLower{ lSArr(custom) };
+			if (stringLower.find(valueLower) != std::string::npos) {
+				return true;
+			}
+			for (auto& s : customLower) {
+				if (stringLower.find(s) != std::string::npos) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	class toggleCommand : public abstractCommand {
 	public:
 		toggleCommand(const std::string& id, const std::string& name, const std::string& description, hotkey hotkey, fnptr<void(toggleCommand*)> callback) :
@@ -241,116 +268,21 @@ namespace commands {
 			setState();
 			m_accessibleState = state();
 		}
+		void setFromSection(eProtectionState state) {
+			m_state = m_accessibleState = state;
+		}
 		void setState() {
-			switch (rage::joaat(m_value.m_value.string)) {
-			case "Disabled"_joaat: {
+			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
 				m_state = eProtectionState::Disabled;
-			} break;
-			case "Disable"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Disabl"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Disab"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Disa"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Dis"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Di"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "D"_joaat: {
-				m_state = eProtectionState::Disabled;
-			} break;
-			case "Notify"_joaat: {
+			}
+			else if (strSearch(m_value.m_value.string, "Noti", { "Not" }, true)) {
 				m_state = eProtectionState::Notify;
-			} break;
-			case "Notif"_joaat: {
-				m_state = eProtectionState::Notify;
-			} break;
-			case "Noti"_joaat: {
-				m_state = eProtectionState::Notify;
-			} break;
-			case "Not"_joaat: {
-				m_state = eProtectionState::Notify;
-			} break;
-			case "No"_joaat: {
-				m_state = eProtectionState::Notify;
-			} break;
-			case "N"_joaat: {
-				m_state = eProtectionState::Notify;
-			} break;
-			case "Block"_joaat: {
+			}
+			else if (strSearch(m_value.m_value.string, "Blo", { "Bl" }, true)) {
 				m_state = eProtectionState::Block;
-			} break;
-			case "Bloc"_joaat: {
-				m_state = eProtectionState::Block;
-			} break;
-			case "Blo"_joaat: {
-				m_state = eProtectionState::Block;
-			} break;
-			case "Bl"_joaat: {
-				m_state = eProtectionState::Block;
-			} break;
-			case "B"_joaat: {
-				m_state = eProtectionState::Block;
-			} break;
-			case "BlockAndNotify"_joaat: {
+			}
+			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN" "BAndN", "BAnd", }, true)) {
 				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "Block And Notify"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAndNotif"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAndNoti"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAndNot"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAndNo"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAndN"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAnd"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockAn"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BlockA"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndNotify"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndNotif"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndNoti"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndNot"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndNo"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAndN"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
-			case "BAN"_joaat: {
-				m_state = eProtectionState::BlockAndNotify;
-			} break;
 			}
 		}
 		eProtectionState state() {
@@ -360,6 +292,54 @@ namespace commands {
 	private:
 		eProtectionState m_state{};
 		typedValue m_value{};
+	};
+	class sectionProtectionCommand : public abstractCommand {
+	public:
+		sectionProtectionCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(sectionProtectionCommand*)> callback) :
+			abstractCommand(id, name, description, {}, eCommandType::SectionProtectionCommand, false), m_callback(callback) {
+		}
+		sectionProtectionCommand(const std::string& id, const std::string& name, fnptr<void(sectionProtectionCommand*)> callback) :
+			sectionProtectionCommand(id, name, {}, callback) {
+		}
+		sectionProtectionCommand(const std::string& id, fnptr<void(sectionProtectionCommand*)> callback) :
+			sectionProtectionCommand(id, {}, callback) {
+		}
+		~sectionProtectionCommand() {
+			abstractCommand::~abstractCommand();
+		}
+		void init() override {
+			push_value(m_value);
+			abstractCommand::init();
+		}
+		void run() override {
+			m_callback(this);
+			abstractCommand::run();
+		}
+		void update(ccp n) {
+			m_value.m_value.string = n;
+			setState();
+		}
+		void setState() {
+			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
+				m_state = eProtectionState::Disabled;
+			}
+			else if (strSearch(m_value.m_value.string, "Noti", { "Not" }, true)) {
+				m_state = eProtectionState::Notify;
+			}
+			else if (strSearch(m_value.m_value.string, "Blo", { "Bl" }, true)) {
+				m_state = eProtectionState::Block;
+			}
+			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN" "BAndN", "BAnd", }, true)) {
+				m_state = eProtectionState::BlockAndNotify;
+			}
+		}
+		eProtectionState state() {
+			return m_state;
+		}
+		eProtectionState m_state{};
+	private:
+		typedValue m_value{};
+		fnptr<void(sectionProtectionCommand*)> m_callback{};
 	};
 	class variadicCommand : public abstractCommand {
 	public:

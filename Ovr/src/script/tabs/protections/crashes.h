@@ -4,6 +4,7 @@
 namespace tabs::protections {
 	inline void crashes() {
 		elements::tabItem("Crashes", [] {
+			elements::sectionProtectionToggle("allCrashProtections");
 			elements::protectionToggle("invalidRemoveWeaponCrashProtection", true);
 			elements::protectionToggle("invalidObjectTypeCrashProtection");
 			elements::protectionToggle("mismatchObjectTypeCrashProtection", true);

@@ -8,6 +8,17 @@ namespace commands::features {
 	namespace self {
 		namespace ped {
 			namespace proofs {
+				void setAllProofs(actionCommand* command) {
+					"bullet"_TC->get(0).toggle = command->get(0).toggle;
+					"fire"_TC->get(0).toggle = command->get(0).toggle;
+					"collision"_TC->get(0).toggle = command->get(0).toggle;
+					"melee"_TC->get(0).toggle = command->get(0).toggle;
+					"god"_TC->get(0).toggle = command->get(0).toggle;
+					"explosion"_TC->get(0).toggle = command->get(0).toggle;
+					"steam"_TC->get(0).toggle = command->get(0).toggle;
+					"drown"_TC->get(0).toggle = command->get(0).toggle;
+					"water"_TC->get(0).toggle = command->get(0).toggle;
+				}
 				void bullet(toggleCommand* command) {
 					cPed->set_damage_bit(eEntityProofs::Bullet, command->get(0).toggle);
 				}
@@ -44,6 +55,12 @@ namespace commands::features {
 			namespace armor {
 				void maxAmount(actionCommand* command) {
 					cPed->m_armor = 255.f;
+				}
+			}
+			void autoHeal(toggleCommand* command) {
+				if (command->get(0).toggle) {
+					"maxHealth"_AC->run();
+					"maxArmor"_AC->run();
 				}
 			}
 			void suicide(actionCommand* command) {
@@ -230,13 +247,13 @@ namespace commands::features {
 									if (constraint && pc >= 30) {
 										s.valid = false;
 									}
-									if ("matchmakingLanguage"_TIF->get(0).toggle && l != "matchmakingLanguage"_TIF->get(1).i32) {
+									if ("matchmakingLanguage"_TIC ->get(0).toggle && l != "matchmakingLanguage"_TIC ->get(1).i32) {
 										s.valid = false;
 									}
-									if (pc < "matchmakingPlayerCountMinimum"_IF->get(0).i32 || pc > "matchmakingPlayerCountMaximum"_IF->get(0).i32) {
+									if (pc < "matchmakingPlayerCountMinimum"_IC->get(0).i32 || pc > "matchmakingPlayerCountMaximum"_IC->get(0).i32) {
 										s.valid = false;
 									}
-									if ("matchmakingType"_TIF->get(0).toggle && ((d & (1 << 14)) == (1 << 14)) != (bool)"matchmakingType"_TIF->get(1).i32) {
+									if ("matchmakingType"_TIC ->get(0).toggle && ((d & (1 << 14)) == (1 << 14)) != (bool)"matchmakingType"_TIC ->get(1).i32) {
 										s.valid = false;
 									}
 								}
@@ -478,6 +495,116 @@ namespace commands::features {
 			NETWORK::NETWORK_BAIL_TRANSITION(0, 0, 16);
 		}
 	}
+	namespace protections {
+		namespace kicks {
+			namespace reactions {
+				void kick(toggleCommand* command) {
+
+				}
+				void crash(toggleCommand* command) {
+
+				}
+			}
+			void allKickProtections(sectionProtectionCommand* command) {
+				"desyncKickProtection"_PC->setFromSection(command->state());
+				"lostConnectionKickProtection"_PC->setFromSection(command->state());
+				"arrayOverrunKickProtection"_PC->setFromSection(command->state());
+			}
+		}
+		namespace crashes {
+			namespace reactions {
+				void kick(toggleCommand* command) {
+
+				}
+				void crash(toggleCommand* command) {
+
+				}
+			}
+			void allCrashProtections(sectionProtectionCommand* command) {
+				"invalidRemoveWeaponCrashProtection"_PC->setFromSection(command->state());
+				"invalidObjectTypeCrashProtection"_PC->setFromSection(command->state());
+				"mismatchObjectTypeCrashProtection"_PC->setFromSection(command->state());
+				"invalidSectorPositionCrashProtection"_PC->setFromSection(command->state());
+				"vehicleTempActionCrashProtection"_PC->setFromSection(command->state());
+				"invalidTempActionCrashProtection"_PC->setFromSection(command->state());
+				"invalidTrainTrackIndexCrashProtection"_PC->setFromSection(command->state());
+				"pedAttachCrashProtection"_PC->setFromSection(command->state());
+				"giveControlCrashProtection"_PC->setFromSection(command->state());
+				"invalidWordStateCrashProection"_PC->setFromSection(command->state());
+				"scriptEventIslandHeliLaunchCrashProtection"_PC->setFromSection(command->state());
+				"scriptEventSpawnVehicleCrashProtection"_PC->setFromSection(command->state());
+				"scriptEventSyncedIntractionCrashProtection"_PC->setFromSection(command->state());
+			}
+		}
+		namespace networkEvents {
+			namespace reactions {
+				void kick(toggleCommand* command) {
+
+				}
+				void crash(toggleCommand* command) {
+
+				}
+			}
+			void allNetworkEventProtections(sectionProtectionCommand* command) {
+				"freezeProtection"_PC->setFromSection(command->state());
+				"ragdollProtection"_PC->setFromSection(command->state());
+				"requestControlProtection"_PC->setFromSection(command->state());
+				"giveWeaponProtection"_PC->setFromSection(command->state());
+				"removeWeaponProtection"_PC->setFromSection(command->state());
+				"removeAllWeaponsProtection"_PC->setFromSection(command->state());
+				"voteKickProtection"_PC->setFromSection(command->state());
+			}
+		}
+		namespace scriptEvents {
+			namespace reactions {
+				void redirect(toggleCommand* command) {
+
+				}
+				void kick(toggleCommand* command) {
+
+				}
+				void crash(toggleCommand* command) {
+
+				}
+			}
+			void allScriptEventProtections(sectionProtectionCommand* command) {
+				"ceoBanProtection"_PC->setFromSection(command->state());
+				"ceoKickProtection"_PC->setFromSection(command->state());
+				"ceoMoneyProtection"_PC->setFromSection(command->state());
+				"clearWantedLevelProtection"_PC->setFromSection(command->state());
+				"forceMissionProtection"_PC->setFromSection(command->state());
+				"giveCollectableProtection"_PC->setFromSection(command->state());
+				"gtaBannerProtection"_PC->setFromSection(command->state());
+				"networkBailProtection"_PC->setFromSection(command->state());
+				"personalVehicleDestroyedProtection"_PC->setFromSection(command->state());
+				"remoteOffRadarProtection"_PC->setFromSection(command->state());
+				"sendToCutsceneProtection"_PC->setFromSection(command->state());
+				"sendToIslandProtection"_PC->setFromSection(command->state());
+				"sendToLocationProtection"_PC->setFromSection(command->state());
+				"soundSpamProtection"_PC->setFromSection(command->state());
+				"spectateProtection"_PC->setFromSection(command->state());
+				"teleportProtection"_PC->setFromSection(command->state());
+				"teleportToWarehouseProtection"_PC->setFromSection(command->state());
+				"gentleVehicleKickProtection"_PC->setFromSection(command->state());
+				"mcTeleportProtection"_PC->setFromSection(command->state());
+				"startActivityProtection"_PC->setFromSection(command->state());
+				"markPlayerBeastProtection"_PC->setFromSection(command->state());
+				"sendTextLabelSMSProtection"_PC->setFromSection(command->state());
+				"sendTextMessageProtection"_PC->setFromSection(command->state());
+				"tseCommandProtection"_PC->setFromSection(command->state());
+				"tseCommandRotateCamProtection"_PC->setFromSection(command->state());
+				"notificationProtection"_PC->setFromSection(command->state());
+				"customNotificationProtection"_PC->setFromSection(command->state());
+				"moneyBankedNotificationProtection"_PC->setFromSection(command->state());
+				"moneyStolenNotificationProtection"_PC->setFromSection(command->state());
+				"moneyRemovedNotificationProtection"_PC->setFromSection(command->state()); 
+				"destoryPersonalVehicleProtection"_PC->setFromSection(command->state());
+				"triggerCeoRaidProtection"_PC->setFromSection(command->state());
+				"startScriptBeginProtection"_PC->setFromSection(command->state());
+				"startScriptProceedProtection"_PC->setFromSection(command->state());
+			}
+		}
+	}
 	namespace settings {
 		namespace game {
 			void autoMp(toggleCommand* command) {
@@ -551,6 +678,7 @@ namespace commands::features {
 		//Self::Ped::Armor
 		g_manager.add(actionCommand("maxArmor", "Max Amount", self::ped::armor::maxAmount));
 		//Self::Ped
+		g_manager.add(toggleCommand("autoHeal", "Auto Heal", self::ped::autoHeal));
 		g_manager.add(actionCommand("suicide", "Suicide", self::ped::suicide));
 		//Self::Movement
 		g_manager.add(toggleFloatCommand("run", "Run", self::movement::run));
@@ -602,28 +730,72 @@ namespace commands::features {
 		g_manager.add(variadicCommand("join", "Join", "Join an player", { { eValueType::String } }, network::join, false));
 		g_manager.add(actionCommand("bail", "Bail", "Bail from online", network::bail));
 		//Protections::Kicks
+		g_manager.add(sectionProtectionCommand("allKickProtections", "All Kick Protections", "Sets all kick protections", protections::kicks::allKickProtections));
 		g_manager.add(protectionCommand("desyncKickProtection", "Desync", "May cause an modder detction"));
 		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"));
 		g_manager.add(protectionCommand("arrayOverrunKickProtection", "ScriptVM Overrun Kick", "This protects against all script event kicks that cause an array overflow"));
 		//Protections::Crashes
-		g_manager.add(protectionCommand("invalidRemoveWeaponCrashProtection", "Invalid weapon remove"));
-		g_manager.add(protectionCommand("invalidObjectTypeCrashProtection", "Invalid object type"));
-		g_manager.add(protectionCommand("mismatchObjectTypeCrashProtection", "Mismatch object type"));
-		g_manager.add(protectionCommand("invalidSectorPositionCrashProtection", "Invalid sector position"));
+		g_manager.add(sectionProtectionCommand("allCrashProtections", "All Crash Protections", "Sets all crash protections", protections::crashes::allCrashProtections));
+		g_manager.add(protectionCommand("invalidRemoveWeaponCrashProtection", "Invalid Weapon Remove"));
+		g_manager.add(protectionCommand("invalidObjectTypeCrashProtection", "Invalid Object Type"));
+		g_manager.add(protectionCommand("mismatchObjectTypeCrashProtection", "Mismatch Object Type"));
+		g_manager.add(protectionCommand("invalidSectorPositionCrashProtection", "Invalid Sector Position"));
 		g_manager.add(protectionCommand("vehicleTempActionCrashProtection", "Vehicle Temp Action"));
-		g_manager.add(protectionCommand("invalidTempActionCrashProtection", "Vehicle Temp Action"));
-		g_manager.add(protectionCommand("invalidTrainTrackIndexCrashProtection", "Invalid train track index"));
-		g_manager.add(protectionCommand("pedAttachCrashProtection", "Infinite ped attachment"));
-		g_manager.add(protectionCommand("giveControlCrashProtection", "Invalid give control type"));
-		g_manager.add(protectionCommand("invalidWordStateCrashProection", "Invalid world state"));
+		g_manager.add(protectionCommand("invalidTempActionCrashProtection", "Invalid Temp Action"));
+		g_manager.add(protectionCommand("invalidTrainTrackIndexCrashProtection", "Invalid Train Track Index"));
+		g_manager.add(protectionCommand("pedAttachCrashProtection", "Infinite Ped Attachment"));
+		g_manager.add(protectionCommand("giveControlCrashProtection", "Invalid Give Control Type"));
+		g_manager.add(protectionCommand("invalidWordStateCrashProection", "Invalid World State"));
+		g_manager.add(protectionCommand("scriptEventIslandHeliLaunchCrashProtection", "Script Event Island Heli Launch"));
+		g_manager.add(protectionCommand("scriptEventSpawnVehicleCrashProtection", "Script Event Spawn Vehicle"));
+		g_manager.add(protectionCommand("scriptEventSyncedIntractionCrashProtection", "Script Event Synced Interaction"));
 		//Protections::Events::Network
+		g_manager.add(sectionProtectionCommand("allNetworkEventProtections", "All Network Event Protections", "Sets all network event protections", protections::networkEvents::allNetworkEventProtections));
 		g_manager.add(protectionCommand("freezeProtection", "Freeze"));
 		g_manager.add(protectionCommand("ragdollProtection", "Ragdoll"));
 		g_manager.add(protectionCommand("requestControlProtection", "Request Control"));
-		g_manager.add(protectionCommand("giveWeaponProtection", "Give weapon"));
-		g_manager.add(protectionCommand("removeWeaponProtection", "Remove weapon"));
-		g_manager.add(protectionCommand("removeAllWeaponsProtection", "Remove all weapons"));
-		g_manager.add(protectionCommand("voteKickProtection", "Vote kick"));
+		g_manager.add(protectionCommand("giveWeaponProtection", "Give Weapon"));
+		g_manager.add(protectionCommand("removeWeaponProtection", "Remove Weapon"));
+		g_manager.add(protectionCommand("removeAllWeaponsProtection", "Remove All Weapons"));
+		g_manager.add(protectionCommand("voteKickProtection", "Vote Kick"));
+		//Protections::Events::Script
+		g_manager.add(sectionProtectionCommand("allScriptEventProtections", "All Network Event Protections", "Sets all script event protections", protections::scriptEvents::allScriptEventProtections));
+		g_manager.add(protectionCommand("ceoBanProtection", "CEO Ban"));
+		g_manager.add(protectionCommand("ceoKickProtection", "CEO Kick"));
+		g_manager.add(protectionCommand("ceoMoneyProtection", "CEO Money"));
+		g_manager.add(protectionCommand("clearWantedLevelProtection", "Clear Wanted Level"));
+		g_manager.add(protectionCommand("forceMissionProtection", "Force Mission"));
+		g_manager.add(protectionCommand("giveCollectableProtection", "Give Collectable"));
+		g_manager.add(protectionCommand("gtaBannerProtection", "GTA Banner"));
+		g_manager.add(protectionCommand("networkBailProtection", "Network Bail"));
+		g_manager.add(protectionCommand("personalVehicleDestroyedProtection", "Personal Vehicle Destroyed"));
+		g_manager.add(protectionCommand("remoteOffRadarProtection", "Remote Off-Radar"));
+		g_manager.add(protectionCommand("sendToCutsceneProtection", "Send To Cutscene"));
+		g_manager.add(protectionCommand("sendToIslandProtection", "Send To Island"));
+		g_manager.add(protectionCommand("sendToLocationProtection", "Send To Location"));
+		g_manager.add(protectionCommand("soundSpamProtection", "Sound Spam"));
+		g_manager.add(protectionCommand("spectateProtection", "Spectate"));
+		g_manager.add(protectionCommand("teleportProtection", "Teleport"));
+		g_manager.add(protectionCommand("teleportToWarehouseProtection", "Teleport To Warehouse"));
+		g_manager.add(protectionCommand("gentleVehicleKickProtection", "Gentle Vehicle Kick"));
+		g_manager.add(protectionCommand("mcTeleportProtection", "MC Teleport"));
+		g_manager.add(protectionCommand("startActivityProtection", "Start Activity"));
+		g_manager.add(protectionCommand("markPlayerBeastProtection", "Mark Player Beast"));
+		g_manager.add(protectionCommand("kickFromInteriorProtection", "Kick From Interior"));
+		g_manager.add(protectionCommand("interiorControlProtection", "Interior Control"));
+		g_manager.add(protectionCommand("sendTextLabelSMSProtection", "Send Text Label SMS"));
+		g_manager.add(protectionCommand("sendTextMessageProtection", "Send Text Message"));
+		g_manager.add(protectionCommand("tseCommandProtection", "TSE Command"));
+		g_manager.add(protectionCommand("tseCommandRotateCamProtection", "TSE Command Rotate Cam"));
+		g_manager.add(protectionCommand("notificationProtection", "Notification"));
+		g_manager.add(protectionCommand("customNotificationProtection", "Custom Notification"));
+		g_manager.add(protectionCommand("moneyBankedNotificationProtection", "Money Banked Notification"));
+		g_manager.add(protectionCommand("moneyStolenNotificationProtection", "Money Stolen Notification"));
+		g_manager.add(protectionCommand("moneyRemovedNotificationProtection", "Money Removed Notification"));
+		g_manager.add(protectionCommand("destoryPersonalVehicleProtection", "Destroy Personal Vehicle"));
+		g_manager.add(protectionCommand("triggerCeoRaidProtection", "Trigger CEO Raid"));
+		g_manager.add(protectionCommand("startScriptBeginProtection", "Start Script Begin"));
+		g_manager.add(protectionCommand("startScriptProceedProtection", "Start Script Proceed"));
 		//Protections
 		g_manager.add(protectionCommand("vehicleKickProtection", "Vehicle Kick"));
 		g_manager.add(protectionCommand("remoteTeleportProtecton", "Remote Teleport"));
@@ -640,19 +812,19 @@ namespace commands::features {
 	void onInit() {
 		//These need to be after init because the values aren't created yet
 		//Self::Movement
-		"run"_TF->get(1).floating_point = 1.f;
-		"swim"_TF->get(1).floating_point = 1.f;
-		"stamina"_TF->get(1).floating_point = 11.f;
-		"staminaRegeneration"_TF->get(1).floating_point = 1.f;
-		"superRun"_TF->get(1).floating_point = 2.f;
-		"noClip"_TF->get(1).floating_point = 1.f;
+		"run"_TC->get(1).floating_point = 1.f;
+		"swim"_TC->get(1).floating_point = 1.f;
+		"stamina"_TC->get(1).floating_point = 11.f;
+		"staminaRegeneration"_TC->get(1).floating_point = 1.f;
+		"superRun"_TC->get(1).floating_point = 2.f;
+		"noClip"_TC->get(1).floating_point = 1.f;
 		//Self
-		"alpha"_IF->get(0).i32 = 255;
+		"alpha"_IC->get(0).i32 = 255;
 		//Network::Session::Browser
-		"matchmakingPlayerCountMinimum"_IF->get(0).i32 = 1;
-		"matchmakingPlayerCountMaximum"_IF->get(0).i32 = 32;
+		"matchmakingPlayerCountMinimum"_IC->get(0).i32 = 1;
+		"matchmakingPlayerCountMaximum"_IC->get(0).i32 = 32;
 		//Settings::Ui
-		"scale"_FF->get(0).floating_point = 1.f;
+		"scale"_FC->get(0).floating_point = 1.f;
 	}
 	void onTick() {
 		Vector3 coords{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), !PLAYER::IS_PLAYER_DEAD(PLAYER::PLAYER_ID())) };
