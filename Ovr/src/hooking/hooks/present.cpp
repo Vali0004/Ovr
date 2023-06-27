@@ -10,6 +10,7 @@ HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags)
 	ImGui::NewFrame();
 	commands::gui::g_box.draw();
 	g_notifications.draw();
+	g_statistics.draw();
 	g_renderer->onPresent();
 	ImGui::EndFrame();
 	ImGui::Render();

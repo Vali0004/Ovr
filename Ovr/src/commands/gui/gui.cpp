@@ -6,8 +6,6 @@
 
 namespace commands::gui {
 	#define CMD_ALERT(fmt, ...) alert(std::format(fmt, __VA_ARGS__));
-	#define WHITE(A) { 255, 255, 255, A }
-	#define BLACK(A) { 0, 0, 0, A }
 	void box::captureCmd(std::string s, bool hasSpace) {
 		if (!hasSpace) {
 			m_cmd = s;
@@ -101,11 +99,11 @@ namespace commands::gui {
 			util::onPress(VK_ESCAPE, [this] { stop(); });
 			util::onPress(VK_RETURN, [this] { run(); clear(false, true); });
 			m_drawBase = m_pos.y;
-			elements::custom::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, WHITE(255), false);
-			elements::custom::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, BLACK(255), elements::custom::eJustify::Left, 0.f, false);
+			elements::drawlist::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, { 255, 255, 255, 255 }, false);
+			elements::drawlist::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, { 0, 0, 0, 255 }, elements::drawlist::eJustify::Left, 0.f, false);
 			m_drawBase += m_title.y;
 			m_drawBase += m_padding;
-			elements::custom::rect({ m_pos.x, m_drawBase + (m_inputBox.y / 2.f) }, m_inputBox, BLACK(190), false);
+			elements::drawlist::rect({ m_pos.x, m_drawBase + (m_inputBox.y / 2.f) }, m_inputBox, { 0, 0, 0, 190 }, false);
 			input();
 			m_drawBase += m_inputBox.y;
 			if (m_items.size() && m_context.empty()) {
@@ -156,8 +154,8 @@ namespace commands::gui {
 
 	void box::drawItem(std::string item) {
 		m_drawBase += m_itemPadding;
-		elements::custom::rect({ m_pos.x, m_drawBase + (m_item.y / 2.f) }, m_item, BLACK(190));
-		elements::custom::text(g_renderer->m_tahoma, item, { m_pos.x - (m_item.x / 2.05f), m_drawBase + (m_item.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, WHITE(255));
+		elements::drawlist::rect({ m_pos.x, m_drawBase + (m_item.y / 2.f) }, m_item, { 0, 0, 0, 190 });
+		elements::drawlist::text(g_renderer->m_tahoma, item, { m_pos.x - (m_item.x / 2.05f), m_drawBase + (m_item.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, { 255, 255, 255, 255 });
 		m_drawBase += m_item.y;
 	}
 	void box::addItem(std::string item) {

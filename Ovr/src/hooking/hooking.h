@@ -9,6 +9,7 @@
 #include "shv/dynamic_loader.h"
 #include "rage/joaat.h"
 #include "util/player_mgr.h"
+#include "util/statistics.h"
 #define CALL(hk, ...) g_hooking->m_##hk##.getOg<pointers::types::##hk##>()(__VA_ARGS__)
 #define CALL_DECL(hk, ...) g_hooking->m_##hk##.getOg<decltype(&##hk)>()(__VA_ARGS__)
 #define RET_CALL(hk, ...) return CALL(hk, __VA_ARGS__);
@@ -19,39 +20,6 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
-struct statistics {
-	int m_nativesInvoked{};
-	int m_nativesInvokedByUs{};
-	int m_playerCount{};
-	int m_incomingNetworkEvents{};
-	int m_frameCount{};
-	std::string m_gameType{};
-	util::network::player m_lastScriptEventSender{};
-	util::network::player m_host{};
-	util::network::player m_local{};
-	util::network::player m_scriptHost{};
-	void setGameType() {
-		if (util::network::g_manager.online()) {
-			std::string gstype{ gsTypeToString(g_sessionType) };
-			m_gameType = gstype.c_str();
-		}
-		else {
-			m_gameType = "Offline";
-		}
-	}
-	void reset() {
-		if (m_host.m_netGamePlayer != util::network::g_manager.host().m_netGamePlayer)
-			m_host = util::network::g_manager.host();
-		if (m_local.m_netGamePlayer != util::network::g_manager.local().m_netGamePlayer)
-			m_local = util::network::g_manager.local();
-		if (m_scriptHost.m_netGamePlayer != util::network::g_manager.scriptHost().m_netGamePlayer)
-			m_scriptHost = util::network::g_manager.scriptHost();
-		m_nativesInvoked = 0;
-		m_nativesInvokedByUs = 0;
-		m_incomingNetworkEvents = 0;
-	}
-};
-inline statistics g_statistics{};
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);

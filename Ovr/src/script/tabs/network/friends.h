@@ -28,7 +28,7 @@ namespace tabs::network {
 			});
 			elements::sameLine();
 			elements::listBox("SelectedFriend", { 350.f, 0.f }, [] {
-				static FriendInfo& info{ util::network::friends::getFriends()[g_selectedFriend] };
+				FriendInfo& info{ util::network::friends::getFriends()[g_selectedFriend] };
 				elements::text("Name: {}", info.m_name);
 				elements::text("RID: {}", info.m_rockstar_id);
 				cbutton("copyFriendRid"_AC);

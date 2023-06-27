@@ -41,7 +41,9 @@ namespace commands::features {
 			namespace armor {
 				extern void maxAmount(actionCommand* command);
 			}
+			extern void tinyPed(toggleCommand* command);
 			extern void autoHeal(toggleCommand* command);
+			extern void clone(actionCommand* command);
 			extern void suicide(actionCommand* command);
 		}
 		namespace movement {
@@ -49,15 +51,24 @@ namespace commands::features {
 			extern void swim(toggleFloatCommand* command);
 			extern void stamina(toggleFloatCommand* command);
 			extern void staminaRegen(toggleFloatCommand* command);
-			extern void beastJump(toggleCommand* command); //Handled in hooking
-			extern void superJump(toggleCommand* command); //Handled in hooking
 			extern void gracefulLanding(toggleCommand* command); //Handled in hooking
+			extern void beastJump(toggleCommand* command); //Handled in hooking
+			extern void superJump(toggleCommand* command);
+			extern void ultraJump(toggleCommand* command);
 			extern void superRun(toggleFloatCommand* command);
 			extern void noClip(toggleFloatCommand* command);
+			extern void walkOnAir(toggleCommand* command);
+		}
+		namespace world {
+			extern void walkThroughWater(toggleCommand* command);
+			extern void walkOnWater(toggleCommand* command);
+			extern void slowMotion(toggleCommand* command);
 		}
 		namespace police {
 			extern void neverWanted(toggleCommand* command);
+			extern void lockWantedLevel(toggleCommand* command);
 			extern void wantedLevel(intCommand* command);
+			extern void fakeWantedLevel(intCommand* command);
 		}
 		extern void alpha(intCommand* command);
 		extern void invisibility(toggleCommand* command);
@@ -76,10 +87,13 @@ namespace commands::features {
 			extern void infiniteFlares(toggleCommand* command);
 			extern void refill(actionCommand* command);
 		}
+		namespace loadout {
+
+		}
 	}
 	namespace vehicle {
 		namespace spawner {
-
+			extern void spawnVehicle(variadicCommand* command);
 		}
 	}
 	namespace network {
@@ -188,10 +202,18 @@ namespace commands::features {
 			extern void allScriptEventProtections(sectionProtectionCommand* command);
 		}
 	}
-	namespace settings {
+	namespace miscellaneous {
 		namespace game {
+			extern void mobileRadio(toggleCommand* command);
 			extern void autoMp(toggleCommand* command);
 			extern void exitInstantly(toggleCommand* command);
+		}
+		namespace world {
+
+		}
+	}
+	namespace settings {
+		namespace game {
 			extern void unload(actionCommand* command);
 			extern void exit(actionCommand* command);
 		}

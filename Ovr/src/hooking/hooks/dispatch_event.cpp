@@ -9,6 +9,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 		rage::datBitBuffer buffer(pEvent->m_data, pEvent->m_length);
 		buffer.m_flagBits = 1;
 		if (eNetMessage type{}; player && util::network::deserialiseNetMessage(type, buffer)) {
+			g_statistics.m_incomingNetworkEvents++;
 			switch (type) {
 			case eNetMessage::CMsgLostConnectionToHost: {
 				uint64_t sessionId{};
@@ -21,10 +22,12 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 						LOG(Session, "H{} kick from {}", 0, player.m_name);
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "H{} kick from {}", 0,  player.m_name);
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					}
@@ -50,12 +53,14 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 								case eProtectionState::Block: {
 									complaintMgr.Remove(arrayElement);
 									buffer.Seek(0);
+									g_statistics.m_incomingNetworkEvents--;
 									return false;
 								} break;
 								case eProtectionState::BlockAndNotify: {
 									LOG(Session, "D{} from {}", kickType,  player.m_name);
 									complaintMgr.Remove(arrayElement);
 									buffer.Seek(0);
+									g_statistics.m_incomingNetworkEvents--;
 									return false;
 								} break;
 								}
@@ -71,11 +76,13 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 						} break;
 						case eProtectionState::Block: {
 							complaintMgr.RemoveAll();
+							g_statistics.m_incomingNetworkEvents--;
 							return false;
 						} break;
 						case eProtectionState::BlockAndNotify: {
 							LOG(Session, "D{} from {}", kickType,  player.m_name);
 							complaintMgr.RemoveAll();
+							g_statistics.m_incomingNetworkEvents--;
 							return false;
 						} break;
 						}
@@ -98,6 +105,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 					pointers::g_joinBySessionInfo(util::network::get(), &util::network::get()->m_last_joined_session.m_session_info, 1, 1 | 2 | 4, nullptr, 0);
 				} break;
 				}
+				g_statistics.m_incomingNetworkEvents--;
 				return false;
 			} break;
 			case eNetMessage::CMsgTextMessage: {
@@ -111,10 +119,12 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 						LOG(Session, "{} is a chat spammer",  player.m_name);
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "{} is a chat spammer",  player.m_name);
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					}
@@ -132,10 +142,12 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 						LOG(Session, "{} is a text message spammer",  player.m_name);
 					} break;
 					case eProtectionState::Block: {
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					case eProtectionState::BlockAndNotify: {
 						LOG(Session, "{} is a text message spammer",  player.m_name);
+						g_statistics.m_incomingNetworkEvents--;
 						return true;
 					} break;
 					}
@@ -143,6 +155,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				LOG_DIRECT(White, "Text", "{}: {}", player.m_name, msg.m_message);
 			} break;
 			}
+			g_statistics.m_incomingNetworkEvents--;
 		}
 	}
 	RET_CALL(dispatchEvent, _This, pConMgr, pEvent);

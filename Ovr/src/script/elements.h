@@ -2,6 +2,8 @@
 #include "pch/pch.h"
 #include "fiber/pool.h"
 #include "commands/manager/manager.h"
+#include "fiber/pool.h"
+#include "color.h"
 #define cbutton(f, ...) elements::button(f->m_name, [] { f->run(); }, __VA_ARGS__);
 #define ccheckbox(f, ...) elements::checkbox(f->m_name, f->get(0).toggle, __VA_ARGS__);
 #define cintSlider(f, ...) elements::intSlider(f->m_name, f->get(0).i32, __VA_ARGS__);
@@ -62,9 +64,40 @@ namespace elements {
 	inline ImDrawList* getWindowDrawlist() {
 		return getWindow()->DrawList;
 	}
-	inline void addWindowRect(ImVec2 size, ImColor color) {
-		ImVec2 pos{ windowPos() };
-		getWindowDrawlist()->AddRectFilled(pos, pos + size, color);
+	inline ImVec2 getTextSize(ImFont* font, std::string text, float wrap = 0.f) {
+		ImVec2 textSize{ font->CalcTextSizeA(font->FontSize, FLT_MAX, wrap, text.c_str(), NULL) };
+		textSize.x = IM_FLOOR(textSize.x + 0.99999999999f);
+		return { convertCoordTypes(textSize, true) };
+	}
+	inline float getTextHeight(ImFont* font, float wrap = 0.f) {
+		ImVec2 fontSize{ getTextSize(font, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", wrap) };
+		return fontSize.x;
+	}
+	namespace drawlist {
+		enum class eJustify : u8 { Left, Right, Center };
+		inline void rect(ImVec2 pos, ImVec2 size, color color, bool foreground = true) {
+			ImDrawList* drawList{ foreground ? ImGui::GetForegroundDrawList() : ImGui::GetBackgroundDrawList() };
+			ImVec2 scaledPos{ convertCoordTypes(pos) };
+			ImVec2 scaledSize{ convertCoordTypes(size) };
+			ImVec2 finalPos{ scaledPos - (scaledSize / 2.f) };
+			drawList->AddRectFilled(finalPos, finalPos + scaledSize, color.pack());
+		}
+		inline void text(ImFont* font, std::string text, ImVec2 pos, color color, eJustify justify = eJustify::Left, float wrap = 0.f, bool foreground = true) {
+			ImDrawList* drawList{ foreground ? ImGui::GetForegroundDrawList() : ImGui::GetBackgroundDrawList() };
+			ImVec2 scaledWrap{ convertCoordTypes({ wrap, wrap }) };
+			switch (justify) {
+			case eJustify::Right: {
+				ImVec2 textSize{ getTextSize(font, text, scaledWrap.y) };
+				pos.x -= textSize.x;
+			} break;
+			case eJustify::Center: {
+				ImVec2 textSize{ getTextSize(font, text, scaledWrap.y) };
+				pos.x -= textSize.x / 2.f;
+			} break;
+			}
+			ImVec2 scaledPos{ convertCoordTypes(pos) };
+			drawList->AddText(font, font->FontSize, scaledPos, color.pack(), text.data(), NULL, scaledWrap.y);
+		}
 	}
 	inline void textWrap(float value, std::function<void()> cb = {}) {
 		ImGui::PushTextWrapPos(value);
@@ -297,7 +330,7 @@ namespace elements {
 	inline void protectionToggle(ccp id, bool continueLine = false) {
 		auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
 		popupButton(cmd->m_name, id, true);
-		selectionPopup<eProtectionState>(id, "State", cmd->m_accessibleState, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
+		selectionPopup<eProtectionState>(id, "State", cmd->m_state, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
 			cmd->update(g_protectionStates[idx]);
 		}, continueLine);
 	}
@@ -306,6 +339,7 @@ namespace elements {
 		popupButton(cmd->m_name, id, true);
 		selectionPopup<eProtectionState>(id, "State", cmd->m_state, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
 			cmd->update(g_protectionStates[idx]);
+			cmd->run();
 		}, continueLine);
 	}
 }

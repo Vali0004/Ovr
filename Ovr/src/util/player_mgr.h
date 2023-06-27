@@ -128,6 +128,18 @@ namespace util::network {
 			}
 			return {};
 		}
+		player nextHost() {
+			if (!online())
+				return {};
+			u64 lastHostToken{ m_players[0] };
+			for (auto& entry : m_players) {
+				auto& player{ entry.second };
+				if (player.m_peerAddress > lastHostToken && !player.m_host) {
+					lastHostToken = player.m_peerAddress;
+				}
+			}
+			return getByPeerAddress(lastHostToken);
+		}
 		player scriptHost() {
 			CNetGamePlayer* player{ getScriptHostNetGamePlayer() };
 			if (player)

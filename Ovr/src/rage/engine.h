@@ -3,7 +3,8 @@
 #include "joaat.h"
 #include "memory/pointers.h"
 #include "rage/commands/list.h"
-#include "hooking/hooking.h"
+#include "rage/classes.h"
+#include "util/statistics.h"
 
 namespace engine {
 	class thread : public GtaThread {

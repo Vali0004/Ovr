@@ -5,6 +5,7 @@ namespace tabs::self {
 	inline void ped() {
 		elements::tabItem("Ped", [] {
 			elements::section("Proofs", [] {
+				cbutton("setAllProofs"_AC);
 				ccheckbox("bulletProof"_TC);
 				ccheckbox("fireProof"_TC);
 				ccheckbox("collisionProof"_TC);
@@ -24,6 +25,8 @@ namespace tabs::self {
 			cintSlider("alpha"_IC, 0, 255);
 			ccheckbox("noRagdoll"_TC);
 			ccheckbox("invisibility"_TC);
+			ccheckbox("autoHeal"_TC);
+			cbutton("clone"_AC);
 			cbutton("suicide"_AC);
 		});
 	}

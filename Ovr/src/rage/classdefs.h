@@ -184,7 +184,6 @@ namespace rage {
 	class CDynamicEntity;
 	class CPhysical;
 	class scriptHandlerMgr;
-	class scrVectorSpace;
 	class scrNativeCallContext;
 	using scrCmd = void(*)(scrNativeCallContext*);
 	using scrNativeHash = uint64_t;

@@ -5,7 +5,7 @@
 namespace tabs::settings {
 	inline void command() {
 		elements::tabItem("Command", [] {
-			ccheckbox("useDirectMatchResult"_TC);
+			ccheckbox("useDirectMatchResults"_TC);
 			ccheckbox("autoCompleteCommands"_TC);
 			ccheckbox("useFirstCommandOnMultipleResults"_TC);
 			ccheckbox("clearCommandBoxOnEnter"_TC);

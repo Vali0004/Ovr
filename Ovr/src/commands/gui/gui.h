@@ -3,47 +3,6 @@
 #include "commands/manager/abstract.h"
 #include "script/elements.h"
 
-namespace elements {
-	struct color {
-		u8 r{}, g{}, b{}, a{};
-		inline u32 pack() { return a << 24 | b << 16 | g << 8 | r << 0; }
-	};
-	inline ImVec2 getTextSize(ImFont* font, std::string text, float wrap = 0.f) {
-		ImVec2 textSize{ font->CalcTextSizeA(font->FontSize, FLT_MAX, wrap, text.c_str(), NULL) };
-		textSize.x = IM_FLOOR(textSize.x + 0.99999999999f);
-		return { convertCoordTypes(textSize, true) };
-	}
-	inline float getTextHeight(ImFont* font, float wrap = 0.f) {
-		ImVec2 fontSize{ getTextSize(font, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", wrap) };
-		return fontSize.x;
-	}
-	namespace custom {
-		inline void rect(ImVec2 pos, ImVec2 size, color color, bool foreground = true) {
-			ImDrawList* drawList{ foreground ? ImGui::GetForegroundDrawList() : ImGui::GetBackgroundDrawList() };
-			ImVec2 scaledPos{ convertCoordTypes(pos) };
-			ImVec2 scaledSize{ convertCoordTypes(size) };
-			ImVec2 finalPos{ scaledPos - (scaledSize / 2.f) };
-			drawList->AddRectFilled(finalPos, finalPos + scaledSize, color.pack());
-		}
-		enum class eJustify : u8 { Left, Right, Center };
-		inline void text(ImFont* font, std::string text, ImVec2 pos, color color, eJustify justify = eJustify::Left, float wrap = 0.f, bool foreground = true) {
-			ImDrawList* drawList{ foreground ? ImGui::GetForegroundDrawList() : ImGui::GetBackgroundDrawList() };
-			ImVec2 scaledWrap{ convertCoordTypes({ wrap, wrap }) };
-			switch (justify) {
-			case eJustify::Right: {
-				ImVec2 textSize{ getTextSize(font, text, scaledWrap.y) };
-				pos.x -= textSize.x;
-			} break;
-			case eJustify::Center: {
-				ImVec2 textSize{ getTextSize(font, text, scaledWrap.y) };
-				pos.x -= textSize.x / 2.f;
-			} break;
-			}
-			ImVec2 scaledPos{ convertCoordTypes(pos) };
-			drawList->AddText(font, font->FontSize, scaledPos, color.pack(), text.data(), NULL, scaledWrap.y);
-		}
-	}
-}
 namespace commands::gui {
 	class box {
 	private:

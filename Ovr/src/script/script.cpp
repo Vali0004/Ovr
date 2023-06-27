@@ -11,17 +11,12 @@
 #include "tabs/network.h"
 #include "tabs/protections.h"
 #include "tabs/scripting.h"
+#include "tabs/miscellaneous.h"
 #include "tabs/settings.h"
 #include "elements.h"
 #include "commands/gui/gui.h"
 
 namespace script {
-	inline bool debug() {
-		#ifdef DEBUG
-			return true;
-		#endif
-		return false;
-	}
 	void onPresent() {
 		if (script::g_guiOpen) {
 			elements::window(BRAND, g_guiOpen, [] {
@@ -32,25 +27,12 @@ namespace script {
 					elements::tabItem("Network", &tabs::network::tab);
 					elements::tabItem("Protections", &tabs::protections::tab);
 					elements::tabItem("Scripting", &tabs::scripting::tab);
+					elements::tabItem("Miscellaneous", &tabs::miscellaneous::tab);
 					elements::tabItem("Settings", &tabs::settings::tab);
 				});
 			});
 		}
-		elements::setWindow({ 20.f, 20.f }, { 155.f, 120.f });
-		elements::primitiveWindow("Pools", [] {
-			elements::text("Vehicles: {}", util::getVehicleCounts());
-			elements::text("Peds: {}", util::getPedCounts());
-			elements::text("Pickups: {}", util::getPedCounts());
-			elements::text("Objects: {}", util::getObjectCounts());
-		});
-		elements::setWindow({ ImGui::GetIO().DisplaySize.x - 455.f, 5.f }, { 445.f, 40.f });
-		elements::primitiveWindow("Overlay", [] {
-			elements::setStyleColor({ { ImGuiCol_Border, {} } }, [] {
-				elements::addWindowRect({ 435.f, 2.f }, { 255, 192, 255, 255 });
-				std::string time{ util::time(debug() ? "%c" : "%T")};
-				elements::text("overseer.menu | FPS: {} | Date: {}", static_cast<u32>(ImGui::GetIO().Framerate / 1.5f), time);
-			});
-		});
+		elements::drawlist::text(g_renderer->m_tahoma, BRAND " developer", { 0.001f, 0.f }, { 255, 255, 255, 255 });
 	}
 	void init() {
 		if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {

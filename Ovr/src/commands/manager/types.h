@@ -67,7 +67,8 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_value.m_value.toggle ^= true;
 			}
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	public:
@@ -99,7 +100,8 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	public:
@@ -135,7 +137,8 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_toggleValue.m_value.toggle ^= true;
 			}
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	public:
@@ -168,7 +171,8 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	public:
@@ -204,7 +208,8 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_toggleValue.m_value.toggle ^= true;
 			}
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	public:
@@ -236,7 +241,8 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 	private:
@@ -266,10 +272,9 @@ namespace commands {
 		void update(ccp n) {
 			m_value.m_value.string = n;
 			setState();
-			m_accessibleState = state();
 		}
 		void setFromSection(eProtectionState state) {
-			m_state = m_accessibleState = state;
+			m_state = state;
 		}
 		void setState() {
 			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
@@ -281,16 +286,15 @@ namespace commands {
 			else if (strSearch(m_value.m_value.string, "Blo", { "Bl" }, true)) {
 				m_state = eProtectionState::Block;
 			}
-			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN" "BAndN", "BAnd", }, true)) {
+			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN", "BAndN", "BAnd", }, true)) {
 				m_state = eProtectionState::BlockAndNotify;
 			}
 		}
 		eProtectionState state() {
 			return m_state;
 		}
-		eProtectionState m_accessibleState{ eProtectionState::Disabled };
-	private:
 		eProtectionState m_state{};
+	private:
 		typedValue m_value{};
 	};
 	class sectionProtectionCommand : public abstractCommand {
@@ -312,12 +316,13 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 		void update(ccp n) {
 			m_value.m_value.string = n;
-			setState();
+			//setState();
 		}
 		void setState() {
 			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
@@ -358,7 +363,8 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			m_callback(this);
+			if (m_callback)
+				m_callback(this);
 			abstractCommand::run();
 		}
 		bool looped() {

@@ -532,6 +532,24 @@
     <ClInclude Include="src\stb\image.h">
       <Filter>src\stb</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\statistics.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\color.h">
+      <Filter>src\script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous.h">
+      <Filter>src\script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self\world.h">
+      <Filter>src\script\tabs\self</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous\game.h">
+      <Filter>src\script\tabs\miscellaneous</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous\world.h">
+      <Filter>src\script\tabs\miscellaneous</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -849,6 +867,9 @@
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp">
       <Filter>src\hooking\hooks</Filter>
     </ClCompile>
+    <ClCompile Include="src\util\statistics.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -994,6 +1015,12 @@
     </Filter>
     <Filter Include="src\stb">
       <UniqueIdentifier>{851d4248-f913-404e-b6f3-b79401bd440f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\script\tabs\miscellaneous">
+      <UniqueIdentifier>{6a1d1ba2-b4fb-4983-9ccd-92e0142a9c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\script\tabs\miscellaneous\world">
+      <UniqueIdentifier>{6a5b7200-fc69-43c7-852d-423ddc91165c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

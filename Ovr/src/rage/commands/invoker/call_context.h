@@ -11,7 +11,7 @@ public:
 		Return = &m_retData[0];
 		ArgCount = 0;
 		Args = &m_argData[0];
-		VectorSpace = rage::scrVectorSpace();
+		Reset();
 		memset(&m_retData, NULL, sizeof(m_retData));
 		memset(&m_argData, NULL, sizeof(m_argData));
 	}

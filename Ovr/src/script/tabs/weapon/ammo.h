@@ -9,6 +9,8 @@ namespace tabs::weapon {
 			});
 			ccheckbox("infiniteAmmo"_TC);
 			ccheckbox("infiniteClip"_TC);
+			ccheckbox("infiniteStickyBombs"_TC);
+			ccheckbox("infiniteFlares"_TC);
 			cbutton("refillAmmo"_AC);
 		});
 	}

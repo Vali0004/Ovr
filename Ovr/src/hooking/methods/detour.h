@@ -11,21 +11,17 @@ public:
 	static bool Create(T Target, T Detour, T* Originial) {
 		MH_STATUS Status{ MH_CreateHook(Target, LPVOID(Detour), (LPVOID*)Originial) };
 		if (Status == MH_STATUS::MH_OK) {
-			printf("[MinHook::Create] Hook OK\n");
 			return true;
 		}
 		if (Status != MH_STATUS::MH_ERROR_NOT_INITIALIZED && Status != MH_STATUS::MH_ERROR_UNSUPPORTED_FUNCTION && Status != MH_STATUS::MH_ERROR_MEMORY_ALLOC && Status != MH_STATUS::MH_ERROR_MEMORY_PROTECT) {
 			if (std::optional<LPVOID> CorrectedTarget{ GetCorrectedTarget<T>(Target) }; CorrectedTarget.has_value()) {
 				Status = MH_CreateHook(CorrectedTarget.value(), LPVOID(Detour), (LPVOID*)Originial);
 				if (Status == MH_STATUS::MH_OK) {
-					printf("[MinHook::Create::Corrected] Hook OK\n");
 					return true;
 				}
-				printf("[MinHook::Create::Corrected] Hook FAIL\n");
 				return false;
 			}
 		}
-		printf("[MinHook::Create] Hook FAIL\n");
 		return false;
 	}
 	template <typename T>

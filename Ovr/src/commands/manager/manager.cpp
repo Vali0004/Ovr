@@ -33,6 +33,8 @@ namespace commands {
 	}
 	void manager::tick() {
 		for (auto& f : m_commands) {
+			if (f->m_type == eCommandType::ProtectionCommand || f->m_type == eCommandType::SectionProtectionCommand)
+				continue;
 			if (f->m_type != eCommandType::VariadicCommand) {
 				if (f->m_looped) {
 					f->run();

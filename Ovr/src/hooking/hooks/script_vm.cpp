@@ -5,9 +5,8 @@
 #define DEFAULT default:
 #define FETCH_INSN {
 #define NEXT_INSN break; }
-#define SET_PC(_o) ONCE({ i64 o{ _o }; pc = (opcodesTbl[o >> 14] + (o & 0x3FFF) - 1); opcodes = pc - o; });
-#define SET_STATE_AND_RET(state) Serialised->m_state = state; return Serialised->m_state;
-#define FAULT(s, ...) { LOG(Fatal, s, __VA_ARGS__); continue; }
+#define SET_PC(_o) ONCE({ i64 o{ _o }; pc = (opcodesTbl[o >> 14] + (o & 0x3FFF) - 1); opcodes = pc - o; })
+#define FAULT(s, ...) ONCE({ LOG(Fatal, s, __VA_ARGS__); continue; })
 #define LoadImm8 (*++pc)
 #define LoadImm16 ((pc+=2), *(uint16_t*)(pc-1))
 #define LoadImmS16 ((pc+=2), *(int16_t*)(pc-1))
@@ -47,15 +46,13 @@ void scrAppendString(char* dst, unsigned size, const char* src) {
 }
 
 using namespace rage;
-rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globals, rage::scrProgram* Program, rage::scrThreadSerialised* Serialised) {
-	u8** opcodesTbl{ Program->m_code_blocks };
-	rage::scrValue* sp{ Stack + Serialised->m_stack_pointer - 1 };
-	rage::scrValue* fp{ Stack + Serialised->m_frame_pointer };
-	u8* pc{};
-	u8* opcodes{};
-	SET_PC(Serialised->m_pointer_count);
+rage::eThreadState hooks::scriptVm(scrValue* stack, scrValue** globals, scrProgram* pt, scrThreadSerialised* ser) {
+	uint8_t** opcodesTbl = pt->m_code_blocks;
+	scrValue* sp = stack + ser->m_stack_pointer - 1;
+	scrValue* fp = stack + ser->m_frame_pointer;
+	uint8_t* pc{}, * opcodes{};
+	SET_PC(ser->m_pointer_count);
 	CHAR buf[0x10]{};
-	static rage::scrValue dummy{};
 	while (true) {
 		switch (LoadImm8) {
 			CASE(OP_NOP) FETCH_INSN; SET_PC(pc - opcodes); NEXT_INSN;
@@ -78,7 +75,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_FSUB) FETCH_INSN; --sp; sp[0].Float -= sp[1].Float; NEXT_INSN;
 			CASE(OP_FMUL) FETCH_INSN; --sp; sp[0].Float *= sp[1].Float; NEXT_INSN;
 			CASE(OP_FDIV) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float /= sp[1].Float; NEXT_INSN;
-			CASE(OP_FMOD) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float = (sp[1].Float ? sp[0].Float - ((i32)(sp[0].Float / sp[1].Float) * sp[1].Float) : 0); NEXT_INSN;
+			CASE(OP_FMOD) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float = (sp[1].Float ? sp[0].Float - ((int32_t)(sp[0].Float / sp[1].Float) * sp[1].Float) : 0); NEXT_INSN;
 			CASE(OP_FNEG) FETCH_INSN; sp[0].Uns ^= 0x80000000; NEXT_INSN;
 
 			CASE(OP_FEQ) FETCH_INSN; --sp; sp[0].Int = sp[0].Float == sp[1].Float; NEXT_INSN;
@@ -99,7 +96,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_IXOR) FETCH_INSN; --sp; sp[0].Int ^= sp[1].Int; NEXT_INSN;
 
 			CASE(OP_I2F) FETCH_INSN; sp[0].Float = (float_t)sp[0].Int; NEXT_INSN;
-			CASE(OP_F2I) FETCH_INSN; sp[0].Int = (i32)sp[0].Float; NEXT_INSN;
+			CASE(OP_F2I) FETCH_INSN; sp[0].Int = (int32_t)sp[0].Float; NEXT_INSN;
 			CASE(OP_F2V) FETCH_INSN; sp += 2; sp[-1].Int = sp[0].Int = sp[-2].Int; NEXT_INSN;
 
 			CASE(OP_PUSH_CONST_U8) FETCH_INSN; ++sp; sp[0].Int = LoadImm8; NEXT_INSN;
@@ -113,30 +110,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_DROP) FETCH_INSN; --sp; NEXT_INSN;
 
 			CASE(OP_NATIVE) FETCH_INSN;
-				uint32_t returnSize{ LoadImm8 };
-				uint32_t paramCount{ (returnSize >> 2u) & 63u };
-				int32_t imm{ (LoadImm8 << 8u) };
+				size_t returnSize = LoadImm8;
+				size_t paramCount = (returnSize >> 2) & 63;
+				uint32_t imm = (LoadImm8 << 8);
 				imm |= LoadImm8;
-				returnSize &= 3u;
-				scrCmd cmd{ Program->m_natives[imm] };
-				Serialised->m_pointer_count = (int32_t)(pc - opcodes - 4);
-				Serialised->m_frame_pointer = (int32_t)(fp - Stack);
-				Serialised->m_stack_pointer = (int32_t)(sp - Stack + 1);
-				scrNativeCallContext curInfo(returnSize ? &Stack[Serialised->m_stack_pointer - paramCount] : 0, paramCount, &Stack[Serialised->m_stack_pointer - paramCount]);
-				if (cmd == pointers::g_nativeRegistrationTable->get_handler(0xEE8559BBFC27701B)) {
-					cmd = [](rage::scrNativeCallContext* ctx) {
-						Entity entity{ ctx->Args[1].Int };
-						const char* propertyName{ ctx->Args[1].String };
-						int value{ ctx->Args[1].Int };
-						DECORATOR::DECOR_SET_INT(entity, propertyName, value);
-						printf("call for DSI\n");
-					};
-				}
+				returnSize &= 3;
+				scrCmd cmd = (decltype(cmd))(size_t)pt->m_natives[imm];
+				ser->m_pointer_count = (int32_t)(pc - opcodes - 4);
+				ser->m_frame_pointer = (int32_t)(fp - stack);
+				ser->m_stack_pointer = (int32_t)(sp - stack + 1);
+				scrNativeCallContext curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				g_statistics.m_nativesInvoked++;
 				(*cmd)(&curInfo);
-				if (Serialised->m_state != eThreadState::running)
-					return Serialised->m_state;
-				curInfo.VectorSpace.CopyReferencedParametersOut();
+				if (ser->m_state != eThreadState::running)
+					return ser->m_state;
+				curInfo.CopyReferencedParametersOut();
 				sp -= paramCount - returnSize;
 			NEXT_INSN;
 
@@ -144,13 +132,13 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				uint32_t paramCount = LoadImm8;
 				uint32_t localCount = LoadImm16;
 				uint32_t nameCount = LoadImm8;
-				if (Serialised->m_call_depth < 16)
-					Serialised->m_callstack[Serialised->m_call_depth] = (int32_t)(pc - opcodes + 2);
-				++(Serialised->m_call_depth);
+				if (ser->m_call_depth < 16)
+					ser->m_callstack[ser->m_call_depth] = (int32_t)(pc - opcodes + 2);
+				++(ser->m_call_depth);
 				pc += nameCount;
-				if (sp - Stack >= (int32_t)(Serialised->m_stack_size - localCount))
+				if (sp - stack >= (int32_t)(ser->m_stack_size - localCount))
 					FAULT("Stack overflow");
-				(++sp)->Int = (int32_t)(fp - Stack);
+				(++sp)->Int = (int32_t)(fp - stack);
 				fp = sp - paramCount - 1;
 				while (localCount--)
 					(++sp)->Any = 0;
@@ -158,19 +146,19 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			NEXT_INSN;
 
 			CASE(OP_LEAVE) FETCH_INSN;
-				--(Serialised->m_call_depth);
+				--(ser->m_call_depth);
 				uint32_t paramCount = LoadImm8;
 				uint32_t returnSize = LoadImm8;
 				scrValue* result = sp - returnSize;
 				sp = fp + paramCount - 1;
-				fp = Stack + sp[2].Uns;
+				fp = stack + sp[2].Uns;
 				uint32_t newPc = sp[1].Uns;
 				SET_PC(newPc);
 				sp -= paramCount;
 				while (returnSize--)
 					*++sp = *++result;
 				if (!newPc)
-					return Serialised->m_state = eThreadState::killed;
+					return ser->m_state = eThreadState::killed;
 			NEXT_INSN;
 
 			CASE(OP_LOAD) FETCH_INSN; sp[0].Any = (sp[0].Reference)->Any; NEXT_INSN;
@@ -196,7 +184,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[1].Reference);
 				size_t idx = sp[0].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm8;
 				sp[0].Reference = (r);
@@ -207,7 +209,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[1].Reference);
 				size_t idx = sp[0].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm8;
 				sp[0].Any = r->Any;
@@ -218,7 +234,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[3].Reference);
 				size_t idx = sp[2].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm8;
 				r->Any = sp[1].Any;
@@ -228,9 +258,9 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_LOCAL_U8_LOAD) FETCH_INSN; ++sp; sp[0].Any = fp[LoadImm8].Any; NEXT_INSN;
 			CASE(OP_LOCAL_U8_STORE) FETCH_INSN; --sp; fp[LoadImm8].Any = sp[1].Any; NEXT_INSN;
 
-			CASE(OP_STATIC_U8) FETCH_INSN; ++sp; sp[0].Reference = (Stack + LoadImm8); NEXT_INSN;
-			CASE(OP_STATIC_U8_LOAD) FETCH_INSN; ++sp; sp[0].Any = Stack[LoadImm8].Any; NEXT_INSN;
-			CASE(OP_STATIC_U8_STORE) FETCH_INSN; --sp; Stack[LoadImm8].Any = sp[1].Any; NEXT_INSN;
+			CASE(OP_STATIC_U8) FETCH_INSN; ++sp; sp[0].Reference = (stack + LoadImm8); NEXT_INSN;
+			CASE(OP_STATIC_U8_LOAD) FETCH_INSN; ++sp; sp[0].Any = stack[LoadImm8].Any; NEXT_INSN;
+			CASE(OP_STATIC_U8_STORE) FETCH_INSN; --sp; stack[LoadImm8].Any = sp[1].Any; NEXT_INSN;
 
 			CASE(OP_IADD_U8) FETCH_INSN; sp[0].Int += LoadImm8; NEXT_INSN;
 			CASE(OP_IMUL_U8) FETCH_INSN; sp[0].Int *= LoadImm8; NEXT_INSN;
@@ -253,7 +283,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[1].Reference);
 				size_t idx = sp[0].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm16;
 				sp[0].Reference = (r);
@@ -264,7 +308,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[1].Reference);
 				size_t idx = sp[0].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm16;
 				sp[0].Any = r->Any;
@@ -275,7 +333,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				scrValue* r = (sp[3].Reference);
 				uint32_t idx = sp[2].Uns;
 				if (idx >= r->Uns) {
-					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					switch ("arrayOverrunKickProtection"_PC->state()) {
+					case eProtectionState::Notify: {
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					case eProtectionState::Block: {
+						idx = 0;
+					} break;
+					case eProtectionState::BlockAndNotify: {
+						idx = 0;
+						LOG(Session, "{} from {}", "arrayOverrunKickProtection"_PC->m_name, g_statistics.m_lastScriptEventSender.m_name);
+					} break;
+					}
+					if ("arrayOverrunKickProtection"_PC->state() < eProtectionState::Block) {
+						FAULT("Array overrun, {} >= {}", idx, r->Uns);
+					}
 				}
 				r += 1U + idx * LoadImm16;
 				r->Any = sp[1].Any;
@@ -285,46 +357,43 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_LOCAL_U16_LOAD) FETCH_INSN; ++sp; sp[0].Any = fp[LoadImm16].Any; NEXT_INSN;
 			CASE(OP_LOCAL_U16_STORE) FETCH_INSN; --sp; fp[LoadImm16].Any = sp[1].Any; NEXT_INSN;
 
-			CASE(OP_STATIC_U16) FETCH_INSN; ++sp; sp[0].Reference = (Stack + LoadImm16); NEXT_INSN;
-			CASE(OP_STATIC_U16_LOAD) FETCH_INSN; ++sp; sp[0].Any = Stack[LoadImm16].Any; NEXT_INSN;
-			CASE(OP_STATIC_U16_STORE) FETCH_INSN; --sp; Stack[LoadImm16].Any = sp[1].Any; NEXT_INSN;
+			CASE(OP_STATIC_U16) FETCH_INSN; ++sp; sp[0].Reference = (stack + LoadImm16); NEXT_INSN;
+			CASE(OP_STATIC_U16_LOAD) FETCH_INSN; ++sp; sp[0].Any = stack[LoadImm16].Any; NEXT_INSN;
+			CASE(OP_STATIC_U16_STORE) FETCH_INSN; --sp; stack[LoadImm16].Any = sp[1].Any; NEXT_INSN;
 
-			CASE(OP_GLOBAL_U16) FETCH_INSN; ++sp; sp[0].Reference = (Globals[0] + LoadImm16); NEXT_INSN;
-			CASE(OP_GLOBAL_U16_LOAD) FETCH_INSN; ++sp; sp[0].Any = Globals[0][LoadImm16].Any; NEXT_INSN;
-			CASE(OP_GLOBAL_U16_STORE) FETCH_INSN; --sp; Globals[0][LoadImm16].Any = sp[1].Any; NEXT_INSN;
+			CASE(OP_GLOBAL_U16) FETCH_INSN; ++sp; sp[0].Reference = (globals[0] + LoadImm16); NEXT_INSN;
+			CASE(OP_GLOBAL_U16_LOAD) FETCH_INSN; ++sp; sp[0].Any = globals[0][LoadImm16].Any; NEXT_INSN;
+			CASE(OP_GLOBAL_U16_STORE) FETCH_INSN; --sp; globals[0][LoadImm16].Any = sp[1].Any; NEXT_INSN;
 
-			CASE(OP_STATIC_U24) FETCH_INSN; ++sp; sp[0].Reference = (Stack + LoadImm24); NEXT_INSN;
-			CASE(OP_STATIC_U24_LOAD) FETCH_INSN; ++sp; sp[0].Any = Stack[LoadImm24].Any; NEXT_INSN;
-			CASE(OP_STATIC_U24_STORE) FETCH_INSN; --sp; Stack[LoadImm24].Any = sp[1].Any; NEXT_INSN;
+			CASE(OP_STATIC_U24) FETCH_INSN; ++sp; sp[0].Reference = (stack + LoadImm24); NEXT_INSN;
+			CASE(OP_STATIC_U24_LOAD) FETCH_INSN; ++sp; sp[0].Any = stack[LoadImm24].Any; NEXT_INSN;
+			CASE(OP_STATIC_U24_STORE) FETCH_INSN; --sp; stack[LoadImm24].Any = sp[1].Any; NEXT_INSN;
 
 			CASE(OP_GLOBAL_U24) FETCH_INSN;
 				uint32_t imm = LoadImm24, block = imm >> 18, ofs = imm & 0x3FFFF;
 				++sp;
-				if (!Globals[block]) {
+				if (!globals[block])
 					FAULT("Global block {}/{} not resident", block, ofs);
-				}
 				else
-					sp[0].Reference = (&Globals[block][ofs]);
+					sp[0].Reference = (&globals[block][ofs]);
 			NEXT_INSN;
 
 			CASE(OP_GLOBAL_U24_LOAD) FETCH_INSN;
 				uint32_t imm = LoadImm24, block = imm >> 18, ofs = imm & 0x3FFFF;
 				++sp;
-				if (!Globals[block]) {
+				if (!globals[block])
 					FAULT("Global block {}/{} not resident", block, ofs);
-				}
 				else
-					sp[0].Any = Globals[block][ofs].Any;
+					sp[0].Any = globals[block][ofs].Any;
 			NEXT_INSN;
 
 			CASE(OP_GLOBAL_U24_STORE) FETCH_INSN;
 				uint32_t imm = LoadImm24, block = imm >> 18, ofs = imm & 0x3FFFF;
 				--sp;
-				if (!Globals[block]) {
+				if (!globals[block])
 					FAULT("Global block {}/{} not resident", block, ofs);
-				}
 				else
-					Globals[block][ofs].Any = sp[1].Any;
+					globals[block][ofs].Any = sp[1].Any;
 			NEXT_INSN;
 
 			CASE(OP_PUSH_CONST_U24) FETCH_INSN; ++sp; sp[0].Int = LoadImm24; NEXT_INSN;
@@ -332,13 +401,13 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 			CASE(OP_CALL) FETCH_INSN; uint32_t imm = LoadImm24; ++sp; sp[0].Uns = (int32_t)(pc - opcodes); SET_PC(imm); NEXT_INSN;
 
 			CASE(OP_J) FETCH_INSN; int32_t imm = LoadImmS16; SET_PC((pc - opcodes) + imm); NEXT_INSN;
-			CASE(OP_JZ) FETCH_INSN; int32_t imm = LoadImmS16; --sp; if (sp[1].Int == 0) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IEQ_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int == sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_INE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int != sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IGE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int >= sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IGT_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int > sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_ILE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int <= sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_ILT_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int < sp[2].Int)) { SET_PC((pc - opcodes) + imm); } else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_JZ) FETCH_INSN; int32_t imm = LoadImmS16; --sp; if (sp[1].Int == 0) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_IEQ_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int == sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_INE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int != sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_IGE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int >= sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_IGT_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int > sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_ILE_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int <= sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_ILT_JZ) FETCH_INSN; int32_t imm = LoadImmS16; sp -= 2; if (!(sp[1].Int < sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
 
 			CASE(OP_SWITCH) FETCH_INSN;
 				--sp;
@@ -358,7 +427,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 
 			CASE(OP_STRING) FETCH_INSN;
 				uint32_t offset = sp[0].Uns;
-				sp[0].String = (Program->m_strings_data[offset >> 14] + (offset & 0x3FFF));
+				sp[0].String = (pt->m_strings_data[offset >> 14] + (offset & 0x3FFF));
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_ASSIGN_STRING) FETCH_INSN;
@@ -405,25 +474,25 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				LPSTR cDest = (LPSTR)dest;
 				if (cDest)
 					cDest[(srcSize * sizeof(scrValue)) - 1] = '\0';
-			NEXT_INSN;
+				NEXT_INSN;
 
-			CASE(OP_CATCH) FETCH_INSN;
-				Serialised->m_catch_pointer_count = (int32_t)(pc - opcodes);
-				Serialised->m_catch_frame_pointer = (int32_t)(fp - Stack);
-				Serialised->m_catch_stack_pointer = (int32_t)(sp - Stack + 1);
+				CASE(OP_CATCH) FETCH_INSN;
+				ser->m_catch_pointer_count = (int32_t)(pc - opcodes);
+				ser->m_catch_frame_pointer = (int32_t)(fp - stack);
+				ser->m_catch_stack_pointer = (int32_t)(sp - stack + 1);
 				++sp;
 				sp[0].Int = -1;
 			NEXT_INSN;
 
 			CASE(OP_THROW) FETCH_INSN;
 				int32_t imm = sp[0].Int;
-				if (!Serialised->m_catch_pointer_count) {
+				if (!ser->m_catch_pointer_count) {
 					FAULT("THROW with no CATCH");
 				}
 				else {
-					SET_PC(Serialised->m_catch_pointer_count);
-					fp = Stack + Serialised->m_catch_frame_pointer;
-					sp = Stack + Serialised->m_catch_stack_pointer;
+					SET_PC(ser->m_catch_pointer_count);
+					fp = stack + ser->m_catch_frame_pointer;
+					sp = stack + ser->m_catch_stack_pointer;
 					sp[0].Int = imm;
 				}
 			NEXT_INSN;
@@ -462,8 +531,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* Stack, rage::scrValue** Globa
 				--sp;
 				sp[0].Int = ((sp[0].Int & (1 << sp[1].Int)) != 0);
 			NEXT_INSN;
-
-			DEFAULT FAULT("Bad opcode");
+			DEFAULT FAULT("Invalid opcode!");
 		}
 	}
 }

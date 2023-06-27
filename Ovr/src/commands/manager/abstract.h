@@ -92,12 +92,18 @@ namespace commands {
 		}
 		typedValue* get_value(size_t index) {
 			if (index > m_values.size() - 1) {
+				LOG(Info, "Value index cannot be over value size!");
 				throw std::runtime_error("Value index cannot be over value size!");
+				return nullptr;
 			}
 			return m_values[index];
 		}
 		value& get(size_t index) {
-			return get_value(index)->m_value;
+			typedValue* g{ get_value(index) };
+			if (g)
+				return g->m_value;
+			static value dummy{};
+			return dummy;
 		}
 		void add_hotkey(int key) {
 			m_hotkey.add_hotkey(key);

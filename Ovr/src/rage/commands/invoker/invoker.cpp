@@ -13,7 +13,7 @@ void invoker::end(rage::scrNativeHash hash) {
 	if (rage::scrCmd cmd{ getNativeCmd(hash) }) {
 		g_statistics.m_nativesInvokedByUs++;
 		cmd(&m_context);
-		m_context.VectorSpace.CopyReferencedParametersOut();
+		m_context.CopyReferencedParametersOut();
 	}
 	else {
 		LOG(Fatal, "Failed to get command 0x{:X}", hash);

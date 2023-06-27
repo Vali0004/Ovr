@@ -14,7 +14,7 @@
 #define DEBUG
 
 #define SIZEOF(a) sizeof(a) / sizeof(std::remove_pointer_t<decltype(a)>)
-#define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((u64)(!(sizeof(a) % sizeof(0[a])))))
+#define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
 #define ONCE(a) do a while (false)
 #define PI 3.141592653589793238462643383279502884L
 	
@@ -52,6 +52,12 @@ namespace defines {
 	inline u32 g_selectedFriend{};
 	inline std::string g_selectedAsi{};
 	inline eSessionTypes g_sessionType{ eSessionTypes::Offline };
+	inline bool debug() {
+		#ifdef DEBUG
+			return true;
+		#endif
+		return false;
+	}
     inline bool isNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c) == 0)

@@ -281,10 +281,14 @@
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\memory\scanner.h" />
     <ClInclude Include="src\hooking\methods\vmt.h" />
+    <ClInclude Include="src\script\color.h" />
     <ClInclude Include="src\script\elements.h" />
     <ClInclude Include="src\script\notifications\notifications.h" />
     <ClInclude Include="src\script\script.h" />
     <ClInclude Include="src\script\tabs\includes.h" />
+    <ClInclude Include="src\script\tabs\miscellaneous.h" />
+    <ClInclude Include="src\script\tabs\miscellaneous\game.h" />
+    <ClInclude Include="src\script\tabs\miscellaneous\world.h" />
     <ClInclude Include="src\script\tabs\network.h" />
     <ClInclude Include="src\script\tabs\network\friends.h" />
     <ClInclude Include="src\script\tabs\network\session.h" />
@@ -300,6 +304,7 @@
     <ClInclude Include="src\script\tabs\protections\reactions\network_event.h" />
     <ClInclude Include="src\script\tabs\protections\reactions\script_event.h" />
     <ClInclude Include="src\script\tabs\protections\script_events.h" />
+    <ClInclude Include="src\script\tabs\self\world.h" />
     <ClInclude Include="src\stb\image.h" />
     <ClInclude Include="src\stb\image_write.h" />
     <ClInclude Include="src\util\clipboard.h" />
@@ -330,6 +335,7 @@
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\player_mgr.h" />
+    <ClInclude Include="src\util\statistics.h" />
     <ClInclude Include="src\util\util.h" />
     <ClInclude Include="src\zydis\Decoder.h" />
     <ClInclude Include="src\zydis\DecoderTypes.h" />
@@ -453,6 +459,7 @@
     <ClCompile Include="src\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
     <ClCompile Include="src\util\player_mgr.cpp" />
+    <ClCompile Include="src\util\statistics.cpp" />
     <ClCompile Include="src\zydis\Decoder.c" />
     <ClCompile Include="src\zydis\DecoderData.c" />
     <ClCompile Include="src\zydis\Disassembler.c" />

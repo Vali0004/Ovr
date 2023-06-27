@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "self/ped.h"
 #include "self/movement.h"
+#include "self/world.h"
 #include "self/police.h"
 
 namespace tabs::self {
@@ -9,6 +10,7 @@ namespace tabs::self {
 		elements::tabBar("Self", [] {
 			self::ped();
 			self::movement();
+			self::world();
 			self::police();
 		});
 	}

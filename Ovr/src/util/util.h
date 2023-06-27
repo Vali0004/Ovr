@@ -2,6 +2,8 @@
 #include "pch/pch.h"
 #include "memory/pointers.h"
 #include "rage/classes.h"
+#include "rage/commands/list.h"
+#include "fiber/fiber.h"
 
 namespace util {
 	namespace classes {
@@ -147,6 +149,14 @@ namespace util {
 			return false;
 		}
 	}
+	namespace natives {
+		inline void requestModel(u32 hash) {
+			for (i8 i{ 25i8 }; !STREAMING::HAS_MODEL_LOADED(hash) && i; --i) {
+				STREAMING::REQUEST_MODEL(hash);
+				fiber::current()->sleep();
+			}
+		}
+	}
 	inline bool pressed(i8 key) {
 		if (GetForegroundWindow() == pointers::g_hwnd) {
 			if (GetAsyncKeyState(key) & 0x1) {
@@ -204,22 +214,6 @@ namespace util {
 			arr[i] = pointers::g_pointerToHandle((rage::CEntity*)objects[i]);
 		}
 		return objects.size();
-	}
-	inline std::string getVehicleCounts() {
-		auto inf{ classes::getVehicleInterface() };
-		return std::format("{}/{}", inf->m_count, inf->m_size);
-	}
-	inline std::string getPedCounts() {
-		auto inf{ classes::getPedInterface() };
-		return std::format("{}/{}", inf->m_count, inf->m_size);
-	}
-	inline std::string getPickupCounts() {
-		auto inf{ classes::getPickupInterface() };
-		return std::format("{}/{}", inf->m_count, inf->m_size);
-	}
-	inline std::string getObjectCounts() {
-		auto inf{ classes::getObjectInterface() };
-		return std::format("{}/{}", inf->m_count, inf->m_size);
 	}
 	inline std::wstring strToWstr(std::string str) {
 		return fs::path(str).wstring();

@@ -17,6 +17,7 @@ namespace rage {
 	};
 	struct vector3 {
 		float x, y, z;
+		Vector2 serialize_v2();
 		Vector3 serialize();
 	};
 	struct vector4 {
@@ -1332,36 +1333,32 @@ namespace rage {
 		char pad_0032[14]; //0x0032
 		netLoggingInterface* m_logger; //0x0040
 	}; //Size: 0x0048
-	class scrVectorSpace {
+	class scrNativeCallContext {
 	public:
 		void Reset() {
+			ArgCount = 0;
 			BufferCount = 0;
 			memset(Orig, NULL, sizeof(Orig));
 			memset(Buffer, NULL, sizeof(Buffer));
-		}
-		void CopyReferencedParametersOut() {
-			while (BufferCount--) {
-				Orig[BufferCount][0].Float = Buffer[BufferCount].x;
-				Orig[BufferCount][1].Float = Buffer[BufferCount].y;
-				Orig[BufferCount][2].Float = Buffer[BufferCount].z;
-			}
-		}
-		uint32_t BufferCount; //0x0000
-		scrValue* Orig[4]; //0x0004
-		scrVector Buffer[4]; //0x0020
-	}; //Size: 0x0060
-	class scrNativeCallContext {
-	public:
-		void reset() {
-			ArgCount = 0;
-			VectorSpace.Reset();
 		}
 	public:
 		scrValue* Return; //0x0000
 		uint32_t ArgCount; //0x0008
 		scrValue* Args; //0x0010
-		scrVectorSpace VectorSpace;
-	}; //Size: 0x00E0
+		int BufferCount;
+		u32* Orig[4];
+		scrVector Buffer[4];
+		void CopyReferencedParametersOut() { 
+			int bc = BufferCount;
+			while (bc--) {
+				u32 *dst = Orig[bc];
+				u32 *src = (u32*)&Buffer[bc].x;
+				dst[0] = src[0]; 
+				dst[1] = src[1]; 
+				dst[2] = src[2];
+			}
+		}
+	};
 	class scrNativeRegistration {
 	public:
 		scrNativeRegistration* m_next; //0x0000
@@ -2941,6 +2938,9 @@ public:
 	}
 };
 inline Vector2 rage::vector2::serialize() {
+	return { x, y };
+}
+inline Vector2 rage::vector3::serialize_v2() {
 	return { x, y };
 }
 inline Vector3 rage::vector3::serialize() {
