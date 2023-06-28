@@ -33,8 +33,8 @@ namespace engine {
 			auto ogThr = tls->m_script_thread;
 			tls->m_script_thread = this;
 			if (m_serialised.m_state != rage::eThreadState::killed && g_statistics.m_frameCount != MISC::GET_FRAME_COUNT()) {
-				g_statistics.reset();
 				do_run();
+				g_statistics.m_frameTime = MISC::GET_FRAME_TIME();
 				g_statistics.m_frameCount = MISC::GET_FRAME_COUNT();
 			}
 			tls->m_script_thread = ogThr;

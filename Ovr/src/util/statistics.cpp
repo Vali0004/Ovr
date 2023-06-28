@@ -14,6 +14,7 @@ void statistics::draw() {
 	drawPlayerCount();
 	drawIncomingNetworkEvents();
 	drawFrameCount();
+	drawFrameTime();
 	drawSessionType();
 	drawHost();
 	drawScriptHost();
@@ -103,6 +104,13 @@ void statistics::drawIncomingNetworkEvents() {
 }
 void statistics::drawFrameCount() {
 	std::string s{ std::format("{} - Frame Count", m_frameCount) };
+	ImVec2 size{ elements::getTextSize(g_renderer->m_tahoma, s) };
+	elements::drawlist::text(g_renderer->m_tahoma, s, { m_pos.x - size.x, m_drawBase + size.y }, m_color);
+	m_drawBase += elements::getTextSize(g_renderer->m_tahoma, s).y;
+	m_drawBase += m_padding;
+}
+void statistics::drawFrameTime() {
+	std::string s{ std::format("{} - Frame Time", m_frameTime) };
 	ImVec2 size{ elements::getTextSize(g_renderer->m_tahoma, s) };
 	elements::drawlist::text(g_renderer->m_tahoma, s, { m_pos.x - size.x, m_drawBase + size.y }, m_color);
 	m_drawBase += elements::getTextSize(g_renderer->m_tahoma, s).y;

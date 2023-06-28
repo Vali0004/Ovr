@@ -15,6 +15,7 @@ namespace core {
 		}
 		void loop() {
 			while (g_running) {
+				util::onPress(VK_F12, [] { g_running = false; });
 				std::this_thread::sleep_for(100ms);
 			}
 		}
@@ -36,7 +37,7 @@ namespace core {
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		pointers::doPatches();
-		while (*pointers::g_gameState != eGameState::Playing) {
+		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(10ms);
 		}
 		g_invoker.cache();

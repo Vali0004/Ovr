@@ -20,6 +20,7 @@ private:
 	void drawPlayerCount();
 	void drawIncomingNetworkEvents();
 	void drawFrameCount();
+	void drawFrameTime();
 	void drawSessionType();
 	void drawHost();
 	void drawNextHost();
@@ -32,6 +33,7 @@ public:
 	int m_playerCount{};
 	int m_incomingNetworkEvents{};
 	int m_frameCount{};
+	float m_frameTime{};
 	std::string m_gameType{};
 	util::network::player m_lastScriptEventSender{};
 	util::network::player m_host{};

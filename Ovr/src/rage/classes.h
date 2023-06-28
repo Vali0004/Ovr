@@ -811,7 +811,7 @@ namespace rage {
 		int32_t Int;
 		uint32_t Uns;
 		float Float;
-		LPCSTR String;
+		const char* String;
 		scrValue* Reference;
 		size_t Any;
 		bool operator==(const scrValue& val) {
@@ -1348,13 +1348,13 @@ namespace rage {
 		int BufferCount;
 		u32* Orig[4];
 		scrVector Buffer[4];
-		void CopyReferencedParametersOut() { 
+		void CopyReferencedParametersOut() {
 			int bc = BufferCount;
 			while (bc--) {
-				u32 *dst = Orig[bc];
-				u32 *src = (u32*)&Buffer[bc].x;
-				dst[0] = src[0]; 
-				dst[1] = src[1]; 
+				u32* dst = Orig[bc];
+				u32* src = (u32*)&Buffer[bc].x;
+				dst[0] = src[0];
+				dst[1] = src[1];
 				dst[2] = src[2];
 			}
 		}
@@ -2684,6 +2684,7 @@ public:
 public:
 	alignas(8) float x{};
 	alignas(8) float y{};
+public:
 	rage::vector2 deserialize() {
 		return { x, y };
 	}
@@ -2850,6 +2851,7 @@ public:
 	alignas(8) float y{};
 	alignas(8) float z{};
 	alignas(8) float w{};
+public:
 	rage::vector4 deserialize() {
 		return { x, y, z, w };
 	}

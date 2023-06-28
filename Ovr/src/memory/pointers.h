@@ -83,7 +83,7 @@ namespace pointers {
 	inline HashTable<rage::CBaseModelInfo*>* g_hashTable{};
 	inline rage::atArray<GtaThread*>* g_gtaThreads{};
 	inline rage::scrValue** g_globals{};
-	inline eGameState* g_gameState{};
+	inline eLoadingScreenState* g_loadingScreenState{};
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
 	inline u64* g_reportModule{};

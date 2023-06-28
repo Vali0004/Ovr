@@ -128,9 +128,9 @@ enum class ePlayerGameState : int32_t {
 	Respawn,
 	InMPCutscene
 };
-enum class eGameState : int32_t {
+enum class eLoadingScreenState : int32_t {
 	Invalid = -1,
-	Playing,
+	Finished,
 	PreLegal,
 	Unknown_2,
 	Legals,
