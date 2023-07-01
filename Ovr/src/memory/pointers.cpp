@@ -74,7 +74,12 @@ namespace pointers {
                 patch(NULL, h.add(8).as<i32*>(), bytes, true).apply();
                 arxIntegCheck++;
             }
-            LOG(Info, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
+            if (arxIntegCheck) {
+                LOG(Info, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
+            }
+            else {
+                LOG(Info, "ARX functions ");
+            }
         }
         catch (...) {
             LOG(Info, "ARX function patches failed to patch, checking if they were already applied.");
