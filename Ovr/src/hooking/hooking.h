@@ -32,7 +32,13 @@ struct hooks {
 	static bool receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp);
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
+	static bool processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 	static bool addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
+	static bool request(CHttpRequest* pRequest);
+	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
+	static bool prepareMetric(rage::datBitBuffer* pBitBuffer, i32 Unk, i32 Time, rage::rlMetric* pMetric);
+	static void sendNetworkEvent(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
+	static u64 addEventToList(u64* pEventPool);
 	static LPVOID convertThreadToFiber(LPVOID param);
 	static FARPROC getProcAddress(HMODULE hModule, LPCSTR lpProcName);
 	static bool updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attribute, u64 Value);
@@ -79,7 +85,13 @@ public:
 	detour m_receiveCloneCreate;
 	detour m_canApplyData;
 	detour m_findGameMatch;
+	detour m_processMatchmakingFind;
 	detour m_addItemToBasket;
+	detour m_request;
+	detour m_sendMetric;
+	detour m_prepareMetric;
+	detour m_sendNetworkEvent;
+	detour m_addEventToList;
 	detour m_updateAttributeInt;
 	detour m_convertThreadToFiber;
 	detour m_getProcAddress;

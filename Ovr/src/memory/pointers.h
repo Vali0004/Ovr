@@ -24,7 +24,7 @@ namespace pointers {
 		using dispatchEvent = bool(*)(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent);
 		using scriptVm = rage::eThreadState(*)(rage::scrValue* Stack, rage::scrValue** Globals, rage::scrProgram* Program, rage::scrThreadSerialised* Serialised);
 		using scGetGameInfoIndex = int(*)(const char* StringId, u64 Unk, u32 GameId);
-		using joinBySessionInfo = bool(*)(CNetwork* Network, rage::rlSessionInfo* Info, i32 Unk, i32 Flags, rage::rlGamerHandle* Handles, i32 HandleCount); using SendEventAck = void(*)(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, i32 Index, i32 HandledBitset);
+		using joinBySessionInfo = bool(*)(CNetwork* Network, rage::rlSessionInfo* Info, i32 Unk, i32 Flags, rage::rlGamerHandle* Handles, i32 HandleCount);
 		using proccessPackedEvents = void(*)(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, u16 Id, i32 Index, i32 HandledBitset, i32 BufferSize, rage::datBitBuffer* Buffer);
 		using sendEventAck = void(*)(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, i32 Index, i32 HandledBitset);
 		using getNetObject = rage::netObject* (*)(CNetworkObjectMgr* pObjMgr, u16 ObjectId, bool CanDeleteBePending);
@@ -36,6 +36,12 @@ namespace pointers {
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
 		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 		using addItemToBasket = bool(*)(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
+		using request = bool(*)(CHttpRequest* pRequest);
+		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
+		using prepareMetric = bool(*)(rage::datBitBuffer* pBitBuffer, i32 Unk, i32 Time, rage::rlMetric* pMetric);
+		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
+		using addEventToList = u64(*)(u64* pEventPool);
+		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -65,6 +71,12 @@ namespace pointers {
 	inline types::getGamerTaskResult g_getGamerTaskResult{};
 	inline types::findGameMatch g_findGameMatch{};
 	inline types::addItemToBasket g_addItemToBasket{};
+	inline types::request g_request{};
+	inline types::sendMetric g_sendMetric{};
+	inline types::prepareMetric g_prepareMetric{};
+	inline types::sendNetworkEvent g_sendNetworkEvent{};
+	inline types::addEventToList g_addEventToList{};
+	inline types::processMatchmakingFind g_processMatchmakingFind{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline ScGameInfo* g_scGameInfo{};
@@ -87,5 +99,8 @@ namespace pointers {
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
 	inline u64* g_reportModule{};
+	inline u64* g_reportCashSpawnEvent{};
+	inline u64* g_updateFxnEvent{};
+	inline u64* g_networkCheckCodeCrcsEvent{};
 	inline HWND g_hwnd{};
 }

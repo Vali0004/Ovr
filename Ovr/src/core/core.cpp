@@ -33,7 +33,7 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1)");
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b908)");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		pointers::doPatches();
@@ -47,6 +47,7 @@ namespace core {
 		g_hooking->enable();
 		g_manager.add("script", &script::onTick);
 		g_manager.add("commands", &commands::onTick);
+		g_manager.add("playerManager", &util::network::manager::onTick);
 		engine::createThread(&g_manager);
 	}
 	void destroy() {

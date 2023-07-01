@@ -157,6 +157,28 @@ namespace util {
 			}
 		}
 	}
+	inline bool inModuleRegion(ccp module, u64 address) {
+		static HMODULE hmod{ GetModuleHandleA(module ? module : NULL) };
+		static u64 moduleBase{};
+		static u64 moduleSize{};
+		if (!moduleBase || !moduleSize) {
+			MODULEINFO info{};
+			if (!K32GetModuleInformation(GetCurrentProcess(), hmod, &info, sizeof(info))) {
+				return true;
+			}
+			else {
+				moduleBase = (u64)hmod;
+				moduleSize = (u64)info.SizeOfImage;
+			}
+		}
+		return address > moduleBase && address < (moduleBase + moduleSize);
+	}
+	inline bool checkIns(ccp module, u64 address, u8 ins) {
+		if (!inModuleRegion(module, address)) {
+			return false;
+		}
+		return *(u8*)address == ins;
+	}
 	inline bool pressed(i8 key) {
 		if (GetForegroundWindow() == pointers::g_hwnd) {
 			if (GetAsyncKeyState(key) & 0x1) {
@@ -280,6 +302,19 @@ namespace util {
 		for (u8 i{}; i != 15; ++i) {
 			if (vehicle->m_passengers[i] == ped)
 				return true;
+		}
+		return false;
+	}
+	inline constexpr char const* g_badEndpoints[3] = {
+		"Bonus",
+		"SubmitCompressed",
+		"SubmitRealTime"
+	};
+	inline bool badEndpoint(const std::string& endpoint) {
+		for (i8 i{}; i != COUNT(g_badEndpoints); ++i) {
+			if (endpoint.size() && endpoint.find(g_badEndpoints[i]) != std::string::npos) {
+				return true;
+			}
 		}
 		return false;
 	}

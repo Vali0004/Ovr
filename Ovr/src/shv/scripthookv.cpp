@@ -84,6 +84,21 @@ namespace shv {
 			return (int)util::getPoolObjects<CPickupInterface>(3, arr, arrSize);
 		}
 	}
+	void wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		if (uMsg == WM_KEYDOWN || uMsg == WM_KEYUP || uMsg == WM_SYSKEYDOWN || uMsg == WM_SYSKEYUP) {
+			for (auto& cb : g_keyboardFunctions) {			
+				cb(
+					static_cast<DWORD>(wParam),
+					LOWORD(lParam),
+					HIBYTE(lParam >> 16),
+					lParam >> 24 & 1,
+					uMsg == WM_SYSKEYDOWN || uMsg == WM_SYSKEYUP,
+					lParam >> 30 & 1,
+					uMsg == WM_SYSKEYUP || uMsg == WM_KEYUP
+				);
+			}
+		}
+	}
 	void onPresent(renderer* renderer) {
 		renderer->createTextures();
 		if (!g_drawTextureArray.empty()) {

@@ -94,24 +94,28 @@ namespace defines {
         }
         return tArr;
     }
-    inline std::vector<std::string> splitString(const std::string& string, char split) {
-        std::vector<std::string> strings{};
-        std::string buffer{};
-        for (u64 i{}; i != string.size(); ++i) {
-            char c{ string[i] };
-            if (c == split) {
-                strings.push_back(buffer);
-                buffer.erase();
-            }
-            else {
-                buffer += c;
-                if (i == string.length() - 1) {
-                    strings.push_back(buffer);
-                }
-            }
+    inline std::vector<std::string> getMatches(std::string str, std::string ex) {
+        std::vector<std::string> matches{};
+        std::regex expression{ ex };
+        std::sregex_iterator iter{ str.begin(), str.end(), expression };
+        std::sregex_iterator end{};
+        while (iter != end) {
+            matches.push_back((*iter).str());
+            ++iter;
         }
-        return strings;
+        return matches;
     }
+    inline std::vector<std::string> splitString(const std::string& string, char split) {
+		std::vector<std::string> output{};
+		u64 previousPosition{}, position{};
+		while ((position = string.find(string, position)) != std::string::npos) {
+			std::string substring{ string.substr(previousPosition, position - previousPosition) };
+			output.push_back(substring);
+			previousPosition = ++position;
+		}
+		output.push_back(string.substr(previousPosition, position - previousPosition));
+		return output;
+	}
 }
 using namespace defines;
 

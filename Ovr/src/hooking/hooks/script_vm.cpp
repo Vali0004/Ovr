@@ -6,6 +6,7 @@
 #define FETCH_INSN {
 #define NEXT_INSN break; }
 #define SET_PC(_o) ONCE({ i64 o{ _o }; pc = (opcodesTbl[o >> 14] + (o & 0x3FFF) - 1); opcodes = pc - o; })
+#define ADD_PC(_r) SET_PC((pc - opcodes) + (_r))
 #define CHECK_PC SET_PC(pc - opcodes)
 #define FAULT(s, ...) ONCE({ LOG(Fatal, s, __VA_ARGS__); continue; })
 #define LoadImm8 (*++pc)
@@ -47,6 +48,8 @@ void scrAppendString(char* dst, unsigned size, const char* src) {
 }
 
 rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThreadSerialised* ser) {
+	if (ser->m_script_hash == "valentinerpreward2"_joaat)
+		return ser->m_state = rage::eThreadState::aborted;
 	u8** opcodesTbl{ pt->m_code_blocks };
 	rage::scrValue* sp{ stack + ser->m_stack_pointer - 1 };
 	rage::scrValue* fp{ stack + ser->m_frame_pointer };
@@ -116,11 +119,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				i32 imm{ (LoadImm8 << 8) };
 				imm |= LoadImm8;
 				returnSize &= 3;
-				rage::scrCmd cmd{ (decltype(cmd))(size_t)pt->m_natives[imm] };
+				rage::Cmd cmd{ (decltype(cmd))(size_t)pt->m_natives[imm] };
 				ser->m_pointer_count = (i32)(pc - opcodes - 4);
 				ser->m_frame_pointer = (i32)(fp - stack);
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
-				rage::scrNativeCallContext curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
+				rage::scrThreadInfo curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				g_statistics.m_nativesInvoked++;
 				(*cmd)(&curInfo);
 				if (ser->m_state != rage::eThreadState::running)
@@ -159,7 +162,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				while (returnSize--)
 					*++sp = *++result;
 				if (!newPc)
-					return ser->m_state = rage::eThreadState::killed;
+					return ser->m_state = rage::eThreadState::halted;
 			NEXT_INSN;
 
 			CASE(OP_LOAD) FETCH_INSN; sp[0].Any = (sp[0].Reference)->Any; NEXT_INSN;
@@ -401,29 +404,29 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 
 			CASE(OP_CALL) FETCH_INSN; u32 imm = LoadImm24; ++sp; sp[0].Uns = (i32)(pc - opcodes); SET_PC(imm); NEXT_INSN;
 
-			CASE(OP_J) FETCH_INSN; i32 imm = LoadImmS16; SET_PC((pc - opcodes) + imm); NEXT_INSN;
-			CASE(OP_JZ) FETCH_INSN; i32 imm = LoadImmS16; --sp; if (sp[1].Int == 0) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IEQ_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int == sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_INE_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int != sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IGE_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int >= sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_IGT_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int > sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_ILE_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int <= sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
-			CASE(OP_ILT_JZ) FETCH_INSN; i32 imm = LoadImmS16; sp -= 2; if (!(sp[1].Int < sp[2].Int)) SET_PC((pc - opcodes) + imm); else SET_PC(pc - opcodes); NEXT_INSN;
+			CASE(OP_J) FETCH_INSN; i32 imm{ LoadImmS16 }; ADD_PC(imm); NEXT_INSN;
+			CASE(OP_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; --sp; if (sp[1].Int == 0) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_IEQ_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int == sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_INE_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int != sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_IGE_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int >= sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_IGT_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int > sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_ILE_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int <= sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
+			CASE(OP_ILT_JZ) FETCH_INSN; i32 imm{ LoadImmS16 }; sp -= 2; if (!(sp[1].Int < sp[2].Int)) ADD_PC(imm); else CHECK_PC; NEXT_INSN;
 
 			CASE(OP_SWITCH) FETCH_INSN;
 				--sp;
 				u32 label{ sp[1].Uns };
 				u32 count{ LoadImm8 };
-				SET_PC(pc - opcodes);
-				for (u32 i{}; i < count; i++) {
+				CHECK_PC;
+				for (u32 i{}; i != count; ++i) {
 					u32 match{ LoadImm32 };
 					u32 target{ LoadImm16 };
 					if (label == match) {
-						SET_PC((pc - opcodes) + target);
+						ADD_PC(target);
 						break;
 					}
 				}
-				SET_PC(pc - opcodes);
+				CHECK_PC;
 			NEXT_INSN;
 
 			CASE(OP_STRING) FETCH_INSN;
@@ -463,19 +466,21 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 
 			CASE(OP_TEXT_LABEL_COPY) FETCH_INSN;
 				sp -= 3;
-				rage::scrValue* dest{ sp[3].Reference };
-				size_t destSize{ sp[2].Any };
-				size_t srcSize{ sp[1].Any };
+				rage::scrValue* dest = sp[3].Reference;
+				int destSize = sp[2].Int;
+				int srcSize = sp[1].Int;
+				// Remove excess
 				while (srcSize > destSize) {
 					--srcSize;
 					--sp;
 				}
-				for (i32 i{}; i < srcSize; i++)
-					dest[srcSize - 1 - i].Any = (sp--)->Any;
-				char* cDest{ (char*)dest };
-				if (cDest)
-					cDest[(srcSize * sizeof(rage::scrValue)) - 1] = '\0';
-				NEXT_INSN;
+				// Do the bulk of the copy
+				for (int i = 0; i < srcSize; i++)
+					dest[srcSize - 1 - i].Reference = (sp--)->Reference;
+				// Make sure it's still NUL-terminated
+				char* cDest = (char*)dest;
+				cDest[(srcSize * sizeof(rage::scrValue)) - 1] = '\0';
+			NEXT_INSN;
 
 			CASE(OP_CATCH) FETCH_INSN;
 				ser->m_catch_pointer_count = (i32)(pc - opcodes);

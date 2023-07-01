@@ -15,7 +15,8 @@ void stackWalker::OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) {
 	LOG(Stackwalker, "Error ({}) in {} at 0x{:X}", gle, szFuncName, addr);
 }
 void stackWalker::OnCallstackEntry(CallstackEntryType eType, CallstackEntry& entry) {
-	std::string offsetStr{ std::format("{}.dll+0x{:X}", entry.moduleName, entry.offset) };
+	HMODULE gameHmod{ GetModuleHandleA(NULL) };
+	std::string offsetStr{ std::format("{}.{}+0x{:X}", entry.moduleName, entry.moduleName == "GTA5" ? "exe" : "dll", entry.offset - (entry.moduleName == "GTA5" ? u64(gameHmod) : 0))};
 #ifdef DEBUG
 	if (entry.lineFileName[0]) {
 		if (entry.name[0]) {

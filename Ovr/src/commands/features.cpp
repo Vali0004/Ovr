@@ -100,25 +100,27 @@ namespace commands::features {
 				}
 			}
 			void ultraJump(toggleCommand* command) {
-				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				static bool wasJumping{};
-				static int isJumpingTimer{};
-				bool isJumping = PED::IS_PED_JUMPING(ped);
-				if (isJumping && wasJumping) {
-					wasJumping = true;
-					if (isJumpingTimer > 0) {
-						isJumpingTimer--;
-						PED::SET_PED_CAN_RAGDOLL(ped, FALSE);
-						WEAPON::REMOVE_WEAPON_FROM_PED(ped, "GADGET_PARACHUTE"_joaat);
-						ENTITY::APPLY_FORCE_TO_ENTITY(ped, 1, { 0.f, 2.5f, 20.f }, {}, 0, TRUE, TRUE, TRUE, FALSE, TRUE);
+				if (command->get(0).toggle) {
+					Ped ped{ PLAYER::PLAYER_PED_ID() };
+					static bool wasJumping{};
+					static int isJumpingTimer{};
+					bool isJumping = PED::IS_PED_JUMPING(ped);
+					if (isJumping && wasJumping) {
+						wasJumping = true;
+						if (isJumpingTimer > 0) {
+							isJumpingTimer--;
+							PED::SET_PED_CAN_RAGDOLL(ped, FALSE);
+							WEAPON::REMOVE_WEAPON_FROM_PED(ped, "GADGET_PARACHUTE"_joaat);
+							ENTITY::APPLY_FORCE_TO_ENTITY(ped, 1, { 0.f, 2.5f, 20.f }, {}, 0, TRUE, TRUE, TRUE, FALSE, TRUE);
+						}
 					}
-				}
-				else if (isJumping && !wasJumping) {
-					wasJumping = true;
-					isJumpingTimer = 10;
-				}
-				else if (!isJumping) {
-					wasJumping = false;
+					else if (isJumping && !wasJumping) {
+						wasJumping = true;
+						isJumpingTimer = 10;
+					}
+					else if (!isJumping) {
+						wasJumping = false;
+					}
 				}
 			}
 			void superRun(toggleFloatCommand* command) {
@@ -134,7 +136,7 @@ namespace commands::features {
 			}
 			void noClip(toggleFloatCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				ENTITY::SET_ENTITY_COLLISION(ped, !command->get(0).toggle, FALSE);
+				ENTITY::SET_ENTITY_COLLISION(ped, !command->get(0).toggle, TRUE);
 				if (command->get(0).toggle) {
 					Vector3 pos{ cPed->get_position().serialize() };
 					Vector3 rot{ math::rotToDir(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
@@ -167,7 +169,7 @@ namespace commands::features {
 						if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlSprint)) {
 							coords.z -= 1.6f;
 						}
-						else if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlJump)) {
+						if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlJump)) {
 							coords.z -= 0.4f;
 						}
 						else {
@@ -192,25 +194,27 @@ namespace commands::features {
 				}
 			}
 			void walkOnWater(toggleCommand* command) {
-				Vector3 coords{ cPed->get_position().serialize() };
-				static float height{};
-				static Object handle{};
-				if (ENTITY::DOES_ENTITY_EXIST(handle)) {
-					WATER::GET_WATER_HEIGHT(coords, &height);
-					ENTITY::SET_ENTITY_VISIBLE(handle, FALSE, TRUE);
-					ENTITY::SET_ENTITY_COORDS(handle, { coords.x, coords.y, height - 1.9f }, TRUE, FALSE, FALSE, TRUE);
-					ENTITY::SET_ENTITY_ROTATION(handle, 180.f, 90.f, 180.f, 2, FALSE);
-					ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
-				}
-				else {
-					util::natives::requestModel("prop_ld_ferris_wheel"_joaat);
-					handle = OBJECT::CREATE_OBJECT("prop_ld_ferris_wheel"_joaat, coords, TRUE, TRUE, FALSE);
-					ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
-					ENTITY::SET_ENTITY_COLLISION(handle, TRUE, FALSE);
+				if (command->get(0).toggle) {
+					Vector3 coords{ cPed->get_position().serialize() };
+					static float height{};
+					static Object handle{};
+					if (ENTITY::DOES_ENTITY_EXIST(handle)) {
+						WATER::GET_WATER_HEIGHT(coords, &height);
+						ENTITY::SET_ENTITY_VISIBLE(handle, FALSE, TRUE);
+						ENTITY::SET_ENTITY_COORDS(handle, { coords.x, coords.y, height - 1.9f }, TRUE, FALSE, FALSE, TRUE);
+						ENTITY::SET_ENTITY_ROTATION(handle, 180.f, 90.f, 180.f, 2, FALSE);
+						ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
+					}
+					else {
+						util::natives::requestModel("prop_ld_ferris_wheel"_joaat);
+						handle = OBJECT::CREATE_OBJECT("prop_ld_ferris_wheel"_joaat, coords, TRUE, TRUE, FALSE);
+						ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
+						ENTITY::SET_ENTITY_COLLISION(handle, TRUE, FALSE);
+					}
 				}
 			}
 			void slowMotion(toggleCommand* command) {
-				MISC::SET_TIME_SCALE(1.f / command->get(0).toggle ? 2.f : 1.f);
+				MISC::SET_TIME_SCALE(command->get(0).toggle ? 0.5f : 1.f);
 			}
 		}
 		namespace police {
@@ -330,8 +334,8 @@ namespace commands::features {
 				std::string rid{ clipboard.str() };
 				clipboard.str() = curText;
 				clipboard.set();
-				nlohmann::json body = { "RockstarId", rid };
-				//auto res = socialclub::backend::jRequest({ "RockstarId", rid }, "https://scapi.rockstargames.com/friends/remove");
+				nlohmann::json body = { { "RockstarId", rid } };
+				auto res = socialclub::backend::jRequest(body, "https://scapi.rockstargames.com/friends/remove");
 				LOG(Info, "Body: {}", body.dump(4));
 			}
 		}		
@@ -591,18 +595,20 @@ namespace commands::features {
 		void join(variadicCommand* command) {
 			std::string strRid{ command->get(0).string };
 			if (strRid.empty()) {
-				g_notifications.add("Join", "Please provide a name or RID");
+				LOG(Commands, "Please provide a name or RID");
+				return;
 			}
 			if (!isNumber(strRid)) {
 				u64 rid{ socialclub::backend::nameToRid(strRid) };
 				if (!rid) {
-					g_notifications.add("Join", "Failed to get {}'s RID", strRid);
+					LOG(Commands, "Failed to get {}'s RID", strRid);
+					return;
 				}
 				strRid = std::to_string(rid);
 			}
 			u64 rid{ stoull(strRid) };
 			socialclub::backend::getGamerTask(rid, [](rage::rlSessionByGamerTaskResult& result) {
-				printf("Gamer task success\n");
+				LOG(Commands, "Gamer task success");
 			});
 		}
 		void bail(actionCommand* command) {
@@ -700,7 +706,7 @@ namespace commands::features {
 				"spectateProtection"_PC->setFromSection(command->state());
 				"teleportProtection"_PC->setFromSection(command->state());
 				"teleportToWarehouseProtection"_PC->setFromSection(command->state());
-				"gentleVehicleKickProtection"_PC->setFromSection(command->state());
+				"vehicleKickProtection"_PC->setFromSection(command->state());
 				"mcTeleportProtection"_PC->setFromSection(command->state());
 				"startActivityProtection"_PC->setFromSection(command->state());
 				"markPlayerBeastProtection"_PC->setFromSection(command->state());
@@ -717,6 +723,21 @@ namespace commands::features {
 				"triggerCeoRaidProtection"_PC->setFromSection(command->state());
 				"startScriptBeginProtection"_PC->setFromSection(command->state());
 				"startScriptProceedProtection"_PC->setFromSection(command->state());
+			}
+		}
+		namespace general {
+			namespace reactions {
+				void kick(toggleCommand* command) {
+
+				}
+				void crash(toggleCommand* command) {
+
+				}
+			}
+			void allGeneralProtections(sectionProtectionCommand* command) {
+				"remoteTeleportProtecton"_PC->setFromSection(command->state());
+				"reportProtection"_PC->setFromSection(command->state());
+				"chatSpamProtection"_PC->setFromSection(command->state());
 			}
 		}
 	}
@@ -812,11 +833,11 @@ namespace commands::features {
 		g_manager.add(toggleFloatCommand("staminaRegeneration", "Stamina Regeneration", self::movement::staminaRegen));
 		g_manager.add(toggleCommand("gracefulLanding", "Graceful Landing", self::movement::gracefulLanding));
 		g_manager.add(toggleCommand("beastJump", "Beast Jump", self::movement::beastJump));
-		g_manager.add(toggleCommand("superJump", "Super Jump", self::movement::superJump));
+		/*g_manager.add(toggleCommand("superJump", "Super Jump", self::movement::superJump));
 		g_manager.add(toggleCommand("ultraJump", "Ultra Jump", self::movement::ultraJump));
 		g_manager.add(toggleFloatCommand("superRun", "Super Run", self::movement::superRun));
 		g_manager.add(toggleFloatCommand("noClip", "No Clip", self::movement::noClip));
-		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));
+		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));*/
 		//Self::World
 		g_manager.add(toggleCommand("walkOnWater", "Walk On Water", "Walk on water, instead of swimming", self::world::walkOnWater));
 		g_manager.add(toggleCommand("walkThroughWater", "Walk Through Water", "Allows you to walk right through water", self::world::walkThroughWater));
@@ -910,7 +931,7 @@ namespace commands::features {
 		g_manager.add(protectionCommand("spectateProtection", "Spectate"));
 		g_manager.add(protectionCommand("teleportProtection", "Teleport"));
 		g_manager.add(protectionCommand("teleportToWarehouseProtection", "Teleport To Warehouse"));
-		g_manager.add(protectionCommand("gentleVehicleKickProtection", "Gentle Vehicle Kick"));
+		g_manager.add(protectionCommand("vehicleKickProtection", "Vehicle Kick"));
 		g_manager.add(protectionCommand("mcTeleportProtection", "MC Teleport"));
 		g_manager.add(protectionCommand("startActivityProtection", "Start Activity"));
 		g_manager.add(protectionCommand("markPlayerBeastProtection", "Mark Player Beast"));
@@ -930,10 +951,10 @@ namespace commands::features {
 		g_manager.add(protectionCommand("startScriptBeginProtection", "Start Script Begin"));
 		g_manager.add(protectionCommand("startScriptProceedProtection", "Start Script Proceed"));
 		//Protections
-		g_manager.add(protectionCommand("vehicleKickProtection", "Vehicle Kick"));
+		g_manager.add(sectionProtectionCommand("allGeneralProtections", "All General Protections", "Sets general protections", protections::general::allGeneralProtections));
 		g_manager.add(protectionCommand("remoteTeleportProtecton", "Remote Teleport"));
 		g_manager.add(protectionCommand("reportProtection", "Reports"));
-		g_manager.add(protectionCommand("chatSpam", "Chat Spam", "Stops chat spam from being displayed"));
+		g_manager.add(protectionCommand("chatSpamProtection", "Chat Spam", "Stops chat spam from being displayed"));
 		//Miscellaneous::Game
 		g_manager.add(toggleCommand("mobileRadio", "Mobile Radio", "Use the game's radio anywhere", miscellaneous::game::mobileRadio));
 		g_manager.add(toggleCommand("automp", "Auto Multiplayer", "Automatically load into multiplayer on startup", miscellaneous::game::autoMp));
@@ -947,12 +968,12 @@ namespace commands::features {
 	void onInit() {
 		//These need to be after init because the values aren't created yet
 		//Self::Movement
-		"run"_TC->get(1).floating_point = 1.f;
+		/*"run"_TC->get(1).floating_point = 1.f;
 		"swim"_TC->get(1).floating_point = 1.f;
 		"stamina"_TC->get(1).floating_point = 11.f;
 		"staminaRegeneration"_TC->get(1).floating_point = 1.f;
 		"superRun"_TC->get(1).floating_point = 2.f;
-		"noClip"_TC->get(1).floating_point = 1.f;
+		"noClip"_TC->get(1).floating_point = 1.f;*/
 		//Self
 		"alpha"_IC->get(0).i32 = 255;
 		//Network::Session::Browser

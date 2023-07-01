@@ -24,7 +24,7 @@ public:
 	t* getRetPointer() {
 		return reinterpret_cast<t*>(m_context.Return);
 	}
-	rage::scrCmd getNativeCmd(u64 hash) {
+	rage::Cmd getNativeCmd(u64 hash) {
 		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
 			return p->second;
 		}
@@ -36,7 +36,7 @@ public:
 		return nullptr;
 	}
 private:
-	std::map<rage::scrNativeHash, rage::scrCmd> m_cache{};
+	std::map<rage::scrNativeHash, rage::Cmd> m_cache{};
 	context m_context{};
 };
 inline invoker g_invoker{};

@@ -28,9 +28,10 @@ namespace commands {
 				}
 			}
 		}
+		return p;
 	}
 	void engine::executeWithCommand(abstractCommand*& command, const std::string& context) {
-		std::vector<std::string> arguments{ splitString(context, ' ') };
+		auto arguments{ getMatches(context, R"_(\S+)_") };
 		size_t trueArgCount{ arguments.size() - 1 };
 		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
 			if (command->m_type != eCommandType::ToggleIntCommand && command->m_type != eCommandType::ToggleFloatCommand) {
@@ -164,7 +165,7 @@ namespace commands {
 			g_notifications.add("Commands", "Empty command string!");
 			return false;
 		}
-		std::vector<std::string> words{ splitString(string, ' ') };
+		auto words{ getMatches(string, R"_(\S+)_") };
 		if (words.empty()) {
 			g_notifications.add("Commands", "No command!");
 			return false;
@@ -230,30 +231,11 @@ namespace commands {
 		}
 	}
 	std::vector<abstractCommand*> engine::findMatches(const std::string& command) {
-		std::string camel{ command };
-		camel[0] = tolower(camel[0]);
 		std::string lower{ lStr(command) };
 		std::vector<abstractCommand*> matches{};
 		for (auto& f : g_manager.getCommands()) {
-			if (f->m_id[0] == lower[0]) {
-				if (f->m_id.find(command) != std::string::npos) {
-					matches.push_back(f);
-				}
-				else if (f->m_id.find(camel) != std::string::npos) {
-					matches.push_back(f);
-				}
-				else if (f->m_id.find(lower) != std::string::npos) {
-					matches.push_back(f);
-				}
-				else if (lStr(f->m_id).find(command) != std::string::npos) {
-					matches.push_back(f);
-				}
-				else if (lStr(f->m_id).find(camel) != std::string::npos) {
-					matches.push_back(f);
-				}
-				else if (lStr(f->m_id).find(lower) != std::string::npos) {
-					matches.push_back(f);
-				}
+			if (lStr(f->m_id).find(lower) != std::string::npos) {
+				matches.push_back(f);
 			}
 		}
 		return matches;

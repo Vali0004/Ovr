@@ -76,7 +76,6 @@ namespace script {
 				g_sessionType = eSessionTypes::Offline;
 				g_statistics.setGameType();
 			}
-			util::network::g_manager.loop();
 			fiber::current()->sleep();
 		}
 	}

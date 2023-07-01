@@ -5,7 +5,7 @@
 inline std::pair<bool, std::vector<class native*>> g_nativeHooks{ true, {} };
 class native {
 public:
-	native(u32 script, u32 hash, rage::scrCmd replacement) : m_script(script), m_hash(hash), m_cmd(g_invoker.getNativeCmd(m_hash)), m_replacement(replacement) { g_nativeHooks.second.push_back(this); }
+	native(u32 script, u32 hash, rage::Cmd replacement) : m_script(script), m_hash(hash), m_cmd(g_invoker.getNativeCmd(m_hash)), m_replacement(replacement) { g_nativeHooks.second.push_back(this); }
 public:
 	void enable() {
 		m_enabled = true;
@@ -13,7 +13,7 @@ public:
 	void disable() {
 		m_enabled = false;
 	}
-	void set(rage::scrProgram* program, u32 nativeIdx, rage::scrCmd& cmd) {
+	void set(rage::scrProgram* program, u32 nativeIdx, rage::Cmd& cmd) {
 		if (bool enabled{ g_nativeHooks.first || m_enabled }; enabled && program->m_natives[nativeIdx] == m_cmd) {
 			if (m_script == "all_scripts"_joaat || program->m_name_hash == m_script) {
 				cmd = m_replacement;
@@ -25,6 +25,6 @@ private:
 	bool m_enabled{};
 	u32 m_script{};
 	u32 m_hash{};
-	rage::scrCmd m_cmd{};
-	rage::scrCmd m_replacement{};
+	rage::Cmd m_cmd{};
+	rage::Cmd m_replacement{};
 };

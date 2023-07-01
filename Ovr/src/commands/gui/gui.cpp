@@ -3,16 +3,13 @@
 #include "commands/engine/engine.h"
 #include "util/util.h"
 #include "renderer/renderer.h"
+#define CMD_ALERT(fmt, ...) alert(std::format(fmt, __VA_ARGS__));
 
 namespace commands::gui {
-	#define CMD_ALERT(fmt, ...) alert(std::format(fmt, __VA_ARGS__));
-	void box::captureCmd(std::string s, bool hasSpace) {
-		if (!hasSpace) {
-			m_cmd = s;
-			return;
-		}
-		std::vector<std::string> words{ splitString(s, ' ') };
-		m_cmd = words[0];
+	void box::captureCmd(std::string s) {
+		auto words{ getMatches(s, R"_(\S+)_") };
+		if (words.size())
+			m_cmd = words[0];
 	}
 	void box::input() {
 		elements::setWindow(elements::convertCoordTypes({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase - m_padding }), elements::convertCoordTypes({ m_width + 0.001f, 0.04f }));
@@ -32,7 +29,7 @@ namespace commands::gui {
 	}
 
 	void box::fetch() {
-		captureCmd(m_context, m_context.find(" ") != std::string::npos);
+		captureCmd(m_context);
 		m_matches = g_engine.findMatches(m_cmd);
 		if (m_matches.size() > 1) {
 			if (g_engine.m_useDirectMatchResults) {

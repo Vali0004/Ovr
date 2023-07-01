@@ -31,6 +31,7 @@ namespace shv {
 		extern int worldGetAllPickups(int* arr, int arrSize);
 	}
 	extern void onPresent(renderer* renderer);
+	extern void wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	extern void onRendererReset();
 	inline uint64_t g_hash{};
 	inline std::set<TKeyboardFn> g_keyboardFunctions{};

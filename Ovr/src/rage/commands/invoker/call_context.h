@@ -1,7 +1,7 @@
 #pragma once
 #include "rage/classes.h"
 
-class context : public rage::scrNativeCallContext {
+class context : public rage::scrThreadInfo {
 public:
 	context() {
 		reset();

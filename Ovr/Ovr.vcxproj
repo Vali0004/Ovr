@@ -369,14 +369,20 @@
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp" />
     <ClCompile Include="src\commands\gui\gui.cpp" />
+    <ClCompile Include="src\hooking\hooks\add_event_to_list.cpp" />
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
     <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
+    <ClCompile Include="src\hooking\hooks\prepare_metric.cpp" />
+    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
+    <ClCompile Include="src\hooking\hooks\request.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp" />
     <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
     <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
     <ClCompile Include="src\commands\engine\engine.cpp" />
+    <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
+    <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
     <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\core\core.cpp" />

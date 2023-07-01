@@ -47,6 +47,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
+#include <regex>
 #pragma comment(lib, "winmm")
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "wldap32")

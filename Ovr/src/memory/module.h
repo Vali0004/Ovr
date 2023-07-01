@@ -2,33 +2,24 @@
 #include "pch/pch.h"
 #include "mem.h"
 
-struct headers {
-	HMODULE m_handle{};
-	IMAGE_DOS_HEADER* m_dos{};
-	IMAGE_NT_HEADERS64* m_nt{};
-	IMAGE_OPTIONAL_HEADER64 m_optional{};
-	IMAGE_EXPORT_DIRECTORY* m_exportDir{};
-	void set(HMODULE handle) {
-		m_handle = handle;
-		m_dos = decltype(m_dos)(m_handle);
-		m_nt = decltype(m_nt)(m_handle + m_dos->e_lfanew);
-		m_optional = m_nt->OptionalHeader;
-		m_exportDir = decltype(m_exportDir)(m_handle + m_optional.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+class hmodule {
+public:
+	hmodule(std::string_view name = {}) : m_name(name), m_handle(get()), m_base(m_handle) {
+		auto dosHeader = m_base.as<IMAGE_DOS_HEADER*>();
+		auto ntHeader = m_base.add(dosHeader->e_lfanew).as<IMAGE_NT_HEADERS*>();
+		m_size = ntHeader->OptionalHeader.SizeOfImage;
 	}
-};
-struct hmodule {
-	hmodule(std::string_view name = {}) : m_name(name), m_handle(get()), m_begin(m_handle) {
-		m_headers.set(m_handle);
-		m_size = m_headers.m_nt->OptionalHeader.SizeOfImage;
-		m_end = m_begin.add(m_size);
+public:
+	mem begin() {
+		return m_base;
 	}
-
-	std::string_view m_name{};
-	headers m_headers{};
-	HMODULE m_handle{};
-	mem m_begin{};
-	mem m_end{};
-	size_t m_size{};
+	mem end() {
+		return begin().add(size());
+	}
+	size_t size() {
+		return m_size;
+	}
+public:
 	FARPROC getProcess(std::string search) {
 		return GetProcAddress(m_handle, search.c_str());
 	}
@@ -37,4 +28,9 @@ struct hmodule {
 			return GetModuleHandleA(NULL);
 		return GetModuleHandleA(m_name.data());
 	}
+private:
+	std::string_view m_name{};
+	HMODULE m_handle{};
+	mem m_base{};
+	size_t m_size{};
 };

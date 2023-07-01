@@ -82,6 +82,7 @@ LRESULT renderer::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if (g_renderer.get()) {
 		if (ImGui::GetCurrentContext())
 			ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		shv::wndProc(hWnd, uMsg, wParam, lParam);
 		if (uMsg == WM_KEYDOWN && wParam == VK_INSERT) {
 			script::g_guiOpen ^= true;
 		}

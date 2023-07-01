@@ -10,7 +10,7 @@ void invoker::begin() {
 	m_context.reset();
 }
 void invoker::end(rage::scrNativeHash hash) {
-	if (rage::scrCmd cmd{ getNativeCmd(hash) }) {
+	if (rage::Cmd cmd{ getNativeCmd(hash) }) {
 		g_statistics.m_nativesInvokedByUs++;
 		cmd(&m_context);
 		m_context.CopyReferencedParametersOut();

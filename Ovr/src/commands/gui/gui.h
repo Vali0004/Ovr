@@ -6,7 +6,7 @@
 namespace commands::gui {
 	class box {
 	private:
-		void captureCmd(std::string s, bool hasSpace);
+		void captureCmd(std::string s);
 		void input();
 	private:
 		void fetch();

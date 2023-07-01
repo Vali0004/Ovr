@@ -2,6 +2,19 @@
 #include <json/json.h>
 
 nlohmann::json j{};
+bool badTransaction(nlohmann::json& data, u32 hash, std::string msg) {
+	if (data["Category"].get<u32>() == hash) {
+		u32 category{ data["Category"].get<u32>() };
+		u32 id{ data["ID"].get<u32>() };
+		u32 action{ data["Action"].get<u32>() };
+		u32 target{ data["Target"].get<u32>() };
+		u32 count{ data["Count"].get<u32>() };
+		LOG(Info, "[rage::CNetShopTransactionMgr::Push]: {} pushed.", msg);
+		LOG(Info, "Data: 0x{:X}[{}], {} executing {} for {} {} times", category, id, action, target, count);
+		return true;
+	}
+	return false;
+}
 bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items) {
 	if (pTransactionMgr) {
 		for (auto node{ pTransactionMgr->m_first }; node; node = node->m_next) {
@@ -23,6 +36,9 @@ bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items)
 					{ "Multiplier", item.m_multiplier },
 					{ "Value", item.m_value },
 				};
+			}
+			if (badTransaction(j[transaction->m_category], 0xAE04310C, "Transaction report hash")) {
+				return false;
 			}
 			LOG(Info, j.dump(4));
 		}

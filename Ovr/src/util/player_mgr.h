@@ -17,6 +17,7 @@ namespace util::network {
 		}
 	public:
 		u8 m_index{};
+		bool m_host{};
 		std::string m_name{};
 		rage::vector3 m_pos{};
 		fp m_heading{};
@@ -37,7 +38,6 @@ namespace util::network {
 		u64 m_peerAddress{};
 		u64 m_platformData{};
 		u16 m_port{};
-		bool m_host{};
 	public:
 		struct data {
 			std::string m_name{};
@@ -72,6 +72,7 @@ namespace util::network {
 	};
 	class manager {
 	public:
+		static void onTick();
 		void loop();
 	public:
 		player& get(u16 index) {
@@ -122,7 +123,7 @@ namespace util::network {
 		player host() {
 			for (auto& entry : m_players) {
 				auto& player{ entry.second };
-				if (player.m_host) {
+				if (player && player.m_host) {
 					return player;
 				}
 			}

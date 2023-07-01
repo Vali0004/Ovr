@@ -128,6 +128,7 @@ namespace commands::features {
 					public:
 						i32 count() { return m_count; }
 						sessionData* sessions() { return m_sessions; }
+						bool active() { return m_active; }
 					private:
 						constexpr static int MaxSessions{ 1063 };
 						int m_count{};
@@ -200,6 +201,13 @@ namespace commands::features {
 				extern void crash(toggleCommand* command);
 			}
 			extern void allScriptEventProtections(sectionProtectionCommand* command);
+		}
+		namespace general {
+			namespace reactions {
+				extern void kick(toggleCommand* command);
+				extern void crash(toggleCommand* command);
+			}
+			extern void allGeneralProtections(sectionProtectionCommand* command);
 		}
 	}
 	namespace miscellaneous {

@@ -22,7 +22,7 @@ namespace tabs::protections {
 			elements::protectionToggle("spectateProtection");
 			elements::protectionToggle("teleportProtection", true);
 			elements::protectionToggle("teleportToWarehouseProtection", true);
-			elements::protectionToggle("gentleVehicleKickProtection");
+			elements::protectionToggle("vehicleKickProtection");
 			elements::protectionToggle("mcTeleportProtection", true);
 			elements::protectionToggle("startActivityProtection", true);
 			elements::protectionToggle("markPlayerBeastProtection");

@@ -8,6 +8,7 @@ namespace util::network {
 			m_snPlayer = session->m_players[m_netGamePlayer->m_player_id];
 			m_snPeer = session->m_peers[m_netGamePlayer->m_player_id];
 			m_index = m_netGamePlayer->m_player_id;
+			m_host = m_netGamePlayer->IsNetworkHost();
 			m_gamerInfo = m_netGamePlayer->GetGamerInfo();
 			m_name = m_netGamePlayer->GetName();
 			m_playerInfo = m_netGamePlayer->m_player_info;
@@ -33,15 +34,18 @@ namespace util::network {
 				m_peerAddress = m_gamerInfo->m_peer_address;
 				m_platformData = m_gamerInfo->m_platform_data;
 			}
-			m_host = m_netGamePlayer->IsNetworkHost();
 			m_data.set(this);
+		}
+	}
+	void manager::onTick() {
+		while (true) {
+			g_manager.loop();
+			fiber::current()->sleep(100ms);
 		}
 	}
 	void manager::loop() {
 		if (!online())
 			return;
-		if (m_playerCount != m_players.size())
-			m_players.clear();
 		if (mgr()) {
 			m_playerCount = mgr()->m_player_count;
 			m_playerLimit = mgr()->m_player_limit;

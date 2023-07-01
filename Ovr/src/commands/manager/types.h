@@ -14,32 +14,20 @@ inline ccp g_protectionStates[4]{
 	"Block And Notify"
 };
 namespace commands {
-	inline bool strSearch(std::string string, std::string value, std::vector<std::string> custom, bool tryLower = false, bool skipSpaces = false) {
-		if (skipSpaces) {
-			for (std::string s{ string }; s[0] == ' ' && s.size() != string.size(); s = s.substr(1)) {}
+	inline eProtectionState getProtectionStateFromString(const std::string& string) {
+		std::string str{ lStr(string) };
+		if (!str.compare("ban")) {
+			return eProtectionState::BlockAndNotify;
 		}
-		if (string.find(value) != std::string::npos) {
-			return true;
+		if (!str.compare("bandn")) {
+			return eProtectionState::BlockAndNotify;
 		}
-		for (auto& s : custom) {
-			if (string.find(s) != std::string::npos) {
-				return true;
+		for (i8 i{}; i != COUNT(g_protectionStates); ++i) {
+			if (!str.compare(lStr(g_protectionStates[i])) || lStr(g_protectionStates[i]).find(str) != std::string::npos) {
+				return static_cast<eProtectionState>(i);
 			}
 		}
-		if (tryLower) {
-			std::string stringLower{ lStr(string) };
-			std::string valueLower{ lStr(string) };
-			std::vector<std::string> customLower{ lSArr(custom) };
-			if (stringLower.find(valueLower) != std::string::npos) {
-				return true;
-			}
-			for (auto& s : customLower) {
-				if (stringLower.find(s) != std::string::npos) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return eProtectionState::Disabled;
 	}
 	class toggleCommand : public abstractCommand {
 	public:
@@ -277,18 +265,7 @@ namespace commands {
 			m_state = state;
 		}
 		void setState() {
-			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
-				m_state = eProtectionState::Disabled;
-			}
-			else if (strSearch(m_value.m_value.string, "Noti", { "Not" }, true)) {
-				m_state = eProtectionState::Notify;
-			}
-			else if (strSearch(m_value.m_value.string, "Blo", { "Bl" }, true)) {
-				m_state = eProtectionState::Block;
-			}
-			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN", "BAndN", "BAnd", }, true)) {
-				m_state = eProtectionState::BlockAndNotify;
-			}
+			m_state = getProtectionStateFromString(m_value.m_value.string);
 		}
 		eProtectionState state() {
 			return m_state;
@@ -325,18 +302,7 @@ namespace commands {
 			//setState();
 		}
 		void setState() {
-			if (strSearch(m_value.m_value.string, "Dis", { "D" }, true)) {
-				m_state = eProtectionState::Disabled;
-			}
-			else if (strSearch(m_value.m_value.string, "Noti", { "Not" }, true)) {
-				m_state = eProtectionState::Notify;
-			}
-			else if (strSearch(m_value.m_value.string, "Blo", { "Bl" }, true)) {
-				m_state = eProtectionState::Block;
-			}
-			else if (strSearch(m_value.m_value.string, "BlockAnd", { "BAN" "BAndN", "BAnd", }, true)) {
-				m_state = eProtectionState::BlockAndNotify;
-			}
+			m_state = getProtectionStateFromString(m_value.m_value.string);
 		}
 		eProtectionState state() {
 			return m_state;

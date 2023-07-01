@@ -3,7 +3,7 @@
 
 class patch {
 public:
-	patch(ccp id, u64* ptr, std::vector<i32> bytes) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes) {
+	patch(ccp id, i32* ptr, const std::vector<i32>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
 		memcpy(m_original.data(), m_ptr, m_original.size());
 	}
 	~patch() {
@@ -11,18 +11,25 @@ public:
 	}
 public:
 	void apply() {
-		memcpy(m_ptr, m_bytes.data(), m_bytes.size());
-		for (auto& b : m_bytes) {
-			memset(m_ptr, b, sizeof(b));
+		if (m_set) {
+			memset(m_ptr, m_bytes.at(0), m_bytes.size());
+		}
+		else {
+			memcpy(m_ptr, m_bytes.data(), m_bytes.size());
 		}
 	}
 	void restore() {
-		for (auto& b : m_original) {
-			memset(m_ptr, b, sizeof(b));
+		if (m_set) {
+			for (auto& b : m_original) {
+				memset(m_ptr, b, 1);
+			}
+		}
+		else {
+			memcpy(m_ptr, m_original.data(), m_original.size());
 		}
 	}
 	template <typename t>
-	t* getPtr() {
+	t* get() {
 		return reinterpret_cast<t*>(m_ptr);
 	}
 	ccp& id() {
@@ -30,15 +37,16 @@ public:
 	}
 private:
 	ccp m_id{};
-	void* m_ptr{};
+	i32* m_ptr{};
 	std::vector<i32> m_bytes{};
 	std::vector<i32> m_original{};
+	bool m_set{};
 };
 class patches {
 public:
 	template <typename t>
-	void add(ccp id, t ptr, std::vector<i32> bytes, bool apply = true) {
-		m_patches.push_back(std::make_unique<patch>(id, (i32*)ptr, bytes));
+	void add(ccp id, t* ptr, std::vector<t> bytes, bool apply = true) {
+		m_patches.push_back(std::make_unique<patch>(id, ptr, bytes));
 		if (apply)
 			m_patches.back()->apply();
 	}

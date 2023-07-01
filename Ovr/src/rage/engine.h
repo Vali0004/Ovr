@@ -15,7 +15,7 @@ namespace engine {
 		virtual void do_run() = 0;
 		virtual rage::eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) {
 			RtlZeroMemory(&m_serialised, sizeof(m_serialised));
-			m_serialised.m_state = rage::eThreadState::sleeping;
+			m_serialised.m_state = rage::eThreadState::blocked;
 			m_serialised.m_script_hash = script_hash;
 			m_serialised.m_min_pc = -1;
 			m_serialised.m_max_pc = -1;
@@ -32,7 +32,7 @@ namespace engine {
 			}
 			auto ogThr = tls->m_script_thread;
 			tls->m_script_thread = this;
-			if (m_serialised.m_state != rage::eThreadState::killed && g_statistics.m_frameCount != MISC::GET_FRAME_COUNT()) {
+			if (m_serialised.m_state != rage::eThreadState::halted && g_statistics.m_frameCount != MISC::GET_FRAME_COUNT()) {
 				do_run();
 				g_statistics.m_frameTime = MISC::GET_FRAME_TIME();
 				g_statistics.m_frameCount = MISC::GET_FRAME_COUNT();
@@ -94,6 +94,9 @@ namespace engine {
 		}
 	}
 	inline void cleanupThreads() {
+		if (g_ownedThreads.empty()) {
+			return;
+		}
 		std::reverse(g_ownedThreads.begin(), g_ownedThreads.end());
 		auto& collection{ *getThreadCollection() };
 		int slot{};

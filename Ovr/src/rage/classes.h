@@ -436,6 +436,16 @@ namespace rage {
 			pointers::g_readBitsSingle(m_data, &result, numBits, m_bitsRead + m_bitOffset);
 			return result;
 		}
+		bool CheckIntegrity() {
+			bool shouldCheck{};
+			bool success{ ReadBool(&shouldCheck) };
+			if (!shouldCheck)
+				return success;
+			uint32_t sig{};
+			if (ReadDword(&sig, 0x10))
+				return sig == 0xCDEF;
+			return false;
+		}
 		template <typename t>
 		bool Write(t value, u32 bits = 0) {
 			uint32_t bitsToWrite{ bits ? bits : sizeof(t) };
@@ -495,10 +505,10 @@ namespace rage {
 			return true;
 		}
 		bool WriteString(char* string, u32 length) {
-			bool extended{ Write<bool>(length > m_maxBit ? true : false, 1) };
-			u32 len{ Write<u32>(extended ? 15 : 7) };
-			if (len > length ? true : false)
-				return false;
+			u32 len{ min(length, (u32)strlen(string) + 1) };
+			bool extended{ len > 127 };
+			WriteBool(extended);
+			WriteDword(len, extended ? 15 : 7);
 			WriteArray(string, len * 8);
 			return true;
 		}
@@ -509,8 +519,6 @@ namespace rage {
 		bool ReadString(char* string, u32 length) {
 			bool extended{ Read<bool>(1) };
 			u32 len{ Write<u32>(extended ? 15 : 7) };
-			if (len > length ? true : false)
-				return false;
 			ReadArray(string, len * 8);
 			if (string[len - 1] != '\0')
 				return false;
@@ -553,8 +561,8 @@ namespace rage {
 			*integer = Read<u32>(bits);
 			return true;
 		}
-		bool WriteDword(uint32_t value, int bits) {
-			return Write<uint32_t>(value, bits);
+		bool WriteDword(u32 value, int bits) {
+			return Write<u32>(value, bits);
 		}
 		bool ReadInt32(i32* integer, int bits) {
 			if (!EnsureBitData(bits))
@@ -688,7 +696,7 @@ namespace rage {
 		uint32_t m_native_count; //0x002C
 		scrValue* m_local_data; //0x0030
 		scrValue** m_global_data; //0x0038
-		scrCmd* m_natives; //0x0040
+		Cmd* m_natives; //0x0040
 		uint32_t m_proc_count; //0x0048
 		const char** m_proc_names; //0x0050
 		uint32_t m_name_hash; //0x0058
@@ -737,7 +745,7 @@ namespace rage {
 				return &m_strings_data[index >> 14][index & 0x3FFF];
 			return nullptr;
 		}
-		scrCmd* get_native(scrCmd entrypoint) {
+		Cmd* get_native(Cmd entrypoint) {
 			for (uint32_t i{}; i != m_native_count; ++i) {
 				if (m_natives[i] == entrypoint) {
 					return m_natives + i;
@@ -755,7 +763,7 @@ namespace rage {
 	public:
 		scrProgram* m_program; //0x0000
 		char pad_0008[4]; //0x0008
-		joaat_t m_hash; //0x000C
+		uint32_t m_hash; //0x000C
 	}; //Size: 0x0010
 	static_assert(sizeof(scrProgramTableEntry) == 0x10);
 	class scrProgramTable {
@@ -764,7 +772,7 @@ namespace rage {
 		char pad_0008[16]; //0x0008
 		uint32_t m_size; //0x0018
 
-		scrProgram* find_script(joaat_t hash) {
+		scrProgram* find_script(uint32_t hash) {
 			for (uint32_t i{}; i != m_size; ++i) {
 				if (m_data[i].m_hash == hash) {
 					return m_data[i].m_program;
@@ -783,16 +791,16 @@ namespace rage {
 	//Thread State
 	enum class eThreadState : uint32_t {
 		running,
-		sleeping,
-		killed,
-		paused,
-		breakpoint
+		blocked,
+		aborted,
+		halted,
+		reset_instruction_count
 	};
 	//Thread
 	class tlsContext {
 	public:
 		char pad_0000[180]; //0x0000
-		uint32_t m_unknown_byte; //0x00B4
+		uint32_t m_code_intergity_valid; //0x00B4
 		class sysMemAllocator* m_allocator; //0x00B8
 		class sysMemAllocator* m_tls_entry; //0x00C0
 		class sysMemAllocator* m_unk_allocator; //0x00C8
@@ -922,8 +930,8 @@ namespace rage {
 		virtual ~scriptIdBase() = default;
 		virtual void assume_thread_identity(scrThread* thread) {}
 		virtual bool is_valid() { return true; }
-		virtual joaat_t* get_hash(joaat_t* out) { return nullptr; }
-		virtual joaat_t* get_hash2(joaat_t* out) { return nullptr; }
+		virtual uint32_t* get_hash(uint32_t* out) { return nullptr; }
+		virtual uint32_t* get_hash2(uint32_t* out) { return nullptr; }
 		virtual const char* get_name() { return ""; }
 		virtual void deserialize(datBitBuffer* buffer) {}
 		virtual void serialize(datBitBuffer* buffer) {}
@@ -1333,7 +1341,7 @@ namespace rage {
 		char pad_0032[14]; //0x0032
 		netLoggingInterface* m_logger; //0x0040
 	}; //Size: 0x0048
-	class scrNativeCallContext {
+	class scrThreadInfo {
 	public:
 		void Reset() {
 			ArgCount = 0;
@@ -1363,7 +1371,7 @@ namespace rage {
 	public:
 		scrNativeRegistration* m_next; //0x0000
 		scrNativeRegistration* m_previous; //0x0008
-		scrCmd m_handlers[7]; //0x0010
+		Cmd m_handlers[7]; //0x0010
 		uint32_t m_num_entries; //0x0048
 		uint32_t m_num_entries_2; //0x004C
 		uint64_t m_hashes[7 * 2]; //0x0050
@@ -1402,7 +1410,7 @@ namespace rage {
 		uint32_t m_seed; //0x07F8
 		bool m_initialized; //0x07FC
 
-		rage::scrCmd get_handler(uint64_t hash) {
+		rage::Cmd get_handler(uint64_t hash) {
 			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
 					if (auto entry_hash = entry->get_hash(i); entry_hash == hash) {
@@ -1418,37 +1426,67 @@ namespace rage {
 #pragma pack(push, 1)
 	class JSONSerialiser {
 	public:
-		JSONSerialiser(char* buffer, uint32_t length) : m_buffer(buffer), m_max_length(length) {
-			unk_0000 = 0;
-			unk_0004 = 0;
-			m_current_length = 0;
-			unk_0018 = 1;
-			m_flags = 0;
-		}
+		JSONSerialiser(uint32_t length) : m_buffer(new char[length]), m_max_length(length), m_read(TRUE) {}
+		~JSONSerialiser() { delete[] m_buffer; }
 	public:
-		uint32_t unk_0000; //0x0000
-		uint32_t unk_0004; //0x0004
-		char* m_buffer; //0x0008
-		uint32_t m_current_length; //0x0010
-		uint32_t m_max_length; //0x0014
-		uint32_t unk_0018; //0x0018
-		uint8_t m_flags; //0x001C
+		uint32_t unk_0000{}; //0x0000
+		uint32_t unk_0004{}; //0x0004
+		char* m_buffer{}; //0x0008
+		uint32_t m_current_length{}; //0x0010
+		uint32_t m_max_length{}; //0x0014
+		uint32_t m_read{}; //0x0018
+		uint8_t m_flags{}; //0x001C
 
-		std::string get_buffer() {
+		std::string str() {
 			return m_buffer;
+		}
+		void clear() {
+			memset(m_buffer, NULL, m_max_length);
 		}
 	}; //Size: 0x0020
 	static_assert(sizeof(JSONSerialiser) == 0x1D);
 #pragma pack(pop)
+	class JSONNode {
+	public:
+		char* m_key;                    //0x0000
+		char pad_0008[32];              //0x0008
+		class rage::JSONNode* m_sibling;//0x0028
+		class rage::JSONNode* m_child;  //0x0030
+		char* m_value;                  //0x0038
+		char pad_0040[8];               //0x0040
+		JSONNode* GetChild(const char* name) {
+			for (JSONNode* node{ m_child }; node; node = node->m_sibling) {
+				if (!strcmp(name, node->m_key)) {
+					return node;
+				}
+			}
+			return nullptr;
+		}
+	};//Size: 0x0048
+	static_assert(sizeof(JSONNode) == 0x48);
 	class rlMetric {
 	public:
 		virtual ~rlMetric() = default; //Deconstructor
-		virtual int _0x08() { return 0; }; //Returns a constant integerlike 4, 5, 6
-		virtual int _0x10() { return 0; }; //Returns a constant integer like 0
+		virtual int metric_b() { return 0; }; //Returns a constant integer like 4, 5, 6
+		virtual int metric_a() { return 0; }; //Returns a constant integer like 0
+		virtual int unk_0018() { return 0; };
 		virtual char const* get_name() { return ""; }; //Short name of the metric
 		virtual bool to_json(JSONSerialiser* jsonStream) { return false; }; //Prints the metric out to a JSON stream
 		virtual int get_size() { return 0; }; //Size in bytes of derived object (for copying)
-		virtual uint32_t get_name_hash() { return 0; };     //Joaat of short name
+		virtual uint32_t get_name_hash() { return 0; }; //Joaat of short name
+	public: 
+		bool using_a() {
+			return metric_a() == 6;
+		}
+		bool using_b() {
+			return metric_b() == 5;
+		}
+		bool using_c() {
+			return !using_a() && !using_b();
+		}
+		bool crc_flag() {
+			return !(*(i8*)(*(u64*)__readgsqword(0x58) + 0xB4) & 1);
+		}
 	};
 	template <typename t>
 	class ObfVar {
@@ -2069,6 +2107,27 @@ namespace rage {
 	};
 	static_assert(sizeof(netSyncDataNode) == 0xB0);
 #pragma pack(pop)
+	class sysModuleVtbl {
+	public:
+		u64 desturctor;
+		u64 unk_0008;
+		u64 unk_0010;
+		u64 unk_0018;
+		u64 unk_0020;
+		u64 unk_0028;
+		u64 unk_0030;
+		u64 unk_0038;
+		u64 unk_0040;
+		u64 unk_0048;
+		u64 unk_0050;
+		u64 unk_0058;
+		u64 function1;
+	}; //Size: 0x0008
+	class sysModule {
+	public:
+		sysModuleVtbl* m_vtable;
+		char pad_0008[152];
+	}; //Size: 0x00A0
 }
 #pragma pack(push, 1)
 class CNetShopTransactionBase {
@@ -2115,6 +2174,23 @@ public:
 }; //Size: 0x0051
 static_assert(sizeof(CNetShopTransactionMgr) == 0x51);
 #pragma pack(pop)
+class CHeaders {
+public:
+	char m_header_data[465]; //0x0000
+}; //Size: 0x01D1
+static_assert(sizeof(CHeaders) == 0x1D1);
+class CHttpRequest {
+public:
+	char pad_0000[112]; //0x0000
+	void* m_allocator; //0x0070
+	char pad_0078[16]; //0x0078
+	CHeaders* m_http_headers; //0x0088
+	char pad_0090[1144]; //0x0090
+	char* m_protocol; //0x0508
+	char* m_base_url; //0x0510
+	char* m_endpoint_data; //0x0518
+}; //Size: 0x0520
+static_assert(sizeof(CHttpRequest) == 0x520);
 class CGameScriptId : public rage::scriptId {
 public:
 	char pad_002C[4]; //0x002C

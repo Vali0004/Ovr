@@ -32,6 +32,22 @@ inline std::vector<std::optional<u8>> createBytesFromString(std::string ptr) {
 	}
 	return bytes;
 }
+inline bool doesMemoryMatch(u8* target, std::optional<u8> const* sig, u64 len) {
+	for (u64 i{}; i != len; ++i) {
+		if (sig[i] && *sig[i] != target[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+inline u64 findPatternBruteforce(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
+	for (u64 i{}; i != module.size() - bytes.size(); ++i) {
+		if (doesMemoryMatch(module.begin().add(i).as<u8*>(), bytes.data(), bytes.size())) {
+			return module.begin().as<u64>() + i;
+		}
+	}
+	return NULL;
+}
 inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
 	u64 maxShift{ bytes.size() };
 	u64 maxIdx{ maxShift - 1 };
@@ -51,31 +67,33 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 	for (u64 i{ wildCardIdx + 1 }; i != maxIdx; ++i)
 		shiftTable[*bytes[i]] = maxIdx - i;
 	//Loop data
-	for (u64 curIdx{}; curIdx != module.m_size - bytes.size();) {
+	for (u64 curIdx{}; curIdx != module.size() - bytes.size();) {
 		for (u64 sigIdx = maxIdx; sigIdx >= 0; --sigIdx) {
-			if (bytes[sigIdx] && *module.m_begin.add(curIdx + sigIdx).as<u8*>() != *bytes[sigIdx]) {
-				curIdx += shiftTable[*module.m_begin.add(curIdx + maxIdx).as<u8*>()];
+			if (bytes[sigIdx] && *module.begin().add(curIdx + sigIdx).as<u8*>() != *bytes[sigIdx]) {
+				curIdx += shiftTable[*module.begin().add(curIdx + maxIdx).as<u8*>()];
 				break;
 			}
 			else if (sigIdx == NULL) {
-				return module.m_begin.add(curIdx).as<u64>();
+				return module.begin().add(curIdx).as<u64>();
 			}
 		}
 	}
 	return NULL;
 }
-struct scanner {
-	scanner(std::string name, std::string pattern, hmodule mod = {}) :
-		m_name(name), m_pattern(pattern), m_module(mod), m_elements(createBytesFromString(m_pattern))
+class scanner {
+public:
+	scanner(std::string name, std::string pattern, hmodule module = {}) :
+		m_name(name), m_pattern(pattern), m_module(module), m_elements(createBytesFromString(m_pattern))
 	{
 	}
+public:
 	mem get() {
 		g_totalSigCount++;
 		try {
 			mem res{ findPatternBoyerMooreHorspool(m_elements, m_module) };
 			if (res) {
 				g_foundSigCount++;
-				LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.m_begin.as<u64>());
+				LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.begin().as<u64>());
 			}
 			else {
 				g_failedSigCount++;
@@ -89,11 +107,22 @@ struct scanner {
 		}
 		return {};
 	}
+private:
 	std::string m_name{};
 	std::string m_pattern{};
 	hmodule m_module{};
 	std::vector<std::optional<u8>> m_elements{};
 };
-inline mem scan(std::string key, std::string ptr, hmodule mod = {}) {
-	return scanner(key, ptr, mod).get();
+inline mem scan(std::string key, std::string ptr, hmodule module = {}) {
+	return scanner(key, ptr, module).get();
+}
+inline std::vector<mem> getAllResults(std::string ptr, hmodule module = {}) {
+	std::vector<std::optional<u8>> bytes{ createBytesFromString(ptr) };
+	std::vector<mem> results{};
+	for (u64 i{}; i != module.size() - bytes.size(); ++i) {
+		if (doesMemoryMatch(module.begin().add(i).as<u8*>(), bytes.data(), bytes.size())){
+			results.push_back(module.begin().add(i));
+		}
+	}
+	return results;
 }

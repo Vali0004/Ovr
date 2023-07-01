@@ -3,10 +3,10 @@
 #include "joaat.h"
 #include "enums.h"
 #include <cassert>
-#define LODWORD(x)  (*((DWORD*)&(x)))
-#define HIDWORD(x)  (*((DWORD*)&(x)+1))
-#define SLODWORD(x) (*((int32_t*)&(x)))
-#define SHIDWORD(x) (*((int32_t*)&(x)+1))
+#define LODWORD(l)           ((DWORD)(((DWORD_PTR)(l)) & 0xffffff))
+#define HIDWORD(l)           ((DWORD)((((DWORD_PTR)(l)) >> 16) & 0xffffff))
+#define SLODWORD(l)          ((signed long)(((DWORD_PTR)(l)) & 0xffffffff))
+#define SHIDWORD(l)          ((signed long)((((DWORD_PTR)(l)) >> 16) & 0xffffffff))
 #define DEFINE_AT_RTTI(T) private: \
 	virtual T* GetIdentifier() { return nullptr; }; \
 	virtual T* GetIdentifier_2() { return nullptr; }; \
@@ -21,6 +21,8 @@ class CNetShopTransactionBase;
 class CNetShopTransaction;
 class CNetShopTransactionNode;
 class CNetShopTransactionMgr;
+class CHeaders;
+class CHttpRequest;
 class CGameScriptId;
 class CGameScriptObjInfo;
 class NodeCommonDataOperations;
@@ -184,12 +186,13 @@ namespace rage {
 	class CDynamicEntity;
 	class CPhysical;
 	class scriptHandlerMgr;
-	class scrNativeCallContext;
-	using scrCmd = void(*)(scrNativeCallContext*);
+	class scrThreadInfo;
+	using Cmd = void(*)(scrThreadInfo*);
 	using scrNativeHash = uint64_t;
 	class scrNativeRegistration;
 	class scrNativeRegistrationTable;
 	class JSONSerialiser;
+	class JSONNode;
 	class rlMetric;
 	template <typename t>
 	class ObfVar;
@@ -233,4 +236,5 @@ namespace rage {
 	class netSyncNodeBase;
 	class netSyncDataNode;
 	class netSyncData;
+	class sysModule;
 }

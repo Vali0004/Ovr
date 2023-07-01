@@ -15,8 +15,8 @@ namespace pointers {
         g_writeBitsSingle = scan("WBS", "E8 ? ? ? ? 01 6B 10").call().as<decltype(g_writeBitsSingle)>();
         g_cTaskJumpConstructor = scan("CTJC", "48 89 5C 24 ? 89 54 24 10 57 48 83 EC 30 0F 29 74 24").as<decltype(g_cTaskJumpConstructor)>();
         g_cTaskFallConstructor = scan("CTFC", "E8 ? ? ? ? B3 04 08 98 A0").call().as<decltype(g_cTaskFallConstructor)>();
-        g_runAsyncModuleRequest = scan("RAMS", "48 89 5C 24 ? 57 48 83 EC ? 8B FA 8B D9 FF 15").as<decltype(g_runAsyncModuleRequest)>();
-        g_hasIntervalElapsed = scan("HIE", "48 89 5C 24 ? 57 48 83 EC ? 0F B6 99").as<decltype(g_hasIntervalElapsed)>();
+        g_runAsyncModuleRequest = scan("RAMS", "48 89 5C 24 ? 57 48 83 EC ? 0F B6 99").as<decltype(g_runAsyncModuleRequest)>();
+        g_hasIntervalElapsed = scan("HIE", "48 89 5C 24 ? 57 48 83 EC ? 8B FA 8B D9 FF 15").as<decltype(g_hasIntervalElapsed)>();
         g_dispatchEvent = scan("DE", "48 83 EC 20 4C 8B 71 50 33 ED").sub(0x19).as<decltype(g_dispatchEvent)>();
         g_scriptVm = scan("SV", "4A 89 3C 39").sub(0x27).call().as<decltype(g_scriptVm)>();
         g_scGetGameInfoIndex = scan("SGGII", "E8 ? ? ? ? 85 C0 78 27 3B 47 14 7D 1E 48 98 48 8B D6 48 69 C8", { "socialclub.dll" }).call().as<decltype(g_scGetGameInfoIndex)>();
@@ -32,7 +32,13 @@ namespace pointers {
         g_getGamerTaskResult = scan("GGTR", "E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 8B 05 ? ? ? ? 48 8D 4C 24").call().as<decltype(g_getGamerTaskResult)>();
         g_findGameMatch = scan("FGM", "E8 ? ? ? ? 84 C0 0F 84 F6 FE FF FF").call().as<decltype(g_findGameMatch)>();
         g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
-
+        g_request = scan("R", "75 6F 48 8B CE").sub(0xD).as<decltype(g_request)>();
+        g_sendMetric = scan("SM", "E8 ? ? ? ? EB 69 41 8B D6").call().as<decltype(g_sendMetric)>();
+        g_prepareMetric = scan("PM", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 30 49 8B E8 4C 8D 40 EC 49 8B F1 48 8B D9 40 32 FF E8").as<decltype(g_prepareMetric)>();
+        g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
+        g_addEventToList = scan("AETL", "4C 8B D1 48 63 49 18").as<decltype(g_addEventToList)>();
+        g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
+ 
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
@@ -54,23 +60,25 @@ namespace pointers {
         g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
         g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
         g_reportModule = scan("RM", "48 8D 0D ? ? ? ? 88 05 ? ? ? ? 48 8D 05").mov().as<decltype(g_reportModule)>();
+        g_reportCashSpawnEvent = scan("RCSE", "48 89 5C 24 08 57 48 83 EC 20 33 FF 48 8B D9 48 85 C9 74 0B").sub(0xeF).as<decltype(g_reportCashSpawnEvent)>();
+        g_updateFxnEvent = scan("UFE", "40 53 48 83 EC 40 83 B9 ? ? ? ? ? 48 8B D9 75 67 48 83 64 24 ? ? 48 83 64 24 ? ? 48 8D 54 24 ? 48 81 C1").add(0x5E).call().add(0x22).as<decltype(g_updateFxnEvent)>();
+        g_networkCheckCodeCrcsEvent = scan("NCHCE", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 30 44 8B F1 48 8B 0D").add(0x64).as<decltype(g_networkCheckCodeCrcsEvent)>();
         g_hwnd = FindWindowA("grcWindow", nullptr);
+        LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
     }
     void doPatches() {
-        //g_patches.add("RTUBS", scan("RTUBS", "42 6F 6E 75 73 00").as<u64>(), 
-        //    { 0x42, 0x6F, 0x6E, 0x75, 0x73, 0x61 }
-        //);
-        //g_patches.add("RTULS", scan("RTULS", "62 6F 6E 75 73 00").as<u64>(), 
-        //    { 0x62, 0x6F, 0x6E, 0x75, 0x73, 0x61 }
-        //);
-        //g_patches.add("S3I", scan("S3I", "BA ? ? ? ? E8 ? ? ? ? 84 C0 74 ? BB ? ? ? ? 8A C3 48 83 C4 ? 5B C3 90").as<u64>(), 
-        //    { 0xBA, 0xB9, 0x0B, 0x00, 0x00 }
-        //);
-        //g_patches.add("S30I", scan("S30I", "BA ? ? ? ? E8 ? ? ? ? 84 C0 74 ? BB ? ? ? ? 8A C3 48 83 C4 ? 5B C3 CC 48 83 EC").as<u64>(), 
-        //    { 0xBA, 0x31, 0x75, 0x00, 0x00 }
-        //);
-        //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u64>(), 
-        //    { 0xB0, 0x01, 0xC3 }
-        //);
+        try {
+            i32 arxIntegCheck{};
+            const std::vector<i32> bytes{ 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+            for (auto& h : getAllResults("48 8D 45 ? 48 89 45 ? 48 8D 05 ? ? ? ? 48 89 45")) {
+                patch(NULL, h.add(8).as<i32*>(), bytes, true).apply();
+                arxIntegCheck++;
+            }
+            LOG(Info, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
+        }
+        catch (...) {
+            LOG(Info, "ARX function patches failed to patch, checking if they were already applied.");
+        }
+        //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<i32*>(), { 0xB0, 0x01, 0xC3 });
     }
 }

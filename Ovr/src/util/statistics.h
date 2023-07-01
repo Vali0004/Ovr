@@ -11,22 +11,8 @@ public:
 public:
 	void setGameType();
 private:
-	void drawGameNativesInvoked();
-	void drawNativesInvoked();
-	void drawVehiclePool();
-	void drawPedPool();
-	void drawPickupPool();
-	void drawObjectPool();
-	void drawPlayerCount();
-	void drawIncomingNetworkEvents();
-	void drawFrameCount();
-	void drawFrameTime();
-	void drawSessionType();
-	void drawHost();
-	void drawNextHost();
-	void drawScriptHost();
-	void drawPlayerName();
-	void drawLastScriptEventSender();
+	template <typename ...a>
+	void draw(std::string f, a... args);
 public:
 	int m_nativesInvoked{};
 	int m_nativesInvokedByUs{};
