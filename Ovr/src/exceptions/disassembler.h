@@ -113,7 +113,7 @@ namespace x64 {
 		uint8_t getNumModrmOperands() {
 			uint8_t count{};
 			for (uint8_t i{}; i != m_maxOperands; ++i)
-				if (auto enc = getOprEncoding(i); enc == M || enc == R)
+				if (x64OperandEncoding enc = getOprEncoding(i); enc == M || enc == R)
 					++count;
 			return count;
 		}
@@ -184,10 +184,10 @@ namespace x64 {
 		}
 	};
 	template <typename T = uint64_t>
-	inline static void getImmediate(T& val, uint8_t*& code, uint8_t immBytes) {
+	inline static void getImmediate(T& val, uint8_t* code, uint8_t immBytes) {
 		++code;
 		val = 0;
-		for (auto i = immBytes; i-- != 0;)
+		for (uint8_t i{ immBytes }; i; --i)
 			val <<= 8, val |= code[i];
 		code += (immBytes - 1);
 	}

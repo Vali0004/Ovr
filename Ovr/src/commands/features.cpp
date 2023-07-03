@@ -100,7 +100,7 @@ namespace commands::features {
 				}
 			}
 			void ultraJump(toggleCommand* command) {
-				if (command->get(0).toggle) {
+				/*if (command->get(0).toggle) {
 					Ped ped{ PLAYER::PLAYER_PED_ID() };
 					static bool wasJumping{};
 					static int isJumpingTimer{};
@@ -121,7 +121,7 @@ namespace commands::features {
 					else if (!isJumping) {
 						wasJumping = false;
 					}
-				}
+				}*/
 			}
 			void superRun(toggleFloatCommand* command) {
 				if (command->get(0).toggle) {
@@ -151,7 +151,7 @@ namespace commands::features {
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
-				if (command->get(0).toggle) {
+				/*if (command->get(0).toggle) {
 					Vector3 coords{ cPed->get_position().serialize() };
 					u32 hash{ "p_oil_slick_01"_joaat };
 					static Object handle{};
@@ -177,7 +177,7 @@ namespace commands::features {
 						}
 						ENTITY::SET_ENTITY_COORDS(handle, coords, TRUE, FALSE, FALSE, FALSE);
 					}
-				}
+				}*/
 			}
 		}
 		namespace world {
@@ -833,11 +833,11 @@ namespace commands::features {
 		g_manager.add(toggleFloatCommand("staminaRegeneration", "Stamina Regeneration", self::movement::staminaRegen));
 		g_manager.add(toggleCommand("gracefulLanding", "Graceful Landing", self::movement::gracefulLanding));
 		g_manager.add(toggleCommand("beastJump", "Beast Jump", self::movement::beastJump));
-		/*g_manager.add(toggleCommand("superJump", "Super Jump", self::movement::superJump));
+		g_manager.add(toggleCommand("superJump", "Super Jump", self::movement::superJump));
 		g_manager.add(toggleCommand("ultraJump", "Ultra Jump", self::movement::ultraJump));
 		g_manager.add(toggleFloatCommand("superRun", "Super Run", self::movement::superRun));
 		g_manager.add(toggleFloatCommand("noClip", "No Clip", self::movement::noClip));
-		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));*/
+		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));
 		//Self::World
 		g_manager.add(toggleCommand("walkOnWater", "Walk On Water", "Walk on water, instead of swimming", self::world::walkOnWater));
 		g_manager.add(toggleCommand("walkThroughWater", "Walk Through Water", "Allows you to walk right through water", self::world::walkThroughWater));
@@ -968,12 +968,12 @@ namespace commands::features {
 	void onInit() {
 		//These need to be after init because the values aren't created yet
 		//Self::Movement
-		/*"run"_TC->get(1).floating_point = 1.f;
+		"run"_TC->get(1).floating_point = 1.f;
 		"swim"_TC->get(1).floating_point = 1.f;
 		"stamina"_TC->get(1).floating_point = 11.f;
 		"staminaRegeneration"_TC->get(1).floating_point = 1.f;
 		"superRun"_TC->get(1).floating_point = 2.f;
-		"noClip"_TC->get(1).floating_point = 1.f;*/
+		"noClip"_TC->get(1).floating_point = 1.f;
 		//Self
 		"alpha"_IC->get(0).i32 = 255;
 		//Network::Session::Browser

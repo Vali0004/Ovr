@@ -17,43 +17,42 @@ namespace commands {
 		}
 		return pressed;
 	}
-	void manager::remove(u32 id) {
-		for (size_t i{}; i != m_commands.size(); ++i) {
-			auto& f{ m_commands[i] };
-			if (f->m_lookupId == id) {
-				delete f;
-				m_commands.erase(m_commands.begin() + i);
-			}
+	void manager::remove(ccp id) {
+		if (auto it{ m_commands.find(id) }; it != m_commands.end()) {
+			delete it->second;
+			m_commands.erase(it);
 		}
 	}
 	void manager::init() {
-		for (auto& f : m_commands) {
-			f->init();
+		for (auto& e : m_commands) {
+			e.second->init();
 		}
 	}
 	void manager::tick() {
-		for (auto& f : m_commands) {
-			if (f->m_type == eCommandType::ProtectionCommand || f->m_type == eCommandType::SectionProtectionCommand)
+		for (auto& e : m_commands) {
+			auto& c{ e.second };
+			if (c->m_type == eCommandType::ProtectionCommand || c->m_type == eCommandType::SectionProtectionCommand)
 				continue;
-			if (f->m_type != eCommandType::VariadicCommand) {
-				if (f->m_looped) {
-					f->run();
+			if (c->m_type != eCommandType::VariadicCommand) {
+				if (c->m_looped) {
+					c->run();
 				}
-				else if (f->m_hotkey.pressed()) {
-					ONCE({ f->run(); });
+				else if (c->m_hotkey.pressed()) {
+					ONCE({ c->run(); });
 				}
 			}
 			else {
-				if (dynamic_cast<variadicCommand*>(f)->looped()) {
-					f->run();
+				if (dynamic_cast<variadicCommand*>(c)->looped()) {
+					c->run();
 				}
 			}
 		}
 	}
 	void manager::clear() {
-		for (auto& f : m_commands) {
-			f->~abstractCommand();
-			delete f;
+		for (auto& e : m_commands) {
+			auto& c{ e.second };
+			c->~abstractCommand();
+			delete c;
 		}
 	}
 }

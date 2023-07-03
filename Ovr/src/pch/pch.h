@@ -16,7 +16,7 @@
 #define SIZEOF(a) sizeof(a) / sizeof(std::remove_pointer_t<decltype(a)>)
 #define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
 #define ONCE(a) do a while (false)
-#define PI 3.141592653589793238462643383279502884L
+constexpr long double PI{ 3.141592653589793238462643383279502884L };
 	
 template <typename t>
 using comPtr = Microsoft::WRL::ComPtr<t>;

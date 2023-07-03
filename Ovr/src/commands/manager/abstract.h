@@ -67,7 +67,7 @@ namespace commands {
 	class abstractCommand {
 	public:
 		abstractCommand(std::string id, std::string name, std::string description, hotkey hotkey, eCommandType type, bool looped) :
-			m_id(id), m_name(name), m_description(description), m_lookupId(rage::joaat(m_id)), m_hotkey(hotkey), m_type(type), m_looped(looped)
+			m_id(id), m_name(name), m_description(description), m_hotkey(hotkey), m_type(type), m_looped(looped)
 		{}
 		abstractCommand(std::string id, std::string name, std::string description, eCommandType type, bool looped) : abstractCommand(id, name, description, {}, type, looped) {}
 		abstractCommand(std::string id, std::string name, eCommandType type, bool looped) : abstractCommand(id, name, {}, type, looped) {}
@@ -87,6 +87,9 @@ namespace commands {
 			m_values.clear();
 			m_hotkey.m_keys.clear();
 		}
+		ccp id() {
+			return m_id.c_str();
+		}
 		void push_value(typedValue& v) {
 			m_values.emplace_back(&v);
 		}
@@ -94,7 +97,6 @@ namespace commands {
 			if (index > m_values.size() - 1) {
 				LOG(Info, "Value index cannot be over value size!");
 				throw std::runtime_error("Value index cannot be over value size!");
-				return nullptr;
 			}
 			return m_values[index];
 		}
@@ -119,7 +121,6 @@ namespace commands {
 		std::string m_id{};
 		std::string m_name{};
 		std::string m_description{};
-		uint32_t m_lookupId{};
 		hotkey m_hotkey{};
 		bool m_looped{};
 		std::vector<std::string> m_buffer{};

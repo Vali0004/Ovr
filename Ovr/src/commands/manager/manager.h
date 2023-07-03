@@ -4,37 +4,31 @@
 namespace commands {
 	class manager {
 	public:
-		template<typename t>
+		template <typename t>
 		void add(t command) {
-			m_commands.push_back(new t(command));
+			t* cmd{ new t(command) };
+			m_commands.insert({ cmd->id(), std::move(cmd) });
 		}
-		void remove(u32 id);
+		void remove(ccp id);
 		void init();
 		void tick();
 		void clear();
-		template <typename t>
-		t* getCommand(u32 id) {
-			for (auto& f : m_commands) {
-				if (f->m_lookupId == id) {
-					return (t*)f;
-				}
-			}
-			return nullptr;
-		}
+
 		template <typename t>
 		t* getCommand(cc* id) {
-			for (auto& f : m_commands) {
-				if (f->m_id == id) {
-					return (t*)f;
+			for (auto& e : m_commands) {
+				auto& c{ e.second };
+				if (c->m_id == id) {
+					return (t*)c;
 				}
 			}
 			return nullptr;
 		}
-		std::vector<abstractCommand*>& getCommands() {
+		std::map<ccp, abstractCommand*>& getCommands() {
 			return m_commands;
 		}
 	private:
-		std::vector<abstractCommand*> m_commands{};
+		std::map<ccp, abstractCommand*> m_commands{};
 	};
 	inline manager g_manager{};
 }

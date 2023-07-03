@@ -46,8 +46,7 @@
 
 namespace fs = std::filesystem;
 namespace global {
-	inline uint64_t g_exportModuleAddress{};
-	inline HMODULE g_exportModule{};
+	inline HMODULE g_exportModule{ (HMODULE)0xD0BD9B9B };
 	inline HANDLE g_thread{};
 	inline std::atomic<bool> g_running{ true };
 }

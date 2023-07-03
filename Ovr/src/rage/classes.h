@@ -436,6 +436,11 @@ namespace rage {
 			pointers::g_readBitsSingle(m_data, &result, numBits, m_bitsRead + m_bitOffset);
 			return result;
 		}
+		bool WriteIntegrityPassed() {
+			WriteBool(false);
+			WriteDword(0xCDEF, 0x10);
+			return true;
+		}
 		bool CheckIntegrity() {
 			bool shouldCheck{};
 			bool success{ ReadBool(&shouldCheck) };
@@ -1410,7 +1415,7 @@ namespace rage {
 		uint32_t m_seed; //0x07F8
 		bool m_initialized; //0x07FC
 
-		rage::Cmd get_handler(uint64_t hash) {
+		Cmd get_handler(uint64_t hash) {
 			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
 					if (auto entry_hash = entry->get_hash(i); entry_hash == hash) {

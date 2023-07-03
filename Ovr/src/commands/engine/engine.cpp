@@ -224,8 +224,8 @@ namespace commands {
 	}
 	void engine::replaceCommand(abstractCommand* command) {
 		for (auto& f : g_manager.getCommands()) {
-			if (f->m_lookupId == command->m_lookupId) {
-				f = command;
+			if (f.second->m_id == command->m_id) {
+				f.second = command;
 				break;
 			}
 		}
@@ -234,8 +234,8 @@ namespace commands {
 		std::string lower{ lStr(command) };
 		std::vector<abstractCommand*> matches{};
 		for (auto& f : g_manager.getCommands()) {
-			if (lStr(f->m_id).find(lower) != std::string::npos) {
-				matches.push_back(f);
+			if (lStr(f.second->m_id).find(lower) != std::string::npos) {
+				matches.push_back(f.second);
 			}
 		}
 		return matches;

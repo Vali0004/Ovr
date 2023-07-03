@@ -17,3 +17,6 @@
 *.dll.recipe
 *.idb
 *.ilk
+*.lib
+*.txt
+*.exp

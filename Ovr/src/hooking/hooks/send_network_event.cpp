@@ -4,12 +4,15 @@ void hooks::sendNetworkEvent(rage::netEventMgr* pEventMgr, rage::netGameEvent* p
 	if (pEvent) {
 		switch (static_cast<ePackedEvents>(pEvent->m_id)) {
 		case ePackedEvents::CUpdateFxnEvent: {
+			pEvent->~netGameEvent();
 			return;
 		} break;
 		case ePackedEvents::CReportCashSpawnEvent: {
+			pEvent->~netGameEvent();
 			return;
 		} break;
 		case ePackedEvents::CNetworkCheckCodeCrcsEvent: {
+			pEvent->~netGameEvent();
 			return;
 		} break;
 		}

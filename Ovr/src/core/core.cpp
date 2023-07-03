@@ -33,13 +33,13 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b908)");
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1017)");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
-		pointers::doPatches();
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(10ms);
 		}
+		pointers::doPatches();
 		g_invoker.cache();
 		g_fiberPool.create();
 		g_renderer = std::make_unique<renderer>();

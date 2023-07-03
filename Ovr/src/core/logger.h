@@ -12,7 +12,7 @@ enum class eLogColor : u16 {
 	Grey = Intensify,
 	LightRed = Red | Intensify,
 	LightGreen = Green | Intensify,
-	LightBlue = Blue | Intensify,
+	LightBlue = Blue | Intensify
 };
 inline eLogColor operator|(eLogColor a, eLogColor b) {
 	return static_cast<eLogColor>(static_cast<std::underlying_type_t<eLogColor>>(a) | static_cast<std::underlying_type_t<eLogColor>>(b));

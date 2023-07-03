@@ -119,13 +119,18 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				i32 imm{ (LoadImm8 << 8) };
 				imm |= LoadImm8;
 				returnSize &= 3;
-				rage::Cmd cmd{ (decltype(cmd))(size_t)pt->m_natives[imm] };
+				rage::Cmd cmd{ *pt->m_natives[imm] };
 				ser->m_pointer_count = (i32)(pc - opcodes - 4);
 				ser->m_frame_pointer = (i32)(fp - stack);
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThreadInfo curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				g_statistics.m_nativesInvoked++;
-				(*cmd)(&curInfo);
+				if (g_nativeHooks.first) {
+					for (auto& e : g_nativeHooks.second) {
+						e->set(pt, imm, cmd);
+					}
+				}
+				cmd(&curInfo);
 				if (ser->m_state != rage::eThreadState::running)
 					return ser->m_state;
 				curInfo.CopyReferencedParametersOut();

@@ -78,7 +78,7 @@ namespace pointers {
                 LOG(Info, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
             }
             else {
-                LOG(Info, "ARX functions ");
+                LOG(Info, "ARX functions were already patched.");
             }
         }
         catch (...) {
