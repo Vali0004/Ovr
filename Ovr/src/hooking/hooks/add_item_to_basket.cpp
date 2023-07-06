@@ -15,6 +15,19 @@ bool badTransaction(nlohmann::json& data, u32 hash, std::string msg) {
 	}
 	return false;
 }
+bool badAction(nlohmann::json& data, u32 hash, u32 actionHash, std::string msg) {
+	if (data["Category"].get<u32>() == hash && data["Action"].get<u32>() == actionHash) {
+		u32 category{ data["Category"].get<u32>() };
+		u32 id{ data["ID"].get<u32>() };
+		u32 action{ data["Action"].get<u32>() };
+		u32 target{ data["Target"].get<u32>() };
+		u32 count{ data["Count"].get<u32>() };
+		LOG(Info, "[rage::CNetShopTransactionMgr::Push]: {} contained an bad action (0x{:X}).", msg, actionHash);
+		LOG(Info, "Data: 0x{:X}[{}], {} executing {} for {} {} times", category, id, action, target, count);
+		return true;
+	}
+	return false;
+}
 bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items) {
 	if (pTransactionMgr) {
 		for (auto node{ pTransactionMgr->m_first }; node; node = node->m_next) {
@@ -37,7 +50,10 @@ bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items)
 					{ "Value", item.m_value },
 				};
 			}
-			if (badTransaction(j[transaction->m_category], 0xAE04310C, "Transaction report hash")) {
+			if (badTransaction(j[transaction->m_category], "SERVICE_BONUS"_joaat, "Transaction report hash")) {
+				return false;
+			}
+			if (badAction(j[transaction->m_category], "CATEGORY_SERVICE_WITH_THRESHOLD"_joaat, "NET_SHOP_ACTION_BONUS"_joaat, "Category Service (Threshold)")) {
 				return false;
 			}
 			LOG(Info, j.dump(4));

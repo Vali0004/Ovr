@@ -19,16 +19,16 @@ namespace shv {
 					VirtualProtect((void*)address, patch.size(), oldProtect, &oldProtect);
 				}
 			}
-			g_manager.add(std::format("0x{:X}:0x{:X}", (uint64_t)module, (uint64_t)LP_SCRIPT_MAIN).c_str(), LP_SCRIPT_MAIN);
+			g_manager.add(std::format("shv:0x{:X}:shv:0x{:X}", (uint64_t)module, (uint64_t)LP_SCRIPT_MAIN).c_str(), LP_SCRIPT_MAIN);
 		}
 		void scriptRegisterAdditionalThread(HMODULE module, void(*LP_SCRIPT_MAIN)()) {
-			g_manager.add(std::format("0x{:X}:0x{:X}", (uint64_t)module, (uint64_t)LP_SCRIPT_MAIN).c_str(), LP_SCRIPT_MAIN);
+			g_manager.add(std::format("shv:0x{:X}:shv:0x{:X}", (uint64_t)module, (uint64_t)LP_SCRIPT_MAIN).c_str(), LP_SCRIPT_MAIN);
 		}
 		void scriptUnregister(HMODULE module) {
-			g_manager.removeBase(std::format("0x{:X}", (uint64_t)module).c_str());
+			g_manager.removeBase(std::format("shv:0x{:X}", (uint64_t)module).c_str());
 		}
 		void scriptUnregisterDepricated(void(*LP_SCRIPT_MAIN)()) {
-			g_manager.removeBase(std::format("0x{:X}", (uint64_t)LP_SCRIPT_MAIN).c_str());
+			g_manager.removeBase(std::format("shv:0x{:X}", (uint64_t)LP_SCRIPT_MAIN).c_str());
 		}
 		void nativeInit(uint64_t hash) {
 			g_hash = hash;

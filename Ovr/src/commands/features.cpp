@@ -515,11 +515,11 @@ namespace commands::features {
 					return {};
 				}
 				void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess) {
-					rage::rlGamerHandle handles[1]{ { rid } };
+					rage::rlGamerHandle handle{ rid };
 					rage::rlSessionByGamerTaskResult result{};
 					bool success{};
 					rage::rlTaskStatus status{};
-					if (pointers::g_getGamerTaskResult(0, handles, SIZEOF(handles), &result, 1, &success, &status)) {
+					if (pointers::g_getGamerTaskResult(0, &handle, 1, &result, 1, &success, &status)) {
 						while (status.m_state == 1) {
 							fiber::current()->sleep();
 						}

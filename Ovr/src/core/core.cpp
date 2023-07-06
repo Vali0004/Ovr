@@ -7,7 +7,6 @@
 #include <memory/scanner.h>
 
 namespace core {
-	scyllaHide g_scyllaHide{};
 	namespace thread {
 		void create(HMODULE hmodule) {
 			g_module = hmodule;
@@ -23,17 +22,20 @@ namespace core {
 			CloseHandle(g_thread);
 		}
 		DWORD entry(LPVOID paramater) {
-			g_scyllaHide.load();
+			//g_scyllaHide = std::make_unique<scyllaHide>();
 			core::create();
 			loop();
 			core::destroy();
-			g_scyllaHide.unload();
+			//g_scyllaHide.reset();
 			FreeLibraryAndExitThread(g_module, 0);
 			return 0;
 		}
 	}
 	void create() {
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1017)");
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1156)");
+		shv::g_shvLoader = std::make_unique<shv::shvLoader>();
+		if (shv::g_shvLoader->getModule())
+			LOG(Info, "SHV module loaded.");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
@@ -57,6 +59,8 @@ namespace core {
 		std::this_thread::sleep_for(1s);
 		g_renderer.reset();
 		g_hooking.reset();
+		shv::g_asiLoader.clear();
+		shv::g_shvLoader.reset();
 		g_patches.reset();
 		commands::g_manager.clear();
 		exceptions::uninitExceptionHandler();

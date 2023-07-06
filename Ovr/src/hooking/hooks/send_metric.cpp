@@ -30,6 +30,21 @@ const u32 g_blockedMetrics[]{
 	"GARAGE_TAMPER"_joaat
 };
 bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
+	#ifdef DEBUG
+	ccp key{};
+	if (pMetric->using_a()) {
+		key = "A";
+	}
+	else if (pMetric->using_b()) {
+		key = "B";
+	}
+	else if (pMetric->using_c()) {
+		key = "C";
+	}
+	rage::JSONSerialiser json{ 256 };
+	pMetric->to_json(&json);
+	LOG(Info, "[Metric{}::Prepare][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
+	#endif
 	if (pMetric->using_c()) {
 		if (pMetric->crc_flag()) {
 			return false;

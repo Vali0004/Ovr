@@ -5,7 +5,6 @@
 
 namespace core {
 	void initialize() {
-		printf("init\n");
 	}
 	void loop() {
 		while (global::g_running) {

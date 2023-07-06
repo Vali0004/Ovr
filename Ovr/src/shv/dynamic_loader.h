@@ -1,5 +1,6 @@
 #pragma once
 #include "pch/pch.h"
+#include "fiber/manager.h"
 
 namespace shv {
 	class dynamicLoader {
@@ -52,10 +53,10 @@ namespace shv {
 	};
 	class shvLoader : public dynamicLoader {
 	public:
-		shvLoader() : dynamicLoader(m_path.append(BRAND"\\Modules").append("ScriptHookV.dll")) {}
+		shvLoader() : dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Modules").append("ScriptHookV.dll")) {}
 		~shvLoader() {}
 	private:
-		fs::path m_path{ std::getenv("appdata") };
+		fs::path m_path{};
 	};
 	inline std::unique_ptr<shvLoader> g_shvLoader{};
 	class asiLoader {
@@ -67,9 +68,11 @@ namespace shv {
 		void unload(std::string name) {
 			std::lock_guard lock(m_mutex);
 			for (size_t i{}; i != m_modules.size(); ++i) {
-				if (auto& module{ m_modules[i] }; module.get()) {
-					if (auto str{ module->c_str() }; str) {
+				if (auto& module{ m_modules[i] }; module && module.get()) {
+					if (auto str{ module->str() }; str.c_str()) {
 						if (!name.compare(str)) {
+							std::string id{ std::format("shv:0x{:X}", reinterpret_cast<uint64_t>(module->getModule())) };
+							g_manager.removeBase(id.c_str());
 							module->free();
 							m_modules.erase(m_modules.begin() + i);
 						}
@@ -82,6 +85,7 @@ namespace shv {
 			m_modules.clear();
 		}
 		bool isScriptLoaded(std::string name) {
+			std::lock_guard lock(m_mutex);
 			for (auto& m : m_modules) {
 				if (auto str{ m->c_str() }; str) {
 					if (!name.compare(str)) {

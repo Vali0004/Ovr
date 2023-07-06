@@ -4,8 +4,8 @@
 
 hooking::hooking() :
 	m_minhook(),
-	m_cTaskJumpConstructor("CTJC", pointers::g_cTaskJumpConstructor, &hooks::cTaskJumpConstructor, false),
-	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor, false),
+	m_cTaskJumpConstructor("CTJC", pointers::g_cTaskJumpConstructor, &hooks::cTaskJumpConstructor),
+	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor),
 	m_runAsyncModuleRequest("RAMS", pointers::g_runAsyncModuleRequest, &hooks::runAsyncModuleRequest),
 	m_hasIntervalElapsed("HIE", pointers::g_hasIntervalElapsed, &hooks::hasIntervalElapsed),
 	m_dispatchEvent("DE", pointers::g_dispatchEvent, &hooks::dispatchEvent),
@@ -19,9 +19,7 @@ hooking::hooking() :
 	m_addItemToBasket("AITB", pointers::g_addItemToBasket, &hooks::addItemToBasket),
 	m_request("R", pointers::g_request, &hooks::request),
 	m_sendMetric("SM", pointers::g_sendMetric, &hooks::sendMetric),
-	m_prepareMetric("SM", pointers::g_prepareMetric, &hooks::prepareMetric),
 	m_sendNetworkEvent("SNE", pointers::g_sendNetworkEvent, &hooks::sendNetworkEvent),
-	m_addEventToList("AETL", pointers::g_addEventToList, &hooks::addEventToList),
 	m_updateAttributeInt("SV", pointers::g_presenceData[g_updateAttributeIntIndex], &hooks::updateAttributeInt),
 	m_convertThreadToFiber("CTTF", *dynamicFunctionParser{ "kernel32.dll", "ConvertThreadToFiber" }, &hooks::convertThreadToFiber),
 	m_getProcAddress("GPA", &GetProcAddress, &hooks::getProcAddress),

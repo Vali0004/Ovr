@@ -36,9 +36,7 @@ struct hooks {
 	static bool addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
-	static bool prepareMetric(rage::datBitBuffer* pBitBuffer, i32 Unk, i32 Time, rage::rlMetric* pMetric);
 	static void sendNetworkEvent(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
-	static u64 addEventToList(u64* pEventPool);
 	static LPVOID convertThreadToFiber(LPVOID param);
 	static FARPROC getProcAddress(HMODULE hModule, LPCSTR lpProcName);
 	static bool updateAttributeInt(PresenceData* Data, int ProfileIndex, char* Attribute, u64 Value);
@@ -89,9 +87,7 @@ public:
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;
-	detour m_prepareMetric;
 	detour m_sendNetworkEvent;
-	detour m_addEventToList;
 	detour m_updateAttributeInt;
 	detour m_convertThreadToFiber;
 	detour m_getProcAddress;

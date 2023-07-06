@@ -9,20 +9,14 @@
 #include "exceptions/handler.h"
 
 namespace core {
-	struct scyllaHide {
-		void load() {
-			fs::path path{ std::getenv("appdata") };
-			path /= BRAND;
-			path /= "Modules"; 
-			path /= "ScyllaHide.dll";
-			m_hmodule = LoadLibraryA(path.string().c_str());
-		}
-		void unload() {
-			if (m_hmodule)
-				FreeLibrary(m_hmodule);
-		}
-		HMODULE m_hmodule{};
-	};
+	//class scyllaHide : public shv::dynamicLoader {
+	//public:
+	//	scyllaHide() : shv::dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Modules").append("ScyllaHide.dll")) {}
+	//	~scyllaHide() {}
+	//private:
+	//	fs::path m_path{};
+	//};
+	//inline std::unique_ptr<scyllaHide> g_scyllaHide{};
 	namespace thread {
 		extern void create(HMODULE hmodule);
 		extern void loop();

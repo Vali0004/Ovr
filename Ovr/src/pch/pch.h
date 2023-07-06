@@ -44,6 +44,83 @@ public:
 	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr);
     virtual void OnCallstackEntry(CallstackEntryType eType, CallstackEntry& entry);
 };
+template <typename T>
+class SmartPointer {
+public:
+    SmartPointer() : instance(nullptr), refCount(nullptr) {}
+    explicit SmartPointer(T* pointer) : instance(pointer), refCount(new size_t(1)) {}
+    SmartPointer(const SmartPointer& other) : instance(other.instance), refCount(other.refCount) {
+        increaseRefCount();
+    }
+    SmartPointer(SmartPointer&& other) noexcept : instance(other.instance), refCount(other.refCount) {
+        other.instance = nullptr;
+        other.refCount = nullptr;
+    }
+    ~SmartPointer() {
+        reset();
+    }
+public:
+    [[nodiscard]] T* get() const noexcept {
+        return instance;
+    }
+    [[nodiscard]] void reset() noexcept {
+        release();
+        instance = nullptr;
+        refCount = nullptr;
+    }
+private:
+    void increaseRefCount() {
+        if (refCount)
+            ++(*refCount);
+    }
+    void decreaseRefCount() {
+        if (refCount && --(*refCount) == 0) {
+            delete instance;
+            delete refCount;
+        }
+    }
+    void release() {
+        decreaseRefCount();
+        instance = nullptr;
+        refCount = nullptr;
+    }
+public:
+    SmartPointer& operator=(const SmartPointer& other) {
+        if (this != &other) {
+            release();
+            instance = other.instance;
+            refCount = other.refCount;
+            increaseRefCount();
+        }
+        return *this;
+    }
+    SmartPointer& operator=(SmartPointer&& other) noexcept {
+        if (this != &other) {
+            release();
+            instance = other.instance;
+            refCount = other.refCount;
+            other.instance = nullptr;
+            other.refCount = nullptr;
+        }
+        return *this;
+    }
+    [[nodiscard]] T& operator*() const noexcept {
+        return *instance;
+    }
+    [[nodiscard]] T* operator->() const noexcept {
+        return instance;
+    }
+    explicit operator bool() const noexcept {
+        return instance != nullptr;
+    }
+private:
+    T* instance{};
+    size_t* refCount{};
+};
+template <typename T, typename... Args>
+inline std::unique_ptr<T> MakeSmartPointer(Args&&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 namespace defines {
 	inline bool g_running{ true };
 	inline HMODULE g_module{};

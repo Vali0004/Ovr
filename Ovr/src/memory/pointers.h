@@ -38,9 +38,7 @@ namespace pointers {
 		using addItemToBasket = bool(*)(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
-		using prepareMetric = bool(*)(rage::datBitBuffer* pBitBuffer, i32 Unk, i32 Time, rage::rlMetric* pMetric);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
-		using addEventToList = u64(*)(u64* pEventPool);
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
@@ -73,9 +71,7 @@ namespace pointers {
 	inline types::addItemToBasket g_addItemToBasket{};
 	inline types::request g_request{};
 	inline types::sendMetric g_sendMetric{};
-	inline types::prepareMetric g_prepareMetric{};
 	inline types::sendNetworkEvent g_sendNetworkEvent{};
-	inline types::addEventToList g_addEventToList{};
 	inline types::processMatchmakingFind g_processMatchmakingFind{};
 
 	inline rage::grcTextureStore* g_textureStore{};
@@ -99,8 +95,5 @@ namespace pointers {
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
 	inline u64* g_reportModule{};
-	inline u64* g_reportCashSpawnEvent{};
-	inline u64* g_updateFxnEvent{};
-	inline u64* g_networkCheckCodeCrcsEvent{};
 	inline HWND g_hwnd{};
 }

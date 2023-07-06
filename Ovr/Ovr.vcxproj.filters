@@ -875,8 +875,6 @@
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
     <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
-    <ClCompile Include="src\hooking\hooks\prepare_metric.cpp" />
-    <ClCompile Include="src\hooking\hooks\add_event_to_list.cpp" />
     <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
   </ItemGroup>
   <ItemGroup>

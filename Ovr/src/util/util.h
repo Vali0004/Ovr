@@ -157,6 +157,9 @@ namespace util {
 			}
 		}
 	}
+	inline void async(std::function<void()> callback) {
+		std::thread(callback).detach();
+	}
 	inline bool inModuleRegion(ccp module, u64 address) {
 		static HMODULE hmod{ GetModuleHandleA(module ? module : NULL) };
 		static u64 moduleBase{};

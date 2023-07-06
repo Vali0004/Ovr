@@ -34,9 +34,7 @@ namespace pointers {
         g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
         g_request = scan("R", "75 6F 48 8B CE").sub(0xD).as<decltype(g_request)>();
         g_sendMetric = scan("SM", "E8 ? ? ? ? EB 69 41 8B D6").call().as<decltype(g_sendMetric)>();
-        g_prepareMetric = scan("PM", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 30 49 8B E8 4C 8D 40 EC 49 8B F1 48 8B D9 40 32 FF E8").as<decltype(g_prepareMetric)>();
         g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
-        g_addEventToList = scan("AETL", "4C 8B D1 48 63 49 18").as<decltype(g_addEventToList)>();
         g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
  
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
@@ -60,9 +58,6 @@ namespace pointers {
         g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
         g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
         g_reportModule = scan("RM", "48 8D 0D ? ? ? ? 88 05 ? ? ? ? 48 8D 05").mov().as<decltype(g_reportModule)>();
-        g_reportCashSpawnEvent = scan("RCSE", "48 89 5C 24 08 57 48 83 EC 20 33 FF 48 8B D9 48 85 C9 74 0B").sub(0xeF).as<decltype(g_reportCashSpawnEvent)>();
-        g_updateFxnEvent = scan("UFE", "40 53 48 83 EC 40 83 B9 ? ? ? ? ? 48 8B D9 75 67 48 83 64 24 ? ? 48 83 64 24 ? ? 48 8D 54 24 ? 48 81 C1").add(0x5E).call().add(0x22).as<decltype(g_updateFxnEvent)>();
-        g_networkCheckCodeCrcsEvent = scan("NCHCE", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 30 44 8B F1 48 8B 0D").add(0x64).as<decltype(g_networkCheckCodeCrcsEvent)>();
         g_hwnd = FindWindowA("grcWindow", nullptr);
         LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
     }
@@ -84,6 +79,7 @@ namespace pointers {
         catch (...) {
             LOG(Info, "ARX function patches failed to patch, checking if they were already applied.");
         }
+        //I really need to fucking fix this.
         //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<i32*>(), { 0xB0, 0x01, 0xC3 });
     }
 }
