@@ -23,7 +23,9 @@ namespace core {
 			CloseHandle(g_thread);
 		}
 		DWORD entry(LPVOID paramater) {
-			//g_scyllaHide = MakeSmartPointer<scyllaHide>();
+			/*g_scyllaHide = MakeSmartPointer<scyllaHide>();
+			if (g_scyllaHide->getModule())
+				LOG(Info, "ScyllaHide loaded.");*/
 			core::create();
 			loop();
 			core::destroy();
@@ -33,7 +35,7 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1451)");
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1455)");
 		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
 		//if (shv::g_shvLoader->getModule())
 		//	LOG(Info, "SHV module loaded.");
