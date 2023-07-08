@@ -310,7 +310,35 @@ namespace commands::features {
 	namespace vehicle {
 		namespace spawner {
 			void spawnVehicle(variadicCommand* command) {
-
+				std::string key{ command->get(0).string };
+				u32 hash{};
+				if (isNumber(key)) {
+					hash = stoi(key);
+				}
+				else if (containsANumber(key) && key.size() == 8) {
+					hash = stoull(key);
+				}
+				else {
+					LOG(Commands, "{} is not a valid key!", key);
+					return;
+				}
+				if (!STREAMING::IS_MODEL_VALID(hash)) {
+					LOG(Commands, "{} is not a valid hash!", key);
+				}
+				else {
+					while (!STREAMING::HAS_MODEL_LOADED(hash)) {
+						STREAMING::REQUEST_MODEL(hash);
+						fiber::current()->sleep();
+					}
+					Vector3 pos{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE) };
+					float heading{ ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()) };
+					Vehicle vehicle{ VEHICLE::CREATE_VEHICLE(hash, pos, heading, TRUE, TRUE, FALSE) };
+					if (NETWORK::NETWORK_IS_SESSION_STARTED()) {
+						DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
+					}
+					PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), vehicle, -1);
+					STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
+				}
 			}
 		}
 	}

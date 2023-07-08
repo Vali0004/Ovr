@@ -339,6 +339,7 @@
     <ClInclude Include="src\util\player_mgr.h" />
     <ClInclude Include="src\util\statistics.h" />
     <ClInclude Include="src\util\util.h" />
+    <ClInclude Include="src\util\vehicle.h" />
     <ClInclude Include="src\zydis\Decoder.h" />
     <ClInclude Include="src\zydis\DecoderTypes.h" />
     <ClInclude Include="src\zydis\Defines.h" />

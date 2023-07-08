@@ -551,6 +551,7 @@
       <Filter>src\script\tabs\miscellaneous</Filter>
     </ClInclude>
     <ClInclude Include="src\util\message.h" />
+    <ClInclude Include="src\util\vehicle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">

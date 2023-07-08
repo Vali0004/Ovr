@@ -53,6 +53,8 @@ public:
         return instance;
     }
     [[nodiscard]] void reset() noexcept {
+        if (!instance && !refCount)
+            return;
         release();
         instance = nullptr;
         refCount = nullptr;
