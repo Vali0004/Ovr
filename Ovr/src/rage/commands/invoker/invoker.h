@@ -22,7 +22,7 @@ public:
 	}
 	template <typename t>
 	t* getRetPointer() {
-		return reinterpret_cast<t*>(m_context.Return);
+		return reinterpret_cast<t*>(m_context.ResultPtr);
 	}
 	rage::Cmd getNativeCmd(u64 hash) {
 		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {

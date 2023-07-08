@@ -41,7 +41,6 @@ public:
 		for (auto& scr : m_fibers) {
 			scr.second->tick();
 		}
-		g_statistics.reset();
 	}
 private:
 	std::recursive_mutex m_mutex{};

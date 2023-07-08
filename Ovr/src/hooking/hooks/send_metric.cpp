@@ -43,7 +43,10 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 	}
 	rage::JSONSerialiser json{ 256 };
 	pMetric->to_json(&json);
-	LOG(Info, "[Metric{}::Prepare][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
+	if (pMetric->get_name() == "SPAWN" && json.str().find("-") != std::string::npos) {
+		LOG(Info, "Oh no bro.");
+	}
+	LOG(Info, "[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
 	#endif
 	if (pMetric->using_c()) {
 		if (pMetric->crc_flag()) {

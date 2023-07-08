@@ -4,8 +4,8 @@
 
 hooking::hooking() :
 	m_minhook(),
-	m_cTaskJumpConstructor("CTJC", pointers::g_cTaskJumpConstructor, &hooks::cTaskJumpConstructor),
-	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor),
+	m_cTaskJumpConstructor("CTJC", pointers::g_cTaskJumpConstructor, &hooks::cTaskJumpConstructor, false),
+	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor, false),
 	m_runAsyncModuleRequest("RAMS", pointers::g_runAsyncModuleRequest, &hooks::runAsyncModuleRequest),
 	m_hasIntervalElapsed("HIE", pointers::g_hasIntervalElapsed, &hooks::hasIntervalElapsed),
 	m_dispatchEvent("DE", pointers::g_dispatchEvent, &hooks::dispatchEvent),
@@ -31,18 +31,18 @@ hooking::hooking() :
 hooking::~hooking() {
 }
 void hooking::enable() {
-	g_nativeHooks.second.push_back(new native("all_scripts"_joaat, 0x580CE4438479CC61, [](rage::scrThreadInfo* info) {
-		info->Return->Int = FALSE;
+	createNativeShim("all_scripts"_joaat, 0x580CE4438479CC61, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
 		return;
-	}));
-	g_nativeHooks.second.push_back(new native("all_scripts"_joaat, 0x95914459A87EBA28, [](rage::scrThreadInfo* info) {
-		info->Return->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x95914459A87EBA28, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
 		return;
-	}));
-	g_nativeHooks.second.push_back(new native("all_scripts"_joaat, 0xEAA572036990CD1B, [](rage::scrThreadInfo* info) {
-		info->Return->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xEAA572036990CD1B, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
 		return;
-	}));
+	});
 	m_DX.enable();
 	detour::enableAll();
 	MH_ApplyQueued();
@@ -53,6 +53,7 @@ void hooking::disable() {
 	if (this) {
 		m_DX.disable();
 	}
+	resetNativeShims();
 	detour::disableAll();
 	MH_ApplyQueued();
 }

@@ -47,7 +47,7 @@ void scrAppendString(char* dst, unsigned size, const char* src) {
 	scrAssignString(dst, size, src);
 }
 
-rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThreadSerialised* ser) {
+rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser) {
 	if (ser->m_script_hash == "valentinerpreward2"_joaat)
 		return ser->m_state = rage::eThreadState::aborted;
 	u8** opcodesTbl{ pt->m_code_blocks };
@@ -123,7 +123,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_pointer_count = (i32)(pc - opcodes - 4);
 				ser->m_frame_pointer = (i32)(fp - stack);
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
-				rage::scrThreadInfo curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
+				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				g_statistics.m_nativesInvoked++;
 				if (g_nativeHooks.first) {
 					for (auto& e : g_nativeHooks.second) {

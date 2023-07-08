@@ -69,6 +69,7 @@ namespace script {
 		#endif
 		init();
 		while (true) {
+			g_statistics.reset();
 			if (g_guiOpen || commands::gui::g_box.m_lock || g_renderer->hasActiveCallback()) {
 				PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
 			}

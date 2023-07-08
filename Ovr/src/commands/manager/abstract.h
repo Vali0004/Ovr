@@ -1,6 +1,7 @@
 #pragma once
 #include "pch/pch.h"
 #include "rage/classes.h"
+#include "core/logger.h"
 
 namespace commands {
 	union value {

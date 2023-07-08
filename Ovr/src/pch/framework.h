@@ -90,3 +90,16 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 using namespace std;
 using namespace std::chrono;
 using namespace std::chrono_literals;
+//Shortened types
+using u64 = unsigned long long;
+using i64 = signed long long;
+using u32 = unsigned int;
+using i32 = signed int;
+using u16 = unsigned short;
+using i16 = signed short;
+using u8 = unsigned char;
+using i8 = signed char;
+using cc = const char;
+using ccp = cc*;
+using fp = float;
+using db = double;

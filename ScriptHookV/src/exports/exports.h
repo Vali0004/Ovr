@@ -81,150 +81,122 @@ enum eGameVersion : int {
 };
 
 EXPORT void scriptRegister(HMODULE module, void(*LP_SCRIPT_MAIN)()) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&scriptRegister))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(module, LP_SCRIPT_MAIN);
 }
 EXPORT void scriptRegisterAdditionalThread(HMODULE module, void(*LP_SCRIPT_MAIN)()) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&scriptRegisterAdditionalThread))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(module, LP_SCRIPT_MAIN);
 }
 EXPORT void scriptUnregister(HMODULE module) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (void(*)(HMODULE module))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(module);
 }
 EXPORT void scriptUnregister(void(*LP_SCRIPT_MAIN)()) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (void(*)(void(*LP_SCRIPT_MAIN)()))GetProcAddress(global::g_exportModule, __FUNCTION__"Depricated") };
 	if (!fn)
 		return;
 	return fn(LP_SCRIPT_MAIN);
 }
 EXPORT void nativeInit(uint64_t hash) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&nativeInit))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(hash);
 }
 EXPORT void nativePush64(uint64_t val) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&nativePush64))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(val);
 }
 EXPORT PUINT64 nativeCall() {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&nativeCall))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn();
 }
 EXPORT PUINT64 getGlobalPtr(int index) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&getGlobalPtr))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(index);
 }
-EXPORT int registerRawStreamingFile(const std::string& fileName, const std::string& registerAs) {
-	printf("%s called\n", __FUNCTION__);
-	auto fn{ (decltype(&registerRawStreamingFile))GetProcAddress(global::g_exportModule, __FUNCTION__) };
-	if (!fn)
-		return NULL;
-	return fn(fileName, registerAs);
-}
 EXPORT int createTexture(const char* fileName) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&createTexture))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(fileName);
 }
 EXPORT void drawTexture(int id, int index, int level, int time, float sizeX, float sizeY, float centerX, float centerY, float posX, float posY, float rotation, float screenHeightScaleFactor, float r, float g, float b, float a) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&drawTexture))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(id, index, level, time, sizeX, sizeY, centerX, centerY, posX, posY, rotation, screenHeightScaleFactor, r, g, b, a);
 }
 EXPORT void scriptWait(unsigned long waitTime) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&scriptWait))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(waitTime);
 }
 EXPORT void keyboardHandlerRegister(TKeyboardFn function) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&keyboardHandlerRegister))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(function);
 }
 EXPORT void keyboardHandlerUnregister(TKeyboardFn function) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&keyboardHandlerUnregister))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return;
 	return fn(function);
 }
 EXPORT eGameVersion getGameVersion() {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&getGameVersion))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return eGameVersion::VER_UNK;
 	return fn();
 }
 EXPORT BYTE* getScriptHandleBaseAddress(int handle) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&getScriptHandleBaseAddress))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(handle);
 }
 EXPORT void presentCallbackUnregister(PresentCallback cb) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&presentCallbackUnregister))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	return fn(cb);
 }
 EXPORT void presentCallbackRegister(PresentCallback cb) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&presentCallbackRegister))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	return fn(cb);
 }
 EXPORT int worldGetAllVehicles(int* arr, int arrSize) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&worldGetAllVehicles))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(arr, arrSize);
 }
 EXPORT int worldGetAllPeds(int* arr, int arrSize) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&worldGetAllPeds))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(arr, arrSize);
 }
 EXPORT int worldGetAllObjects(int* arr, int arrSize) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&worldGetAllObjects))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;
 	return fn(arr, arrSize);
 }
 EXPORT int worldGetAllPickups(int* arr, int arrSize) {
-	printf("%s called\n", __FUNCTION__);
 	auto fn{ (decltype(&worldGetAllPickups))GetProcAddress(global::g_exportModule, __FUNCTION__) };
 	if (!fn)
 		return NULL;

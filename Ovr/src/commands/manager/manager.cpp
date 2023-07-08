@@ -1,4 +1,5 @@
 #include "manager.h"
+#include "memory/pointers.h"
 
 namespace commands {
 	void hotkey::add_hotkey(int key) {

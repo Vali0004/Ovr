@@ -5,6 +5,7 @@
 #include "commands/commands.h"
 #include "memory/patch.h"
 #include <memory/scanner.h>
+#include <Mmsystem.h>
 
 namespace core {
 	namespace thread {
@@ -32,12 +33,16 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1156)");
-		shv::g_shvLoader = std::make_unique<shv::shvLoader>();
-		if (shv::g_shvLoader->getModule())
-			LOG(Info, "SHV module loaded.");
+		//Almost build 1337, let's go
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1321)");
+		//shv::g_shvLoader = std::make_unique<shv::shvLoader>();
+		//if (shv::g_shvLoader->getModule())
+		//	LOG(Info, "SHV module loaded.");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
+		fs::path path{ std::getenv("appdata") };
+		path /= BRAND"\\Sounds\\injection_sound.wav";
+		sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(10ms);
 		}
@@ -53,6 +58,9 @@ namespace core {
 		engine::createThread(&g_manager);
 	}
 	void destroy() {
+		g_fiberPool.add(&commands::features::uninit);
+		//We'd like ped flags and other things to be reset because of cases like no-clip
+		std::this_thread::sleep_for(200ms);
 		engine::cleanupThreads();
 		g_manager.destroy();
 		g_hooking->disable();
@@ -60,7 +68,7 @@ namespace core {
 		g_renderer.reset();
 		g_hooking.reset();
 		shv::g_asiLoader.clear();
-		shv::g_shvLoader.reset();
+		//shv::g_shvLoader.reset();
 		g_patches.reset();
 		commands::g_manager.clear();
 		exceptions::uninitExceptionHandler();

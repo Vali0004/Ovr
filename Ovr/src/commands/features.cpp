@@ -136,8 +136,8 @@ namespace commands::features {
 			}
 			void noClip(toggleFloatCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				ENTITY::SET_ENTITY_COLLISION(ped, !command->get(0).toggle, TRUE);
 				if (command->get(0).toggle) {
+					ENTITY::SET_ENTITY_COLLISION(ped, FALSE, TRUE);
 					Vector3 pos{ cPed->get_position().serialize() };
 					Vector3 rot{ math::rotToDir(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
 					Vector3 camCoords{ pos + rot * command->get(1).floating_point };
@@ -148,6 +148,9 @@ namespace commands::features {
 					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlMoveUpOnly)) {
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, camCoords, TRUE, TRUE, TRUE);
 					}
+				}
+				else {
+					ONCE({ ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
@@ -198,9 +201,9 @@ namespace commands::features {
 					Vector3 coords{ cPed->get_position().serialize() };
 					static float height{};
 					static Object handle{};
-					if (ENTITY::DOES_ENTITY_EXIST(handle)) {
+					if (handle) {
 						WATER::GET_WATER_HEIGHT(coords, &height);
-						ENTITY::SET_ENTITY_VISIBLE(handle, FALSE, TRUE);
+						pointers::g_handleToPointer(handle)->set_entity_flag(eEntityFlags::Visible, false);
 						ENTITY::SET_ENTITY_COORDS(handle, { coords.x, coords.y, height - 1.9f }, TRUE, FALSE, FALSE, TRUE);
 						ENTITY::SET_ENTITY_ROTATION(handle, 180.f, 90.f, 180.f, 2, FALSE);
 						ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
@@ -219,12 +222,10 @@ namespace commands::features {
 		}
 		namespace police {
 			void neverWanted(toggleCommand* command) {
-				Player id{ PLAYER::PLAYER_ID() };
 				if (command->get(0).toggle) {
-					cPlayerInfo->m_wanted_level = 0;
-					PLAYER::SET_PLAYER_WANTED_LEVEL_NOW(id, TRUE);
+					cPlayerInfo->m_is_wanted = false;
+					cPlayerInfo->m_wanted_level_display = cPlayerInfo->m_wanted_level = 0;
 				}
-				PLAYER::SET_DISPATCH_COPS_FOR_PLAYER(id, !command->get(0).toggle);
 			}
 			void lockWantedLevel(toggleCommand* command) {
 				if (command->get(0).toggle) {
@@ -459,22 +460,46 @@ namespace commands::features {
 		}
 		namespace socialclub {
 			namespace backend {
+				size_t writeCallback(char* ptr, size_t size, size_t nmemb, std::string* data) {
+					size_t totalSize = size * nmemb;
+					data->append(ptr, totalSize);
+					return totalSize;
+				}
 				nlohmann::json jRequest(nlohmann::json body, std::string endpoint) {
-					curlWrapper curl{};
-					std::vector<const char*> headers{
-						"X-Requested-With: XMLHttpRequest",
-						"Content-Type: application/json; charset=utf-8",
-						util::network::socialclub::authorizationHeader().c_str()
-					};
-					std::string response{ curl.post(endpoint, body.dump(), headers) };
-					nlohmann::json j{ nlohmann::json::parse(response) };
-					if (j["Status"]) {
-						return j;
+					std::string ticket = util::network::socialclub::getTicket();
+					CURL* curl = curl_easy_init();
+					if (curl) {
+						std::string response;
+						std::string jsonBody = body.dump();
+						struct curl_slist* headers = nullptr;
+						headers = curl_slist_append(headers, "X-Requested-With: XMLHttpRequest");
+						headers = curl_slist_append(headers, "Content-Type: application/json; charset=utf-8");
+						std::string authorizationHeader = "Authorization: SCAUTH val=\"" + ticket + "\"";
+						headers = curl_slist_append(headers, authorizationHeader.c_str());
+						curl_easy_setopt(curl, CURLOPT_URL, endpoint.c_str());
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonBody.c_str());
+						curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonBody.length());
+						curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+						curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+						curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+						CURLcode result = curl_easy_perform(curl);
+						curl_slist_free_all(headers);
+						curl_easy_cleanup(curl);
+						printf("%s\n", response.c_str());
+						if (result == CURLE_OK) {
+							return nlohmann::json::parse(response);
+						}
+						else {
+							std::cerr << "cURL error: " << curl_easy_strerror(result) << std::endl;
+						}
+					}
+					else {
+						std::cerr << "Failed to initialize cURL" << std::endl;
 					}
 					return {};
 				}
 				bool isOnline(u64 rid) {
-					if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
+					/*if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
 						for (auto& acc : json["Accounts"]) {
 							if (auto& r_acc = acc["RockstarAccount"]; !r_acc.is_null()) {
 								if (rid == r_acc["RockstarId"].get<u64>()) {
@@ -482,28 +507,31 @@ namespace commands::features {
 								}
 							}
 						}
-					}
+					}*/
 					return false;
 				}
 				u64 nameToRid(std::string name) {
-					if (nlohmann::json json{ jRequest({ { "searchNickname", name } }, "https://scui.rockstargames.com/api/friend/accountsearch") }; !json.is_null()) {
+					std::string endpoint = "https://scui.rockstargames.com/api/friend/accountsearch";
+					nlohmann::json body = { { "searchNickname", name } };
+					nlohmann::json json = jRequest(body, endpoint);
+					if (!json.is_null()) {
 						if (name.size() <= 20) {
-							if (i32 numAccs{ json["Total"].get<i32>() }; numAccs > 0) {
+							int numAccs = json["Total"].get<int>();
+							if (numAccs > 0) {
 								return json["Accounts"][0]["RockstarId"].get<u64>();
 							}
 							else {
-								LOG(Info, "{} wasn't found. Please ensure there are no spelling mistakes", name);
+								std::cout << name << " wasn't found. Please ensure there are no spelling mistakes." << std::endl;
 							}
 						}
 						else {
-							LOG(Info, "The character count cannot exceed 20, please shorten the value");
+							std::cout << "The character count cannot exceed 20. Please shorten the value." << std::endl;
 						}
-						return 0;
 					}
 					return 0;
 				}
 				std::string ridToName(u64 rid) {
-					if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
+					/*if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
 						for (auto& acc : json["Accounts"]) {
 							if (auto& r_acc = acc["RockstarAccount"]; !r_acc.is_null()) {
 								if (rid == r_acc["RockstarId"].get<u64>()) {
@@ -511,7 +539,7 @@ namespace commands::features {
 								}
 							}
 						}
-					}
+					}*/
 					return {};
 				}
 				void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess) {
@@ -533,12 +561,11 @@ namespace commands::features {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
 			}
 			void nameToRid(variadicCommand* command) {
-				std::thread t([command] {
+				util::async([command] {
 					u64 rid{ backend::nameToRid(command->get(0).string) };
 					if (rid)
 						g_engine.primitiveExecute("copyText {}", rid);
 				});
-				t.detach();
 			}
 			void convert(variadicCommand* command) {
 				std::string str{ command->get(0).string };
@@ -607,8 +634,23 @@ namespace commands::features {
 				strRid = std::to_string(rid);
 			}
 			u64 rid{ stoull(strRid) };
-			socialclub::backend::getGamerTask(rid, [](rage::rlSessionByGamerTaskResult& result) {
-				LOG(Commands, "Gamer task success");
+			g_fiberPool.add([rid] {
+				if (HUD::GET_CURRENT_FRONTEND_MENU_VERSION() != 0xFFFFFFFF) {
+					HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
+					fiber::current()->sleep(200ms);
+				}
+				HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
+				fiber::current()->sleep(200ms);
+				//why no work bro?!!111????11!?!!?!!?!???!?!??!?!??111111!!!!!!
+				CPlayerListMenu* ptr = new CPlayerListMenu();
+				u32 Hash{ 0xDA4858C1 };
+				FriendInfo& Friend{ util::network::friends::getFriends()[0] };
+				u64 OriginalRID{ Friend.m_rockstar_id };
+				Friend.m_rockstar_id = rid;
+				//what in the quantum?
+				reinterpret_cast<bool(*)(CPlayerListMenu*, uint32_t*)>(pointers::g_triggerPlayermenuAction)(ptr, &Hash);
+				fiber::current()->sleep(400ms);
+				Friend.m_rockstar_id = OriginalRID;
 			});
 		}
 		void bail(actionCommand* command) {
@@ -964,6 +1006,17 @@ namespace commands::features {
 		//Settings::Game
 		g_manager.add(actionCommand("unload", "Unload", "Removes " BRAND " from the game", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));
+	}
+	void uninit() {
+		Ped ped{ PLAYER::PLAYER_PED_ID() };
+		ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE);
+		ENTITY::RESET_ENTITY_ALPHA(ped);
+		ENTITY::SET_ENTITY_VISIBLE(ped, TRUE, FALSE);
+		ENTITY::SET_ENTITY_HAS_GRAVITY(ped, TRUE);
+		PLAYER::SET_MAX_WANTED_LEVEL(5);
+		PLAYER::SET_POLICE_RADAR_BLIPS(TRUE);
+		Player player{ PLAYER::PLAYER_ID() };
+		PLAYER::RESET_WANTED_LEVEL_HIDDEN_ESCAPE_TIME(player);
 	}
 	void onInit() {
 		//These need to be after init because the values aren't created yet

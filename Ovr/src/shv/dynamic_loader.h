@@ -24,21 +24,8 @@ namespace shv {
 	};
 	class asiModule : public dynamicLoader {
 	public:
-		asiModule(std::string name) : dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Scripts").append(name)), m_name(name) {}
+		asiModule(std::string name) : m_name(name), dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Scripts").append(m_name)) {}
 		~asiModule() {}
-	public:
-		void load() override {
-			if (!m_loaded) {
-				dynamicLoader::load();
-				m_loaded = true;
-			}
-		}
-		void free() override {
-			if (m_loaded && getModule()) {
-				dynamicLoader::free();
-				m_loaded = false;
-			}
-		}
 	public:
 		std::string& str() {
 			return m_name;
@@ -49,7 +36,6 @@ namespace shv {
 	private:
 		fs::path m_path{};
 		std::string m_name{};
-		bool m_loaded{};
 	};
 	class shvLoader : public dynamicLoader {
 	public:
@@ -89,7 +75,7 @@ namespace shv {
 			for (auto& m : m_modules) {
 				if (auto str{ m->c_str() }; str) {
 					if (!name.compare(str)) {
-						return true;;
+						return true;
 					}
 				}
 			}

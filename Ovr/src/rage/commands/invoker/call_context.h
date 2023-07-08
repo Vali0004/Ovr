@@ -1,26 +1,27 @@
 #pragma once
 #include "rage/classes.h"
 
-class context : public rage::scrThreadInfo {
+class context : public rage::scrThread::Info {
 public:
-	context() {
+	context() : rage::scrThread::Info(&m_return, 0, m_arugments) {
 		reset();
 	}
 public:
 	void reset() {
-		Return = &m_retData[0];
-		ArgCount = 0;
-		Args = &m_argData[0];
-		Reset();
-		memset(&m_retData, NULL, sizeof(m_retData));
-		memset(&m_argData, NULL, sizeof(m_argData));
+		m_return = {};
+		ParamCount = 0;
+		Params = m_arugments;
+		memset(m_arugments, NULL, 0);
+		BufferCount = 0;
+		memset(Orig, NULL, sizeof(Orig));
+		memset(Buffer, NULL, sizeof(Buffer));
 	}
 	template <typename type>
 	void push(type value) {
 		static_assert(sizeof(type) <= 8);
 		rage::scrValue data;
 		*(type*)(&data) = value;
-		m_argData[ArgCount++] = data;
+		m_arugments[ParamCount++] = data;
 	}
 	template <>
 	void push<Vector3>(Vector3 value) {
@@ -30,11 +31,11 @@ public:
 	}
 	template <typename t>
 	t getRetVal() {
-		return *reinterpret_cast<t*>((u64)Return);
+		return *reinterpret_cast<t*>((u64)ResultPtr);
 	}
 	template <>
 	void getRetVal<void>() {}
 private:
-	rage::scrValue m_retData[10]{};
-	rage::scrValue m_argData[100]{};
+	rage::scrValue m_return{};
+	rage::scrValue m_arugments[32]{};
 };

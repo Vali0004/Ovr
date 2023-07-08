@@ -873,9 +873,18 @@
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp">
       <Filter>src\hooking\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
-    <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
-    <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
+    <ClCompile Include="src\hooking\hooks\send_metric.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\send_network_event.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rage\defines.cpp">
+      <Filter>src\rage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

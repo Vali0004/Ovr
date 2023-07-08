@@ -22,18 +22,6 @@ template <typename t>
 using comPtr = Microsoft::WRL::ComPtr<t>;
 template <typename t> requires std::is_function_v<t>
 using fnptr = std::add_pointer_t<t>;
-using u64 = unsigned long long;
-using i64 = signed long long;
-using u32 = unsigned int;
-using i32 = signed int;
-using u16 = unsigned short;
-using i16 = signed short;
-using u8 = unsigned char;
-using i8 = signed char;
-using cc = const char;
-using ccp = cc*;
-using fp = float;
-using db = double;
 class stackWalker : public StackWalker {
 public:
 	stackWalker() : StackWalker() {}

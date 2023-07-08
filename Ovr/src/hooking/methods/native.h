@@ -27,3 +27,12 @@ private:
 	rage::Cmd m_cmd{};
 	rage::Cmd m_replacement{};
 };
+inline void createNativeShim(u32 script, u64 hash, rage::Cmd replacement) {
+	g_nativeHooks.second.push_back(new native(script, hash, replacement));
+}
+inline void resetNativeShims() {
+	for (native* hook : g_nativeHooks.second) {
+		delete hook;
+	}
+	g_nativeHooks.second.clear();
+}

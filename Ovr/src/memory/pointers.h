@@ -1,6 +1,6 @@
 #pragma once
 #include "pch/pch.h"
-#include "rage/classdefs.h"
+#include "rage/classes.h"
 #include "rage/commands/types.h"
 #include "core/logger.h"
 
@@ -22,7 +22,7 @@ namespace pointers {
 		using runAsyncModuleRequest = void(*)(u64* Module);
 		using hasIntervalElapsed = bool(*)(u32 Timestamp, u32 Interval);
 		using dispatchEvent = bool(*)(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent);
-		using scriptVm = rage::eThreadState(*)(rage::scrValue* Stack, rage::scrValue** Globals, rage::scrProgram* Program, rage::scrThreadSerialised* Serialised);
+		using scriptVm = rage::eThreadState(*)(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser);
 		using scGetGameInfoIndex = int(*)(const char* StringId, u64 Unk, u32 GameId);
 		using joinBySessionInfo = bool(*)(CNetwork* Network, rage::rlSessionInfo* Info, i32 Unk, i32 Flags, rage::rlGamerHandle* Handles, i32 HandleCount);
 		using proccessPackedEvents = void(*)(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, u16 Id, i32 Index, i32 HandledBitset, i32 BufferSize, rage::datBitBuffer* Buffer);
@@ -40,6 +40,7 @@ namespace pointers {
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
+		using triggerPlayermenuAction = bool(*)(CPlayerListMenu* pMenu, u32* pHash);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -73,6 +74,7 @@ namespace pointers {
 	inline types::sendMetric g_sendMetric{};
 	inline types::sendNetworkEvent g_sendNetworkEvent{};
 	inline types::processMatchmakingFind g_processMatchmakingFind{};
+	inline types::triggerPlayermenuAction g_triggerPlayermenuAction{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline ScGameInfo* g_scGameInfo{};

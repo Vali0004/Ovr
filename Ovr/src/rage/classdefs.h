@@ -118,6 +118,7 @@ class CNetwork;
 class CMsgTextMessage;
 class CMsgTextMessage2;
 class PresenceData;
+class CPlayerListMenu;
 namespace rage {
 	template <typename T>
 	class atRTTI;
@@ -160,15 +161,14 @@ namespace rage {
 	class netGameEvent;
 	template <typename T>
 	class atArray;
+	enum class eThreadState : uint32_t;
+	class tlsContext;
+	union scrValue;
+	class scrThread;
 	class scrProgram;
 	class scrProgramTableEntry;
 	class scrProgramTable;
-	enum class eThreadState : uint32_t;
 	class scriptHandlerObject;
-	class tlsContext;
-	union scrValue;
-	class scrThreadSerialised;
-	class scrThread;
 	class sysMemAllocator;
 	class scriptIdBase;
 	class scriptId;
@@ -186,8 +186,6 @@ namespace rage {
 	class CDynamicEntity;
 	class CPhysical;
 	class scriptHandlerMgr;
-	class scrThreadInfo;
-	using Cmd = void(*)(scrThreadInfo*);
 	using scrNativeHash = uint64_t;
 	class scrNativeRegistration;
 	class scrNativeRegistrationTable;

@@ -1,6 +1,6 @@
 #pragma once
-#include "memory/pointers.h"
 #include "classdefs.h"
+#include "commands/types.h"
 
 class CMoveObjectPooledObject;
 class Vector2;
@@ -428,14 +428,8 @@ namespace rage {
 				return false;
 			return true;
 		}
-		u64 WriteBitsSingle(u32 value, i32 bits) {
-			return pointers::g_writeBitsSingle(m_data, value, bits, m_bitsRead + m_bitOffset);
-		}
-		u32 ReadBitsSingle(u32 numBits) {
-			u32 result{};
-			pointers::g_readBitsSingle(m_data, &result, numBits, m_bitsRead + m_bitOffset);
-			return result;
-		}
+		u64 WriteBitsSingle(u32 value, i32 bits);
+		u32 ReadBitsSingle(u32 numBits);
 		bool WriteIntegrityPassed() {
 			WriteBool(false);
 			WriteDword(0xCDEF, 0x10);
@@ -618,12 +612,8 @@ namespace rage {
 			*integer = ReadSigned<i64>(bits);
 			return true;
 		}
-		bool WriteArray(void* array, i32 size) {
-			return pointers::g_writeBitbufArray(this, array, size, 0);
-		}
-		bool ReadArray(void* array, i32 size) {
-			return pointers::g_readBitbufArray(this, array, size, 0);
-		}
+		bool WriteArray(void* array, i32 size);
+		bool ReadArray(void* array, i32 size);
 	public:
 		u8* m_data; //0x0000
 		u32 m_bitOffset; //0x0008
@@ -689,6 +679,118 @@ namespace rage {
 		uint16_t m_capacity; //0x0010
 	}; //Size: 0x0010
 	static_assert(sizeof(rage::atArray<void*>) == 0x10);
+	enum class eThreadState : uint32_t {
+		running,
+		blocked,
+		aborted,
+		halted,
+		reset_instruction_count
+	};
+	class tlsContext {
+	public:
+		char pad_0000[180]; //0x0000
+		uint32_t m_code_intergity_valid; //0x00B4
+		class sysMemAllocator* m_allocator; //0x00B8
+		class sysMemAllocator* m_tls_entry; //0x00C0
+		class sysMemAllocator* m_unk_allocator; //0x00C8
+		uint32_t m_console_handle; //0x00D0
+		char pad_00D4[188]; //0x00D4
+		uint64_t unk_0190; //0x0190
+		char pad_0194[1712]; //0x0194
+		class scrThread* m_script_thread; //0x0848
+		bool m_is_script_thread_active; //0x00850
+
+		static tlsContext* get() { return *(tlsContext**)(__readgsqword(0x58)); }
+		static tlsContext** getPointer() { return (tlsContext**)(__readgsqword(0x58)); }
+	}; //Size: 0x0850
+	static_assert(sizeof(tlsContext) == 0x858);
+	union scrValue {
+		int32_t Int;
+		uint32_t Uns;
+		float Float;
+		const char* String;
+		scrValue* Reference;
+		size_t Any;
+		bool operator==(const scrValue& val) {
+			return Int == val.Int;
+		}
+	};
+#pragma pack(push, 8)
+	class scrThread {
+	public:
+		virtual ~scrThread() = default;                   //0 (0x00)
+		virtual eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) { return m_serialised.m_state; }     //1 (0x08)
+		virtual eThreadState run() { return m_serialised.m_state; }                //2 (0x10)
+		virtual eThreadState tick(uint32_t ops_to_execute) { return m_serialised.m_state; }          //3 (0x18)
+		virtual void kill() {}                //4 (0x20)
+		static scrThread** getPointer() {
+			auto tls = uint64_t(rage::tlsContext::get());
+			return reinterpret_cast<scrThread**>(tls + offsetof(rage::tlsContext, m_script_thread));
+		}
+		static scrThread* get() {
+			return rage::tlsContext::get()->m_script_thread;
+		}
+	public:
+		class Info {
+		public:
+			Info(scrValue* resultPtr, int parameterCount, scrValue* params) :
+				ResultPtr(resultPtr), ParamCount(parameterCount), Params(params), BufferCount(0) { }
+			scrValue* ResultPtr; //0x0000
+			int32_t ParamCount; //0x0008
+			scrValue* Params;
+			int BufferCount;
+			u32* Orig[4];
+			scrVector Buffer[4];
+			void CopyReferencedParametersOut() {
+				int bc = BufferCount;
+				while (bc--) {
+					u32* dst = Orig[bc];
+					u32* src = (u32*)&Buffer[bc].x;
+					dst[0] = src[0];
+					dst[1] = src[1];
+					dst[2] = src[2];
+				}
+			}
+		};
+		class Serialised {
+		public:
+			uint32_t m_thread_id; //0x0000
+			uint32_t m_script_hash; //0x0004
+			eThreadState m_state; //0x0008
+			uint32_t m_pointer_count; //0x000C
+			uint32_t m_frame_pointer; //0x0010
+			uint32_t m_stack_pointer; //0x0014
+			int32_t m_timer_a; //0x0018
+			int32_t m_timer_b; //0x001C
+			float m_wait; //0x0020
+			int32_t m_min_pc; //0x0024
+			int32_t m_max_pc; //0x0028
+			char m_tls[36]; //0x002C
+			uint32_t m_stack_size; //0x0050
+			uint32_t m_catch_pointer_count; //0x0054
+			uint32_t m_catch_frame_pointer; //0x0058
+			uint32_t m_catch_stack_pointer; //0x005C
+			uint32_t m_priority; //0x0060
+			uint8_t m_call_depth; //0x0060
+			uint8_t unk_0061; //0x0061
+			uint16_t unk_0062; //0x0062
+			char m_callstack[16]; //0x0068
+		} m_serialised; //0x0000
+		char unk_0078[48]; //0x0078
+		scrValue* m_stack; //0x00B0
+		uint32_t unk_00B8; //0x00B8
+		uint32_t m_arg_size; //0x00BC
+		uint32_t m_arg_loc; //0x00C0
+		uint32_t unk_00C4; //0x00C4
+		const char* m_exit_message; //0x00C8
+		uint32_t unk_00D0; //0x00D0
+		char m_name[64]; //0x00D4
+		class scriptHandler* m_handler; //0x0110
+		class CGameScriptHandlerNetComponent* m_net_component; //0x0118
+	}; //Size: 0x0128
+	static_assert(sizeof(scrThread) == 0x128);
+#pragma pack(pop)
+	typedef void(*Cmd)(scrThread::Info*);
 #pragma pack(push, 8)
 	class scrProgram : public pgBase {
 	public:
@@ -792,101 +894,6 @@ namespace rage {
 			return m_data + m_size;
 		}
 	}; //Size: 0x001C
-	//Thread
-	//Thread State
-	enum class eThreadState : uint32_t {
-		running,
-		blocked,
-		aborted,
-		halted,
-		reset_instruction_count
-	};
-	//Thread
-	class tlsContext {
-	public:
-		char pad_0000[180]; //0x0000
-		uint32_t m_code_intergity_valid; //0x00B4
-		class sysMemAllocator* m_allocator; //0x00B8
-		class sysMemAllocator* m_tls_entry; //0x00C0
-		class sysMemAllocator* m_unk_allocator; //0x00C8
-		uint32_t m_console_handle; //0x00D0
-		char pad_00D4[188]; //0x00D4
-		uint64_t unk_0190; //0x0190
-		char pad_0194[1712]; //0x0194
-		class scrThread* m_script_thread; //0x0848
-		bool m_is_script_thread_active; //0x00850
-
-		static tlsContext* get() { return *(tlsContext**)(__readgsqword(0x58)); }
-		static tlsContext** getPointer() { return (tlsContext**)(__readgsqword(0x58)); }
-	}; //Size: 0x0850
-	static_assert(sizeof(tlsContext) == 0x858);
-	union scrValue {
-		int32_t Int;
-		uint32_t Uns;
-		float Float;
-		const char* String;
-		scrValue* Reference;
-		size_t Any;
-		bool operator==(const scrValue& val) {
-			return Int == val.Int;
-		}
-	};
-#pragma pack(push, 8)
-	class scrThreadSerialised {
-	public:
-		uint32_t m_thread_id; //0x0000
-		uint32_t m_script_hash; //0x0004
-		eThreadState m_state; //0x0008
-		uint32_t m_pointer_count; //0x000C
-		uint32_t m_frame_pointer; //0x0010
-		uint32_t m_stack_pointer; //0x0014
-		float m_timer_a; //0x0018
-		float m_timer_b; //0x001C
-		float m_wait; //0x0020
-		int32_t m_min_pc; //0x0024
-		int32_t m_max_pc; //0x0028
-		char m_tls[36]; //0x002C
-		uint32_t m_stack_size; //0x0050
-		uint32_t m_catch_pointer_count; //0x0054
-		uint32_t m_catch_frame_pointer; //0x0058
-		uint32_t m_catch_stack_pointer; //0x005C
-		uint32_t m_priority; //0x0060
-		uint8_t m_call_depth; //0x0060
-		uint8_t unk_0061; //0x0061
-		uint16_t unk_0062; //0x0062
-		char m_callstack[16]; //0x0068
-	}; //Size: 0x0078
-	static_assert(sizeof(scrThreadSerialised) == 0x78);
-#pragma pack(pop)
-	class scrThread {
-	public:
-		virtual ~scrThread() = default;                   //0 (0x00)
-		virtual eThreadState reset(uint32_t script_hash, void* args, uint32_t arg_count) { return m_serialised.m_state; }     //1 (0x08)
-		virtual eThreadState run() { return m_serialised.m_state; }                //2 (0x10)
-		virtual eThreadState tick(uint32_t ops_to_execute) { return m_serialised.m_state; }          //3 (0x18)
-		virtual void kill() {}                //4 (0x20)
-		static scrThread** getPointer() {
-			auto tls = uint64_t(rage::tlsContext::get());
-			return reinterpret_cast<scrThread**>(tls + offsetof(rage::tlsContext, m_script_thread));
-		}
-		static scrThread* get() {
-			return rage::tlsContext::get()->m_script_thread;
-		}
-	public:
-		scrThreadSerialised m_serialised; //0x0000
-		char unk_0078[48]; //0x0078
-		scrValue* m_stack; //0x00B0
-		uint32_t unk_00B8; //0x00B8
-		uint32_t m_arg_size; //0x00BC
-		uint32_t m_arg_loc; //0x00C0
-		uint32_t unk_00C4; //0x00C4
-		const char* m_exit_message; //0x00C8
-		uint32_t unk_00D0; //0x00D0
-		char m_name[64]; //0x00D4
-		class scriptHandler* m_handler; //0x0110
-		class CGameScriptHandlerNetComponent* m_net_component; //0x0118
-	}; //Size: 0x0128
-	static_assert(sizeof(scrThread) == 0x128);
 	class sysMemAllocator : public atRTTI<sysMemAllocator> {
 	public:
 		virtual ~sysMemAllocator() = 0;
@@ -1346,32 +1353,6 @@ namespace rage {
 		char pad_0032[14]; //0x0032
 		netLoggingInterface* m_logger; //0x0040
 	}; //Size: 0x0048
-	class scrThreadInfo {
-	public:
-		void Reset() {
-			ArgCount = 0;
-			BufferCount = 0;
-			memset(Orig, NULL, sizeof(Orig));
-			memset(Buffer, NULL, sizeof(Buffer));
-		}
-	public:
-		scrValue* Return; //0x0000
-		uint32_t ArgCount; //0x0008
-		scrValue* Args; //0x0010
-		int BufferCount;
-		u32* Orig[4];
-		scrVector Buffer[4];
-		void CopyReferencedParametersOut() {
-			int bc = BufferCount;
-			while (bc--) {
-				u32* dst = Orig[bc];
-				u32* src = (u32*)&Buffer[bc].x;
-				dst[0] = src[0];
-				dst[1] = src[1];
-				dst[2] = src[2];
-			}
-		}
-	};
 	class scrNativeRegistration {
 	public:
 		scrNativeRegistration* m_next; //0x0000
@@ -4166,17 +4147,7 @@ public:
 	char pad_0176[28]; //0x0176
 	uint8_t m_host_migration_flags; //0x0192
 	char pad_0193[29]; //0x0193
-	int get_participant_index(CNetGamePlayer* player) {
-		if (player == (*pointers::g_networkPlayerMgr)->m_local_net_player)
-			return m_local_participant_index;
-		if (m_num_participants <= 1)
-			return -1;
-		for (decltype(m_num_participants) i{}; i != m_num_participants - 1; ++i) {
-			if (m_participants[i] && m_participants[i]->m_net_game_player == player)
-				return m_participants[i]->m_participant_index;
-		}
-		return -1;
-	}
+	int get_participant_index(CNetGamePlayer* player);
 	bool is_player_a_participant(CNetGamePlayer* player) {
 		return m_participant_bitset & (1 << player->m_player_id);
 	}
@@ -4201,19 +4172,7 @@ public:
 		else
 			m_host_migration_flags &= ~(1 << 7);
 	}
-	bool force_host() {
-		if (auto& cNetworkPlayerMgr = *pointers::g_networkPlayerMgr; cNetworkPlayerMgr) {
-			for (int32_t i{}; !is_local_player_host(); ++i) {
-				if (i > 200)
-					return false;
-
-				send_host_migration_event(cNetworkPlayerMgr->m_local_net_player);
-				send_host_migration_event(cNetworkPlayerMgr->m_local_net_player);
-			}
-			return is_local_player_host();
-		}
-		return false;
-	}
+	bool force_host();
 	bool give_host(CNetGamePlayer* player) {
 		if (!force_host())
 			return false;
@@ -4400,35 +4359,17 @@ public:
 	uint32_t m_flags; //0x0E84
 	char pad_0E88[16]; //0x0E88
 
-	inline bool HasComplaint(uint64_t PeerAddress) {
+	bool HasComplaint(uint64_t PeerAddress) {
 		for (uint32_t i{}; i != m_num_addresses_complained; ++i)
 			if (m_peer_addresses_complained[i] == PeerAddress)
 				return true;
 		return false;
 	}
-	inline void Add(uint64_t PeerAddress, bool UseAll, bool SpoofAddress) {
-		auto net_mgr = (*pointers::g_networkPlayerMgr);
-		if (HasComplaint(PeerAddress) || PeerAddress == net_mgr->m_local_net_player->GetGamerInfo()->m_peer_address)
-			return;
-		auto old_token = m_peer_address;
-		if (m_peer_address == old_token && SpoofAddress)
-			m_peer_address = PeerAddress;
-		if (UseAll) {
-			for (auto player : net_mgr->m_player_list) {
-				if (auto gamer_info = player->GetGamerInfo(); player && player->IsConnected()) {
-					if (gamer_info->m_peer_address != PeerAddress)
-						m_peer_addresses_complained[m_num_addresses_complained++] = gamer_info->m_peer_address;
-				}
-			}
-		}
-		m_peer_addresses_complained[m_num_addresses_complained++] = PeerAddress;
-		if (m_peer_address != old_token && SpoofAddress)
-			m_peer_address = old_token;
-	}
-	inline uint32_t Count() {
+	void Add(uint64_t PeerAddress, bool UseAll, bool SpoofAddress);
+	uint32_t Count() {
 		return m_num_addresses_complained;
 	}
-	inline void Remove(uint64_t peer_address) {
+	void Remove(uint64_t peer_address) {
 		if (!HasComplaint(peer_address))
 			return;
 		for (uint32_t i{}; i != m_num_addresses_complained; ++i)
@@ -4436,7 +4377,7 @@ public:
 				m_peer_addresses_complained[i] = m_peer_addresses_complained[m_num_addresses_complained - 1];
 		m_num_addresses_complained--;
 	}
-	inline void RemoveAll() {
+	void RemoveAll() {
 		for (uint32_t i{}; i != m_num_addresses_complained; ++i)
 			m_peer_addresses_complained[i] = m_peer_addresses_complained[m_num_addresses_complained - 1];
 		m_num_addresses_complained = 0;
@@ -4629,4 +4570,23 @@ public:
 	virtual bool UpdateAttributeInt(int ProfileIndex, char* Attribute, u64 Value) = 0;
 	virtual bool UpdateAttributeUnk(int ProfileIndex, char* Attribute, u64 Value) = 0;
 	virtual bool UpdateAttributeString(int ProfileIndex, char* Attribute, char* Value) = 0;
+};
+class CPlayerListMenu {
+public:
+	virtual ~CPlayerListMenu() {}
+	virtual void unk_0008() {}
+
+	char pad_0008[112]; //0x0008
+	bool m_failed; //0x0076
+	char pad_0079[21]; //0x0077
+	uint32_t m_selected_friend; //0x008C
+	char pad_0090[40]; //0x0090
+	uint32_t m_online_bitset; //0x00B8
+	char pad_00BC[28]; //0x00BC
+	uint8_t m_is_joinable; //0x00D8
+	char pad_00D9[3]; //0x00D9
+	uint32_t unk_0066; //0x00DC
+	class unk* unk_0085; //0x00E0
+	char pad_00E8[80]; //0x00E8
+	uint32_t unk_006A; //0x0138
 };

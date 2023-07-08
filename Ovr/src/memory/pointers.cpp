@@ -36,12 +36,13 @@ namespace pointers {
         g_sendMetric = scan("SM", "E8 ? ? ? ? EB 69 41 8B D6").call().as<decltype(g_sendMetric)>();
         g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
         g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
+        g_triggerPlayermenuAction = scan("TPA", "48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B D9").as<decltype(g_triggerPlayermenuAction)>();
  
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
         g_friendRegistry = scan("FR", "41 8B F4 3B C5").sub(0xB).lea().as<decltype(g_friendRegistry)>();
-        g_scInfo = scan("SI", "48 8D 05 ? ? ? ? 48 63 D1").mov().as<decltype(g_scInfo)>();
+        g_scInfo = scan("SI", "48 8B D3 48 8D 4C 24 ? 48 69 D2").sub(7).mov().as<decltype(g_scInfo)>();
         g_networkPlayerMgr = scan("NPM", "48 8B 0D ? ? ? ? 8A D3 48 8B 01 FF 50 ? 4C 8B 07 48 8B CF").mov().as<decltype(g_networkPlayerMgr)>();
         g_networkObjectMgr = scan("NOM", "48 8B 0D ? ? ? ? 45 33 C0 E8 ? ? ? ? 33 FF 4C 8B F0").mov().as<decltype(g_networkObjectMgr)>();
         g_network = scan("N", "48 8B 0D ? ? ? ? 48 8B D7 E8 ? ? ? ? 84 C0 75 17 48 8B 0D ? ? ? ? 48 8B D7").mov().as<decltype(g_network)>();
