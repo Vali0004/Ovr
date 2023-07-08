@@ -23,7 +23,7 @@ namespace core {
 			CloseHandle(g_thread);
 		}
 		DWORD entry(LPVOID paramater) {
-			//g_scyllaHide = std::make_unique<scyllaHide>();
+			//g_scyllaHide = MakeSmartPointer<scyllaHide>();
 			core::create();
 			loop();
 			core::destroy();
@@ -33,8 +33,8 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1451)");
-		//shv::g_shvLoader = std::make_unique<shv::shvLoader>();
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1451)");
+		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
 		//if (shv::g_shvLoader->getModule())
 		//	LOG(Info, "SHV module loaded.");
 		exceptions::initExceptionHandler();
@@ -48,8 +48,8 @@ namespace core {
 		pointers::doPatches();
 		g_invoker.cache();
 		g_fiberPool.create();
-		g_renderer = std::make_unique<renderer>();
-		g_hooking = std::make_unique<hooking>();
+		g_renderer = MakeSmartPointer<renderer>();
+		g_hooking = MakeSmartPointer<hooking>();
 		g_hooking->enable();
 		g_manager.add("script", &script::onTick);
 		g_manager.add("commands", &commands::onTick);

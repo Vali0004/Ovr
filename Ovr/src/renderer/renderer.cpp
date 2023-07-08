@@ -33,9 +33,9 @@ renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	if (FAILED(m_swapchain->GetDevice(__uuidof(ID3D11Device), (void**)m_device.GetAddressOf())))
 		throw std::runtime_error("Failed to get the D3D device!");
 	m_device->GetImmediateContext(m_context.GetAddressOf());
-	m_stateSaver = std::make_unique<stateSaver>(m_context.Get());
-	m_commonState = std::make_unique<CommonStates>(m_device.Get());
-	m_spriteBatch = std::make_unique<SpriteBatch>(m_context.Get());
+	m_stateSaver = MakeSmartPointer<stateSaver>(m_context.Get());
+	m_commonState = MakeSmartPointer<CommonStates>(m_device.Get());
+	m_spriteBatch = MakeSmartPointer<SpriteBatch>(m_context.Get());
 	ImGui::CreateContext();
 	ImGui_ImplDX11_Init(m_device.Get(), m_context.Get());
 	ImGui_ImplWin32_Init(pointers::g_hwnd);

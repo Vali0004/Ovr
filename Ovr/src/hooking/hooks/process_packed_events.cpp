@@ -137,7 +137,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 	g_statistics.m_incomingNetworkEvents++;
 	switch (static_cast<ePackedEvents>(Id)) {
 	case ePackedEvents::CScriptedGameEvent: {
-		std::unique_ptr<CScriptedGameEvent> event{ std::make_unique<CScriptedGameEvent>() };
+		SmartPointer<CScriptedGameEvent> event{ MakeSmartPointer<CScriptedGameEvent>() };
 		Buffer->ReadDword(&event->m_args_size, 32);
 		if (event->m_args_size - 1 <= 0x1AF) {
 			Buffer->ReadArray(&event->m_args, 8 * event->m_args_size);
@@ -148,7 +148,7 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		Buffer->Seek(0);
 	} break;
 	case ePackedEvents::CNetworkIncrementStatEvent: {
-		std::unique_ptr<CNetworkIncrementStatEvent> event{ std::make_unique<CNetworkIncrementStatEvent>() };
+		SmartPointer<CNetworkIncrementStatEvent> event{ MakeSmartPointer<CNetworkIncrementStatEvent>() };
 		Buffer->ReadDword(&event->m_stat, 32);
 		Buffer->ReadDword(&event->m_amount, 32);
 		if (incrementStatEvent(event.get(), Sender)) {

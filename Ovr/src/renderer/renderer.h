@@ -87,13 +87,13 @@ public:
 	}
 	std::vector<callback> m_callbacks{};
 	bool m_stateSaved{};
-	std::unique_ptr<stateSaver> m_stateSaver{};
-	std::unique_ptr<DirectX::CommonStates> m_commonState{};
-	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch{};
+	SmartPointer<stateSaver> m_stateSaver{};
+	SmartPointer<DirectX::CommonStates> m_commonState{};
+	SmartPointer<DirectX::SpriteBatch> m_spriteBatch{};
 	comPtr<IDXGISwapChain> m_swapchain{};
 	comPtr<ID3D11DeviceContext> m_context{};
 private:
 	WNDPROC m_wndProc{};
 	comPtr<ID3D11Device> m_device{};
 };
-inline std::unique_ptr<renderer> g_renderer{};
+inline SmartPointer<renderer> g_renderer{};

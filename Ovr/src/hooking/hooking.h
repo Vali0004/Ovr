@@ -93,4 +93,4 @@ public:
 	detour m_getProcAddress;
 	hookVFT m_DX;
 };
-inline std::unique_ptr<hooking> g_hooking{};
+inline SmartPointer<hooking> g_hooking{};

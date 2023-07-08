@@ -7,7 +7,7 @@ class manager : public engine::thread {
 public:
 	void add(ccp id, fnptr<void()> fn, bool log = true, std::optional<u64> stackSize = std::nullopt) {
 		std::lock_guard lck(m_mutex);
-		m_fibers.insert({ id, std::make_unique<fiber>(fn, stackSize) });
+		m_fibers.insert({ id, MakeSmartPointer<fiber>(fn, stackSize) });
 		if (log)
 			LOG(Info, "Created fiber {}", id);
 	}
@@ -44,6 +44,6 @@ public:
 	}
 private:
 	std::recursive_mutex m_mutex{};
-	std::map<ccp, std::unique_ptr<fiber>> m_fibers{};
+	std::map<ccp, SmartPointer<fiber>> m_fibers{};
 };
 inline manager g_manager{};

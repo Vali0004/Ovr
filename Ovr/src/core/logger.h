@@ -101,4 +101,4 @@ private:
 	std::ofstream m_con{};
 	std::ofstream m_file{};
 };
-inline std::unique_ptr<logger> g_logger{};
+inline SmartPointer<logger> g_logger{};

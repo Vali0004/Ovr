@@ -46,7 +46,7 @@ class patches {
 public:
 	template <typename t>
 	void add(ccp id, t* ptr, std::vector<t> bytes, bool apply = true) {
-		m_patches.push_back(std::make_unique<patch>(id, ptr, bytes));
+		m_patches.push_back(MakeSmartPointer<patch>(id, ptr, bytes));
 		if (apply)
 			m_patches.back()->apply();
 	}
@@ -71,6 +71,6 @@ public:
 		m_patches.clear();
 	}
 private:
-	std::vector<std::unique_ptr<patch>> m_patches{};
+	std::vector<SmartPointer<patch>> m_patches{};
 };
 inline patches g_patches{};

@@ -107,8 +107,8 @@ private:
     size_t* refCount{};
 };
 template <typename T, typename... Args>
-inline std::unique_ptr<T> MakeSmartPointer(Args&&... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+inline SmartPointer<T> MakeSmartPointer(Args&&... args) {
+    return SmartPointer<T>(new T(static_cast<Args&&>(args)...));
 }
 namespace defines {
 	inline bool g_running{ true };

@@ -8,7 +8,7 @@
 #include "commands/features.h"
 #include "exceptions/handler.h"
 
-namespace core {/*
+namespace core {
 	class scyllaHide : public shv::dynamicLoader {
 	public:
 		scyllaHide() : shv::dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Modules").append("ScyllaHide.dll")) {}
@@ -16,7 +16,7 @@ namespace core {/*
 	private:
 		fs::path m_path{};
 	};
-	inline std::unique_ptr<scyllaHide> g_scyllaHide{};*/
+	inline SmartPointer<scyllaHide> g_scyllaHide{};
 	namespace thread {
 		extern void create(HMODULE hmodule);
 		extern void loop();

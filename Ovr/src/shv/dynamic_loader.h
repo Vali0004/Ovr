@@ -44,12 +44,12 @@ namespace shv {
 	private:
 		fs::path m_path{};
 	};
-	inline std::unique_ptr<shvLoader> g_shvLoader{};
+	inline SmartPointer<shvLoader> g_shvLoader{};
 	class asiLoader {
 	public:
 		void load(std::string name) {
 			std::lock_guard lock(m_mutex);
-			m_modules.push_back(std::make_unique<asiModule>(name));
+			m_modules.push_back(MakeSmartPointer<asiModule>(name));
 		}
 		void unload(std::string name) {
 			std::lock_guard lock(m_mutex);
@@ -83,7 +83,7 @@ namespace shv {
 		}
 	public:
 		std::recursive_mutex m_mutex{};
-		std::vector<std::unique_ptr<asiModule>> m_modules{};
+		std::vector<SmartPointer<asiModule>> m_modules{};
 	};
 	inline asiLoader g_asiLoader{};
 }
