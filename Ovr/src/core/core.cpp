@@ -33,8 +33,7 @@ namespace core {
 		}
 	}
 	void create() {
-		//Almost build 1337, let's go
-		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1321)");
+		g_logger = std::make_unique<logger>("Ovr | Developer (0.00.1, b1451)");
 		//shv::g_shvLoader = std::make_unique<shv::shvLoader>();
 		//if (shv::g_shvLoader->getModule())
 		//	LOG(Info, "SHV module loaded.");

@@ -335,6 +335,7 @@
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\util\global.h" />
+    <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\player_mgr.h" />
     <ClInclude Include="src\util\statistics.h" />
     <ClInclude Include="src\util\util.h" />
@@ -464,6 +465,7 @@
     <ClCompile Include="src\script\script.cpp" />
     <ClCompile Include="src\shv\scripthookv.cpp" />
     <ClCompile Include="src\stackwalker\stackwalker.cpp" />
+    <ClCompile Include="src\util\message.cpp" />
     <ClCompile Include="src\util\player_mgr.cpp" />
     <ClCompile Include="src\util\statistics.cpp" />
     <ClCompile Include="src\zydis\Decoder.c" />

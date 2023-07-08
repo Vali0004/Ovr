@@ -149,12 +149,12 @@ namespace commands::features {
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, camCoords, TRUE, TRUE, TRUE);
 					}
 				}
-				else {
-					ONCE({ ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
+				else {				
+					ONCE(init, { ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
-				/*if (command->get(0).toggle) {
+				if (command->get(0).toggle) {
 					Vector3 coords{ cPed->get_position().serialize() };
 					u32 hash{ "p_oil_slick_01"_joaat };
 					static Object handle{};
@@ -180,7 +180,7 @@ namespace commands::features {
 						}
 						ENTITY::SET_ENTITY_COORDS(handle, coords, TRUE, FALSE, FALSE, FALSE);
 					}
-				}*/
+				}
 			}
 		}
 		namespace world {
@@ -489,17 +489,11 @@ namespace commands::features {
 						if (result == CURLE_OK) {
 							return nlohmann::json::parse(response);
 						}
-						else {
-							std::cerr << "cURL error: " << curl_easy_strerror(result) << std::endl;
-						}
-					}
-					else {
-						std::cerr << "Failed to initialize cURL" << std::endl;
 					}
 					return {};
 				}
 				bool isOnline(u64 rid) {
-					/*if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
+					if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
 						for (auto& acc : json["Accounts"]) {
 							if (auto& r_acc = acc["RockstarAccount"]; !r_acc.is_null()) {
 								if (rid == r_acc["RockstarId"].get<u64>()) {
@@ -507,7 +501,7 @@ namespace commands::features {
 								}
 							}
 						}
-					}*/
+					}
 					return false;
 				}
 				u64 nameToRid(std::string name) {
@@ -521,17 +515,17 @@ namespace commands::features {
 								return json["Accounts"][0]["RockstarId"].get<u64>();
 							}
 							else {
-								std::cout << name << " wasn't found. Please ensure there are no spelling mistakes." << std::endl;
+								LOG(Info, "{} wasn't found. Please ensure there are no spelling mistakes.", name);
 							}
 						}
 						else {
-							std::cout << "The character count cannot exceed 20. Please shorten the value." << std::endl;
+							LOG(Info, "The character count cannot exceed 20. Please shorten the value.");
 						}
 					}
 					return 0;
 				}
 				std::string ridToName(u64 rid) {
-					/*if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
+					if (nlohmann::json json{ jRequest({ { "RockstarId", std::to_string(rid) } }, "https://scui.rockstargames.com/api/friend/getprofile") }; !json.is_null()) {
 						for (auto& acc : json["Accounts"]) {
 							if (auto& r_acc = acc["RockstarAccount"]; !r_acc.is_null()) {
 								if (rid == r_acc["RockstarId"].get<u64>()) {
@@ -539,7 +533,7 @@ namespace commands::features {
 								}
 							}
 						}
-					}*/
+					}
 					return {};
 				}
 				void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess) {
@@ -641,16 +635,21 @@ namespace commands::features {
 				}
 				HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
 				fiber::current()->sleep(200ms);
-				//why no work bro?!!111????11!?!!?!!?!???!?!??!?!??111111!!!!!!
 				CPlayerListMenu* ptr = new CPlayerListMenu();
 				u32 Hash{ 0xDA4858C1 };
 				FriendInfo& Friend{ util::network::friends::getFriends()[0] };
 				u64 OriginalRID{ Friend.m_rockstar_id };
+				u32 OriginialState{ Friend.m_friend_state };
+				u32 WasJoinable{ Friend.m_is_joinable };
 				Friend.m_rockstar_id = rid;
+				Friend.m_friend_state = 3;
+				Friend.m_is_joinable = 0x1;
 				//what in the quantum?
-				reinterpret_cast<bool(*)(CPlayerListMenu*, uint32_t*)>(pointers::g_triggerPlayermenuAction)(ptr, &Hash);
+				pointers::g_triggerPlayermenuAction(ptr, &Hash);
 				fiber::current()->sleep(400ms);
 				Friend.m_rockstar_id = OriginalRID;
+				Friend.m_friend_state = OriginialState;
+				Friend.m_is_joinable = WasJoinable;
 			});
 		}
 		void bail(actionCommand* command) {
@@ -825,7 +824,7 @@ namespace commands::features {
 			}
 			void exit(actionCommand* command) {
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
-					ONCE({ elements::openPopup("Close?"); });
+					ONCE_PER_FRAME({ elements::openPopup("Close?"); });
 					ImVec2 center{ ImGui::GetMainViewport()->GetCenter() };
 					elements::setWindowPos(center, NULL, { 0.5f, 0.5f });
 					elements::setWindowSize({ 470.f, 235.f });

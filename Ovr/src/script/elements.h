@@ -71,7 +71,7 @@ namespace elements {
 	}
 	inline float getTextHeight(ImFont* font, float wrap = 0.f) {
 		ImVec2 fontSize{ getTextSize(font, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", wrap) };
-		return fontSize.x;
+		return fontSize.y;
 	}
 	namespace drawlist {
 		enum class eJustify : u8 { Left, Right, Center };

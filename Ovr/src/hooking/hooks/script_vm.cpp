@@ -5,10 +5,10 @@
 #define DEFAULT default:
 #define FETCH_INSN {
 #define NEXT_INSN break; }
-#define SET_PC(_o) ONCE({ i64 o{ _o }; pc = (opcodesTbl[o >> 14] + (o & 0x3FFF) - 1); opcodes = pc - o; })
+#define SET_PC(_o) ONCE_PER_FRAME({ i64 o{ _o }; pc = (opcodesTbl[o >> 14] + (o & 0x3FFF) - 1); opcodes = pc - o; })
 #define ADD_PC(_r) SET_PC((pc - opcodes) + (_r))
 #define CHECK_PC SET_PC(pc - opcodes)
-#define FAULT(s, ...) ONCE({ LOG(Fatal, s, __VA_ARGS__); continue; })
+#define FAULT(s, ...) ONCE_PER_FRAME({ LOG(Fatal, s, __VA_ARGS__); continue; })
 #define LoadImm8 (*++pc)
 #define LoadImm16 ((pc+=2), *(u16*)(pc-1))
 #define LoadImmS16 ((pc+=2), *(i16*)(pc-1))

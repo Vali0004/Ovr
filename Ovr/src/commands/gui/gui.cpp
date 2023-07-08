@@ -97,7 +97,7 @@ namespace commands::gui {
 			util::onPress(VK_RETURN, [this] { run(); clear(false, true); });
 			m_drawBase = m_pos.y;
 			elements::drawlist::rect({ m_pos.x, m_drawBase + (m_title.y / 2.f) }, m_title, { 255, 255, 255, 255 }, false);
-			elements::drawlist::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, { 0, 0, 0, 255 }, elements::drawlist::eJustify::Left, 0.f, false);
+			elements::drawlist::text(g_renderer->m_tahoma, BRAND" Command Box", { m_pos.x - (m_title.x / 2.05f), m_drawBase + (m_title.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial) / 2.f) }, { 0, 0, 0, 255 }, elements::drawlist::eJustify::Left, 0.f, false);
 			m_drawBase += m_title.y;
 			m_drawBase += m_padding;
 			elements::drawlist::rect({ m_pos.x, m_drawBase + (m_inputBox.y / 2.f) }, m_inputBox, { 0, 0, 0, 190 }, false);
@@ -106,20 +106,22 @@ namespace commands::gui {
 			if (m_items.size() && m_context.empty()) {
 				clear();
 			}
-			if (m_matches.size() > m_matchLimit && !g_engine.m_useFirstResultOnTooManyResults && g_engine.m_useDirectMatchResults) {
-				drawItem(std::format("Sorry, {} is not unique enough.", m_context));
-			}
-			else {
-				for (u64 i{}; i != m_items.size() && i <= m_limit; ++i) {
-					drawItem(m_items[i]);
-				}
-			}
-			if (m_items.size() > m_limit && g_engine.m_useFirstResultOnTooManyResults) {
-				if (m_items.size() < 5) {
-					drawItem(std::format("... and {} more", m_items.size()));
+			if (!m_context.empty()) {
+				if (m_matches.size() > m_matchLimit && !g_engine.m_useFirstResultOnTooManyResults && g_engine.m_useDirectMatchResults) {
+					drawItem(std::format("Sorry, {} is not unique enough.", m_context));
 				}
 				else {
-					drawItem("... and many more");
+					for (u64 i{}; i != m_items.size() && i <= m_limit; ++i) {
+						drawItem(m_items[i]);
+					}
+				}
+				if (m_items.size() > m_limit && g_engine.m_useFirstResultOnTooManyResults) {
+					if (m_items.size() < 5) {
+						drawItem(std::format("... and {} more", m_items.size()));
+					}
+					else {
+						drawItem("... and many more");
+					}
 				}
 			}
 		}
@@ -152,7 +154,7 @@ namespace commands::gui {
 	void box::drawItem(std::string item) {
 		m_drawBase += m_itemPadding;
 		elements::drawlist::rect({ m_pos.x, m_drawBase + (m_item.y / 2.f) }, m_item, { 0, 0, 0, 190 });
-		elements::drawlist::text(g_renderer->m_tahoma, item, { m_pos.x - (m_item.x / 2.05f), m_drawBase + (m_item.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial, 0.25f) / 2.f) - 0.006f }, { 255, 255, 255, 255 });
+		elements::drawlist::text(g_renderer->m_tahoma, item, { m_pos.x - (m_item.x / 2.05f), m_drawBase + (m_item.y / 2.f) - (elements::getTextHeight(g_renderer->m_arial) / 2.f) }, { 255, 255, 255, 255 });
 		m_drawBase += m_item.y;
 	}
 	void box::addItem(std::string item) {

@@ -550,6 +550,7 @@
     <ClInclude Include="src\script\tabs\miscellaneous\world.h">
       <Filter>src\script\tabs\miscellaneous</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\message.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -885,6 +886,7 @@
     <ClCompile Include="src\rage\defines.cpp">
       <Filter>src\rage</Filter>
     </ClCompile>
+    <ClCompile Include="src\util\message.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

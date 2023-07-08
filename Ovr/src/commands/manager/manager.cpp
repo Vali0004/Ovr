@@ -39,7 +39,7 @@ namespace commands {
 					c->run();
 				}
 				else if (c->m_hotkey.pressed()) {
-					ONCE({ c->run(); });
+					ONCE_PER_FRAME({ c->run(); });
 				}
 			}
 			else {
