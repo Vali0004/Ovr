@@ -15,7 +15,9 @@ namespace core {
 		}
 		void loop() {
 			while (g_running) {
-				util::onPress(VK_F12, [] { g_running = false; });
+				if (GetAsyncKeyState(VK_F12)) {
+					g_running = false;
+				}
 				std::this_thread::sleep_for(100ms);
 			}
 		}
@@ -31,16 +33,16 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1462)");
-		//g_scyllaHide = MakeSmartPointer<scyllaHide>();
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1503)");
+		g_scyllaHide = MakeSmartPointer<scyllaHide>();
+		if (g_scyllaHide->getModule()) {
+			LOG(Debug, "ScyllaHide loaded.");
+		}
 		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
 		//if (shv::g_shvLoader->getModule())
-		//	LOG(Info, "SHV module loaded.");
+		//	LOG(Debug, "SHV module loaded.");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
-		fs::path path{ std::getenv("appdata") };
-		path /= BRAND"\\Sounds\\injection_sound.wav";
-		sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(10ms);
 		}
@@ -54,6 +56,9 @@ namespace core {
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
 		engine::createThread(&g_manager);
+		fs::path path{ std::getenv("appdata") };
+		path /= BRAND"\\Sounds\\injection_sound.wav";
+		sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
 	}
 	void destroy() {
 		g_fiberPool.add(&commands::features::uninit);

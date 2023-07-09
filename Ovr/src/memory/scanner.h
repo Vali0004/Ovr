@@ -93,7 +93,7 @@ public:
 			mem res{ findPatternBoyerMooreHorspool(m_elements, m_module) };
 			if (res) {
 				g_foundSigCount++;
-				LOG(Info, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.begin().as<u64>());
+				LOG(Debug, "Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.begin().as<u64>());
 			}
 			else {
 				g_failedSigCount++;

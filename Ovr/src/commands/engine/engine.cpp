@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "util/util.h"
 #include "script/notifications/notifications.h"
+#include "fiber/pool.h"
 
 namespace commands {
 	util::network::player engine::getPlayerForCommandArgument(const std::string& arg) {
@@ -69,7 +70,7 @@ namespace commands {
 		case eCommandType::ActionCommand: {
 			//We do handle it below, but we can't be sure
 			// Just incase we provide a unneeded space, we won't kill everything. An example would be "suicide "
-			command->run();
+			g_fiberPool.add([command] { command->run(); });
 		} break;
 		case eCommandType::ProtectionCommand: {
 			command->get(0).string = arguments[1].c_str();
@@ -150,10 +151,10 @@ namespace commands {
 			}
 			if (command->m_type == eCommandType::VariadicCommand) {
 				if (!dynamic_cast<variadicCommand*>(command)->looped())
-					command->run();
+					g_fiberPool.add([command] { command->run(); });
 			}
 			if (!command->m_looped)
-				command->run();
+				g_fiberPool.add([command] { command->run(); });
 		} break;
 		default: {
 

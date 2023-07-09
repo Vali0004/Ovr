@@ -278,8 +278,11 @@ namespace rage {
 		char pad_004C[81]; //0x004C
 		uint8_t m_model_type; //0x009D
 		char pad_009E[6]; //0x009E
-		uint8_t get_model_type() {
+		uint8_t get_type() {
 			return m_model_type & 0xFF;
+		}
+		bool is_type(eModelType type) {
+			return get_type() == static_cast<uint8_t>(type);
 		}
 	}; //Size: 0x00A4
 	static_assert(sizeof(CBaseModelInfo) == 0xA4);
@@ -364,7 +367,7 @@ namespace rage {
 #pragma pack(pop)
 	class datBitBuffer {
 	public:
-		datBitBuffer(u8* data, u32 size, bool flagBitsToWrite = false) {
+		datBitBuffer(uint8_t* data, uint32_t size, bool flagBitsToWrite = false) {
 			m_data = data;
 			m_bitOffset = 0;
 			m_maxBit = size * 8;
@@ -382,21 +385,21 @@ namespace rage {
 				m_flagBits |= 1u;
 			}
 		}
-		datBitBuffer(void* data, u32 size, bool flagBitsToWrite = false) : datBitBuffer((u8*)data, size, flagBitsToWrite) {}
-		datBitBuffer(bool flagBitsToWrite = false) : datBitBuffer((u8*)nullptr, NULL, flagBitsToWrite) {}
+		datBitBuffer(void* data, uint32_t size, bool flagBitsToWrite = false) : datBitBuffer((uint8_t*)data, size, flagBitsToWrite) {}
+		datBitBuffer(bool flagBitsToWrite = false) : datBitBuffer((uint8_t*)nullptr, NULL, flagBitsToWrite) {}
 
-		bool IsFlagSet(u8 flag) {
+		bool IsFlagSet(uint8_t flag) {
 			return (m_flagBits & flag) != NULL;
 		}
-		u32 GetPosition() {
+		uint32_t GetPosition() {
 			return m_bitsRead;
 		}
-		u32 GetMaxPossibleBit() {
+		uint32_t GetMaxPossibleBit() {
 			return (m_highestBitsRead + 7) >> 3;
 		}
-		bool Seek(u32 bits) {
+		bool Seek(uint32_t bits) {
 			if (bits >= 0) {
-				u32 length{ IsFlagSet(1) ? m_maxBit : m_curBit };
+				uint32_t length{ IsFlagSet(1) ? m_maxBit : m_curBit };
 				if (bits <= length) {
 					m_bitsRead = bits;
 					return true;
@@ -404,32 +407,32 @@ namespace rage {
 			}
 			return false;
 		}
-		i64 SeekCur(u32 bits) {
-			m_bitsRead += static_cast<u32>(bits);
+		int64_t SeekCur(uint32_t bits) {
+			m_bitsRead += static_cast<uint32_t>(bits);
 			if (m_bitsRead > m_curBit)
 				m_curBit = m_bitsRead;
 			return m_bitsRead;
 		}
-		i64 AddNumberOfBits(u32 bits) {
-			m_bitsRead += static_cast<u32>(bits);
+		int64_t AddNumberOfBits(uint32_t bits) {
+			m_bitsRead += static_cast<uint32_t>(bits);
 			if (m_bitsRead > m_highestBitsRead)
 				m_highestBitsRead = m_bitsRead;
 			return m_bitsRead;
 		}
-		u32 GetDataLength() {
-			u32 leftoverBit{ (m_curBit % 8u) ? 1u : 0u };
+		uint32_t GetDataLength() {
+			uint32_t leftoverBit{ (m_curBit % 8u) ? 1u : 0u };
 			return (m_curBit / 8u) + leftoverBit;
 		}
-		u32 GetMaxDataLength() {
+		uint32_t GetMaxDataLength() {
 			return (m_flagBits & 1) != NULL ? m_maxBit : m_curBit;
 		}
-		bool EnsureBitData(u32 bits) {
+		bool EnsureBitData(uint32_t bits) {
 			if (IsFlagSet(2) || m_bitsRead + bits > GetMaxDataLength())
 				return false;
 			return true;
 		}
-		u64 WriteBitsSingle(u32 value, i32 bits);
-		u32 ReadBitsSingle(u32 numBits);
+		u64 WriteBitsSingle(uint32_t value, int32_t bits);
+		uint32_t ReadBitsSingle(uint32_t numBits);
 		bool WriteIntegrityPassed() {
 			WriteBool(false);
 			WriteDword(0xCDEF, 0x10);
@@ -446,84 +449,84 @@ namespace rage {
 			return false;
 		}
 		template <typename t>
-		bool Write(t value, u32 bits = 0) {
+		bool Write(t value, uint32_t bits = 0) {
 			uint32_t bitsToWrite{ bits ? bits : sizeof(t) };
-			bool res{ WriteBitsSingle((u32)value, bitsToWrite) ? true : false };
+			bool res{ WriteBitsSingle((uint32_t)value, bitsToWrite) ? true : false };
 			SeekCur(bitsToWrite);
 			return res;
 		}
 		template <typename t>
-		void WriteSigned(t value, i32 bits) {
-			i32 sign{ value < 0 };
-			u32 signEx{ sign ? 0xFFFFFFFF : 0 };
-			u32 d{ value ^ signEx };
-			Write<i32>(1, sign);
-			Write<i32>(bits - 1, d);
+		void WriteSigned(t value, int32_t bits) {
+			int32_t sign{ value < 0 };
+			uint32_t signEx{ sign ? 0xFFFFFFFF : 0 };
+			uint32_t d{ value ^ signEx };
+			Write<int32_t>(1, sign);
+			Write<int32_t>(bits - 1, d);
 		}
-		void WriteFloat(i32 length, float divisor, float value) {
-			i32 max{ (1 << length) - 1 };
-			i32 integer{ (i32)((value / divisor) * max) };
-			Write<i32>(length, integer);
+		void WriteFloat(int32_t length, float divisor, float value) {
+			int32_t max{ (1 << length) - 1 };
+			int32_t integer{ (int32_t)((value / divisor) * max) };
+			Write<int32_t>(length, integer);
 		}
-		void WriteSignedFloat(i32 length, float divisor, float value) {
-			i32 max{ (1 << (length - 1)) - 1 };
-			i32 integer{ (i32)((value / divisor) * max) };
-			WriteSigned<i32>(length, integer);
+		void WriteSignedFloat(int32_t length, float divisor, float value) {
+			int32_t max{ (1 << (length - 1)) - 1 };
+			int32_t integer{ (int32_t)((value / divisor) * max) };
+			WriteSigned<int32_t>(length, integer);
 		}
 		template <typename t>
-		t Read(u32 bits) {
+		t Read(uint32_t bits) {
 			if (bits <= 32) {
 				return t(ReadBitsSingle(bits));
 			}
 			else {
-				u32 Low{ ReadBitsSingle(bits - 32u) };
-				u32 High{ ReadBitsSingle(32u) };
-				return t(High | ((u64)Low << 32));
+				uint32_t Low{ ReadBitsSingle(bits - 32u) };
+				uint32_t High{ ReadBitsSingle(32u) };
+				return t(High | ((uint64_t)Low << 32));
 			}
 		}
 		template <typename t>
-		t ReadSigned(u32 bits) {
-			i32 sign{ Read<i32>(1) };
-			i32 data{ Read<i32>(bits - 1) };
-			return t((i64)sign + (data ^ -sign));
+		t ReadSigned(uint32_t bits) {
+			int32_t sign{ Read<int32_t>(1) };
+			int32_t data{ Read<int32_t>(bits - 1) };
+			return t((int64_t)sign + (data ^ -sign));
 		}
-		float ReadFloat(i32 length, float divisor) {
-			i32 integer{ Read<i32>(length) };
+		float ReadFloat(int32_t length, float divisor) {
+			int32_t integer{ Read<int32_t>(length) };
 			float max{ static_cast<float>((1 << length) - 1) };
 			return (static_cast<float>(integer) / max) * divisor;
 		}
-		float ReadSignedFloat(i32 length, float divisor) {
-			i32 integer{ ReadSigned<i32>(length) };
+		float ReadSignedFloat(int32_t length, float divisor) {
+			int32_t integer{ ReadSigned<int32_t>(length) };
 			float max{ static_cast<float>((1 << (length - 1)) - 1) };
 			return (static_cast<float>(integer) / max) * divisor;
 		}
-		bool ReadPeerId(u64* value) {
+		bool ReadPeerId(uint64_t* value) {
 			if (!EnsureBitData(0x20))
 				return false;
-			*value = Read<u64>(0x20);
+			*value = Read<uint64_t>(0x20);
 			return true;
 		}
-		bool WriteString(char* string, u32 length) {
-			u32 len{ min(length, (u32)strlen(string) + 1) };
+		bool WriteString(char* string, uint32_t length) {
+			uint32_t len{ min(length, (uint32_t)strlen(string) + 1) };
 			bool extended{ len > 127 };
 			WriteBool(extended);
 			WriteDword(len, extended ? 15 : 7);
 			WriteArray(string, len * 8);
 			return true;
 		}
-		template <u32 length>
+		template <uint32_t length>
 		bool WriteString(char(&string)[length]) {
 			return WriteString(string, length);
 		}
-		bool ReadString(char* string, u32 length) {
+		bool ReadString(char* string, uint32_t length) {
 			bool extended{ Read<bool>(1) };
-			u32 len{ Write<u32>(extended ? 15 : 7) };
+			uint32_t len{ Write<uint32_t>(extended ? 15 : 7) };
 			ReadArray(string, len * 8);
 			if (string[len - 1] != '\0')
 				return false;
 			return true;
 		}
-		template <u32 length>
+		template <uint32_t length>
 		bool ReadString(char(&string)[length]) {
 			return ReadString(string, length);
 		}
@@ -536,52 +539,52 @@ namespace rage {
 		bool WriteBool(bool value) {
 			return Write<bool>(value);
 		}
-		bool ReadByte(u8* integer, int bits) {
+		bool ReadByte(uint8_t* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<u8>(bits);
+			*integer = Read<uint8_t>(bits);
 			return true;
 		}
-		bool WriteByte(u8 value, int bits) {
-			return Write<u8>(value, bits);
+		bool WriteByte(uint8_t value, int bits) {
+			return Write<uint8_t>(value, bits);
 		}
-		bool ReadWord(u16* integer, int bits) {
+		bool ReadWord(uint16_t* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<u16>(bits);
+			*integer = Read<uint16_t>(bits);
 			return true;
 		}
-		bool WriteWord(u16 value, int bits) {
-			return Write<u16>(value, bits);
+		bool WriteWord(uint16_t value, int bits) {
+			return Write<uint16_t>(value, bits);
 		}
-		bool ReadDword(u32* integer, int bits) {
+		bool ReadDword(uint32_t* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<u32>(bits);
+			*integer = Read<uint32_t>(bits);
 			return true;
 		}
-		bool WriteDword(u32 value, int bits) {
-			return Write<u32>(value, bits);
+		bool WriteDword(uint32_t value, int bits) {
+			return Write<uint32_t>(value, bits);
 		}
-		bool ReadInt32(i32* integer, int bits) {
+		bool ReadInt32(int32_t* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = ReadSigned<i32>(bits);
+			*integer = ReadSigned<int32_t>(bits);
 			return true;
 		}
-		bool ReadQword(u64* integer, int bits) {
+		bool ReadQword(uint64_t* integer, int bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = Read<u64>(bits);
+			*integer = Read<uint64_t>(bits);
 			return true;
 		}
-		bool WriteQword(u64 value, int bits) {
+		bool WriteQword(uint64_t value, int bits) {
 			if (bits <= 32) {
 				if (IsFlagSet(1))
 					return false;
 				if ((m_bitsRead + bits) <= m_maxBit) {
 					if (!IsFlagSet(2)) {
-						Write<u64>(value, bits);
+						Write<uint64_t>(value, bits);
 					}
 					return true;
 				}
@@ -593,35 +596,35 @@ namespace rage {
 				if ((m_bitsRead + 32) > m_maxBit)
 					return false;
 				if (!IsFlagSet(2)) {
-					Write<u64>(value, 32);
+					Write<uint64_t>(value, 32);
 				}
 				if (IsFlagSet(1) || (bits - 32) + m_bitsRead > m_maxBit) {
 					return false;
 				}
 				else {
 					if (!IsFlagSet(2)) {
-						Write<u32>(SHIDWORD(value), bits - 32);
+						Write<uint32_t>(SHIDWORD(value), bits - 32);
 					}
 				}
 			}
 			return true;
 		}
-		bool ReadInt64(i64* integer, i32 bits) {
+		bool ReadInt64(int64_t* integer, int32_t bits) {
 			if (!EnsureBitData(bits))
 				return false;
-			*integer = ReadSigned<i64>(bits);
+			*integer = ReadSigned<int64_t>(bits);
 			return true;
 		}
-		bool WriteArray(void* array, i32 size);
-		bool ReadArray(void* array, i32 size);
+		bool WriteArray(void* array, int32_t size);
+		bool ReadArray(void* array, int32_t size);
 	public:
-		u8* m_data; //0x0000
-		u32 m_bitOffset; //0x0008
-		u32 m_maxBit; //0x000C
-		u32 m_bitsRead; //0x0010
-		u32 m_curBit; //0x0014
-		u32 m_highestBitsRead; //0x0018
-		u8 m_flagBits; //0x001C
+		uint8_t* m_data; //0x0000
+		uint32_t m_bitOffset; //0x0008
+		uint32_t m_maxBit; //0x000C
+		uint32_t m_bitsRead; //0x0010
+		uint32_t m_curBit; //0x0014
+		uint32_t m_highestBitsRead; //0x0018
+		uint8_t m_flagBits; //0x001C
 	}; //Size: 0x0020
 	static_assert(sizeof(datBitBuffer) == 0x20);
 	class netGameEvent {
@@ -3201,6 +3204,12 @@ public:
 	uint32_t m_ability_flags; //0x058B
 	char pad_058F[17]; //0x0584
 
+	uint32_t get_class() {
+		return m_model_class & 0x1F;
+	}
+	bool is_class(eModelClass modelClass) {
+		return get_class() == static_cast<uint32_t>(modelClass);
+	}
 	bool set_ability_flags(eAbilityFlags flag, bool value) {
 		value ? m_ability_flags |= (int)flag : m_ability_flags &= ~(int)flag;
 	}

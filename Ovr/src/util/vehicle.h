@@ -8,23 +8,58 @@
 namespace util::vehicle {
 	class vehicleData {
 	public:
-		vehicleData(const CVehicleModelInfo* mi, const std::string ml, const std::string nl) : m_modelInfo(mi), m_manufacturerLabel(ml), m_nameLabel(nl), m_finalLabel(getLabelAsGXT()) {}
+		vehicleData(const CVehicleModelInfo* mi, std::string ml, std::string nl) : m_modelInfo(mi), m_manufacturerLabel(ml), m_nameLabel(nl), m_finalLabel(getGXT()) {}
 	public:
 		const CVehicleModelInfo* m_modelInfo{};
 		const std::string m_manufacturerLabel{}, m_nameLabel{}, m_finalLabel{};
-	public:
+	private:
 		std::string getLabelAsGXT() {
-			std::string modelName = m_nameLabel;
-			std::string displayName = VEHICLE::GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(m_modelInfo->m_model);
-			std::string label = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(displayName.c_str());
-			auto lower = [](std::string data) {
-				std::transform(data.begin(), data.end(), data.begin(), [](u8 c) { return std::tolower(c); });
-				return data;
-			};
-			return strcmp(label.c_str(), "NULL") == 0 ? lower(strcmp(displayName.c_str(), "NULL") == 0 ? modelName : displayName) : label;
+			std::string displayName{ m_modelInfo->m_name };
+			std::string label{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(displayName.c_str()) };
+			return !label.compare("NULL") ? lStr(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
+		}
+		std::string getManufacturerAsGXT() {
+			std::string displayName{ m_modelInfo->m_manufacturer };
+			std::string label{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(displayName.c_str()) };
+			return !label.compare("NULL") ? lStr(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
+		}
+		std::string getGXT() {
+			std::string manufacturerGXT{ getManufacturerAsGXT() };
+			std::string labelGXT{ getLabelAsGXT() };
+			return manufacturerGXT + " " + labelGXT;
 		}
 	};
-	struct models {
+	class models {
+	public:
+		std::vector<vehicleData>& get(u8 idx) {
+			switch (static_cast<eModelClass>(idx)) {
+			case eModelClass::Compacts: { return m_compacts; } break;
+			case eModelClass::Sedans: { return m_sedans; } break;
+			case eModelClass::SUVs: { return m_suvs; } break;
+			case eModelClass::Coupes: { return m_coupes; } break;
+			case eModelClass::Muscle: { return m_muscle; } break;
+			case eModelClass::SportsClassics: { return m_sportsClassics; } break;
+			case eModelClass::Sports: { return m_sports; } break;
+			case eModelClass::Supers: { return m_supers; } break;
+			case eModelClass::Motorcycles: { return m_motorcycles; } break;
+			case eModelClass::OffRoad: { return m_offRoad; } break;
+			case eModelClass::Industrial: { return m_industrial; } break;
+			case eModelClass::Utility: { return m_utility; } break;
+			case eModelClass::Vans: { return m_vans; } break;
+			case eModelClass::Cycles: { return m_cycles; } break;
+			case eModelClass::Boats: { return m_boats; } break;
+			case eModelClass::Helicopters: { return m_helicopters; } break;
+			case eModelClass::Planes: { return m_planes; } break;
+			case eModelClass::Service: { return m_service; } break;
+			case eModelClass::Emergency: { return m_emergency; } break;
+			case eModelClass::Military: { return m_military; } break;
+			case eModelClass::Commercial: { return m_commercial; } break;
+			case eModelClass::Trains: { return m_trains; } break;
+			case eModelClass::OpenWheel: { return m_openWheels; } break;
+			}
+			return m_dummy;
+		}
+	private:
 		std::vector<vehicleData> m_compacts{};
 		std::vector<vehicleData> m_sedans{};
 		std::vector<vehicleData> m_suvs{};
@@ -32,7 +67,7 @@ namespace util::vehicle {
 		std::vector<vehicleData> m_muscle{};
 		std::vector<vehicleData> m_sportsClassics{};
 		std::vector<vehicleData> m_sports{};
-		std::vector<vehicleData> m_super{};
+		std::vector<vehicleData> m_supers{};
 		std::vector<vehicleData> m_motorcycles{};
 		std::vector<vehicleData> m_offRoad{};
 		std::vector<vehicleData> m_industrial{};
@@ -48,44 +83,21 @@ namespace util::vehicle {
 		std::vector<vehicleData> m_commercial{};
 		std::vector<vehicleData> m_trains{};
 		std::vector<vehicleData> m_openWheels{};
+	private:
 		std::vector<vehicleData> m_dummy{};
-		std::vector<vehicleData>& get(i8 idx) {
-			switch (idx) {
-			case 0: { return m_compacts; } break;
-			case 1: { return m_sedans; } break;
-			case 2: { return m_suvs; } break;
-			case 3: { return m_coupes; } break;
-			case 4: { return m_muscle; } break;
-			case 5: { return m_sportsClassics; } break;
-			case 6: { return m_sports; } break;
-			case 7: { return m_super; } break;
-			case 8: { return m_motorcycles; } break;
-			case 9: { return m_offRoad; } break;
-			case 10: { return m_industrial; } break;
-			case 11: { return m_utility; } break;
-			case 12: { return m_vans; } break;
-			case 13: { return m_cycles; } break;
-			case 14: { return m_boats; } break;
-			case 15: { return m_helicopters; } break;
-			case 16: { return m_planes; } break;
-			case 17: { return m_service; } break;
-			case 18: { return m_emergency; } break;
-			case 19: { return m_military; } break;
-			case 20: { return m_commercial; } break;
-			case 21: { return m_trains; } break;
-			case 22: { return m_openWheels; } break;
-			}
-			return m_dummy;
-		}
 	};
 	inline models g_models{};
 	inline std::vector<std::string> g_modelClasses{};
-	inline std::vector<vehicleData> modelDataSection(i8 modelClass) {
+	inline HashTable<CVehicleModelInfo*>& getHashTable() {
+		return *reinterpret_cast<HashTable<CVehicleModelInfo*>*>(pointers::g_hashTable);
+	}
+	inline std::vector<vehicleData> modelDataSection(u8 modelClass) {
 		std::vector<vehicleData> vehData{};
-		for (i32 i{}; i != pointers::g_hashTable->m_size; ++i) {
-			for (auto node = pointers::g_hashTable->m_lookup_table[i]; node; node = node->m_next) {
-				if (const auto tableIdx = node->m_idx; tableIdx != pointers::g_hashTable->m_size) {
-					if (auto model{ reinterpret_cast<CVehicleModelInfo*>(pointers::g_hashTable->m_data[tableIdx]) }; model && (static_cast<uint8_t>(model->m_model_type) & 0xFF) == (uint8_t)eModelType::Vehicle && (model->m_model_class & 0x1F) == modelClass) {
+		const HashTable<CVehicleModelInfo*>& hashTable{ getHashTable() };
+		for (i32 i{}; i != hashTable.m_size; ++i) {
+			for (HashNode* node{ hashTable.m_lookup_table[i] }; node; node = node->m_next) {
+				if (const u16 tableIdx{ node->m_idx }; tableIdx != hashTable.m_size) {
+					if (CVehicleModelInfo* model{ hashTable.m_data[tableIdx] }; model && model->is_type(eModelType::Vehicle) && model->get_class() == modelClass) {
 						std::string manufacturerLbl = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_manufacturer);
 						std::string nameLbl = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_name);
 						vehData.push_back({ model, manufacturerLbl, model->m_name });
@@ -95,12 +107,17 @@ namespace util::vehicle {
 		}
 		return vehData;
 	}
-	inline std::string getVehicleClassName(i8 vehClass) {
-		std::stringstream ss; ss << "VEH_CLASS_" << vehClass;
-		return std::string(HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(ss.str().c_str())).compare("NULL") ? HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(ss.str().c_str()) : "Unknown Class";
+	inline std::string getVehicleClassName(u8 vehClass) {
+		const std::string& classId{ std::to_string(vehClass) };
+		const std::string& label{ "VEH_CLASS_" + classId };
+		std::string value{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(label.c_str()) };
+		if (!value.compare("NULL")) {
+			value = "Unknown Class (" + classId + ")";
+		}
+		return value;
 	}
 	inline void cacheModelTable() {
-		for (i8 i{}; i != 23; ++i) {
+		for (u8 i{}; i != 23; ++i) {
 			g_modelClasses.push_back(getVehicleClassName(i));
 			g_models.get(i) = modelDataSection(i);
 		}

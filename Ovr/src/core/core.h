@@ -9,12 +9,27 @@
 #include "exceptions/handler.h"
 
 namespace core {
-	class scyllaHide : public shv::dynamicLoader {
+	class scyllaHide {
 	public:
-		scyllaHide() : shv::dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Modules").append("ScyllaHide.dll")) {}
-		~scyllaHide() {}
+		scyllaHide() {
+			fs::path m_path{ std::getenv("appdata") };
+			load(m_path.append(BRAND).append("Modules").append("ScyllaHide.dll"));
+		}
+		virtual ~scyllaHide() {
+			free();
+		}
+		virtual HMODULE getModule() {
+			return m_module;
+		}
+		virtual void load(fs::path path) {
+			m_module = LoadLibraryA(path.string().c_str());
+		}
+		virtual void free() {
+			if (m_module)
+				FreeLibrary(m_module);
+		}
 	private:
-		fs::path m_path{};
+		HMODULE m_module{};
 	};
 	inline SmartPointer<scyllaHide> g_scyllaHide{};
 	namespace thread {

@@ -40,6 +40,31 @@ enum class eModelType : uint8_t {
 	Building = 161,
 	Unk193 = 193
 };
+enum class eModelClass : uint8_t {
+	Compacts,
+	Sedans,
+	SUVs,
+	Coupes,
+	Muscle,
+	SportsClassics,
+	Sports,
+	Supers,
+	Motorcycles,
+	OffRoad,
+	Industrial,
+	Utility,
+	Vans,
+	Cycles,
+	Boats,
+	Helicopters,
+	Planes,
+	Service,
+	Emergency,
+	Military,
+	Commercial,
+	Trains,
+	OpenWheel
+};
 enum class ePedBoneType {
 	Head,
 	LeftFoot,

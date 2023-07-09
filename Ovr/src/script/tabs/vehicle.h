@@ -6,13 +6,13 @@ namespace tabs::vehicle {
 	inline void tab() {
 		elements::tabBar("Vehicle", [] {
 			elements::tabItem("Spawner", [] {
-				for (i8 i{}; i != 23; ++i) {
+				for (u8 i{}; i != 23; ++i) {
 					elements::section(util::vehicle::g_modelClasses[i], [i] {
-						auto vehicles{ util::vehicle::modelDataSection(i) };
+						auto vehicles{ util::vehicle::g_models.get(i) };
 						for (auto veh : vehicles) {
 							elements::selectable(veh.m_finalLabel, false, [veh] {
-								commands::g_engine.primitiveExecute("spawnVehicle {}", veh.m_modelInfo->m_model);
-							}, true);
+								commands::g_engine.primitiveExecute("spawnVehicle {}", veh.m_modelInfo->m_name);
+							});
 						}
 					});
 				}

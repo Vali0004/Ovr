@@ -107,7 +107,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
 				buffer.ReadBool(&msg.m_is_team);
-				LOG(Info, "balls");
+				LOG(Debug, "balls");
 				if (util::isSpamMessage(msg.m_message)) {
 					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -129,7 +129,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				CMsgTextMessage2 msg{};
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
-				LOG(Info, "balls");
+				LOG(Debug, "balls");
 				if (util::isSpamMessage(msg.m_message)) {
 					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {

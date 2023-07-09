@@ -319,8 +319,7 @@ namespace commands::features {
 					hash = stoull(key);
 				}
 				else {
-					LOG(Commands, "{} is not a valid key!", key);
-					return;
+					hash = rage::joaat(key);
 				}
 				if (!STREAMING::IS_MODEL_VALID(hash)) {
 					LOG(Commands, "{} is not a valid hash!", key);
@@ -365,7 +364,7 @@ namespace commands::features {
 				clipboard.set();
 				nlohmann::json body = { { "RockstarId", rid } };
 				auto res = socialclub::backend::jRequest(body, "https://scapi.rockstargames.com/friends/remove");
-				LOG(Info, "Body: {}", body.dump(4));
+				LOG(Debug, "Body: {}", body.dump(4));
 			}
 		}		
 		namespace session {
@@ -928,6 +927,8 @@ namespace commands::features {
 		g_manager.add(toggleCommand("infiniteStickyBombs", "Infinite Sticky Bombs", "Removes the limit on C4s", weapon::ammo::infiniteStickyBombs));
 		g_manager.add(toggleCommand("infiniteFlares", "Infinite Flares", "Removes the limit on flares", weapon::ammo::infiniteFlares));
 		g_manager.add(actionCommand("refillAmmo", "Refill", "Refills all your ammo", weapon::ammo::refill));
+		//Vehicle::Spawner
+		g_manager.add(variadicCommand("spawnVehicle", "Spawn Vehicle", { { eValueType::String } }, &vehicle::spawner::spawnVehicle, false));
 		//Network::Friends::Selected
 		g_manager.add(actionCommand("copyFriendRid", "Copy RID", "Copies their RID to your clipboard", network::friends::selected::copyRid));
 		g_manager.add(actionCommand("copyFriendName", "Copy Name", "Copies their name to your clipboard", network::friends::selected::copyName));

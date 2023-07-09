@@ -71,14 +71,14 @@ namespace pointers {
                 arxIntegCheck++;
             }
             if (arxIntegCheck) {
-                LOG(Info, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
+                LOG(Debug, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
             }
             else {
-                LOG(Info, "ARX functions were already patched.");
+                LOG(Debug, "ARX functions were already patched.");
             }
         }
         catch (...) {
-            LOG(Info, "ARX function patches failed to patch, checking if they were already applied.");
+            LOG(Debug, "ARX function patches failed to patch, checking if they were already applied.");
         }
         //I really need to fucking fix this.
         //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<i32*>(), { 0xB0, 0x01, 0xC3 });
