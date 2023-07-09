@@ -741,17 +741,15 @@ namespace rage {
 			scrValue* ResultPtr; //0x0000
 			int32_t ParamCount; //0x0008
 			scrValue* Params;
-			int BufferCount;
-			u32* Orig[4];
+			i32 BufferCount;
+			scrValue* Orig[4];
 			scrVector Buffer[4];
 			void CopyReferencedParametersOut() {
-				int bc = BufferCount;
+				i32 bc{ BufferCount };
 				while (bc--) {
-					u32* dst = Orig[bc];
-					u32* src = (u32*)&Buffer[bc].x;
-					dst[0] = src[0];
-					dst[1] = src[1];
-					dst[2] = src[2];
+					Orig[bc][0].Float = Buffer[bc].x;
+					Orig[bc][1].Float = Buffer[bc].y;
+					Orig[bc][2].Float = Buffer[bc].z;
 				}
 			}
 		};

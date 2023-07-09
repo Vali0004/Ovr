@@ -33,14 +33,14 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1503)");
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b1521)");
 		g_scyllaHide = MakeSmartPointer<scyllaHide>();
 		if (g_scyllaHide->getModule()) {
 			LOG(Debug, "ScyllaHide loaded.");
 		}
-		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
-		//if (shv::g_shvLoader->getModule())
-		//	LOG(Debug, "SHV module loaded.");
+		shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
+		if (shv::g_shvLoader->getModule())
+			LOG(Debug, "SHV module loaded.");
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {

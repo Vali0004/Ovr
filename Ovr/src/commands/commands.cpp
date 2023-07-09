@@ -63,7 +63,7 @@ namespace commands {
 		onInit();
 		while (true) {
 			features::onTick();
-			g_manager.tick();
+			//g_manager.tick();
 			fiber::current()->sleep();
 		}
 	}

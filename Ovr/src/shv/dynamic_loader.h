@@ -3,46 +3,47 @@
 #include "fiber/manager.h"
 
 namespace shv {
-	class dynamicLoader {
+	class dynamicModule {
 	public:
-		dynamicLoader(fs::path path) : m_path(path) { load(); }
-		virtual ~dynamicLoader() { free(); }
-	public:
-		virtual void load() {
-			m_handle = LoadLibraryA(m_path.string().c_str());
+		dynamicModule(fs::path path) {
+			load(path);
 		}
-		virtual void free() {
-			if (m_handle)
-				FreeLibrary(m_handle);
+		virtual ~dynamicModule() {
+			free();
 		}
 		virtual HMODULE getModule() {
-			return m_handle;
+			return m_module;
+		}
+		virtual void load(fs::path path) {
+			fs::path _path{ std::getenv("appdata") };
+			_path /= BRAND;
+			m_module = LoadLibraryA(_path.append(path.string()).string().c_str());
+		}
+		virtual void free() {
+			if (m_module)
+				FreeLibrary(m_module);
 		}
 	private:
-		fs::path m_path{};
-		HMODULE m_handle{};
+		HMODULE m_module{};
 	};
-	class asiModule : public dynamicLoader {
+	class asiModule : public dynamicModule {
 	public:
-		asiModule(std::string name) : m_name(name), dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Scripts").append(m_name)) {}
+		asiModule(std::string name) : m_name(name), dynamicModule(fs::path("Scripts").append(m_name)) {}
 		~asiModule() {}
 	public:
-		std::string& str() {
+		std::string str() {
 			return m_name;
 		}
 		const char* c_str() {
 			return m_name.c_str();
 		}
 	private:
-		fs::path m_path{};
 		std::string m_name{};
 	};
-	class shvLoader : public dynamicLoader {
+	class shvLoader : public dynamicModule {
 	public:
-		shvLoader() : dynamicLoader(m_path.append(std::getenv("appdata")).append(BRAND"\\Modules").append("ScriptHookV.dll")) {}
+		shvLoader() : dynamicModule(fs::path("Modules").append("ScriptHookV.dll")) {}
 		~shvLoader() {}
-	private:
-		fs::path m_path{};
 	};
 	inline SmartPointer<shvLoader> g_shvLoader{};
 	class asiLoader {

@@ -174,16 +174,19 @@ namespace defines {
         return matches;
     }
     inline std::vector<std::string> splitString(const std::string& string, char split) {
-		std::vector<std::string> output{};
-		u64 previousPosition{}, position{};
-		while ((position = string.find(string, position)) != std::string::npos) {
-			std::string substring{ string.substr(previousPosition, position - previousPosition) };
-			output.push_back(substring);
-			previousPosition = ++position;
-		}
-		output.push_back(string.substr(previousPosition, position - previousPosition));
-		return output;
-	}
+        std::vector<std::string> output{};
+        size_t previousPosition{};
+        size_t position{ string.find(split) };
+        while (position != std::string::npos) {
+            std::string substring{ string.substr(previousPosition, position - previousPosition) };
+            output.push_back(substring);
+            previousPosition = position + 1;
+            position = string.find(split, previousPosition);
+        }
+        std::string lastSubstring{ string.substr(previousPosition) };
+        output.push_back(lastSubstring);
+        return output;
+    }
 }
 using namespace defines;
 

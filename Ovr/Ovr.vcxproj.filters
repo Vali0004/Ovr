@@ -552,6 +552,7 @@
     </ClInclude>
     <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\vehicle.h" />
+    <ClInclude Include="src\script\tabs\vehicle\spawner.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">

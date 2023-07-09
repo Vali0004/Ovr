@@ -89,7 +89,12 @@ namespace commands {
 						return;
 					}
 					for (size_t i{ 1 }; i != arguments.size(); ++i) {
-						switch (command->get_value(i)->m_type) {
+						typedValue* value{ command->get_value(i) };
+						if (!value) {
+							LOG(Debug, "Argument size: {} | Expected argument size: {}", command->value_count());
+							return;
+						}
+						switch (value->m_type) {
 						case eValueType::String: {
 							command->get(i).string = arguments[i].c_str();
 						} break;

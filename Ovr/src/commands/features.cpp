@@ -136,7 +136,7 @@ namespace commands::features {
 			}
 			void noClip(toggleFloatCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				if (command->get(0).toggle) {
+				if (command->get(0).toggle && !PED::IS_PED_IN_ANY_VEHICLE(ped, FALSE)) {
 					ENTITY::SET_ENTITY_COLLISION(ped, FALSE, TRUE);
 					Vector3 pos{ cPed->get_position().serialize() };
 					Vector3 rot{ math::rotToDir(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
@@ -149,8 +149,8 @@ namespace commands::features {
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, camCoords, TRUE, TRUE, TRUE);
 					}
 				}
-				else {				
-					ONCE(init, { ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
+				else {
+					ONCE_PER_FRAME({ ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
@@ -671,7 +671,6 @@ namespace commands::features {
 				Friend.m_rockstar_id = rid;
 				Friend.m_friend_state = 3;
 				Friend.m_is_joinable = 0x1;
-				//what in the quantum?
 				pointers::g_triggerPlayermenuAction(ptr, &Hash);
 				fiber::current()->sleep(400ms);
 				Friend.m_rockstar_id = OriginalRID;

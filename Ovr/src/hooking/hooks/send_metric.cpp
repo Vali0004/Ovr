@@ -30,7 +30,6 @@ const u32 g_blockedMetrics[]{
 	"GARAGE_TAMPER"_joaat
 };
 bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
-	#ifdef DEBUG
 	ccp key{};
 	if (pMetric->using_a()) {
 		key = "A";
@@ -43,11 +42,17 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 	}
 	rage::JSONSerialiser json{ 256 };
 	pMetric->to_json(&json);
-	if (pMetric->get_name() == "SPAWN" && json.str().find("-") != std::string::npos) {
-		LOG(Debug, "Oh no bro.");
+	std::string name{ pMetric->get_name() };
+	if (!name.compare("SPAWN")) {
+		std::string s{ json.str() };
+		size_t start{ s.find(R"("c":[)") + 5 };
+		size_t end{ s.find(R"(],"d")") - 5 };
+		std::string str{ s.substr(start, end) };
+		auto words{ splitString(str, ',') };
+		Vector3 coords{ stof(words[0]), stof(words[1]), stof(words[2]) };
+		LOG(Info, "Spawning at {}, {}, {}", coords.x, coords.y, coords.z);
 	}
-	LOG(Info, "[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
-	#endif
+	LOG(Debug, "[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
 	if (pMetric->using_c()) {
 		if (pMetric->crc_flag()) {
 			return false;

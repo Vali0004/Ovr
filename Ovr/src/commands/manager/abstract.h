@@ -97,7 +97,7 @@ namespace commands {
 		typedValue* get_value(size_t index) {
 			if (index > m_values.size() - 1) {
 				LOG(Debug, "Value index cannot be over value size!");
-				throw std::runtime_error("Value index cannot be over value size!");
+				return nullptr;
 			}
 			return m_values[index];
 		}

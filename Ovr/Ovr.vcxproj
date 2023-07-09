@@ -306,6 +306,7 @@
     <ClInclude Include="src\script\tabs\protections\reactions\script_event.h" />
     <ClInclude Include="src\script\tabs\protections\script_events.h" />
     <ClInclude Include="src\script\tabs\self\world.h" />
+    <ClInclude Include="src\script\tabs\vehicle\spawner.h" />
     <ClInclude Include="src\stb\image.h" />
     <ClInclude Include="src\stb\image_write.h" />
     <ClInclude Include="src\util\clipboard.h" />

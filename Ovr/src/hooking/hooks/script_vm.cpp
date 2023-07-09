@@ -130,6 +130,13 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						e->set(pt, imm, cmd);
 					}
 				}
+				if (cmd == g_invoker.getNativeCmd(0x06843DA7060A026B)) {
+					Entity entity{ curInfo.Params[0].Int };
+					if (entity == PLAYER::PLAYER_PED_ID()) {
+						Vector3 coords{ curInfo.Params[1].Float, curInfo.Params[2].Float, curInfo.Params[3].Float };
+						//When respawning in online, our Z coord is always 0. Needs a more in-depth look to fix.	
+					}
+				}
 				cmd(&curInfo);
 				if (ser->m_state != rage::eThreadState::running)
 					return ser->m_state;
