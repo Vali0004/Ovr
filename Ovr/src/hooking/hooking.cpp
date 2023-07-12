@@ -123,6 +123,7 @@ void hooking::enable() {
 			ENTITY::SET_ENTITY_VISIBLE(entity, info->Params[1].Int, info->Params[2].Int);
 		}
 	});
+	//Currently has a logic error causing the coords to be at 0, 0, 1
 	//createNativeShim("maintransition"_joaat, 0x06843DA7060A026B, [](rage::scrThread::Info* info) { //SET_ENTITY_COORDS_NO_OFFSET
 	//	Entity entity{ info->Params[0].Int };
 	//	Vector3 pos_{ info->Params[1].Float, info->Params[2].Float, info->Params[3].Float };
