@@ -57,15 +57,14 @@ public:
 }; //Size: 0x0060
 static_assert(sizeof(CNavigation) == 0x5C);
 namespace rage {
-	class alignas(16) scrVector {
+	#pragma optimize("", off)
+	__declspec(align(16)) class scrVector {
 	public:
-		scrVector() = default;
+		scrVector() {}
 		scrVector(float x, float y, float z) : x(x), y(y), z(z) {}
-	public:
-		alignas(8) float x{};
-		alignas(8) float y{};
-		alignas(8) float z{};
+		float x, y, z;
 	};
+	#pragma optimize("", on)
 	class netLoggingInterface {
 	public:
 	};
@@ -734,18 +733,23 @@ namespace rage {
 			return rage::tlsContext::get()->m_script_thread;
 		}
 	public:
+		#pragma pack(pop)
+		#pragma optimize("", off)
 		class Info {
 		public:
 			Info(scrValue* resultPtr, int parameterCount, scrValue* params) :
 				ResultPtr(resultPtr), ParamCount(parameterCount), Params(params), BufferCount(0) { }
-			scrValue* ResultPtr; //0x0000
-			int32_t ParamCount; //0x0008
+			// Return result, if applicable
+			scrValue* ResultPtr;
+			// Parameter count
+			int ParamCount;
+			// Pointer to parameter values
 			scrValue* Params;
-			i32 BufferCount;
+			int BufferCount;
 			scrValue* Orig[4];
 			scrVector Buffer[4];
 			void CopyReferencedParametersOut() {
-				i32 bc{ BufferCount };
+				int bc = BufferCount;
 				while (bc--) {
 					Orig[bc][0].Float = Buffer[bc].x;
 					Orig[bc][1].Float = Buffer[bc].y;
@@ -753,6 +757,8 @@ namespace rage {
 				}
 			}
 		};
+		#pragma optimize("", on)
+		#pragma pack(push, 8)
 		class Serialised {
 		public:
 			uint32_t m_thread_id; //0x0000
@@ -1292,6 +1298,15 @@ namespace rage {
 		virtual bool _0x1F0() = 0;
 		virtual void Warp(rage::vector3* pos, float heading, bool update_pos) = 0; // 0x1F8
 
+		void set_position(rage::vector3 v) {
+			rage::vector4 v4{ v.x, v.y, v.z, 0.f };
+			m_transformation_matrix.rows[3].x = v.x;
+			m_transformation_matrix.rows[3].y = v.y;
+			m_transformation_matrix.rows[3].z = v.z;
+			m_navigation->m_position = v;
+			Warp(&v, get_heading(), true);
+			SetPosition(&v4, true);
+		}
 		uint8_t unk_00B9; //0x00B9
 		char pad_00BA[6]; //0x00BA
 		uint32_t m_flags_3; //0x00C0
@@ -2169,7 +2184,7 @@ static_assert(sizeof(CHeaders) == 0x1D1);
 class CHttpRequest {
 public:
 	char pad_0000[112]; //0x0000
-	void* m_allocator; //0x0070
+	rage::sysMemAllocator* m_allocator; //0x0070
 	char pad_0078[16]; //0x0078
 	CHeaders* m_http_headers; //0x0088
 	char pad_0090[1144]; //0x0090
@@ -2820,10 +2835,14 @@ public:
 		return *this;
 	}
 };
-class Vector3 : public rage::scrVector {
+class Vector3 {
 public:
-	Vector3() : rage::scrVector() {}
-	Vector3(float x, float y, float z) : rage::scrVector(x, y, z) {}
+	Vector3() = default;
+	Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
+public:
+	alignas(8) float x{};
+	alignas(8) float y{};
+	alignas(8) float z{};
 public:
 	rage::vector3 deserialize() {
 		return { x, y, z };
@@ -3760,7 +3779,7 @@ public:
 	char pad_144C[4]; //0x144C
 	uint8_t m_forced_aim; //0x1450
 	char pad_1451[187]; //0x1451
-	float m_armor; //0x150C
+	float m_armour; //0x150C
 	float unk_health_threshold; //0x1510
 	float m_fatigued_health_threshold; //0x1514
 	float m_injured_health_threshold; //0x1518
@@ -3815,7 +3834,9 @@ public:
 	float m_swim_speed; //0x01C8
 	char pad_01CC[20]; //0x01CC
 	uint32_t m_water_proof; //0x01E0
-	char pad_01E4[76]; //0x01E4
+	char pad_01E4[10]; //0x01E4
+	uint16_t m_maxarmour; //0x01EE
+	char pad_01F0[62]; //0x01F0
 	uint32_t m_game_state; //0x0230
 	char pad_0234[12]; //0x0234
 	class CPed* m_ped; //0x0240
@@ -3845,7 +3866,7 @@ public:
 	float m_melee_defence_mult; //0x0D70
 	char pad_0D74[8]; //0x0D74
 	float m_melee_weapon_defence_mult; //0x0D7C
-}; //Size: 0x0D0
+}; //Size: 0x0D80
 static_assert(sizeof(CPlayerInfo) == 0xD80);
 #pragma pack(pop)
 #pragma pack(push, 1)
@@ -4592,8 +4613,8 @@ public:
 	char pad_00BC[28]; //0x00BC
 	uint8_t m_is_joinable; //0x00D8
 	char pad_00D9[3]; //0x00D9
-	uint32_t unk_0066; //0x00DC
-	class unk* unk_0085; //0x00E0
+	uint32_t unk_00DC; //0x00DC
+	class unk* unk_00E0; //0x00E0
 	char pad_00E8[80]; //0x00E8
-	uint32_t unk_006A; //0x0138
+	uint32_t unk_0138; //0x0138
 };

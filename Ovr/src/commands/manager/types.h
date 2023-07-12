@@ -41,9 +41,6 @@ namespace commands {
 		toggleCommand(const std::string& id, const std::string& name, fnptr<void(toggleCommand*)> callback) :
 			toggleCommand(id, name, {}, callback) {
 		}
-		toggleCommand(const std::string& id, fnptr<void(toggleCommand*)> callback) :
-			toggleCommand(id, {}, callback) {
-		}
 		~toggleCommand() {
 			abstractCommand::~abstractCommand();
 		}
@@ -76,9 +73,6 @@ namespace commands {
 		intCommand(const std::string& id, const std::string& name, fnptr<void(intCommand*)> callback, bool looped = false) :
 			intCommand(id, name, {}, callback, looped) {
 		}
-		intCommand(const std::string& id, fnptr<void(intCommand*)> callback, bool looped = false) :
-			intCommand(id, {}, callback, looped) {
-		}
 		~intCommand() {
 			abstractCommand::~abstractCommand();
 		}
@@ -108,9 +102,6 @@ namespace commands {
 		}
 		toggleIntCommand(const std::string& id, const std::string& name, fnptr<void(toggleIntCommand*)> callback) :
 			toggleIntCommand(id, name, {}, callback) {
-		}
-		toggleIntCommand(const std::string& id, fnptr<void(toggleIntCommand*)> callback) :
-			toggleIntCommand(id, {}, callback) {
 		}
 		~toggleIntCommand() {
 			abstractCommand::~abstractCommand();
@@ -147,9 +138,6 @@ namespace commands {
 		floatCommand(const std::string& id, const std::string& name, fnptr<void(floatCommand*)> callback, bool looped = false) :
 			floatCommand(id, name, {}, callback, looped) {
 		}
-		floatCommand(const std::string& id, fnptr<void(floatCommand*)> callback, bool looped = false) :
-			floatCommand(id, {}, callback, looped) {
-		}
 		~floatCommand() {
 			abstractCommand::~abstractCommand();
 		}
@@ -179,9 +167,6 @@ namespace commands {
 		}
 		toggleFloatCommand(const std::string& id, const std::string& name, fnptr<void(toggleFloatCommand*)> callback) :
 			toggleFloatCommand(id, name, {}, callback) {
-		}
-		toggleFloatCommand(const std::string& id, fnptr<void(toggleFloatCommand*)> callback) :
-			toggleFloatCommand(id, {}, callback) {
 		}
 		~toggleFloatCommand() {
 			abstractCommand::~abstractCommand();
@@ -218,9 +203,6 @@ namespace commands {
 		actionCommand(const std::string& id, const std::string& name, fnptr<void(actionCommand*)> callback) :
 			actionCommand(id, name, {}, callback) {
 		}
-		actionCommand(const std::string& id, fnptr<void(actionCommand*)> callback) :
-			actionCommand(id, {}, callback) {
-		}
 		~actionCommand() {
 			abstractCommand::~abstractCommand();
 		}
@@ -243,9 +225,6 @@ namespace commands {
 		}
 		protectionCommand(const std::string& id, const std::string& name) :
 			protectionCommand(id, name, {}) {
-		}
-		protectionCommand(const std::string& id) :
-			protectionCommand(id, {}) {
 		}
 		~protectionCommand() {
 			abstractCommand::~abstractCommand();
@@ -282,9 +261,6 @@ namespace commands {
 		sectionProtectionCommand(const std::string& id, const std::string& name, fnptr<void(sectionProtectionCommand*)> callback) :
 			sectionProtectionCommand(id, name, {}, callback) {
 		}
-		sectionProtectionCommand(const std::string& id, fnptr<void(sectionProtectionCommand*)> callback) :
-			sectionProtectionCommand(id, {}, callback) {
-		}
 		~sectionProtectionCommand() {
 			abstractCommand::~abstractCommand();
 		}
@@ -299,7 +275,7 @@ namespace commands {
 		}
 		void update(ccp n) {
 			m_value.m_value.string = n;
-			//setState();
+			setState();
 		}
 		void setState() {
 			m_state = getProtectionStateFromString(m_value.m_value.string);
@@ -311,6 +287,75 @@ namespace commands {
 	private:
 		typedValue m_value{};
 		fnptr<void(sectionProtectionCommand*)> m_callback{};
+	};
+	class stringCommand : public abstractCommand {
+	public:
+		stringCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(stringCommand*)> callback) :
+			abstractCommand(id, name, description, {}, eCommandType::StringCommand, false), m_callback(callback) {
+		}
+		stringCommand(const std::string& id, const std::string& name, fnptr<void(stringCommand*)> callback) :
+			stringCommand(id, name, {}, callback) {
+		}
+		void init() override {
+			push_value(m_stringValue);
+			abstractCommand::init();
+		}
+		void run() override {
+			if (m_callback)
+				m_callback(this);
+			abstractCommand::run();
+		}
+		void set_string(const std::string& str) {
+			m_stringValue.m_value.string = str.c_str();
+		}
+		std::string get_string() {
+			return m_stringValue.m_value.string;
+		}
+		std::string get_context() {
+			std::vector<std::string> words{ getMatches(m_context, R"_(\S+)_") };
+			return m_context.substr(m_context.find(words.at(0)) + words[0].size());
+		}
+	private:
+		typedValue m_stringValue{};
+		fnptr<void(stringCommand*)> m_callback{};
+	};
+	class hashCommand : public abstractCommand {
+	public:
+		hashCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(hashCommand*)> callback) :
+			abstractCommand(id, name, description, {}, eCommandType::StringCommand, false), m_callback(callback) {
+		}
+		hashCommand(const std::string& id, const std::string& name, fnptr<void(hashCommand*)> callback) :
+			hashCommand(id, name, {}, callback) {
+		}
+		void init() override {
+			push_value(m_stringValue);
+			abstractCommand::init();
+		}
+		void run() override {
+			if (m_callback)
+				m_callback(this);
+			abstractCommand::run();
+		}
+		std::string get_key() {
+			return m_stringValue.m_value.string;
+		}
+		u32 get_hash() {
+			std::string key{ get_key() };
+			u32 hash{};
+			if (isNumber(key)) {
+				hash = stoi(key);
+			}
+			else if (containsANumber(key) && (key.size() == 8 || key.size() == 6 || (key[0] == '0' && key[1] == 'x'))) {
+				hash = stoul(key);
+			}
+			else {
+				hash = rage::joaat(key);
+			}
+			return hash;
+		}
+	private:
+		typedValue m_stringValue{};
+		fnptr<void(hashCommand*)> m_callback{};
 	};
 	class variadicCommand : public abstractCommand {
 	public:

@@ -141,7 +141,7 @@ namespace exceptions {
 	extern bool onExceptionCallback_TryExcept(PEXCEPTION_POINTERS exceptionInfo);
 	extern LONG CALLBACK exceptionHandler(PEXCEPTION_POINTERS exceptionInfo);
 	extern LONG CALLBACK unhandledExceptionHandler(PEXCEPTION_POINTERS exceptionInfo);
-	inline PVOID vecExcepHandlerHandle{};
+	inline PVOID g_handler{};
 	extern void initExceptionHandler();
 	extern void uninitExceptionHandler();
 }

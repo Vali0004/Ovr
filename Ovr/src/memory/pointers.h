@@ -41,6 +41,7 @@ namespace pointers {
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 		using triggerPlayermenuAction = bool(*)(CPlayerListMenu* pMenu, u32* pHash);
+		using getFriendsMenu = u64(*)(u32 Index);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -75,6 +76,7 @@ namespace pointers {
 	inline types::sendNetworkEvent g_sendNetworkEvent{};
 	inline types::processMatchmakingFind g_processMatchmakingFind{};
 	inline types::triggerPlayermenuAction g_triggerPlayermenuAction{};
+	inline types::getFriendsMenu g_getFriendsMenu{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline ScGameInfo* g_scGameInfo{};

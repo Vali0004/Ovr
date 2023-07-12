@@ -32,5 +32,9 @@ HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags)
 	if (*pointers::g_loadingScreenState == eLoadingScreenState::Finished) {
 		shv::onPresent(g_renderer.get());
 	}
+	if (GetAsyncKeyState(VK_F11)) {
+		LOG(Debug, "Blocked a game frame from being updated");
+		return S_OK;
+	}
 	return VMT_CALL(DX, present, swapChain, syncInterval, flags);
 }

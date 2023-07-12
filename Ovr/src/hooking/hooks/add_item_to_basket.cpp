@@ -50,13 +50,13 @@ bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items)
 					{ "Value", item.m_value },
 				};
 			}
+			LOG(Debug, j.dump(4));
 			if (badTransaction(j[transaction->m_category], "SERVICE_BONUS"_joaat, "Transaction report hash")) {
 				return false;
 			}
 			if (badAction(j[transaction->m_category], "CATEGORY_SERVICE_WITH_THRESHOLD"_joaat, "NET_SHOP_ACTION_BONUS"_joaat, "Category Service (Threshold)")) {
 				return false;
 			}
-			LOG(Debug, j.dump(4));
 		}
 	}
 	RET_CALL(addItemToBasket, pTransactionMgr, Items);

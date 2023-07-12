@@ -40,7 +40,7 @@ namespace util::network {
 	void manager::onTick() {
 		while (true) {
 			g_manager.loop();
-			fiber::current()->sleep(100ms);
+			fiber::current()->sleep(50ms);
 		}
 	}
 	void manager::loop() {

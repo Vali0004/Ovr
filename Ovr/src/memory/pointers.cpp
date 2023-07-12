@@ -37,6 +37,7 @@ namespace pointers {
         g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
         g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
         g_triggerPlayermenuAction = scan("TPA", "48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B D9").as<decltype(g_triggerPlayermenuAction)>();
+        g_getFriendsMenu = scan("GFM", "75 1C E8 ? ? ? ? 48 85 C0").sub(0xB).as<decltype(g_getFriendsMenu)>();
  
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
@@ -64,14 +65,12 @@ namespace pointers {
     }
     void doPatches() {
         try {
-            i32 arxIntegCheck{};
-            const std::vector<i32> bytes{ 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
             for (auto& h : getAllResults("48 8D 45 ? 48 89 45 ? 48 8D 05 ? ? ? ? 48 89 45")) {
-                patch(NULL, h.add(8).as<i32*>(), bytes, true).apply();
-                arxIntegCheck++;
+                auto target{ h.add(8) };
+                g_arxPatches.addInteg(target.as<u8*>());
             }
-            if (arxIntegCheck) {
-                LOG(Debug, "Patched {} ARX functions ({} checkers)", arxIntegCheck, arxIntegCheck);
+            if (g_arxPatches.count()) {
+                LOG(Debug, "Patched {} ARX functions ({} checkers)", g_arxPatches.count(), g_arxPatches.integCount());
             }
             else {
                 LOG(Debug, "ARX functions were already patched.");
@@ -80,7 +79,6 @@ namespace pointers {
         catch (...) {
             LOG(Debug, "ARX function patches failed to patch, checking if they were already applied.");
         }
-        //I really need to fucking fix this.
-        //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<i32*>(), { 0xB0, 0x01, 0xC3 });
+        //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
     }
 }

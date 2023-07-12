@@ -4,6 +4,31 @@
 #include "script/elements.h"
 
 namespace commands::gui {
+	struct clue {
+		std::string name{};
+		std::string description{};
+	};
+	class commandBoxClues {
+	public:
+		void add(std::string name, std::string description = {}) {
+			m_clues.push_back({ name, description });
+		}
+		void clear() {
+			m_clues.clear();
+		}
+	public:
+		std::vector<clue> search(std::string s) {
+			std::vector<clue> ret{};
+			for (auto& clue : m_clues) {
+				if (clue.name.find(s) != std::string::npos) {
+					ret.push_back(clue);
+				}
+			}
+			return ret;
+		}
+	private:
+		std::vector<clue> m_clues{};
+	};
 	class box {
 	private:
 		void captureCmd(std::string s);
@@ -16,10 +41,11 @@ namespace commands::gui {
 		void clear(bool ui = false, bool buffer = false);
 		void stop();
 		void alert(std::string reason = {});
-	public:
+	private:
 		void drawItem(std::string item);
 		void addItem(std::string item);
 	public:
+		commandBoxClues m_clues{};
 		bool m_draw{};
 		bool m_lock{};
 		bool m_clearCommandBoxOnEnter{ true };

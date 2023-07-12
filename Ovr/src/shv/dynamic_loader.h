@@ -20,7 +20,7 @@ namespace shv {
 			m_module = LoadLibraryA(_path.append(path.string()).string().c_str());
 		}
 		virtual void free() {
-			if (m_module)
+			if (m_module && m_module != INVALID_HANDLE_VALUE)
 				FreeLibrary(m_module);
 		}
 	private:

@@ -45,6 +45,24 @@ namespace util {
 			}
 			return nullptr;
 		}
+		inline GtaThread* getGtaThread(const std::string& str) {
+			if (GtaThread* thread{ getGtaThread(stoi(str)) }) {
+				return thread;
+			}
+			if (GtaThread* thread{ getGtaThread(stoul(str)) }) {
+				return thread;
+			}
+			std::vector<GtaThread*> results{};
+			for (GtaThread* thread : getThreads()) {
+				if (str.find(thread->m_name) != std::string::npos) {
+					results.push_back(thread);
+				}
+			}
+			if (results.size() >= 1) {
+				return results[0];
+			}
+			return nullptr;
+		}
 		inline CGameScriptHandlerNetComponent* getScriptHandlerNetComponet(GtaThread* thr) {
 			return thr->m_net_component;
 		}
@@ -123,29 +141,20 @@ namespace util {
 			return nullptr;
 		}
 		inline bool deserialiseNetMessage(enum eNetMessage& msg, class rage::datBitBuffer& buffer) {
-			#define RET_DEAD() { \
-				msg = eNetMessage::MsgInvalid; \
-				return false; \
+			uint32_t pos;
+			uint32_t magic;
+			uint32_t length;
+			uint32_t extended{};
+			if ((buffer.m_flagBits & 2) != 0 || (buffer.m_flagBits & 1) == 0 ? (pos = buffer.m_curBit) : (pos = buffer.m_maxBit),
+				buffer.m_bitsRead + 15 > pos || !buffer.ReadDword(&magic, 14) || magic != 0x3246 || !buffer.ReadDword(&extended, 1))
+			{
+				msg = eNetMessage::MsgInvalid;
+				return false;
 			}
-			if (buffer.m_flagBits & 2)
-				RET_DEAD();
-			u32 pos{ (buffer.m_flagBits & 1) == 0 ? buffer.m_curBit : buffer.m_maxBit };
-			u32 magic{};
-			u32 extended{};
-			if (buffer.m_bitsRead + 15 > pos)
-				RET_DEAD();
-			if (!buffer.ReadDword(&magic, 14))
-				RET_DEAD();
-			if (magic != 0x3246)
-				RET_DEAD();
-			if (!buffer.ReadDword(&extended, 1))
-				RET_DEAD();
-			u32 length{ extended ? 16u : 8u };
-			pos = (buffer.m_flagBits & 1) == 0 ? buffer.m_curBit : buffer.m_maxBit;
-			if (length + buffer.m_bitsRead <= pos) {
-				if (buffer.ReadDword((u32*)&msg, length))
-					return true;
-			}
+			length = extended ? 16 : 8;
+			if ((buffer.m_flagBits & 1) == 0 ? (pos = buffer.m_curBit) : (pos = buffer.m_maxBit),
+				length + buffer.m_bitsRead <= pos && buffer.ReadDword((uint32_t*)&msg, length))
+				return true;
 			return false;
 		}
 	}

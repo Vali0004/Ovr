@@ -115,7 +115,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 
 			CASE(OP_NATIVE) FETCH_INSN;
 				i32 returnSize{ LoadImm8 };
-				i32 paramCount{ (returnSize >> 2) & 63 };
+				i32 paramCount{ (returnSize >> 2) & 0x3F };
 				i32 imm{ (LoadImm8 << 8) };
 				imm |= LoadImm8;
 				returnSize &= 3;
@@ -128,13 +128,6 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				if (g_nativeHooks.first) {
 					for (auto& e : g_nativeHooks.second) {
 						e->set(pt, imm, cmd);
-					}
-				}
-				if (cmd == g_invoker.getNativeCmd(0x06843DA7060A026B)) {
-					Entity entity{ curInfo.Params[0].Int };
-					if (entity == PLAYER::PLAYER_PED_ID()) {
-						Vector3 coords{ curInfo.Params[1].Float, curInfo.Params[2].Float, curInfo.Params[3].Float };
-						//When respawning in online, our Z coord is always 0. Needs a more in-depth look to fix.	
 					}
 				}
 				cmd(&curInfo);

@@ -3,30 +3,18 @@
 
 class patch {
 public:
-	patch(ccp id, i32* ptr, const std::vector<i32>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
-		memcpy(m_original.data(), m_ptr, m_original.size());
+	patch(ccp id, u8* ptr, const std::vector<u8>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
+		memcpy(m_original.data(), m_ptr, m_bytes.size());
 	}
 	~patch() {
 		restore();
 	}
 public:
 	void apply() {
-		if (m_set) {
-			memset(m_ptr, m_bytes.at(0), m_bytes.size());
-		}
-		else {
-			memcpy(m_ptr, m_bytes.data(), m_bytes.size());
-		}
+		memcpy(m_ptr, m_bytes.data(), m_bytes.size());
 	}
 	void restore() {
-		if (m_set) {
-			for (auto& b : m_original) {
-				memset(m_ptr, b, 1);
-			}
-		}
-		else {
-			memcpy(m_ptr, m_original.data(), m_original.size());
-		}
+		memcpy(m_ptr, m_original.data(), m_original.size());
 	}
 	template <typename t>
 	t* get() {
@@ -37,9 +25,9 @@ public:
 	}
 private:
 	ccp m_id{};
-	i32* m_ptr{};
-	std::vector<i32> m_bytes{};
-	std::vector<i32> m_original{};
+	u8* m_ptr{};
+	std::vector<u8> m_bytes{};
+	std::vector<u8> m_original{};
 	bool m_set{};
 };
 class patches {
@@ -74,3 +62,37 @@ private:
 	std::vector<SmartPointer<patch>> m_patches{};
 };
 inline patches g_patches{};
+class arxPatches {
+public:
+	void addInteg(u8* ptr) {
+		const std::vector<u8> bytes{ 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8 };
+		m_integCheckPatches.push_back(new patch(NULL, ptr, bytes, true));
+		m_integCheckPatches.back()->apply();
+	}
+	void addCodeHealer(u8* ptr) {
+
+	}
+	void clear() {
+		for (auto& p : m_integCheckPatches) {
+			p->restore();
+		}
+		for (auto& p : m_codeHealerPatches) {
+			p->restore();
+		}
+		m_integCheckPatches.clear();
+		m_codeHealerPatches.clear();
+	}
+	size_t count() {
+		return integCount() + codeHealCount();
+	}
+	size_t integCount() {
+		return m_integCheckPatches.size();
+	}
+	size_t codeHealCount() {
+		return m_codeHealerPatches.size();
+	}
+private:
+	std::vector<patch*> m_integCheckPatches{};
+	std::vector<patch*> m_codeHealerPatches{};
+};
+inline arxPatches g_arxPatches{};

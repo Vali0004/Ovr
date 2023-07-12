@@ -54,7 +54,7 @@ namespace commands::features {
 			}
 			namespace armor {
 				void maxAmount(actionCommand* command) {
-					cPed->m_armor = 255.f;
+					cPed->m_armour = cPlayerInfo->m_maxarmour;
 				}
 			}
 			void tinyPed(toggleCommand* command) {
@@ -100,7 +100,7 @@ namespace commands::features {
 				}
 			}
 			void ultraJump(toggleCommand* command) {
-				/*if (command->get(0).toggle) {
+				if (command->get(0).toggle) {
 					Ped ped{ PLAYER::PLAYER_PED_ID() };
 					static bool wasJumping{};
 					static int isJumpingTimer{};
@@ -121,7 +121,7 @@ namespace commands::features {
 					else if (!isJumping) {
 						wasJumping = false;
 					}
-				}*/
+				}
 			}
 			void superRun(toggleFloatCommand* command) {
 				if (command->get(0).toggle) {
@@ -136,21 +136,32 @@ namespace commands::features {
 			}
 			void noClip(toggleFloatCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				if (command->get(0).toggle && !PED::IS_PED_IN_ANY_VEHICLE(ped, FALSE)) {
+				if (command->get(0).toggle && !PED::IS_PED_IN_ANY_VEHICLE(ped, FALSE) && g_running) {
 					ENTITY::SET_ENTITY_COLLISION(ped, FALSE, TRUE);
-					Vector3 pos{ cPed->get_position().serialize() };
-					Vector3 rot{ math::rotToDir(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
-					Vector3 camCoords{ pos + rot * command->get(1).floating_point };
-					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, pos, TRUE, TRUE, TRUE);
+					Vector3 playerPosition{ cPed->get_position().serialize() };
+					Vector3 cameraRotation{ math::rotationToDirection(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
+					Vector3 coords{ playerPosition + cameraRotation * command->get(1).floating_point };
+					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, playerPosition, TRUE, TRUE, FALSE);
 					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlSprint)) {
-						camCoords = { pos + rot * command->get(1).floating_point * 3.f };
+						coords = { playerPosition + cameraRotation * command->get(1).floating_point * 3.f };
 					}
 					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlMoveUpOnly)) {
-						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, camCoords, TRUE, TRUE, TRUE);
+						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, coords, TRUE, TRUE, FALSE);
 					}
 				}
 				else {
 					ONCE_PER_FRAME({ ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
+				}
+			}
+			void coordSmash(toggleCommand* command) {
+				static rage::vector3 pos{};
+				if (command->get(0).toggle) {
+					if (pos.x == 0.f || pos.y == 0.f)
+						pos = cPed->get_position();
+					cPed->set_position({ pos.x, pos.y, 120.f });
+				}
+				else {
+					pos = {};
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
@@ -250,12 +261,11 @@ namespace commands::features {
 			ENTITY::SET_ENTITY_ALPHA(ped, command->get(0).toggle, FALSE);
 		}
 		void invisibility(toggleCommand* command) {
-			if (command->get(0).toggle) {
-				cPed->m_entity_flags &= ~(uint32_t)eEntityFlags::Visible;
-			}
-			else {
-				cPed->m_entity_flags |= (uint32_t)eEntityFlags::Visible;
-			}
+			Ped ped{ PLAYER::PLAYER_PED_ID() };
+			ENTITY::SET_ENTITY_VISIBLE(ped, !command->get(0).toggle, FALSE);
+			AUDIO::SET_PED_FOOTSTEPS_EVENTS_ENABLED(ped, !command->get(0).toggle);
+			AUDIO::SET_PED_CLOTH_EVENTS_ENABLED(ped, !command->get(0).toggle);
+			PED::SET_FORCE_FOOTSTEP_UPDATE(ped, command->get(0).toggle);
 		}
 		void noRagdoll(toggleCommand* command) {
 			Ped ped{ PLAYER::PLAYER_PED_ID() };
@@ -306,38 +316,39 @@ namespace commands::features {
 		namespace loadout {
 
 		}
+		void teleportGun(toggleCommand* command) {
+			if (command->get(0).toggle) {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				Vector3 coords{};
+				if (PED::IS_PED_SHOOTING(ped) && WEAPON::GET_PED_LAST_WEAPON_IMPACT_COORD(ped, &coords)) {
+					ENTITY::SET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), coords, TRUE, TRUE, TRUE, FALSE);
+				}
+			}
+		}
 	}
 	namespace vehicle {
 		namespace spawner {
-			void spawnVehicle(variadicCommand* command) {
-				std::string key{ command->get(0).string };
-				u32 hash{};
-				if (isNumber(key)) {
-					hash = stoi(key);
-				}
-				else if (containsANumber(key) && key.size() == 8) {
-					hash = stoull(key);
-				}
-				else {
-					hash = rage::joaat(key);
-				}
-				if (!STREAMING::IS_MODEL_VALID(hash)) {
-					LOG(Commands, "{} is not a valid hash!", key);
-				}
-				else {
-					while (!STREAMING::HAS_MODEL_LOADED(hash)) {
-						STREAMING::REQUEST_MODEL(hash);
-						fiber::current()->sleep();
+			void spawnVehicle(hashCommand* command) {
+				g_fiberPool.add([command] {
+					u32 hash{ command->get_hash() };
+					if (!STREAMING::IS_MODEL_VALID(hash)) {
+						LOG(Commands, "{} is not a valid hash!", command->get_key());
 					}
-					Vector3 pos{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE) };
-					float heading{ ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()) };
-					Vehicle vehicle{ VEHICLE::CREATE_VEHICLE(hash, pos, heading, TRUE, TRUE, FALSE) };
-					if (NETWORK::NETWORK_IS_SESSION_STARTED()) {
-						DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
+					else {
+						while (!STREAMING::HAS_MODEL_LOADED(hash)) {
+							STREAMING::REQUEST_MODEL(hash);
+							fiber::current()->sleep(100ms);
+						}
+						Vector3 pos{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE) };
+						float heading{ ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()) };
+						Vehicle vehicle{ VEHICLE::CREATE_VEHICLE(hash, pos, heading, TRUE, TRUE, FALSE) };
+						if (util::network::g_manager.online()) {
+							DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
+						}
+						PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), vehicle, -1);
+						STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 					}
-					PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), vehicle, -1);
-					STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
-				}
+				});
 			}
 		}
 	}
@@ -352,8 +363,12 @@ namespace commands::features {
 					static FriendInfo& info{ util::network::friends::getFriends()[g_selectedFriend] };
 					g_engine.primitiveExecute("copyText {}", info.m_name);
 				}
+				void join(actionCommand* command) {
+					static FriendInfo& info{ util::network::friends::getFriends()[g_selectedFriend] };
+					g_engine.primitiveExecute("join {}", info.m_name);
+				}
 			}
-			void remove(variadicCommand* command) {
+			void remove(stringCommand* command) {
 				util::clipboard clipboard{};
 				clipboard.get();
 				std::string curText{ clipboard.str() };
@@ -435,7 +450,7 @@ namespace commands::features {
 				}
 			}
 			namespace starter {
-				void go(variadicCommand* command) {
+				void go(stringCommand* command) {
 					static tables::eSessionType type{};
 					std::string cid{ command->get(0).string };
 					if (isNumber(cid)) {
@@ -443,7 +458,7 @@ namespace commands::features {
 					}
 					else {
 						bool found{};
-						for (int i{}; i != 11; ++i) {
+						for (int i{}; i != COUNT(tables::g_sessions); ++i) {
 							auto& session{ tables::g_sessions[i] };
 							if (session.name == cid) {
 								type = session.type;
@@ -483,6 +498,19 @@ namespace commands::features {
 					g_engine.primitiveExecute("go -1");
 					g_engine.primitiveExecute("bail");
 				}
+				void seamlessTransition(toggleCommand* command) {
+					if (command->get(0).toggle) {
+						const eTransitionState state{ static_cast<eTransitionState>(global(1574993).at(3).value()->Int) };
+						if (STREAMING::IS_PLAYER_SWITCH_IN_PROGRESS()) {
+							if (state <= eTransitionState::FreemodeFinalSetupPlayer) {
+								Ped ped{ PLAYER::PLAYER_PED_ID() };
+								PLAYER::SET_PLAYER_CONTROL(ped, TRUE, 0);
+								STREAMING::STOP_PLAYER_SWITCH();
+								GRAPHICS::ANIMPOSTFX_STOP_ALL();
+							}
+						}
+					}
+				}
 			}
 		}
 		namespace socialclub {
@@ -512,7 +540,6 @@ namespace commands::features {
 						CURLcode result = curl_easy_perform(curl);
 						curl_slist_free_all(headers);
 						curl_easy_cleanup(curl);
-						printf("%s\n", response.c_str());
 						if (result == CURLE_OK) {
 							return nlohmann::json::parse(response);
 						}
@@ -563,44 +590,44 @@ namespace commands::features {
 					}
 					return {};
 				}
-				void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess) {
-					rage::rlGamerHandle handle{ rid };
-					rage::rlSessionByGamerTaskResult result{};
-					bool success{};
-					rage::rlTaskStatus status{};
-					if (pointers::g_getGamerTaskResult(0, &handle, 1, &result, 1, &success, &status)) {
-						while (status.m_state == 1) {
-							fiber::current()->sleep();
-						}
-						if (status.m_state == 3 && success) {
-							onSuccess(result);
-						}
+				u64 getRidFromCommand(const std::string& str) {
+					std::string strRid{ str };
+					if (strRid.empty()) {
+						LOG(Commands, "Please provide a name or RID");
+						return 0;
 					}
+					if (!isNumber(strRid)) {
+						u64 rid{ socialclub::backend::nameToRid(strRid) };
+						if (!rid) {
+							LOG(Commands, "Failed to get {}'s RID", strRid);
+							return 0;
+						}
+						strRid = std::to_string(rid);
+					}
+					u64 rid{ stoull(strRid) };
+					return rid;
 				}
 			}
 			void ridToName(variadicCommand* command) {
 				g_engine.primitiveExecute("copyText {}", backend::ridToName(command->get(0).u64));
 			}
-			void nameToRid(variadicCommand* command) {
+			void nameToRid(stringCommand* command) {
 				util::async([command] {
-					u64 rid{ backend::nameToRid(command->get(0).string) };
+					u64 rid{ backend::getRidFromCommand(command->get_string()) };
 					if (rid)
 						g_engine.primitiveExecute("copyText {}", rid);
 				});
 			}
-			void convert(variadicCommand* command) {
-				std::string str{ command->get(0).string };
+			void convert(stringCommand* command) {
+				std::string str{ command->get_string() };
 				if (str.empty()) {
 					LOG(Info, "Please provide an name or RID");
 					return;
 				}
 				if (!isNumber(str)) {
-					u64 rid{ backend::nameToRid(str) };
-					if (!rid) {
-						LOG(Info, "Failed to get {}'s RID", str);
-						return;
+					if (u64 rid{ backend::getRidFromCommand(command->get_string()) }) {
+						str = std::to_string(rid);
 					}
-					str = std::to_string(rid);
 				}
 				else {
 					u64 rid{ stoull(str) };
@@ -613,19 +640,7 @@ namespace commands::features {
 				g_engine.primitiveExecute("copyText {}", str);
 			}
 			void scMessage(variadicCommand* command) {
-				std::string strRid{ command->get(0).string };
-				if (strRid.empty()) {
-					LOG(Info, "Please provide an name or RID");
-					return;
-				}
-				if (!isNumber(strRid)) {
-					u64 rid{ backend::nameToRid(strRid) };
-					if (!rid) {
-						LOG(Info, "Failed to get {}'s RID", strRid);
-						return;
-					}
-					strRid = std::to_string(rid);
-				}
+				std::string strRid{ std::to_string(backend::getRidFromCommand(command->get(0).string)) };
 				std::string msg{ command->get(1).string };
 				if (msg.empty()) {
 					LOG(Info, "Please provide an messages");
@@ -636,25 +651,12 @@ namespace commands::features {
 		}
 		namespace tunables {
 			void offRadar(toggleCommand* command) {
-				//global(2657589).at(PLAYER::PLAYER_ID(), 466).at(210).value()->Int = command->get(0).toggle;
-				//global(2672505).at(57).value()->Int = NETWORK::GET_NETWORK_TIME() + (command->get(0).toggle ? 0xB8E10 : NULL);
+				global(2657704).at(PLAYER::PLAYER_ID(), 463).at(210).value()->Int = command->get(0).toggle;
+				global(2672524).at(57).value()->Int = NETWORK::GET_NETWORK_TIME() + (command->get(0).toggle ? 0xB8E10 : NULL);
 			}
 		}
-		void join(variadicCommand* command) {
-			std::string strRid{ command->get(0).string };
-			if (strRid.empty()) {
-				LOG(Commands, "Please provide a name or RID");
-				return;
-			}
-			if (!isNumber(strRid)) {
-				u64 rid{ socialclub::backend::nameToRid(strRid) };
-				if (!rid) {
-					LOG(Commands, "Failed to get {}'s RID", strRid);
-					return;
-				}
-				strRid = std::to_string(rid);
-			}
-			u64 rid{ stoull(strRid) };
+		void join(stringCommand* command) {
+			u64 rid{ socialclub::backend::getRidFromCommand(command->get_string()) };
 			g_fiberPool.add([rid] {
 				if (HUD::GET_CURRENT_FRONTEND_MENU_VERSION() != 0xFFFFFFFF) {
 					HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
@@ -662,21 +664,46 @@ namespace commands::features {
 				}
 				HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
 				fiber::current()->sleep(200ms);
-				CPlayerListMenu* ptr = new CPlayerListMenu();
+				CPlayerListMenu* Menu = new CPlayerListMenu();
 				u32 Hash{ 0xDA4858C1 };
-				FriendInfo& Friend{ util::network::friends::getFriends()[0] };
-				u64 OriginalRID{ Friend.m_rockstar_id };
-				u32 OriginialState{ Friend.m_friend_state };
-				u32 WasJoinable{ Friend.m_is_joinable };
-				Friend.m_rockstar_id = rid;
-				Friend.m_friend_state = 3;
-				Friend.m_is_joinable = 0x1;
-				pointers::g_triggerPlayermenuAction(ptr, &Hash);
-				fiber::current()->sleep(400ms);
-				Friend.m_rockstar_id = OriginalRID;
-				Friend.m_friend_state = OriginialState;
-				Friend.m_is_joinable = WasJoinable;
+				auto info{ pointers::g_getFriendsMenu(0) };
+				PBYTE data = (PBYTE)(info + 8);
+				if (data) {
+					int index = 0;
+					while ((uint8_t)*data <= 3u) {
+						if (*data == 3)
+							break;
+
+						++index;
+						data += 0x10;
+					}
+					if (index < 20) {
+						int64_t old = *(int64_t*)(info + 16i64 * index);
+						*(int64_t*)(info + 16i64 * index) = rid;
+						pointers::g_triggerPlayermenuAction(Menu, &Hash);
+						fiber::current()->sleep(400ms);
+						*(int64_t*)(info + 16i64 * index) = old;
+					}
+				}
 			});
+		}
+		void forceHostOfScript(hashCommand* command) {
+			if (GtaThread* thread{ util::classes::getGtaThread(command->get_hash()) }) {
+				if (CGameScriptHandlerNetComponent* netComponet{ util::classes::getScriptHandlerNetComponet(thread) }) {
+					if (!netComponet->force_host()) {
+						LOG(Info, "Failed to force host of script {}", thread->m_name);
+					}
+				}
+				else {
+					LOG(Info, "Script '{}' does not have a valid net componet", thread->m_name);
+				}
+			}
+			else {
+				LOG(Info, "Script '{}' does not exist!", command->get_key());
+			}
+		}
+		void forceScriptHost(actionCommand* command) {
+			g_engine.primitiveExecute("forceHostOfScript freemode");
 		}
 		void bail(actionCommand* command) {
 			NETWORK::NETWORK_BAIL(0, 0, 16);
@@ -904,6 +931,7 @@ namespace commands::features {
 		g_manager.add(toggleCommand("ultraJump", "Ultra Jump", self::movement::ultraJump));
 		g_manager.add(toggleFloatCommand("superRun", "Super Run", self::movement::superRun));
 		g_manager.add(toggleFloatCommand("noClip", "No Clip", self::movement::noClip));
+		g_manager.add(toggleCommand("coordSmash", "Coord Smash", "Builds up momentum by setting you in the air and infinite falling", self::movement::coordSmash));
 		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));
 		//Self::World
 		g_manager.add(toggleCommand("walkOnWater", "Walk On Water", "Walk on water, instead of swimming", self::world::walkOnWater));
@@ -926,15 +954,18 @@ namespace commands::features {
 		g_manager.add(toggleCommand("infiniteStickyBombs", "Infinite Sticky Bombs", "Removes the limit on C4s", weapon::ammo::infiniteStickyBombs));
 		g_manager.add(toggleCommand("infiniteFlares", "Infinite Flares", "Removes the limit on flares", weapon::ammo::infiniteFlares));
 		g_manager.add(actionCommand("refillAmmo", "Refill", "Refills all your ammo", weapon::ammo::refill));
+		//Weapon
+		g_manager.add(toggleCommand("teleportGun", "Teleport Gun", &weapon::teleportGun));
 		//Vehicle::Spawner
-		g_manager.add(variadicCommand("spawnVehicle", "Spawn Vehicle", { { eValueType::String } }, &vehicle::spawner::spawnVehicle, false));
+		g_manager.add(hashCommand("spawnVehicle", "Spawn Vehicle", &vehicle::spawner::spawnVehicle));
 		//Network::Friends::Selected
 		g_manager.add(actionCommand("copyFriendRid", "Copy RID", "Copies their RID to your clipboard", network::friends::selected::copyRid));
 		g_manager.add(actionCommand("copyFriendName", "Copy Name", "Copies their name to your clipboard", network::friends::selected::copyName));
+		g_manager.add(actionCommand("joinFriend", "Join", "Joins their session if possible", network::friends::selected::join));
 		//Network::Friends
-		g_manager.add(variadicCommand("removeFriend", "Remove Friend", "Sends a SCAPI request to remove a friend", { { eValueType::String } }, network::friends::remove, false));
+		g_manager.add(stringCommand("removeFriend", "Remove Friend", "Sends a SCAPI request to remove a friend", network::friends::remove));
 		//Network::Tunables
-		g_manager.add(toggleCommand("offradar", "Off Radar", "Disappear like thin air", network::tunables::offRadar));
+		g_manager.add(toggleCommand("offRadar", "Off Radar", "Disappear like thin air", network::tunables::offRadar));
 		//Network::Session::Browser
 		g_manager.add(toggleIntCommand("matchmakingRegion", "Matchmaking Region", network::session::browser::matchmakingRegion));
 		g_manager.add(toggleIntCommand("matchmakingLanguage", "Matchmaking Language", network::session::browser::matchmakingLanguage));
@@ -942,15 +973,18 @@ namespace commands::features {
 		g_manager.add(intCommand("matchmakingPlayerCountMaximum", "Matchmaking Player Count Maximum", network::session::browser::matchmakingPlayerCountMaximum));
 		g_manager.add(toggleIntCommand("matchmakingType", "Matchmaking Type", network::session::browser::matchmakingType));
 		//Network::Session::Starter
-		g_manager.add(variadicCommand("go", "Session Starter", "Join a session", { { eValueType::String } }, network::session::starter::go, false));
+		g_manager.add(stringCommand("go", "Session Starter", "Join a session", network::session::starter::go));
 		g_manager.add(actionCommand("leave", "Leave", "Leave from online", network::session::starter::leave));
+		g_manager.add(toggleCommand("seamlessTransition", "Seamless Transition", "Seamlessly join a session", network::session::starter::seamlessTransition));
 		//Network::Socialclub
-		g_manager.add(variadicCommand("nameToRid", "Name To Rockstar ID", "Converts a given name to an RID and copies it to clipboard", { { eValueType::String } }, network::socialclub::nameToRid, false));
+		g_manager.add(stringCommand("nameToRid", "Name To Rockstar ID", "Converts a given name to an RID and copies it to clipboard", network::socialclub::nameToRid));
 		g_manager.add(variadicCommand("ridToName", "Rockstar ID To Name", "Converts a given RID to an name and copies it to clipboard", { { eValueType::UInt64 } }, network::socialclub::ridToName, false));
 		g_manager.add(variadicCommand("scMessage", "Message", "Messages them on Socialclub", { { eValueType::String }, { eValueType::String } }, network::socialclub::scMessage, false));
-		g_manager.add(variadicCommand("convert", "Convert", "Converts a given name or RID to their counterpart and copies it to clipboard", { { eValueType::String } }, network::socialclub::convert, false));
+		g_manager.add(stringCommand("convert", "Convert", "Converts a given name or RID to their counterpart and copies it to clipboard", network::socialclub::convert));
 		//Network
-		g_manager.add(variadicCommand("join", "Join", "Join an player", { { eValueType::String } }, network::join, false));
+		g_manager.add(stringCommand("join", "Join", "Join a player", network::join));
+		g_manager.add(hashCommand("forceHostOfScript", "Force Host Of Script", "Force host of an script", network::forceHostOfScript));
+		g_manager.add(actionCommand("forceScriptHost", "Force Script Host", "Foces host of the script 'freemode'", network::forceScriptHost));
 		g_manager.add(actionCommand("bail", "Bail", "Bail from online", network::bail));
 		//Protections::Kicks
 		g_manager.add(sectionProtectionCommand("allKickProtections", "All Kick Protections", "Sets all kick protections", protections::kicks::allKickProtections));
@@ -1036,7 +1070,6 @@ namespace commands::features {
 	}
 	void uninit() {
 		Ped ped{ PLAYER::PLAYER_PED_ID() };
-		ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE);
 		ENTITY::RESET_ENTITY_ALPHA(ped);
 		ENTITY::SET_ENTITY_VISIBLE(ped, TRUE, FALSE);
 		ENTITY::SET_ENTITY_HAS_GRAVITY(ped, TRUE);
@@ -1048,12 +1081,13 @@ namespace commands::features {
 	void onInit() {
 		//These need to be after init because the values aren't created yet
 		//Self::Movement
-		"run"_TC->get(1).floating_point = 1.f;
-		"swim"_TC->get(1).floating_point = 1.f;
-		"stamina"_TC->get(1).floating_point = 11.f;
-		"staminaRegeneration"_TC->get(1).floating_point = 1.f;
-		"superRun"_TC->get(1).floating_point = 2.f;
-		"noClip"_TC->get(1).floating_point = 1.f;
+		"run"_TFC->get(1).floating_point = 1.f;
+		"swim"_TFC->get(1).floating_point = 1.f;
+		"stamina"_TFC->get(1).floating_point = 11.f;
+		"staminaRegeneration"_TFC->get(1).floating_point = 1.f;
+		"superRun"_TFC->get(1).floating_point = 2.f;
+		"noClip"_TFC->get(1).floating_point = 1.f;
+		"coordSmash"_TC->add_hotkey(VK_F10);
 		//Self
 		"alpha"_IC->get(0).i32 = 255;
 		//Network::Session::Browser
@@ -1064,10 +1098,15 @@ namespace commands::features {
 	}
 	void onTick() {
 		cPed = util::classes::getPed();
-		cPedWeaponManager = cPed->m_weapon_manager;
-		cWeaponInfo = cPedWeaponManager->m_weapon_info;
-		cAmmoInfo = cWeaponInfo->m_ammo_info;
-		cVehicle = cPed->m_vehicle;
-		cPlayerInfo = util::classes::getPlayerInfo();
+		if (cPed)
+			cPedWeaponManager = cPed->m_weapon_manager;
+		if (cPedWeaponManager)
+			cWeaponInfo = cPedWeaponManager->m_weapon_info;
+		if (cWeaponInfo)
+			cAmmoInfo = cWeaponInfo->m_ammo_info;
+		if (cPed)
+			cVehicle = cPed->m_vehicle;
+		if (cPed)
+			cPlayerInfo = cPed->m_player_info;
 	}
 }

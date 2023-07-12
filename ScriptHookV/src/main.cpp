@@ -9,11 +9,13 @@ BOOL APIENTRY DllMain(HMODULE hmod, DWORD callReason, LPVOID reserved) {
 		break;
 	case DLL_THREAD_DETACH: //We should be able to forcefully yeet the dll if anything happens.
 		global::g_running = false;
-		CloseHandle(global::g_thread);
+		if (global::g_thread)
+			CloseHandle(global::g_thread);
 		break;
 	case DLL_PROCESS_DETACH:
 		global::g_running = false;
-		CloseHandle(global::g_thread);
+		if (global::g_thread)
+			CloseHandle(global::g_thread);
 		break;
 	}
 	return TRUE;

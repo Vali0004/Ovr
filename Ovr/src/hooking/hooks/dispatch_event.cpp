@@ -9,6 +9,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 		rage::datBitBuffer buffer(pEvent->m_data, pEvent->m_length);
 		buffer.m_flagBits = 1;
 		if (eNetMessage type{}; player && util::network::deserialiseNetMessage(type, buffer)) {
+			//LOG(Debug, "Net message 0x{:X} sent", (u32)type);
 			g_statistics.m_incomingNetworkEvents++;
 			switch (type) {
 			case eNetMessage::CMsgLostConnectionToHost: {

@@ -8,19 +8,19 @@ namespace commands {
 		const char* string;
 		bool toggle;
 		float floating_point;
-		int8_t i8;
-		uint8_t u8;
-		int16_t i16;
-		uint16_t u16;
-		int32_t i32;
-		uint32_t u32;
-		int64_t i64;
-		uint64_t u64;
+		i8 i8;
+		u8 u8;
+		i16 i16;
+		u16 u16;
+		i32 i32;
+		u32 u32;
+		i64 i64;
+		u64 u64;
 		CNetGamePlayer* game_player;
 		rage::netPlayer* net_player;
 		rage::rlGamerInfo* gamer_info;
 	};
-	enum class eValueType : uint8_t {
+	enum class eValueType : u8 {
 		String,
 		Boolean,
 		FloatingPoint,
@@ -53,7 +53,7 @@ namespace commands {
 		void add_hotkey(int key);
 		bool pressed();
 	};
-	enum class eCommandType : uint8_t {
+	enum class eCommandType : u8 {
 		AbstractCommand,
 		ToggleCommand,
 		IntCommand,
@@ -63,6 +63,8 @@ namespace commands {
 		ActionCommand,
 		ProtectionCommand,
 		SectionProtectionCommand,
+		StringCommand,
+		HashCommand,
 		VariadicCommand
 	};
 	class abstractCommand {
@@ -77,10 +79,6 @@ namespace commands {
 			deallocate();
 		}
 		virtual void init() {
-			if (!m_looped) {
-				if (m_type != eCommandType::AbstractCommand && m_type != eCommandType::IntCommand && m_type != eCommandType::FloatCommand && m_type != eCommandType::ActionCommand)
-					m_looped = true;
-			}
 			m_intialized = true;
 		}
 		virtual void run() {}

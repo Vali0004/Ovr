@@ -9,7 +9,7 @@ namespace commands {
 		if (isNumber(arg)) {
 			u32 index{ stoul(arg) };
 			if (index > util::network::g_manager.m_playerCount) {
-				g_notifications.add("Commands", "The index '{}' provided is out of range! Please provide a name or valid index.", index);
+				LOG(Commands, "The index '{}' provided is out of range! Please provide a name or valid index.", index);
 				return {};
 			}
 			p = util::network::g_manager[index];
@@ -23,7 +23,7 @@ namespace commands {
 						break;
 					}
 					else if (player.m_name.find(name) != -1) {
-						g_notifications.add("Commands", "The name '{}' isn't unique enough! Please try again", name);
+						LOG(Commands, "The name '{}' isn't unique enough! Please try again", name);
 						break;
 					}
 				}
@@ -37,13 +37,13 @@ namespace commands {
 		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
 			if (command->m_type != eCommandType::ToggleIntCommand && command->m_type != eCommandType::ToggleFloatCommand) {
 				if (trueArgCount != 1) {
-					g_notifications.add("Commands", "You provided {} arguments for a command that requires one argument.", trueArgCount);
+					LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
 					return;
 				}
 			}
 			else {
 				if (trueArgCount != 2) {
-					g_notifications.add("Commands", "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
+					LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
 					return;
 				}
 			}
@@ -68,9 +68,7 @@ namespace commands {
 			command->get(1).floating_point = convertData<float>(arguments[1]);
 		} break;
 		case eCommandType::ActionCommand: {
-			//We do handle it below, but we can't be sure
-			// Just incase we provide a unneeded space, we won't kill everything. An example would be "suicide "
-			g_fiberPool.add([command] { command->run(); });
+			//Handled below, no arguments required.
 		} break;
 		case eCommandType::ProtectionCommand: {
 			command->get(0).string = arguments[1].c_str();
@@ -81,11 +79,21 @@ namespace commands {
 			static_cast<sectionProtectionCommand*>(command)->update(command->get(0).string);
 			static_cast<sectionProtectionCommand*>(command)->run();
 		} break;
+		case eCommandType::StringCommand: {
+			command->m_buffer.clear();
+			command->m_context = context;
+			size_t index{ context.find(arguments[1]) };
+			command->m_buffer.push_back(context.substr(index));
+			static_cast<stringCommand*>(command)->set_string(command->m_buffer[0]);
+		} break;
+		case eCommandType::HashCommand: {
+			command->get(0).string = arguments[1].c_str();
+		} break;
 		case eCommandType::VariadicCommand: {
 			if (command->has_value()) {
 				if (command->get_value(0)->m_type != eValueType::String) {
 					if (command->value_count() != trueArgCount) {
-						g_notifications.add("Commands", "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
+						LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
 						return;
 					}
 					for (size_t i{ 1 }; i != arguments.size(); ++i) {
@@ -154,30 +162,26 @@ namespace commands {
 					}
 				}
 			}
-			if (command->m_type == eCommandType::VariadicCommand) {
-				if (!dynamic_cast<variadicCommand*>(command)->looped())
-					g_fiberPool.add([command] { command->run(); });
-			}
-			if (!command->m_looped)
-				g_fiberPool.add([command] { command->run(); });
 		} break;
 		default: {
 
 		} break;
 		}
+		if (!command->m_looped)
+			command->run();
 	}
 	bool engine::execute(std::string& string) {
 		if (!string.size()) {
-			g_notifications.add("Commands", "Empty command string!");
+			LOG(Commands, "Empty command string!");
 			return false;
 		}
 		auto words{ getMatches(string, R"_(\S+)_") };
 		if (words.empty()) {
-			g_notifications.add("Commands", "No command!");
+			LOG(Commands, "No command!");
 			return false;
 		}
 		if (isNumber(words[0])) {
-			g_notifications.add("Commands", "Provide a command!");
+			LOG(Commands, "Provide a command!");
 			return false;
 		}
 		abstractCommand* command{ getCommand(words[0]) };
@@ -197,7 +201,7 @@ namespace commands {
 				return true;
 			} break;
 			}
-			g_notifications.add("Commands", "You provided no arguments for a command that requires arguments!");
+			LOG(Commands, "You provided no arguments for a command that requires arguments!");
 			return false;
 		}
 		else if (words.size() > 1) {
@@ -249,7 +253,7 @@ namespace commands {
 	abstractCommand* engine::getCommand(const std::string& search) {
 		auto matches{ findMatches(search) };
 		if (matches.empty()) {
-			g_notifications.add("Commands", "'{}' isn't a valid command.", search);
+			LOG(Commands, "'{}' isn't a valid command.", search);
 			return nullptr;
 		}
 		else {
@@ -264,10 +268,10 @@ namespace commands {
 			}
 			if (matches.size() > 1) {
 				if (m_useFirstResultOnTooManyResults) {
-					g_notifications.add("Commands", "'{}' isn't unique enough. Using {} instead.", search, matches[0]->m_id);
+					LOG(Commands, "'{}' isn't unique enough. Using {} instead.", search, matches[0]->m_id);
 					return matches[0];
 				}
-				g_notifications.add("Commands", "'{}' isn't unique enough. Maybe you meant {}?", search, matches[0]->m_id);
+				LOG(Commands, "'{}' isn't unique enough. Maybe you meant {}?", search, matches[0]->m_id);
 			};
 			return matches[0];
 		}

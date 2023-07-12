@@ -57,6 +57,7 @@ namespace commands::features {
 			extern void ultraJump(toggleCommand* command);
 			extern void superRun(toggleFloatCommand* command);
 			extern void noClip(toggleFloatCommand* command);
+			extern void coordSmash(toggleCommand* command);
 			extern void walkOnAir(toggleCommand* command);
 		}
 		namespace world {
@@ -90,10 +91,11 @@ namespace commands::features {
 		namespace loadout {
 
 		}
+		extern void teleportGun(toggleCommand* command);
 	}
 	namespace vehicle {
 		namespace spawner {
-			extern void spawnVehicle(variadicCommand* command);
+			extern void spawnVehicle(hashCommand* command);
 		}
 	}
 	namespace network {
@@ -101,8 +103,9 @@ namespace commands::features {
 			namespace selected {
 				extern void copyRid(actionCommand* command);
 				extern void copyName(actionCommand* command);
+				extern void join(actionCommand* command);
 			}
-			extern void remove(variadicCommand* command);
+			extern void remove(stringCommand* command);
 		}
 		namespace session {
 			namespace browser {
@@ -144,8 +147,9 @@ namespace commands::features {
 				extern void matchmakingType(toggleIntCommand* command);
 			}
 			namespace starter {
-				extern void go(variadicCommand* command);
+				extern void go(stringCommand* command);
 				extern void leave(actionCommand* command);
+				extern void seamlessTransition(toggleCommand* command);
 			}
 			namespace players {
 				namespace selected {
@@ -159,17 +163,19 @@ namespace commands::features {
 				extern bool isOnline(u64 rid);
 				extern u64 nameToRid(std::string name);
 				extern std::string ridToName(u64 rid);
-				extern void getGamerTask(u64 rid, std::function<void(rage::rlSessionByGamerTaskResult&)> onSuccess);
+				extern u64 getRidFromCommand(const std::string& str);
 			}
 			extern void ridToName(variadicCommand* command);
-			extern void nameToRid(variadicCommand* command);
-			extern void convert(variadicCommand* command);
+			extern void nameToRid(stringCommand* command);
+			extern void convert(stringCommand* command);
 			extern void scMessage(variadicCommand* command);
 		}
 		namespace tunables {
 			extern void offRadar(toggleCommand* command);
 		}
-		extern void join(variadicCommand* command);
+		extern void join(stringCommand* command);
+		extern void forceHostOfScript(hashCommand* command);
+		extern void forceScriptHost(actionCommand* command);
 		extern void bail(actionCommand* command);
 	}
 	namespace protections {

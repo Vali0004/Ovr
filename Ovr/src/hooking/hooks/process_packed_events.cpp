@@ -81,7 +81,7 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 		}
 	} break;
 	case eScriptEvents::ScriptEventRequestToSpawnVehicle: {
-		switch ("scriptEventSyncedIntractionCrashProtection"_PC->state()) {
+		switch ("scriptEventSpawnVehicleCrashProtection"_PC->state()) {
 		case eProtectionState::Notify: {
 			LOG(Session, "S{} from {}", 1, Sender->GetName());
 		} break;

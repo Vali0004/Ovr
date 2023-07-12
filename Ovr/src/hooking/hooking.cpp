@@ -1,6 +1,7 @@
 #include "hooking.h"
 #include "memory/pointers.h"
 #include "hooking/methods/native.h"
+#include "commands/features.h"
 
 hooking::hooking() :
 	m_minhook(),
@@ -33,15 +34,132 @@ hooking::~hooking() {
 void hooking::enable() {
 	createNativeShim("all_scripts"_joaat, 0x580CE4438479CC61, [](rage::scrThread::Info* info) {
 		info->ResultPtr->Int = FALSE;
-		return;
 	});
 	createNativeShim("all_scripts"_joaat, 0x95914459A87EBA28, [](rage::scrThread::Info* info) {
 		info->ResultPtr->Int = FALSE;
-		return;
 	});
 	createNativeShim("all_scripts"_joaat, 0xEAA572036990CD1B, [](rage::scrThread::Info* info) {
 		info->ResultPtr->Int = FALSE;
-		return;
+	});
+	createNativeShim("all_scripts"_joaat, 0x158C16F5E4CF41F8, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x40EB1EFD921822BC, [](rage::scrThread::Info* info) {});
+	createNativeShim("all_scripts"_joaat, 0x340A36A700E99699, [](rage::scrThread::Info* info) {});
+	createNativeShim("all_scripts"_joaat, 0x8E580AB902917360, [](rage::scrThread::Info* info) {});
+	createNativeShim("all_scripts"_joaat, 0x6BFB12CE158E3DD4, [](rage::scrThread::Info* info) { //SC_TRANSITION_NEWS_SHOW
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			info->ResultPtr->Int = FALSE;
+		}
+		else {
+			info->ResultPtr->Int = SOCIALCLUB::SC_TRANSITION_NEWS_SHOW(info->Params[0].Any);
+		}
+	});
+	createNativeShim("all_scripts"_joaat, 0xFE4C1D0D3B9CC17E, [](rage::scrThread::Info* info) { //SC_TRANSITION_NEWS_SHOW_TIMED
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			info->ResultPtr->Int = FALSE;
+		}
+		else {
+			info->ResultPtr->Int = SOCIALCLUB::SC_TRANSITION_NEWS_SHOW_TIMED(info->Params[0].Any, info->Params[1].Any);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x933BBEEB8C61B5F4, [](rage::scrThread::Info* info) { //IS_SWITCH_TO_MULTI_FIRSTPART_FINISHED
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			info->ResultPtr->Int = TRUE;
+		}
+		else {
+			info->ResultPtr->Int = STREAMING::IS_SWITCH_TO_MULTI_FIRSTPART_FINISHED();
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x198F77705FA0931D, [](rage::scrThread::Info* info) { //SET_FOCUS_ENTITY
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			STREAMING::SET_FOCUS_ENTITY(PLAYER::PLAYER_PED_ID());
+		}
+		else {
+			STREAMING::SET_FOCUS_ENTITY(info->Params[0].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x719FF505F097FD20, [](rage::scrThread::Info* info) { //HIDE_HUD_AND_RADAR_THIS_FRAME
+		if (!"seamlessTransition"_TC->get(0).toggle) {
+			HUD::HIDE_HUD_AND_RADAR_THIS_FRAME();
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0xEF01D36B9C9D0C7B, [](rage::scrThread::Info* info) { //ACTIVATE_FRONTEND_MENU
+		Hash menuhash{ info->Params[0].Uns };
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			if (menuhash != "FE_MENU_VERSION_EMPTY_NO_BACKGROUND"_joaat) {
+				HUD::ACTIVATE_FRONTEND_MENU(menuhash, info->Params[1].Int, info->Params[2].Int);
+			}
+		}
+		else {
+			HUD::ACTIVATE_FRONTEND_MENU(menuhash, info->Params[1].Int, info->Params[2].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x10706DC6AD2D49C0, [](rage::scrThread::Info* info) { //RESTART_FRONTEND_MENU
+		Hash menuhash{ info->Params[0].Uns };
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			if (menuhash != "FE_MENU_VERSION_EMPTY_NO_BACKGROUND"_joaat) {
+				HUD::RESTART_FRONTEND_MENU(menuhash, info->Params[1].Int);
+			}
+		}
+		else {
+			HUD::RESTART_FRONTEND_MENU(menuhash, info->Params[1].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0xDFC252D8A3E15AB7, [](rage::scrThread::Info* info) { //TOGGLE_PAUSED_RENDERPHASES
+		if ("seamlessTransition"_TC->get(0).toggle) {
+			GRAPHICS::RESET_PAUSED_RENDERPHASES();
+		}
+		else {
+			GRAPHICS::TOGGLE_PAUSED_RENDERPHASES(info->Params[0].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0xEA1C610A04DB6BBB, [](rage::scrThread::Info* info) { //SET_ENTITY_VISIBLE
+		Entity entity{ info->Params[0].Int };
+		if ("seamlessTransition"_TC->get(0).toggle && entity == PLAYER::PLAYER_PED_ID()) {
+			ENTITY::SET_ENTITY_VISIBLE(entity, TRUE, FALSE);
+		}
+		else {
+			ENTITY::SET_ENTITY_VISIBLE(entity, info->Params[1].Int, info->Params[2].Int);
+		}
+	});
+	//createNativeShim("maintransition"_joaat, 0x06843DA7060A026B, [](rage::scrThread::Info* info) { //SET_ENTITY_COORDS_NO_OFFSET
+	//	Entity entity{ info->Params[0].Int };
+	//	Vector3 pos_{ info->Params[1].Float, info->Params[2].Float, info->Params[3].Float };
+	//	BOOL xAxis{ info->Params[4].Int };
+	//	BOOL yAxis{ info->Params[5].Int };
+	//	BOOL zAxis{ info->Params[6].Int };
+	//	eTransitionState state{ static_cast<eTransitionState>(global(1574993).value()->Int) };
+	//	if (!"seamlessTransition"_TC->get(0).toggle || state == eTransitionState::ConfirmFreemodeSessionJoining || entity != PLAYER::PLAYER_PED_ID()) {
+	//		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, pos_, xAxis, yAxis, zAxis);
+	//	}
+	//});
+	createNativeShim("maintransition"_joaat, 0x1A9205C1B9EE827F, [](rage::scrThread::Info* info) { //SET_ENTITY_COLLISION
+		Entity entity{ info->Params[0].Int };
+		if (!"seamlessTransition"_TC->get(0).toggle || entity != PLAYER::PLAYER_PED_ID()) {
+			ENTITY::SET_ENTITY_COLLISION(entity, info->Params[1].Int, info->Params[2].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x8D32347D6D4C40A2, [](rage::scrThread::Info* info) { //SET_PLAYER_CONTROL
+		if (!"seamlessTransition"_TC->get(0).toggle) {
+			PLAYER::SET_PLAYER_CONTROL(info->Params[0].Int, info->Params[1].Int, info->Params[2].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x428CA6DBD1094446, [](rage::scrThread::Info* info) { //FREEZE_ENTITY_POSITION
+		Entity entity{ info->Params[0].Int };
+		if (!"seamlessTransition"_TC->get(0).toggle || entity != PLAYER::PLAYER_PED_ID()) {
+			ENTITY::FREEZE_ENTITY_POSITION(entity, info->Params[1].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x8D32347D6D4C40A2, [](rage::scrThread::Info* info) { //NETWORK_RESURRECT_LOCAL_PLAYER
+		if (!"seamlessTransition"_TC->get(0).toggle) {
+			Vector3 _pos{ info->Params[0].Float, info->Params[1].Float, info->Params[2].Float };
+
+			NETWORK::NETWORK_RESURRECT_LOCAL_PLAYER(_pos, info->Params[3].Float, info->Params[4].Int, info->Params[5].Int, info->Params[6].Int, info->Params[7].Int, info->Params[8].Int);
+		}
+	});
+	createNativeShim("maintransition"_joaat, 0x8D30F648014A92B5, [](rage::scrThread::Info* info) { //GET_EVER_HAD_BAD_PACK_ORDER
+		info->ResultPtr->Int = FALSE;
 	});
 	m_DX.enable();
 	detour::enableAll();
@@ -53,7 +171,7 @@ void hooking::disable() {
 	if (this) {
 		m_DX.disable();
 	}
-	resetNativeShims();
 	detour::disableAll();
 	MH_ApplyQueued();
+	resetNativeShims();
 }

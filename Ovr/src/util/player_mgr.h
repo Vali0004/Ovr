@@ -55,16 +55,26 @@ namespace util::network {
 				m_host = std::format("Host: {}", p->m_host ? "Yes" : "No");
 				m_rid = std::format("RID: {}", p->m_rid);
 				m_ip = std::format("IP: {}.{}.{}.{}:{}", p->m_ip.m_field1, p->m_ip.m_field2, p->m_ip.m_field3, p->m_ip.m_field4, p->m_port);
-				if (p->m_vehicle) {
-					m_vehicle = std::format("Vehicle: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_manufacturer));
-					m_vehicle += " ";
-					m_vehicle += HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name);
+				if (p->m_vehicle && p->m_vehicleModelInfo) {
+					if (p->m_vehicleModelInfo->m_manufacturer) {
+						m_vehicle = std::format("Vehicle: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_manufacturer));
+						m_vehicle += " ";
+						m_vehicle += HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name);
+					}
+					else if (p->m_vehicleModelInfo->m_name) {
+						m_vehicle = std::format("Vehicle: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name));
+					}
+					else {
+						m_vehicle = "Vehicle: Not in vehicle";
+					}
 				}
 				else {
 					m_vehicle = "Vehicle: Not in vehicle";
 				}
 				if (p->m_ped)
 					m_health = std::format("Health: {}/{}", p->m_ped->m_health, p->m_ped->m_maxhealth);
+				if (p->m_ped && p->m_playerInfo)
+					m_health = std::format("Armor: {}/{}", p->m_ped->m_armour, p->m_playerInfo->m_maxarmour);
 				m_position = std::format("Position: {}, {}, {}", p->m_pos.x, p->m_pos.y, p->m_pos.z);
 				m_heading = std::format("Heading: {}", p->m_heading);
 			}

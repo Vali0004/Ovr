@@ -33,6 +33,7 @@ namespace tabs::network {
 				elements::text("RID: {}", info.m_rockstar_id);
 				cbutton("copyFriendRid"_AC);
 				cbutton("copyFriendName"_AC);
+				cbutton("joinFriend"_AC);
 			});
 		});
 	}

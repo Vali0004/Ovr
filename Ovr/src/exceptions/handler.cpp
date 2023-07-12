@@ -43,21 +43,28 @@ namespace exceptions {
 		exceptionContext ctx{ exceptionInfo };
 		if (!ctx.m_fileoffset.empty()) {
 			switch (ctx.m_code) {
-			case CONTROL_C_EXIT: { return EXCEPTION_CONTINUE_EXECUTION; } break;
-			case EXCEPTION_BREAKPOINT: { return EXCEPTION_CONTINUE_EXECUTION; } break;
+			case CONTROL_C_EXIT:
+			case EXCEPTION_BREAKPOINT:
+			case EXCEPTION_SINGLE_STEP: {
+				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
+				LOG(Exception, "The game has suffered a non-fatal exception, you may disregard this message ({} at {})", exceptionName, ctx.m_fileoffset);
+				return EXCEPTION_CONTINUE_EXECUTION;
+			} break;
+			case EXCEPTION_GUARD_PAGE:
 			case EXCEPTION_ACCESS_VIOLATION: {
 				auto exceptionTypeStr = getExceptionType(ctx.m_type);
-				auto exceptionName = g_exceptionErrorReasons[ctx.m_code]() ? g_exceptionErrorReasons[ctx.m_code].what() : std::format("0x{:X}", ctx.m_code);
+				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
 				LOG(Exception, "The game suffered an fatal exception, you may need to restart the game. ({} at {}, reason of {} was {}{})", exceptionName, ctx.m_fileoffset, exceptionName, exceptionTypeStr, ctx.m_type != 8 && exceptionName != "unknown" ? "" : std::format("0x{:X}", ctx.m_deathAddress));
 			} break;
 			default: {
-				auto exceptionName = g_exceptionErrorReasons[ctx.m_code]() ? g_exceptionErrorReasons[ctx.m_code].what() : std::format("0x{:X}", ctx.m_code);
+				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
 				LOG(Exception, "The game suffered a exception of unknown severity, you may need to restart the game. ({} at {}, reason of exception is unknown)", exceptionName, ctx.m_fileoffset);
-			}
+			} break;
 			}
 		}
 		LOG(Exception, "Dumping registers...");
 		ctx.printRegisters();
+		LOG(Exception, "Showing callstack...");
 		sw.ShowCallstack(GetCurrentThread(), &ctx.m_context);
 		if (attemptStackRecovery(exceptionInfo)) {
 			return EXCEPTION_CONTINUE_EXECUTION;
@@ -76,11 +83,11 @@ namespace exceptions {
 		return onExceptionCallback(exceptionInfo);
 	}
 	void initExceptionHandler() {
-		vecExcepHandlerHandle = AddVectoredExceptionHandler(FALSE, PVECTORED_EXCEPTION_HANDLER(exceptionHandler));
+		g_handler = AddVectoredExceptionHandler(TRUE, PVECTORED_EXCEPTION_HANDLER(exceptionHandler));
 		SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER(unhandledExceptionHandler));
 	}
 	void uninitExceptionHandler() {
-		if (vecExcepHandlerHandle)
-			RemoveVectoredExceptionHandler(vecExcepHandlerHandle);
+		if (g_handler)
+			RemoveVectoredExceptionHandler(g_handler);
 	}
 }
