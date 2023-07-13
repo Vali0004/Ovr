@@ -2,6 +2,63 @@
 #include <windows.h>
 #include <map>
 
+enum class eHandlingType : uint32_t {
+	Bike,
+	Flying,
+	VerticalFlying,
+	Boat,
+	Seaplane,
+	Submarine,
+	Train,
+	Trailer,
+	Car,
+	Weapon,
+	MaxTypes
+};
+enum class eAdvancedFlags : uint32_t {
+	None,
+	DiffFront = (1 << 0),
+	DiffRear = (1 << 1),
+	DiffCentre = (1 << 2),
+	DiffLimitedFront = (1 << 3),
+	DiffLimitedRear = (1 << 4),
+	DiffLimitedCentre = (1 << 5),
+	DiffLockingFront = (1 << 6),
+	DiffLockingRear = (1 << 7),
+	DiffLockingCentre = (1 << 8),
+	GearboxFullAuto = (1 << 9),
+	GearboxManual = (1 << 10),
+	GearboxDirectShift = (1 << 11),
+	GearboxElectric = (1 << 12),
+	AssistTractionControl = (1 << 13),
+	AssistStabilityControl = (1 << 14),
+	AllowReducedSuspensionForce = (1 << 15),
+	HardRevLimit = (1 << 16),
+	HoldGearWithWheelspin = (1 << 17),
+	IncreaseSuspensionForceWithSpeed = (1 << 18),
+	BlockIncreasedRotVelocityWithDriveForce = (1 << 19),
+	ReducedSelfRightingSPeed = (1 << 20),
+	CloseRatioGearbox = (1 << 21),
+	ForceSmoothRPM = (1 << 22),
+	AllowTurnOnSpot = (1 << 23),
+	CanWheelie = (1 << 24),
+	EnableWheelBlockerSideImpacts = (1 << 25),
+	FixOldBugs = (1 << 26),
+	UseDownforceBias = (1 << 27),
+	ReduceBodyRollWithSuspensionMods = (1 << 28),
+	AllowExtendedMods = (1 << 29),
+};
+enum class eBoundType : uint8_t {
+	Sphere,
+	Capsule,
+	Box = 3,
+	Geometry,
+	BVH = 8,
+	Composite = 10,
+	Disc = 12,
+	Cylinder,
+	Plane = 15
+};
 enum class eVehicleType : uint32_t {
 	Car,
 	Plane,
@@ -960,8 +1017,7 @@ enum eBlipSprite {
 	BlipSpriteCrosshair2 = 432,
 	BlipSpriteDollarSignSquared = 434,
 };
-enum eCameraShake
-{
+enum eCameraShake {
 	CameraShakeHand = 0,
 	CameraShakeSmallExplosion,
 	CameraShakeMediumExplosion,
@@ -974,8 +1030,7 @@ enum eCameraShake
 	CameraShakeFamilyDrugTrip,
 	CameraShakeDeathFail
 };
-enum eControl
-{
+enum eControl {
 	ControlNextCamera = 0,
 	ControlLookLeftRight = 1,
 	ControlLookUpDown = 2,
@@ -1315,8 +1370,7 @@ enum eControl
 	ControlVehicleSlowMoDownOnly = 336,
 	ControlMapPointOfInterest = 337,
 };
-enum eRadioStation
-{
+enum eRadioStation {
 	RadioStationLosSantosRockRadio,
 	RadioStationNonStopPopFM,
 	RadioStationLosSantos,
@@ -1684,31 +1738,55 @@ enum eVehicleLandingGear {
 	VehicleLandingGearRetracted = 3,
 };
 enum eVehicleMod {
-	VehicleModSpoilers = 0,
-	VehicleModFrontBumper = 1,
-	VehicleModRearBumper = 2,
-	VehicleModSideSkirt = 3,
-	VehicleModExhaust = 4,
-	VehicleModFrame = 5,
-	VehicleModGrille = 6,
-	VehicleModHood = 7,
-	VehicleModFender = 8,
-	VehicleModRightFender = 9,
-	VehicleModRoof = 10,
-	VehicleModEngine = 11,
-	VehicleModBrakes = 12,
-	VehicleModTransmission = 13,
-	VehicleModHorns = 14,
-	VehicleModSuspension = 15,
-	VehicleModArmor = 16,
-	VehicleModFrontWheels = 23,
-	VehicleModBackWheels = 24 // only for motocycles
+	VehicleModSpoilers,
+	VehicleModFrontBumper,
+	VehicleModRearBumper,
+	VehicleModSideskirt,
+	VehicleModExhaust,
+	VehicleModFrame,
+	VehicleModGrille,
+	VehicleModHood,
+	VehicleModFender,
+	VehicleModRightFender,
+	VehicleModRoof,
+	VehicleModEngine,
+	VehicleModBrakes,
+	VehicleModTransmission,
+	VehicleModHorns,
+	VehicleModSuspension,
+	VehicleModArmour,
+	VehicleModFrontWheels,
+	VehicleModBackWheels, //Only for motocycles
+	VehicleModPlateHolder,
+	VehicleModVanityPlates,
+	VehicleModTrimDesign,
+	VehicleModOrnaments,
+	VehicleModDashboard,
+	VehicleModDialDesign,
+	VehicleModDoorSpeakers,
+	VehicleModSeats,
+	VehicleModSteeringWheels,
+	VehicleModColumnShifterLevers,
+	VehicleModPlaques,
+	VehicleModSpeakers,
+	VehicleModTrunk,
+	VehicleModHydraulics,
+	VehicleModEngineBlock,
+	VehicleModAirfilter,
+	VehicleModStruts,
+	VehicleModArchcover,
+	VehicleModAerials,
+	VehicleModTrim,
+	VehicleModTank,
+	VehicleModWindows,
+	VehicleModDoors,
+	VehicleModLivery
 };
 enum eVehicleNeonLight {
-	VehicleNeonLightLeft = 0,
-	VehicleNeonLightRight = 1,
-	VehicleNeonLightFront = 2,
-	VehicleNeonLightBack = 3,
+	VehicleNeonLightLeft,
+	VehicleNeonLightRight,
+	VehicleNeonLightFront,
+	VehicleNeonLightBack,
 };
 enum eVehicleRoofState {
 	VehicleRoofStateClosed,
@@ -1732,14 +1810,14 @@ enum eVehicleToggleMod {
 	VehicleToggleModXenonHeadlights = 22
 };
 enum eVehicleWheelType {
-	VehicleWheelTypeSport = 0,
-	VehicleWheelTypeMuscle = 1,
-	VehicleWheelTypeLowrider = 2,
-	VehicleWheelTypeSUV = 3,
-	VehicleWheelTypeOffroad = 4,
-	VehicleWheelTypeTuner = 5,
-	VehicleWheelTypeBikeWheels = 6,
-	VehicleWheelTypeHighEnd = 7
+	VehicleWheelTypeSport,
+	VehicleWheelTypeMuscle,
+	VehicleWheelTypeLowrider,
+	VehicleWheelTypeSUV,
+	VehicleWheelTypeOffroad,
+	VehicleWheelTypeTuner,
+	VehicleWheelTypeBikeWheels,
+	VehicleWheelTypeHighEnd
 };
 enum eVehicleWindow {
 	VehicleWindowFrontRight = 1,
@@ -1757,18 +1835,18 @@ enum eVehicleWindowTint {
 	VehicleWindowTintGreen = 6
 };
 enum eNumberPlateMounting {
-	NumberPlateMountingFrontAndRear = 0,
-	NumberPlateMountingFront = 1,
-	NumberPlateMountingRear = 2,
-	NumberPlateMountingNone = 3,
+	NumberPlateMountingFrontAndRear,
+	NumberPlateMountingFront,
+	NumberPlateMountingRear,
+	NumberPlateMountingNone,
 };
 enum eNumberPlateType {
-	NumberPlateTypeBlueOnWhite1 = 0,
-	NumberPlateTypeYellowOnBlack = 1,
-	NumberPlateTypeYellowOnBlue = 2,
-	NumberPlateTypeBlueOnWhite2 = 3,
-	NumberPlateTypeBlueOnWhite3 = 4,
-	NumberPlateTypeNorthYankton = 5,
+	NumberPlateTypeBlueOnWhite1,
+	NumberPlateTypeYellowOnBlack,
+	NumberPlateTypeYellowOnBlue,
+	NumberPlateTypeBlueOnWhite2,
+	NumberPlateTypeBlueOnWhite3,
+	NumberPlateTypeNorthYankton
 };
 enum eVehicleClass {
 	VehicleClassCompacts = 0,
@@ -2096,7 +2174,6 @@ enum eHudComponent {
 	HudComponentReplayLeftBar,
 	HudComponentReplayTimer
 };
-
 enum eGameVersion : int {
 	VER_1_0_335_2_STEAM,
 	VER_1_0_335_2_NOSTEAM,
@@ -2170,7 +2247,6 @@ enum eGameVersion : int {
 	VER_SIZE,
 	VER_UNK = -1
 };
-
 enum class eScriptEvents {
 	ScriptEventTickerMessage = -642704387,
 	ScriptEventTickerMessageCustom = -1801288766,

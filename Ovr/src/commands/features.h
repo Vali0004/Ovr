@@ -43,6 +43,10 @@ namespace commands::features {
 			}
 			extern void tinyPed(toggleCommand* command);
 			extern void autoHeal(toggleCommand* command);
+			extern void instantRespawn(toggleCommand* command);
+			inline Vector3 g_coordsAtDeath{};
+			extern void keepLastCoordinatesOnDeath(toggleCommand* command);
+			extern void clearTasks(actionCommand* command);
 			extern void clone(actionCommand* command);
 			extern void suicide(actionCommand* command);
 		}
@@ -58,12 +62,14 @@ namespace commands::features {
 			extern void superRun(toggleFloatCommand* command);
 			extern void noClip(toggleFloatCommand* command);
 			extern void coordSmash(toggleCommand* command);
+			extern void autoTeleportToWaypoint(toggleCommand* command);
 			extern void walkOnAir(toggleCommand* command);
 		}
 		namespace world {
 			extern void walkThroughWater(toggleCommand* command);
 			extern void walkOnWater(toggleCommand* command);
 			extern void slowMotion(toggleCommand* command);
+			extern void teleportToCoords(variadicCommand* command);
 		}
 		namespace police {
 			extern void neverWanted(toggleCommand* command);
@@ -73,6 +79,7 @@ namespace commands::features {
 		}
 		extern void alpha(intCommand* command);
 		extern void invisibility(toggleCommand* command);
+		extern void noCollision(toggleCommand* command);
 		extern void noRagdoll(toggleCommand* command);
 	}
 	namespace weapon {
@@ -92,9 +99,15 @@ namespace commands::features {
 
 		}
 		extern void teleportGun(toggleCommand* command);
+		extern void deleteGun(toggleCommand* command);
+		extern void deadEye(toggleCommand* command);
 	}
 	namespace vehicle {
 		namespace spawner {
+			inline Vehicle g_lastSpawnedVehicle{};
+			extern void spawnInsideVehicle(toggleCommand* command);
+			extern void spawnVehicleMaxed(toggleCommand* command);
+			extern void deleteLastSpawnedVehicle(toggleCommand* command);
 			extern void spawnVehicle(hashCommand* command);
 		}
 	}
@@ -221,9 +234,10 @@ namespace commands::features {
 			extern void mobileRadio(toggleCommand* command);
 			extern void autoMp(toggleCommand* command);
 			extern void exitInstantly(toggleCommand* command);
+			extern void setTimeScale(floatCommand* command);
 		}
 		namespace world {
-
+			extern void teleportToWaypoint(actionCommand* command);
 		}
 	}
 	namespace settings {

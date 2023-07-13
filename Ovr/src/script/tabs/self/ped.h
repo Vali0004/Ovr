@@ -23,9 +23,13 @@ namespace tabs::self {
 				cbutton("maxArmor"_AC);
 			});
 			cintSlider("alpha"_IC, 0, 255);
+			ccheckbox("noCollision"_TC);
 			ccheckbox("noRagdoll"_TC);
 			ccheckbox("invisibility"_TC);
 			ccheckbox("autoHeal"_TC);
+			ccheckbox("instantRespawn"_TC);
+			ccheckbox("keepLastCoordinatesOnDeath"_TC);
+			cbutton("clearTasks"_AC);
 			cbutton("clone"_AC);
 			cbutton("suicide"_AC);
 		});

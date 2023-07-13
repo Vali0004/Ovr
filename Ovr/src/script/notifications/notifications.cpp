@@ -3,31 +3,24 @@
 #include "script/elements.h"
 #include "renderer/renderer.h"
 
+void notifications::drawNotification(const std::string& title, const std::string& message) {
+	elements::drawlist::rect({ m_pos.x, m_drawBase + (m_size.y / 2.f) }, m_size, { m_color });
+	float titleTextHeight{ elements::getTextHeight(g_renderer->m_fontBold) };
+	float textHeight{ elements::getTextHeight(g_renderer->m_font) };
+	//TODO, fix this shit lmfao
+	elements::drawlist::text(g_renderer->m_font, message, { m_pos.x - (m_size.x / 2.05f), m_drawBase + (m_size.y / 1.9f) - (textHeight / 2.f) }, { 255, 255, 255, 255 });
+	m_drawBase -= textHeight;
+	m_drawBase -= m_padding;
+	elements::drawlist::text(g_renderer->m_fontBold, title, { m_pos.x - (m_size.x / 2.05f), m_drawBase + (m_size.y / 1.85f) - (titleTextHeight / 2.f) }, { 255, 255, 255, 255 });
+	m_drawBase -= m_size.y;
+}
 void notifications::draw() {
 	if (m_draw) {
-		std::vector<notify> notifications{ get() };
-		const ImVec2& ViewportSize{ ImGui::GetMainViewport()->Size };
-		for (u64 i{}; i != notifications.size(); ++i) {
-			notify& n{ notifications[i] };
-			std::string winName{ std::format("##notification{}", i) };
-			//elements::setStyleVars({ { ImGuiStyleVar_WindowBorderSize, { 1.f, 0.f } }, { ImGuiStyleVar_WindowMinSize, { 300.f, 10.f } }, { ImGuiStyleVar_WindowPadding, { 10.f, 10.f } }, { ImGuiStyleVar_WindowRounding, { 4.f, 0.f } } }, [&] {
-				if (ImGui::Begin(winName.c_str(), nullptr, m_flags)) {
-					ImDrawList* list{ ImGui::GetWindowDrawList() };
-					ImVec2 pos{ ImGui::GetWindowPos() };
-					ImVec2 size{ ImGui::GetWindowSize() };
-					if (n.title()) {
-						list->AddText(g_renderer->m_fontBold, g_renderer->m_fontBold->FontSize, elements::shift(pos, 10.f), m_titleColor, n.m_title.c_str());
-					}
-					if (n.message()) {
-						elements::textWrap(m_width - 5.f, [n] {
-							elements::font(g_renderer->m_arial, [n] {
-								elements::text(n.m_message);
-							});
-						});
-					}
-					ImGui::End();
-				}
-			//});
-		}
+		m_drawBase = m_pos.y;
+		updateArray();
+		/*for (auto& pair : m_notifications) {
+			auto& n{ pair.second };
+			drawNotification(n.m_title, n.m_message);
+		}*/
 	}
 }

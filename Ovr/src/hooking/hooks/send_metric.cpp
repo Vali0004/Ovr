@@ -1,4 +1,5 @@
 #include "hooking/hooking.h"
+#include "commands/features.h"
 
 const u32 g_blockedMetrics[]{
 	"DIG"_joaat,
@@ -49,8 +50,23 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 		size_t end{ s.find(R"(],"d")") - 5 };
 		std::string str{ s.substr(start, end) };
 		auto words{ splitString(str, ',') };
-		Vector3 coords{ stof(words[0]), stof(words[1]), stof(words[2]) };
-		LOG(Info, "Spawning at {}, {}, {}", coords.x, coords.y, coords.z);
+		Vector3 newCoords{ stof(words[0]), stof(words[1]), stof(words[2]) };
+		//I am so fucking glad I kept this debug shit in here
+		if ("keepLastCoordinatesOnDeath"_TC->get(0).toggle) {
+			g_fiberPool.add([&] {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				while (ENTITY::IS_ENTITY_DEAD(ped, FALSE)) {
+					fiber::current()->sleep(100ms);
+				}
+				fiber::current()->sleep(100ms);
+				Vector3 coords{ commands::features::self::ped::g_coordsAtDeath };
+				commands::g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
+				LOG(Info, "Spawning at {}, {}, {}", coords.x, coords.y, coords.z);
+			});
+		}
+		else {
+			LOG(Info, "Spawning at {}, {}, {}", newCoords.x, newCoords.y, newCoords.z);
+		}
 	}
 	LOG(Debug, "[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
 	if (pMetric->using_c()) {

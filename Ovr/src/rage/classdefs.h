@@ -52,6 +52,10 @@ class FriendInfo;
 class FriendList;
 class FriendRegistry;
 class CNonPhysicalPlayerData;
+class CHandlingObject;
+class CBaseSubHandlingData;
+class CAdvancedData;
+class CCarHandlingData;
 class CHandlingData;
 class CVehicleModelInfo;
 class CVehicle;
@@ -150,12 +154,21 @@ namespace rage {
 	class fwExtension;
 	class fwExtensionContainer;
 	class fwExtensibleBase;
+	class fwArchetypeDef;
+	class fwArchetype;
 	class CBaseModelInfo;
 	class fwDynamicEntityComponent;
 	class crmtRequestPose;
 	class crmtRequestIk;
 	class crFrameFilter;
 	class fwAudEntity;
+	class phBoundBase;
+	class phBound;
+	class phBoundCapsule;
+	class phBoundComposite;
+	class phArchetype;
+	class phArchetypePhys;
+	class phArchetypeDamp;
 	class fwEntity;
 	class datBitBuffer;
 	class netGameEvent;
@@ -235,4 +248,5 @@ namespace rage {
 	class netSyncDataNode;
 	class netSyncData;
 	class sysModule;
+	class parStructure;
 }

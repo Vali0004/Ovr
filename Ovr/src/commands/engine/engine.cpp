@@ -96,51 +96,51 @@ namespace commands {
 						LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
 						return;
 					}
-					for (size_t i{ 1 }; i != arguments.size(); ++i) {
-						typedValue* value{ command->get_value(i) };
-						if (!value) {
-							LOG(Debug, "Argument size: {} | Expected argument size: {}", command->value_count());
-							return;
-						}
-						switch (value->m_type) {
+					for (size_t i{ 0 }; i != trueArgCount; ++i) {
+						typedValue& value{ *command->get_value(i) };
+						std::string arg{ arguments[i + 1] };
+						switch (value.m_type) {
 						case eValueType::String: {
-							command->get(i).string = arguments[i].c_str();
+							(*value).string = arg.c_str();
 						} break;
 						case eValueType::Boolean: {
-							command->get(i).toggle = convertData<bool>(arguments[i]);
+							(*value).toggle = convertData<bool>(arg);
+						} break;
+						case eValueType::FloatingPoint: {
+							(*value).floating_point = convertData<fp>(arg);
 						} break;
 						case eValueType::Int8: {
-							command->get(i).i8 = convertData<i8>(arguments[i]);
+							(*value).i8 = convertData<i8>(arg);
 						} break;
 						case eValueType::UInt8: {
-							command->get(i).u8 = convertData<u8>(arguments[i]);
+							(*value).u8 = convertData<u8>(arg);
 						} break;
 						case eValueType::Int16: {
-							command->get(i).i16 = convertData<i16>(arguments[i]);
+							(*value).i16 = convertData<i16>(arg);
 						} break;
 						case eValueType::UInt16: {
-							command->get(i).u16 = convertData<u16>(arguments[i]);
+							(*value).u16 = convertData<u16>(arg);
 						} break;
 						case eValueType::Int32: {
-							command->get(i).i32 = convertData<i32>(arguments[i]);
+							(*value).i32 = convertData<i32>(arg);
 						} break;
 						case eValueType::UInt32: {
-							command->get(i).u32 = convertData<u32>(arguments[i]);
+							(*value).u32 = convertData<u32>(arg);
 						} break;
 						case eValueType::Int64: {
-							command->get(i).i64 = convertData<i64>(arguments[i]);
+							(*value).i64 = convertData<i64>(arg);
 						} break;
 						case eValueType::UInt64: {
-							command->get(i).u64 = convertData<u64>(arguments[i]);
+							(*value).u64 = convertData<u64>(arg);
 						} break;
 						case eValueType::GamePlayer: {
-							command->get(i).game_player = getPlayerForCommandArgument(arguments[i]).m_netGamePlayer;
+							(*value).game_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
 						} break;
 						case eValueType::NetPlayer: {
-							command->get(i).net_player = getPlayerForCommandArgument(arguments[i]).m_netGamePlayer;
+							(*value).net_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
 						} break;
 						case eValueType::GamerInfo: {
-							command->get(i).gamer_info = getPlayerForCommandArgument(arguments[i]).m_gamerInfo;
+							(*value).gamer_info = getPlayerForCommandArgument(arg).m_gamerInfo;
 						} break;
 						}
 					}

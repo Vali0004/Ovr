@@ -4,7 +4,7 @@
 namespace tabs::miscellaneous {
 	inline void world() {
 		elements::tabItem("World", [] {
-
+			cbutton("teleportToWaypoint"_AC);
 		});
 	}
 }

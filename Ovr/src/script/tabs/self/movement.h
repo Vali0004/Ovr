@@ -10,6 +10,8 @@ namespace tabs::self {
 			ctoggleFloatSlider("staminaRegeneration"_TFC, 1.f, 5.f);
 			ctoggleFloatSlider("superRun"_TFC, 1.f, 5.f);
 			ctoggleFloatSlider("noClip"_TFC, 1.f, 5.f);
+			ccheckbox("autoTeleportToWaypoint"_TC);
+			ccheckbox("coordSmash"_TC);
 			ccheckbox("walkOnAir"_TC);
 			ccheckbox("gracefulLanding"_TC);
 			ccheckbox("beastJump"_TC);

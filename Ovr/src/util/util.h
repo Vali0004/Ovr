@@ -4,6 +4,7 @@
 #include "rage/classes.h"
 #include "rage/commands/list.h"
 #include "fiber/fiber.h"
+#include "commands/math.h"
 
 namespace util {
 	namespace classes {
@@ -65,6 +66,20 @@ namespace util {
 		}
 		inline CGameScriptHandlerNetComponent* getScriptHandlerNetComponet(GtaThread* thr) {
 			return thr->m_net_component;
+		}
+		inline rage::CDynamicEntity* getEntityFromSGUID(Entity sguid) {
+			return dynamic_cast<rage::CDynamicEntity*>(pointers::g_handleToPointer(sguid));
+		}
+		inline Entity getSGUIDFromEntity(rage::CEntity* entity) {
+			Entity sguid{ -1 };
+			for (rage::fwExtensionContainer* container{ entity->m_extension_container }; container; container->m_next) {
+				if (rage::fwExtension* entry{ container->m_entry }) {
+					if (i32 id{ static_cast<i32>(entry->get_id()) }; id && (id <= sguid || sguid == -1)) {
+						sguid = id;
+					}
+				}
+			}
+			return sguid;
 		}
 	}
 	namespace network {
@@ -163,6 +178,33 @@ namespace util {
 			for (i8 i{ 25i8 }; !STREAMING::HAS_MODEL_LOADED(hash) && i; --i) {
 				STREAMING::REQUEST_MODEL(hash);
 				fiber::current()->sleep();
+			}
+		}
+		inline bool requestControl(Entity ent, i32 tries = 30, bool wait = true) {
+			if (NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent))
+				return true;
+			for (i32 i{}; !NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent) && !NETWORK::NETWORK_REQUEST_CONTROL_OF_NETWORK_ID(ent) && i != tries; ++i) {
+				NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(ent);
+				NETWORK::NETWORK_HAS_CONTROL_OF_NETWORK_ID(ent);
+				if (wait)
+					fiber::current()->sleep(100ms);
+			}
+			if (!NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent)) {
+				return false;
+			}
+			NETWORK::SET_NETWORK_ID_CAN_MIGRATE(NETWORK::NETWORK_GET_NETWORK_ID_FROM_ENTITY(ent), TRUE);
+			return true;
+		}
+		inline bool forcefullyTakeControl(Entity ent) {
+			if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
+				CNetworkPlayerMgr* playerMgr{ *pointers::g_networkPlayerMgr };
+				rage::CDynamicEntity* entity{ classes::getEntityFromSGUID(ent) };
+				requestControl(ent, 1, false);
+				rage::netObject* netObj{ entity->m_net_object };
+				network::getObjectMgr()->ChangeOwner(netObj, playerMgr->m_local_net_player, 0); //Yoink
+			}
+			else {
+				requestControl(ent, 1, false);
 			}
 		}
 	}
@@ -330,4 +372,113 @@ namespace util {
 		}
 		return false;
 	}
+	class raycast {
+	public:
+		bool check(float distance) {
+			BOOL hit{};
+			Vector3 camCoords{ CAM::GET_GAMEPLAY_CAM_COORD() };
+			Vector3 camRotation{ CAM::GET_GAMEPLAY_CAM_ROT(2) };
+			Vector3 dir{ math::rotationToDirection(camRotation) };
+			Vector3 dist{ camCoords + dir * distance };
+			i32 ray{ SHAPETEST::START_EXPENSIVE_SYNCHRONOUS_SHAPE_TEST_LOS_PROBE(camCoords, dist, -1, ent, 7) };
+			SHAPETEST::GET_SHAPE_TEST_RESULT(ray, &hit, &end, &surface, &ent);
+			return hit;
+		}
+		Entity entity() {
+			return ent;
+		}
+		Vector3& coords() {
+			return end;
+		}
+	private:
+		Vector3 end{};
+		Vector3 surface{};
+		Entity ent{};
+	};
+	enum class eBlipHandleType : i8 {
+		Closest,
+		First,
+		Next
+	};
+	class blip {
+	public:
+		blip(i8 sprite, eBlipHandleType handleType) : m_sprite(sprite) {
+			switch (handleType) {
+			case eBlipHandleType::Closest: {
+				m_handle = HUD::GET_CLOSEST_BLIP_INFO_ID(m_sprite);
+			} break;
+			case eBlipHandleType::First: {
+				m_handle = HUD::GET_FIRST_BLIP_INFO_ID(m_sprite);
+			} break;
+			case eBlipHandleType::Next: {
+				m_handle = HUD::GET_NEXT_BLIP_INFO_ID(m_sprite);
+			} break;
+			}
+			m_type = HUD::GET_BLIP_INFO_ID_TYPE(handle());
+			coords() = HUD::GET_BLIP_COORDS(handle());
+			alpha() = HUD::GET_BLIP_ALPHA(handle());
+			rotation() = HUD::GET_BLIP_ROTATION(handle());
+			color() = HUD::GET_BLIP_COLOUR(handle());
+			hudColor() = HUD::GET_BLIP_HUD_COLOUR(handle());
+		}
+	public:
+		void setBlipCoords(Vector3 value) {
+			coords() = value;
+			HUD::SET_BLIP_COORDS(handle(), coords());
+		}
+		void setAlpha(i32 value) {
+			alpha() = value;
+			HUD::SET_BLIP_ALPHA(handle(), alpha());
+		}
+		void setScale(fp value) {
+			scale() = value;
+			HUD::SET_BLIP_SCALE(handle(), scale());
+		}
+		void setColor(i32 value) {
+			color() = value;
+			HUD::SET_BLIP_COLOUR(handle(), color());
+		}
+	public:
+		void remove() {
+			HUD::REMOVE_BLIP(&handle());
+		}
+		bool onMinimap() {
+			return HUD::IS_BLIP_ON_MINIMAP(handle());
+		}
+		bool exists() {
+			return HUD::DOES_BLIP_EXIST(handle());
+		}
+	public:
+		Blip& handle() {
+			return m_handle;
+		}
+		Vector3& coords() {
+			return m_coords;
+		}
+		i32& alpha() {
+			return m_alpha;
+		}
+		fp& scale() {
+			return m_scale;
+		}
+		i32& rotation() {
+			return m_rotation;
+		}
+		i32& color() {
+			return m_color;
+		}
+		i32& hudColor() {
+			return m_hudColor;
+		}
+	private:
+		Blip m_handle{};
+		i8 m_sprite{};
+		i32 m_type{};
+		Vector3 m_coords{};
+		i32 m_alpha{};
+		fp m_scale{};
+		i32 m_rotation{};
+		i32 m_color{};
+		i32 m_hudColor{};
+	};
 }

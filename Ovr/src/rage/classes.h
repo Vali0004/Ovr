@@ -45,7 +45,7 @@ namespace rage {
 		struct { struct { float x, y, z, w; } rows[4]; };
 	};
 }
-class CNavigation {
+/*class CNavigation {
 public:
 	char pad_0000[32]; //0x0000
 	float m_heading; //0x0020
@@ -55,7 +55,24 @@ public:
 	char pad_003C[20]; //0x003C
 	rage::vector3 m_position; //0x0054
 }; //Size: 0x0060
-static_assert(sizeof(CNavigation) == 0x5C);
+static_assert(sizeof(CNavigation) == 0x5C);*/
+class CNavigation {
+public:
+	char pad_0000[16]; //0x0000
+	class rage::phArchetypeDamp* m_damp; //0x0010
+	char pad_0018[8]; //0x0018
+	rage::matrix44 m_transformation_matrix; //0x0020
+
+	rage::vector3& get_position() {
+		return reinterpret_cast<rage::vector3&>(m_transformation_matrix.rows[3]);
+	}
+	void model_to_world(const rage::vector3& model_coords, rage::vector3& world_coords) {
+		world_coords.x = model_coords.x * m_transformation_matrix.data[0][0] + model_coords.y * m_transformation_matrix.data[1][0] + model_coords.z * m_transformation_matrix.data[2][0] + m_transformation_matrix.data[3][0];
+		world_coords.y = model_coords.x * m_transformation_matrix.data[0][1] + model_coords.y * m_transformation_matrix.data[1][1] + model_coords.z * m_transformation_matrix.data[2][1] + m_transformation_matrix.data[3][1];
+		world_coords.z = model_coords.x * m_transformation_matrix.data[0][2] + model_coords.y * m_transformation_matrix.data[1][2] + model_coords.z * m_transformation_matrix.data[2][2] + m_transformation_matrix.data[3][2];
+	}
+}; //Size: 0x0060
+static_assert(sizeof(CNavigation) == 0x60);
 namespace rage {
 	#pragma optimize("", off)
 	__declspec(align(16)) class scrVector {
@@ -92,7 +109,7 @@ namespace rage {
 		uint16_t m_port; //0x0004
 	};
 	static_assert(sizeof(netSocketAddress) == 0x08);
-#pragma pack(push, 8)
+	#pragma pack(push, 8)
 	class rlGamerHandle {
 	public:
 		rlGamerHandle(uint64_t rockstar_id, uint8_t platform) : m_rockstar_id(rockstar_id), m_platform(platform), m_flag(0) {}
@@ -107,8 +124,8 @@ namespace rage {
 		bool serialize(datBitBuffer& buf);
 	}; //Size: 0x0010
 	static_assert(sizeof(rlGamerHandle) == 0x10);
-#pragma pack(pop)
-#pragma pack(push, 8)
+	#pragma pack(pop)
+	#pragma pack(push, 8)
 	class rlPeerInfo {
 	public:
 		char m_certificate[96]; //0x0000
@@ -123,8 +140,8 @@ namespace rage {
 		uint32_t unk_00B9; //0x00B9
 	}; //Size: 0x00C0
 	static_assert(sizeof(rage::rlPeerInfo) == 0xC0);
-#pragma pack(pop)
-#pragma pack(push, 8)
+	#pragma pack(pop)
+	#pragma pack(push, 8)
 	class rlGamerInfo : public rlPeerInfo {
 	public:
 		uint64_t m_peer_address; //0x00C0
@@ -138,8 +155,8 @@ namespace rage {
 		char m_name[17]; //0x00E4
 	}; //Size: 0x00F0
 	static_assert(sizeof(rlGamerInfo) == 0xF0);
-#pragma pack(pop)
-#pragma pack(push, 8)
+	#pragma pack(pop)
+	#pragma pack(push, 8)
 	class netPlayer : public atRTTI<netPlayer> {
 	public:
 		virtual ~netPlayer();
@@ -165,8 +182,8 @@ namespace rage {
 		uint64_t unk_0098; //0x0098
 	}; //Size: 0x00A0
 	static_assert(sizeof(netPlayer) == 0xA0);
-#pragma pack(pop)
-#pragma pack(push, 8)
+	#pragma pack(pop)
+	#pragma pack(push, 8)
 	class netPlayerMgrBase {
 	public:
 		virtual ~netPlayerMgrBase();
@@ -190,8 +207,8 @@ namespace rage {
 		char pad_0290[1618]; //0x0290
 	}; //Size: 0x08E8
 	static_assert(sizeof(netPlayerMgrBase) == 0x8E8);
-#pragma pack(pop)
-#pragma pack(push, 4)
+	#pragma pack(pop)
+	#pragma pack(push, 4)
 	class fwDrawData {
 	public:
 		uint64_t unk_000; //0x0000
@@ -203,7 +220,7 @@ namespace rage {
 		uint32_t unk_0028; //0x0028
 	}; //Size: 0x002C
 	static_assert(sizeof(fwDrawData) == 0x2C);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class pgBase {
 	public:
 		virtual ~pgBase() = default;
@@ -265,28 +282,152 @@ namespace rage {
 		}
 	}; //Size: 0x0020
 	static_assert(sizeof(fwExtensibleBase) == 0x20);
-#pragma pack(push, 1)
-	class CBaseModelInfo {
+	#pragma pack(push, 8)
+	class fwArchetypeDef {
 	public:
-		char pad_0000[24]; //0x0000
-		uint32_t m_model; //0x0018
-		char pad_001C[20]; //0x001C
-		struct vector3 m_min_dimensions; //0x0030
-		char pad_003C[4]; //0x003C
-		struct vector3 m_max_dimensions; //0x0040
-		char pad_004C[81]; //0x004C
+		virtual ~fwArchetypeDef() = 0;
+		virtual int GetTypeIdentifier() = 0;
+
+		float m_lod_dist; //0x0008
+		uint32_t m_flags; //0x000C
+		uint32_t m_special_attribute; //0x0010
+		char pad_0014[12]; //0x0014
+		vector4 m_bounding_box_min; //0x0020
+		vector4 m_bounding_box_max; //0x0030
+		vector4 m_bounding_sphere_center; //0x0040
+		float m_bounding_sphere_radius; //0x0050
+		float m_hd_texture_dist; //0x0054
+		uint32_t m_name_hash; //0x0058
+		uint32_t m_texture_dictionary; //0x005C
+		uint32_t m_clip_dictionary_hash; //0x0060
+		uint32_t m_drawable_dictionary_hash; //0x0064
+		uint32_t m_physics_dictionary_hash; //0x0068
+		enum eAssetType : uint32_t {
+			Uninitialized = 0,
+			Fragment = 1,
+			Drawable = 2,
+			DrawableDictionary = 3,
+			Assetless = 4,
+		} m_asset_type; //0x006C
+		uint32_t m_asset_name_hash; //0x0070
+		uint64_t* m_extensions; //0x0078
+		uint16_t unk_0080; //0x0080
+		char pad_0082[12]; //0x0082
+	}; //Size: 0x0090
+	static_assert(sizeof(fwArchetypeDef) == 0x90);
+	#pragma pack(pop)
+	#pragma pack(push, 8)
+	class fwArchetype : public datBase {
+	public:
+		virtual void Initialize() = 0;
+		virtual void InitializeFromArchetypeDef(uint32_t mapTypeStoreIdx, fwArchetypeDef* archetypeDef, bool) = 0;
+		virtual fwEntity* CreateEntity() = 0;
+
+		char pad_0008[16]; //0x0008
+		int32_t m_hash; //0x0018
+		char unk_001C[4]; //0x001C
+		vector3 m_bounding_sphere_center; //0x0020
+		float m_bounding_sphere_radius; //0x002C
+		vector3 m_aabbMin; //0x0030
+		float m_lod_dist; //0x003C
+		vector3 m_aabbMax; //0x0040
+		float m_hd_texture_dist; //0x004C
+		uint32_t m_flags; //0x0050
+		char unk_0054[4]; //0x0054
+		uint64_t unk_0058; //0x0058
+		char unk_0060[4]; //0x0060
+		uint32_t m_asset_index; //0x0064
+		uint16_t unk_0068; //0x0068
+		uint16_t unk_006A; //0x006A
+	};
+	static_assert(sizeof(fwArchetype) == 0x70);
+	#pragma pack(pop)
+	#pragma pack(push, 8)
+	class CBaseModelInfo : public fwArchetype {
+	public:
+		char pad_0070[8]; //0x0070
+		uint64_t unk_0078; //0x0078
+		uint64_t unk_0080; //0x0080
+		char pad_0088[8]; //0x0088
+		uint64_t unk_0090; //0x0090
+		char pad_0098[5]; //0x0098
 		uint8_t m_model_type; //0x009D
 		char pad_009E[6]; //0x009E
+		uint64_t unk_00A8; //0x00A8
 		uint8_t get_type() {
 			return m_model_type & 0xFF;
 		}
 		bool is_type(eModelType type) {
 			return get_type() == static_cast<uint8_t>(type);
 		}
-	}; //Size: 0x00A4
-	static_assert(sizeof(CBaseModelInfo) == 0xA4);
-#pragma pack(pop)
-#pragma pack(push, 1)
+	}; //Size: 0x00B0
+	static_assert(sizeof(CBaseModelInfo) == 0xB0);
+	#pragma pack(pop)
+	class phBoundBase : public pgBase {
+	public:
+	}; //Size: 0x0010
+	static_assert(sizeof(phBoundBase) == 0x10);
+	#pragma pack(push, 4)
+	class phBound : public phBoundBase {
+	public:
+		eBoundType m_type; //0x0010
+		uint8_t m_flags; //0x0011
+		uint16_t m_part_index; //0x0012
+		float m_radius_around_centroid; //0x0014
+		char pad_0018[8]; //0x0018
+		vector4 m_bounding_box_max_xyz_margin_w; //0x0020
+		vector4 m_bounding_box_min_xyz_ref_count_w; //0x0030
+		vector4 m_centroid_offset_xyz_material_id_0_w; //0x0040
+		vector4 m_cg_offset_xyz_material_id_1_w; //0x0050
+		vector4 m_volume_distribution; //0x0060
+	}; //Size: 0x0070
+	static_assert(sizeof(phBound) == 0x70);
+	#pragma pack(pop)
+	#pragma pack(push, 1)
+	class phBoundCapsule : public phBound {
+	public:
+		float m_capsule_half_height; //0x0070
+		uint64_t unk_0074; //0x0074
+		uint32_t unk_007C; //0x007C
+	}; //Size: 0x0080
+	static_assert(sizeof(phBoundCapsule) == 0x80);
+	#pragma pack(pop)
+	#pragma pack(push, 8)
+	class phBoundComposite : public phBound {
+	public:
+		phBound** m_bounds; //0x0070
+		matrix34* m_current_matrices; //0x0078
+		matrix34* m_last_matrices; //0x0080
+		vector3* unk_0088; //0x0088
+		uint32_t* m_type_and_include_flags; //0x0090
+		uint32_t* m_owned_type_and_include_flags; //0x0098
+		uint16_t m_max_num_bounds; //0x00A0
+		uint16_t m_num_bounds; //0x00A2
+		char pad_00A4[4]; //0x00A4
+		void* unk_00A8; //0x00A8
+	}; //Size: 0x00B0
+	static_assert(sizeof(phBoundComposite) == 0xB0);
+	#pragma pack(pop)
+	class phArchetype {
+	public:
+		char pad_0000[32]; //0x0000
+		class phBound* m_bound; //0x0020
+		char pad_0028[16]; //0x0028
+	}; //Size: 0x0038
+	static_assert(sizeof(phArchetype) == 0x38);
+	class phArchetypePhys : public phArchetype {
+	public:
+		char pad_0038[28]; //0x0028
+		float m_water_collision; //0x0054
+		char pad_0058[40]; //0x0058
+	}; //Size: 0x0080
+	static_assert(sizeof(phArchetypePhys) == 0x80);
+	class phArchetypeDamp : public phArchetypePhys {
+	public:
+		char pad_0080[96]; //0x0080
+	}; //Size: 0x00E0
+	static_assert(sizeof(phArchetypeDamp) == 0xE0);
+	#pragma pack(push, 1)
 	class fwEntity : public fwExtensibleBase {
 	public:
 		DEFINE_AT_RTTI(fwEntity)
@@ -341,14 +482,20 @@ namespace rage {
 		uint32_t m_lod; //0x00B4
 		uint8_t byteB8; //0x00B8
 
+		rage::phBound* getPhBound() {
+			return m_navigation->m_damp->m_bound;
+		}
+		rage::phBoundComposite* getPhBoundComposite() {
+			return reinterpret_cast<rage::phBoundComposite*>(getPhBound());
+		}
 		void set_entity_flag(eEntityFlags flag, bool value) {
 			value ? m_entity_flags |= (uint32_t)flag : m_entity_flags &= ~(uint32_t)flag;
 		}
 		float& get_heading() {
-			return m_navigation->m_heading;
+			return m_navigation->m_transformation_matrix.data[0][0];
 		}
 		void set_heading(float v) {
-			m_navigation->m_heading = v;
+			get_heading() = v;
 		}
 		rage::vector3& get_position() {
 			return reinterpret_cast<rage::vector3&>(m_transformation_matrix.rows[3]);
@@ -363,7 +510,7 @@ namespace rage {
 		}
 	}; //Size: 0x00B9
 	static_assert(sizeof(fwEntity) == 0xB9);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class datBitBuffer {
 	public:
 		datBitBuffer(uint8_t* data, uint32_t size, bool flagBitsToWrite = false) {
@@ -1241,7 +1388,7 @@ namespace rage {
 		virtual void AddEntity(void*, void*) = 0;
 		virtual void UnregisterNetworkObject_(void* unk, bool force) = 0;
 		virtual void UnregisterNetworkObject(netObject* object, int reason, bool force1, bool force2) = 0;
-		virtual void ChangeOwner(netObject* object, CNetGamePlayer* player, int migrationType) = 0;
+		virtual void ChangeOwner(netObject* object, CNetGamePlayer* player, u32 migrationType) = 0;
 		virtual void HandleJoiningPlayer(CNetGamePlayer* player) = 0;
 		virtual void HandleLeavingPlayer(CNetGamePlayer* player) = 0;
 		virtual void _0x50(CNetGamePlayer* player) = 0;
@@ -1303,7 +1450,7 @@ namespace rage {
 			m_transformation_matrix.rows[3].x = v.x;
 			m_transformation_matrix.rows[3].y = v.y;
 			m_transformation_matrix.rows[3].z = v.z;
-			m_navigation->m_position = v;
+			m_navigation->get_position() = v;
 			Warp(&v, get_heading(), true);
 			SetPosition(&v4, true);
 		}
@@ -2923,6 +3070,12 @@ public:
 		z *= vec.z;
 		return *this;
 	}
+	bool operator==(const Vector3& vec) {
+		return vec.x == x && vec.y == y && vec.z == z;
+	}
+	bool operator!=(const Vector3& vec) {
+		return vec.x != x || vec.y != y || vec.z != z;
+	}
 };
 class Vector4 final {
 public:
@@ -3087,7 +3240,44 @@ public:
 	int32_t m_player_id; //0x000C
 	rage::vector3 m_position; //0x0010
 };
-#pragma pack(push, 4)
+class CHandlingObject {
+public:
+	virtual ~CHandlingObject() = NULL;
+	virtual rage::parStructure* parser_GetStructure() = NULL;
+}; //Size: 0x0008
+static_assert(sizeof(CHandlingObject) == 0x8);
+class CBaseSubHandlingData : public CHandlingObject {
+public:
+	virtual eHandlingType GetHandlingType() = NULL;
+	virtual void OnPostLoad() = NULL;
+}; //Size: 0x0008
+static_assert(sizeof(CBaseSubHandlingData) == 0x8);
+class CAdvancedData {
+public:
+	virtual ~CAdvancedData() = NULL;
+	
+	int m_slot; //0x0008
+	int m_index; //0x000C
+	float m_value; //0x0010
+}; //Size: 0x0014
+class CCarHandlingData : public CBaseSubHandlingData {
+public:
+	float m_back_end_popup_car_impulse_mult; //0x0008
+	float m_back_end_popup_building_impulse_mult; //0x000C
+	float m_back_end_popup_max_delta_speed; //0x0010
+	float m_toe_front; //0x0014
+	float m_toe_rear; //0x0018
+	float m_camber_front; //0x001C
+	float m_camber_rear; //0x0020
+	float m_castor; //0x0024
+	float m_engine_resistance; //0x0028
+	float m_max_drive_bias_transfer; //0x002C
+	float m_jumpforce_scale; //0x0030
+	float unk_0034; //0x0034
+	uint32_t unk_0038; //0x0038
+	uint32_t m_advanced_flags; //0x003C
+	rage::atArray<CAdvancedData> m_advanced_data; //0x0040
+};
 class CHandlingData {
 public:
 	char pad_0000[8]; //0x0000
@@ -3161,13 +3351,14 @@ public:
 	uint32_t m_damage_flags; //0x012C
 	char pad_0130[12]; //0x0130
 	uint32_t m_ai_handling_hash; //0x013C
-}; //Size: 0x0140
-static_assert(sizeof(CHandlingData) == 0x140);
-#pragma pack(pop)
+	char pad_140[24]; //0x140
+	rage::atArray<CBaseSubHandlingData*> m_sub_handling_data; // 0x158
+}; //Size: 0x0160
+static_assert(sizeof(CHandlingData) == 0x168);
 #pragma pack(push, 1)
 class CVehicleModelInfo : public rage::CBaseModelInfo {
 public:
-	char pad_00A4[84]; //0x00A4
+	char pad_00B0[72]; //0x00B0
 	uint8_t m_primary_color_combinations[25]; //0x00F8
 	uint8_t m_secondary_color_combinations[25]; //0x0111
 	uint8_t m_unk_color_combos1[25]; //0x012A
@@ -3186,23 +3377,23 @@ public:
 	uint32_t m_unk_vehicle_type; //0x0344
 	uint32_t m_diffuse_tint; //0x0348
 	char pad_034C[20]; //0x034C
-	struct rage::vector3 m_first_person_driveby_ik_offset; //0x0360
+	rage::vector3 m_first_person_driveby_ik_offset; //0x0360
 	char pad_036C[4]; //0x036C
-	struct rage::vector3 m_first_person_driveby_unarmed_ik_offset; //0x0370
+	rage::vector3 m_first_person_driveby_unarmed_ik_offset; //0x0370
 	char pad_037C[20]; //0x037C
-	struct rage::vector3 m_first_person_driveby_right_passenger_ik_offset; //0x0390
+	rage::vector3 m_first_person_driveby_right_passenger_ik_offset; //0x0390
 	char pad_039C[36]; //0x039C
-	struct rage::vector3 m_first_person_driveby_right_passenger_unarmed_ik_offset; //0x03C0
+	rage::vector3 m_first_person_driveby_right_passenger_unarmed_ik_offset; //0x03C0
 	char pad_03CC[4]; //0x03CC
-	struct rage::vector3 m_first_person_projectile_driveby_ik_offset; //0x03D0
+	rage::vector3 m_first_person_projectile_driveby_ik_offset; //0x03D0
 	char pad_03DC[4]; //0x03DC
-	struct rage::vector3 m_first_person_projectile_driveby_passenger_ik_offset; //0x03E0
+	rage::vector3 m_first_person_projectile_driveby_passenger_ik_offset; //0x03E0
 	char pad_03EC[52]; //0x03EC
-	struct rage::vector3 m_first_person_mobile_phone_offset; //0x0420
+	rage::vector3 m_first_person_mobile_phone_offset; //0x0420
 	char pad_042C[4]; //0x042C
-	struct rage::vector3 m_first_person_passenger_mobile_phone_offset; //0x0430
+	rage::vector3 m_first_person_passenger_mobile_phone_offset; //0x0430
 	char pad_043C[20]; //0x043C
-	struct rage::vector3 m_pov_camera_offset; //0x0450
+	rage::vector3 m_pov_camera_offset; //0x0450
 	char pad_045C[36]; //0x045C
 	float m_pov_camera_vertical_adjustement_for_rollcage; //0x0480
 	char pad_0484[8]; //0x0484
@@ -3236,323 +3427,55 @@ static_assert(sizeof(CVehicleModelInfo) == 0x5A0);
 #pragma pack(push, 1)
 class CVehicle : public rage::CPhysical {
 public:
-	char gap30C[4];
-	uint32_t dword310;
-	uint32_t dword314;
-	uint8_t m_boost_state; // 0x318
-	char gap319[2];
-	uint8_t m_boost_allow_recharge; // 0x31B
-	uint16_t word31C;
-	char gap31E[2];
-	float m_boost; // 0x320
-	float m_rocket_recharge_speed; // 0x324
-	uint32_t dword328;
-	uint8_t byte32C;
-	char gap32D[3];
-	uint8_t byte330;
-	char gap331[3];
-	uint64_t qword334;
-	uint32_t dword33C;
-	uint8_t byte340;
-	char gap341[3];
-	uint32_t dword344;
-	uint8_t byte348;
-	char gap349[3];
-	uint64_t qword34C;
-	uint64_t qword354;
-	uint64_t qword35C;
-	uint64_t qword364;
-	uint32_t dword36C;
-	uint32_t dword370;
-	uint8_t byte374;
-	uint16_t word375;
-	uint8_t byte377;
-	uint64_t qword378;
-	uint64_t qword380;
-	uint64_t qword388;
-	uint32_t dword390;
-	uint32_t dword394;
-	uint8_t byte398;
-	char gap399[3];
-	uint64_t qword39C;
-	uint64_t qword3A4;
-	char gap3AC[4];
-	float m_jump_boost_charge; // 0x3B0
-	uint8_t byte3B4;
-	char gap3B5[3];
-	uint64_t qword3B8;
-	uint32_t dword3C0;
-	uint32_t dword3C4;
-	char gap3C8[8];
-	uint16_t oword3D0;
-	char gap3D2[30];
-	uint16_t oword3F0;
-	char gap3F2[14];
-	uint32_t dword400;
-	uint64_t qword404;
-	char gap40C[4];
-	uint32_t dword410;
-	uint64_t qword414;
-	char gap41C[4];
-	uint64_t qword420;
-	uint32_t dword428;
-	uint32_t dword42C;
-	char gap430[1032];
-	uint64_t qword838;
-	float m_body_health; // 0x840
-	float m_petrol_tank_health; // 0x844
-	char gap848[12];
-	float float854;
-	char gap858[176];
-	float m_engine_health; // 0x908
-	char gap90C[44];
-	CHandlingData* m_handling_data; // 0x938
-	char gap940[2];
-	uint8_t m_is_drivable; //0x0942
-	uint8_t m_tyres_can_burst; //0x0943
-	uint8_t m_deform_god; //0x0944
-	char gap945[6];
-	uint8_t byte94B;
-	char gap94C;
-	uint8_t byte94D;
-	char gap94E;
-	uint8_t byte94F;
-	char gap950[3];
-	uint8_t byte953;
-	uint8_t byte954;
-	char gap955;
-	uint8_t byte956;
-	uint8_t byte957;
-	char gap958[2];
-	uint8_t byte95A;
-	char gap95B[9];
-	uint64_t qword964;
-	char gap96C[4];
-	uint64_t qword970;
-	uint64_t qword978;
-	char gap980[8];
-	uint64_t qword988;
-	uint16_t word990;
-	uint32_t dword992;
-	uint16_t word996;
-	uint64_t qword998;
-	uint64_t qword9A0;
-	uint32_t dword9A8;
-	uint64_t qword9AC;
-	uint64_t qword9B4;
-	uint64_t qword9BC;
-	uint16_t word9C4;
-	uint8_t byte9C6;
-	char gap9C7;
-	uint32_t dword9C8;
-	uint8_t byte9CC;
-	char gap9CD;
-	uint16_t word9CE;
-	uint16_t word9D0;
-	char gap9D2[2];
-	uint32_t dword9D4;
-	char gap9D8[8];
-	uint32_t dword9E0;
-	uint64_t qword9E4;
-	uint32_t dword9EC;
-	uint32_t dword9F0;
-	char gap9F4[4];
-	float m_dirt_level; // 0x9F8
-	uint32_t dword9FC;
-	uint64_t qwordA00;
-	uint64_t qwordA08;
-	uint32_t dwordA10;
-	uint32_t dwordA14;
-	uint8_t byteA18;
-	uint16_t wordA19;
-	uint8_t byteA1B;
-	uint32_t dwordA1C;
-	uint64_t qwordA20;
-	uint32_t dwordA28;
-	uint32_t dwordA2C;
-	uint64_t qwordA30;
-	uint64_t qwordA38;
-	uint64_t qwordA40;
-	uint64_t qwordA48;
-	uint8_t byteA50;
-	char gapA51[7];
-	uint64_t qwordA58;
-	uint64_t qwordA60;
-	uint32_t dwordA68;
-	uint32_t dwordA6C;
-	uint32_t dwordA70;
-	uint32_t dwordA74;
-	uint32_t dwordA78;
-	uint32_t dwordA7C;
-	uint64_t qwordA80;
-	uint8_t byteA88;
-	char gapA89;
-	uint16_t wordA8A;
-	uint64_t qwordA8C;
-	uint64_t qwordA94;
-	uint64_t qwordA9C;
-	uint64_t qwordAA4;
-	uint32_t dwordAAC;
-	uint16_t wordAB0;
-	uint16_t wordAB2;
-	uint8_t byteAB4;
-	uint16_t wordAB5;
-	uint16_t wordAB7;
-	char gapAB9[2];
-	char gapABB[3]; // start of some kind of flag, default value 0x1000000i64
-	uint8_t m_is_targetable; // 0xABE
-	char gapABF[4]; // end of some kind of flag
-	uint32_t dwordAC3;
-	uint32_t dwordAC7;
-	uint16_t wordACB;
-	uint8_t byteACD;
-	uint8_t byteACE;
-	char gapACF;
-	uint64_t qwordAD0;
-	uint64_t qwordAD8;
-	uint8_t byteAE0;
-	char gapAE1[3];
-	uint32_t dwordAE4;
-	uint32_t dwordAE8;
-	uint32_t dwordAEC;
-	uint32_t dwordAF0;
-	char gapAF4[4];
-	uint32_t dwordAF8;
-	char gapAFC[20];
-	uint32_t dwordB10;
-	uint32_t dwordB14;
-	char gapB18[24];
-	uint32_t dwordB30;
-	uint64_t qwordB34;
-	char gapB3C[4];
-	uint32_t dwordB40;
-	uint64_t qwordB44;
-	char gapB4C[4];
-	uint16_t owordB50;
-	char gapB52[14];
-	uint16_t owordB60;
-	char gapB62[14];
-	uint32_t dwordB70;
-	uint32_t dwordB74;
-	uint64_t qwordB78;
-	uint32_t dwordB80;
-	uint32_t dwordB84;
-	uint32_t dwordB88;
-	uint32_t dwordB8C;
-	uint32_t dwordB90;
-	uint32_t dwordB94;
-	uint32_t dwordB98;
-	uint32_t dwordB9C;
-	uint32_t dwordBA0;
-	uint64_t qwordBA4;
-	char gapBAC[4];
-	uint32_t dwordBB0;
-	uint64_t qwordBB4;
-	char gapBBC[20];
-	uint64_t qwordBD0;
-	char gapBD8[16];
-	uint32_t dwordBE8;
-	char gapBEC[4];
-	uint64_t qwordBF0;
-	uint32_t dwordBF8;
-	uint64_t qwordBFC;
-	uint16_t wordC04;
-	uint8_t byteC06;
-	char gapC07;
-	uint64_t qwordC08;
-	uint32_t dwordC10;
-	uint32_t dwordC14;
-	uint16_t wordC18;
-	char gapC1A[2];
-	uint64_t qwordC1C;
-	uint64_t qwordC24;
-	uint64_t qwordC2C;
-	uint64_t qwordC34;
-	char gapC3C[4];
-	uint64_t qwordC40;
-	uint64_t qwordC48;
-	uint32_t dwordC50;
-	char gapC54[4];
-	uint32_t dwordC58;
-	float m_gravity; // 0xC5C - might be start of some sub-class
-	char gapC60[8];
-	class CPed* m_driver; //0x0C68
-	class CPed* m_passengers[15]; //0x0C70
-	class CPed* m_last_driver; //0x0CE8
-	char gapCF0[1424]; // end of sub-class
-	uint32_t dword1280;
-	char gap1284[4];
-	uint32_t dword1288;
-	char gap128C[12];
-	uint16_t word1298;
-	uint8_t byte129A;
-	char gap129B;
-	uint64_t qword129C;
-	uint64_t qword12A4;
-	uint64_t qword12AC;
-	uint64_t qword12B4;
-	char gap12BC[4];
-	uint64_t qword12C0;
-	uint64_t qword12C8;
-	uint16_t word12D0;
-	char gap12D2[14];
-	uint32_t dword12E0;
-	uint32_t dword12E4;
-	uint64_t qword12E8;
-	uint32_t dword12F0;
-	char gap12F4[4];
-	uint64_t qword12F8;
-	char gap1300[56];
-	uint64_t qword1338;
-	uint64_t qword1340;
-	uint32_t dword1348;
-	uint32_t dword134C;
-	uint32_t dword1350;
-	uint64_t qword1354;
-	uint32_t dword135C;
-	uint32_t dword1360;
-	uint32_t dword1364;
-	uint32_t dword1368;
-	char gap136C[4];
-	float float1370;
-	float float1374;
-	char gap1378[8];
-	uint64_t qword1380;
-	uint64_t qword1388;
-	uint32_t dword1390;
-	uint64_t qword1394;
-	uint16_t word139C;
-	uint16_t word139E;
-	uint8_t byte13A0;
-	uint16_t word13A1;
-	char gap13A3[2];
-	uint8_t byte13A5;
-	uint16_t word13A6;
-	uint8_t byte13A8;
-	char gap13A9[3];
-	uint32_t dword13AC;
-	uint8_t byte13B0;
-	char gap13B1[3];
-	uint64_t qword13B4;
-	uint32_t dword13BC;
-	uint32_t dword13C0;
-	uint32_t dword13C4;
-	uint32_t dword13C8;
-	uint8_t byte13CC;
-	char gap13CD[3];
-	uint64_t qword13D0;
-	uint8_t byte13D8;
-	char gap13D9[3];
-	uint32_t dword13DC;
-	char gap13E0[8];
-	uint32_t dword13E8;
-	char gap13EC[116];
-	uint32_t dword1460;
-	uint16_t word1464;
-	uint8_t byte1466;
-	char gap1467;
-	uint64_t qword1468;
+	char pad_02EC[12]; //0x02EC
+	uint8_t m_boost_state; //0x02F8
+	char pad_02F9[2]; //0x02F9
+	uint8_t m_boost_allow_recharge; //0x02FB
+	char pad_02FC[4]; //0x02FC
+	float m_boost; //0x0300
+	float m_rocket_recharge_speed; //0x304
+	char pad_0308[136]; //0x0308
+	float m_jump_boost_charge; //0x0390
+	char pad_0394[1084]; //0x0394
+	rage::vector3 m_velocity; //0x07D0
+	char pad_07DC[68]; //0x07DC
+	float m_body_health; //0x0820
+	float m_petrol_tank_health; //0x0824
+	char pad_0828[72]; //0x0828
+	uint16_t m_next_gear; //0x0870
+	uint16_t m_current_gear; //0x0872
+	char pad_0874[2]; //0x0874
+	uint8_t m_top_gear; //0x0876
+	char pad_0877[57]; //0x0877
+	float m_rpm; //0x08D0
+	char pad_08D4[52]; //0x8D4
+	float m_engine_health; //0x08E8
+	char pad_08EC[44]; //0x08EC
+	CHandlingData* m_handling_data; //0x0918
+	char pad_0920[2]; //0x0920
+	uint8_t m_is_drivable; //0x0922
+	uint8_t m_tyres_can_burst; //0x0923
+	uint8_t m_deform_god; //0x0924
+	char pad_0925[179]; //0x0925
+	float m_dirt_level; //0x09D8
+	char pad_09DC[194]; //0x09DC
+	uint8_t m_is_targetable; //0x0A9E
+	char pad_0A9F[413]; //0x0A9F
+	float m_gravity; //0x0C3C
+	uint8_t m_max_passengers; //0x0C40
+	char pad_0C41; //0x0C41
+	uint8_t m_num_of_passengers; //0x0C42
+	char pad_0C43[5]; //0x0C43
+	class CPed* m_driver; //0x0C48
+	class CPed* m_passengers[15]; //0x0C50
+	class CPed* m_last_driver; //0x0CC8
+	char pad_0CD0[1696]; //0x0CD0
+	uint32_t m_door_lock_status; //0x1370
+	char pad_1374[220]; //0x1374
 
+	float get_speed() {
+		return sqrt(m_velocity.x * m_velocity.x + m_velocity.y * m_velocity.y + m_velocity.z * m_velocity.z);
+	}
 	CVehicleModelInfo* get_model_info() {
 		return reinterpret_cast<CVehicleModelInfo*>(m_model_info);
 	}
@@ -3793,6 +3716,12 @@ public:
 	uint8_t m_fired_flares; //0x1962
 	uint8_t m_fired_unk_2; //0x1963
 
+	void set_ped_transformation(rage::vector2 size, rage::vector2 lean) {
+		m_transformation_matrix.data[0][0] = size.x; //0x60 - Width
+		m_transformation_matrix.data[2][0] = lean.x; //0x80 - Front Lean
+		m_transformation_matrix.data[2][3] = lean.y; //0x80 - Back Lean
+		m_transformation_matrix.data[2][2] = size.y; //0x88 - Height
+	}
 	float get_speed() {
 		return sqrt(m_velocity.x * m_velocity.x + m_velocity.y * m_velocity.y + m_velocity.z * m_velocity.z);
 	}

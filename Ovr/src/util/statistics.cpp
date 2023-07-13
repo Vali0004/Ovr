@@ -15,6 +15,9 @@ void statistics::draw() {
 		draw("{} Pickups", inf->m_count);
 	if (CObjectInterface* inf{ util::classes::getObjectInterface() })
 		draw("{} Objects", inf->m_count);
+	draw("{} - X", util::classes::getPed()->get_position().x);
+	draw("{} - Y", util::classes::getPed()->get_position().y);
+	draw("{} - Z", util::classes::getPed()->get_position().z);
 	draw("{} Player{}", util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1, (util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1) == 1 ? "" : "s");
 	draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
 	draw("{} - Frame Count", m_frameCount);

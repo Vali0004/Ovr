@@ -67,6 +67,35 @@ namespace commands::features {
 					"maxArmor"_AC->run();
 				}
 			}
+			void instantRespawn(toggleCommand* command) {
+				if (command->get(0).toggle) {
+					Ped ped{ PLAYER::PLAYER_PED_ID() };
+					if (PED::IS_PED_DEAD_OR_DYING(ped, FALSE)) {
+						Vector3 pos{ ENTITY::GET_ENTITY_COORDS(ped, TRUE) };
+						if (util::network::g_manager.online()) {
+							NETWORK::NETWORK_RESURRECT_LOCAL_PLAYER(pos, 0.f, FALSE, FALSE, FALSE, -1, -1);
+						}
+						else {
+							PED::RESURRECT_PED(ped);
+							ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, pos, FALSE, FALSE, FALSE);
+						}
+						MISC::FORCE_GAME_STATE_PLAYING();
+						"clearTasks"_AC->run();
+						MISC::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME("respawn_controller");
+					}
+				}
+			}
+			void keepLastCoordinatesOnDeath(toggleCommand* command) {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				if (PED::IS_PED_DEAD_OR_DYING(ped, FALSE)) {
+					Vector3 pos{ ENTITY::GET_ENTITY_COORDS(ped, TRUE) };
+					g_coordsAtDeath = pos;
+				}
+			}
+			void clearTasks(actionCommand* command) {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				TASK::CLEAR_PED_TASKS_IMMEDIATELY(ped);
+			}
 			void clone(actionCommand* command) {
 				util::classes::getPedFactory()->ClonePed(cPed, true, true, false);
 			}
@@ -135,22 +164,32 @@ namespace commands::features {
 				}
 			}
 			void noClip(toggleFloatCommand* command) {
-				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				if (command->get(0).toggle && !PED::IS_PED_IN_ANY_VEHICLE(ped, FALSE) && g_running) {
-					ENTITY::SET_ENTITY_COLLISION(ped, FALSE, TRUE);
-					Vector3 playerPosition{ cPed->get_position().serialize() };
+				Entity entity{ PLAYER::PLAYER_PED_ID() };
+				rage::CDynamicEntity* ent{ cPed };
+				if (command->get(0).toggle && g_running) {
+					if (PED::IS_PED_IN_ANY_VEHICLE(entity, FALSE)) {
+						entity = PED::GET_VEHICLE_PED_IS_IN(entity, FALSE);
+						ent = cVehicle;
+					}
+					ent->getPhBoundComposite()->m_bounds[0]->m_bounding_box_max_xyz_margin_w.w = -2.f;
+					Vector3 playerPosition{ ent->get_position().serialize() };
 					Vector3 cameraRotation{ math::rotationToDirection(CAM::GET_GAMEPLAY_CAM_ROT(0)) };
+					if (PED::IS_PED_IN_ANY_VEHICLE(entity, FALSE)) {
+						VEHICLE::SET_VEHICLE_FIXED(entity);
+						Vector3 rotation{ CAM::GET_GAMEPLAY_CAM_ROT(0.1) };
+						ENTITY::SET_ENTITY_ROTATION(entity, rotation.x, rotation.y, rotation.z, 0.1, 0.1);
+					}
 					Vector3 coords{ playerPosition + cameraRotation * command->get(1).floating_point };
-					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, playerPosition, TRUE, TRUE, FALSE);
+					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, playerPosition, TRUE, TRUE, FALSE);
 					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlSprint)) {
 						coords = { playerPosition + cameraRotation * command->get(1).floating_point * 3.f };
 					}
 					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlMoveUpOnly)) {
-						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(ped, coords, TRUE, TRUE, FALSE);
+						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, coords, TRUE, TRUE, FALSE);
 					}
 				}
 				else {
-					ONCE_PER_FRAME({ ENTITY::SET_ENTITY_COLLISION(ped, TRUE, TRUE); });
+					ent->getPhBoundComposite()->m_bounds[0]->m_bounding_box_max_xyz_margin_w.w = 0.25f;
 				}
 			}
 			void coordSmash(toggleCommand* command) {
@@ -162,6 +201,11 @@ namespace commands::features {
 				}
 				else {
 					pos = {};
+				}
+			}
+			void autoTeleportToWaypoint(toggleCommand* command) {
+				if (command->get(0).toggle) {
+					"teleportToWaypoint"_AC->run();
 				}
 			}
 			void walkOnAir(toggleCommand* command) {
@@ -214,7 +258,7 @@ namespace commands::features {
 					static Object handle{};
 					if (handle) {
 						WATER::GET_WATER_HEIGHT(coords, &height);
-						pointers::g_handleToPointer(handle)->set_entity_flag(eEntityFlags::Visible, false);
+						ENTITY::SET_ENTITY_VISIBLE(handle, FALSE, FALSE);
 						ENTITY::SET_ENTITY_COORDS(handle, { coords.x, coords.y, height - 1.9f }, TRUE, FALSE, FALSE, TRUE);
 						ENTITY::SET_ENTITY_ROTATION(handle, 180.f, 90.f, 180.f, 2, FALSE);
 						ENTITY::FREEZE_ENTITY_POSITION(handle, TRUE);
@@ -228,7 +272,19 @@ namespace commands::features {
 				}
 			}
 			void slowMotion(toggleCommand* command) {
-				MISC::SET_TIME_SCALE(command->get(0).toggle ? 0.5f : 1.f);
+				"setTimeScale"_FC->get(0).floating_point = command->get(0).toggle ? 0.5f : 1.f;
+			}
+			void teleportToCoords(variadicCommand* command) {
+				Vector3 pos{ command->get(0).floating_point, command->get(1).floating_point, command->get(2).floating_point };
+				Entity entity{ PLAYER::PLAYER_PED_ID() };
+				if (PED::IS_PED_IN_ANY_VEHICLE(entity, FALSE)) {
+					entity = PED::GET_VEHICLE_PED_IS_IN(entity, FALSE);
+				}
+				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, pos, TRUE, TRUE, FALSE);
+				float groundZCoord{};
+				MISC::GET_GROUND_Z_FOR_3D_COORD(pos, &groundZCoord, FALSE, FALSE);
+				pos.z = groundZCoord;
+				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, pos, TRUE, TRUE, FALSE);
 			}
 		}
 		namespace police {
@@ -266,6 +322,9 @@ namespace commands::features {
 			AUDIO::SET_PED_FOOTSTEPS_EVENTS_ENABLED(ped, !command->get(0).toggle);
 			AUDIO::SET_PED_CLOTH_EVENTS_ENABLED(ped, !command->get(0).toggle);
 			PED::SET_FORCE_FOOTSTEP_UPDATE(ped, command->get(0).toggle);
+		}
+		void noCollision(toggleCommand* command) {
+			cPed->getPhBoundComposite()->m_bounds[0]->m_bounding_box_max_xyz_margin_w.w = command->get(0).toggle ? -1.f : 0.25f;
 		}
 		void noRagdoll(toggleCommand* command) {
 			Ped ped{ PLAYER::PLAYER_PED_ID() };
@@ -319,15 +378,66 @@ namespace commands::features {
 		void teleportGun(toggleCommand* command) {
 			if (command->get(0).toggle) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
-				Vector3 coords{};
-				if (PED::IS_PED_SHOOTING(ped) && WEAPON::GET_PED_LAST_WEAPON_IMPACT_COORD(ped, &coords)) {
-					ENTITY::SET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), coords, TRUE, TRUE, TRUE, FALSE);
+				if (util::raycast ray{}; ray.check(5000.f) && PED::IS_PED_SHOOTING(ped)) {
+					Vector3 coords{ ray.coords() };
+					g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
+				}
+			}
+		}
+		void deleteGun(toggleCommand* command) {
+			if (command->get(0).toggle) {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				if (util::raycast ray{}; ray.check(5000.f) && PED::IS_PED_SHOOTING(ped)) {
+					Entity entity{ ray.entity() };
+					Vector3 coords{ ray.coords() };
+					if (ENTITY::IS_ENTITY_A_PED(entity) && PED::IS_PED_A_PLAYER(entity)) {
+						LOG_DIRECT(White, "Weapons", "You can't delete players!");
+					}
+					else {
+						float distance{ math::distanceBetweenVecs(cPed->get_position().serialize(), coords) };
+						if (distance >= 5000.f) {
+							LOG_DIRECT(White, "Weapons", "The entity you're trying to delete is too far!");
+						}
+						else {
+							if (util::natives::requestControl(entity)) {
+								ENTITY::SET_ENTITY_AS_MISSION_ENTITY(entity, TRUE, TRUE);
+								ENTITY::DELETE_ENTITY(&entity);
+							}
+							else {
+								LOG_DIRECT(White, "Weapons", "Failed to take control of entity.");
+							}
+						}
+					}
+				}
+			}
+		}
+		void deadEye(toggleCommand* command) {
+			if (command->get(0).toggle) {
+				Ped ped{ PLAYER::PLAYER_PED_ID() };
+				if (cPed->on_foot()) {
+					if (PAD::IS_CONTROL_PRESSED(0, ControlAim)) {
+						"setTimeScale"_FC->get(0).floating_point = 0.2f;
+						GRAPHICS::ANIMPOSTFX_PLAY("HeistLocate", 0, FALSE);
+					}
+					else if (PAD::IS_CONTROL_RELEASED(0, ControlAim) && GRAPHICS::ANIMPOSTFX_IS_RUNNING("HeistLocate")) {
+						"setTimeScale"_FC->get(0).floating_point = 1.f;
+						GRAPHICS::ANIMPOSTFX_STOP("HeistLocate");
+					}
 				}
 			}
 		}
 	}
 	namespace vehicle {
 		namespace spawner {
+			void spawnInsideVehicle(toggleCommand* command) {
+
+			}
+			void spawnVehicleMaxed(toggleCommand* command) {
+
+			}
+			void deleteLastSpawnedVehicle(toggleCommand* command) {
+
+			}
 			void spawnVehicle(hashCommand* command) {
 				g_fiberPool.add([command] {
 					u32 hash{ command->get_hash() };
@@ -335,17 +445,52 @@ namespace commands::features {
 						LOG(Commands, "{} is not a valid hash!", command->get_key());
 					}
 					else {
+						Player player{ PLAYER::PLAYER_ID() };
+						Ped ped{ PLAYER::GET_PLAYER_PED(player) };
 						while (!STREAMING::HAS_MODEL_LOADED(hash)) {
 							STREAMING::REQUEST_MODEL(hash);
 							fiber::current()->sleep(100ms);
 						}
-						Vector3 pos{ ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE) };
-						float heading{ ENTITY::GET_ENTITY_HEADING(PLAYER::PLAYER_PED_ID()) };
+						if ("deleteLastSpawnedVehicle"_TC->get(0).toggle) {
+							if (g_lastSpawnedVehicle)
+								VEHICLE::DELETE_VEHICLE(&g_lastSpawnedVehicle);
+						}
+						Vector3 pos{ ENTITY::GET_ENTITY_COORDS(ped, TRUE) };
+						float heading{ ENTITY::GET_ENTITY_HEADING(ped) };
 						Vehicle vehicle{ VEHICLE::CREATE_VEHICLE(hash, pos, heading, TRUE, TRUE, FALSE) };
+						g_lastSpawnedVehicle = vehicle;
 						if (util::network::g_manager.online()) {
 							DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
+							DECORATOR::DECOR_SET_INT(vehicle, "RandomID", NETWORK::NETWORK_HASH_FROM_PLAYER_HANDLE(player));
+							i32 networkId{ NETWORK::VEH_TO_NET(vehicle) };
+							if (NETWORK::NETWORK_GET_ENTITY_IS_NETWORKED(vehicle)) {
+								NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(networkId, true);
+							}
+							VEHICLE::SET_VEHICLE_IS_STOLEN(vehicle, FALSE);
 						}
-						PED::SET_PED_INTO_VEHICLE(PLAYER::PLAYER_PED_ID(), vehicle, -1);
+						if ("spawnInsideVehicle"_TC->get(0).toggle) {
+							PED::SET_PED_INTO_VEHICLE(ped, vehicle, -1);
+						}
+						if ("spawnVehicleMaxed"_TC->get(0).toggle) {
+							if (VEHICLE::IS_THIS_MODEL_A_CAR(hash) || VEHICLE::IS_THIS_MODEL_A_BIKE(hash)) {
+								VEHICLE::SET_VEHICLE_MOD_KIT(vehicle, 0);
+								VEHICLE::SET_VEHICLE_TYRES_CAN_BURST(vehicle, FALSE);
+								VEHICLE::SET_VEHICLE_HAS_STRONG_AXLES(vehicle, TRUE);
+								i32 numberOfEngineMods{ VEHICLE::GET_NUM_VEHICLE_MODS(vehicle, VehicleModEngine) };
+								i32 numberOfBrakeMods{ VEHICLE::GET_NUM_VEHICLE_MODS(vehicle, VehicleModBrakes) };
+								i32 numberOfTransmissionMods{ VEHICLE::GET_NUM_VEHICLE_MODS(vehicle, VehicleModTransmission) };
+								i32 numberOfSuspensionMods{ VEHICLE::GET_NUM_VEHICLE_MODS(vehicle, VehicleModSuspension) };
+								i32 numberOfArmourMods{ VEHICLE::GET_NUM_VEHICLE_MODS(vehicle, VehicleModArmour) };
+								VEHICLE::SET_VEHICLE_MOD(vehicle, VehicleModEngine, numberOfEngineMods - 1, FALSE);
+								VEHICLE::SET_VEHICLE_MOD(vehicle, VehicleModBrakes, numberOfBrakeMods - 1, FALSE);
+								VEHICLE::SET_VEHICLE_MOD(vehicle, VehicleModTransmission, numberOfTransmissionMods - 1, FALSE);
+								VEHICLE::SET_VEHICLE_MOD(vehicle, VehicleModSuspension, numberOfSuspensionMods - 1, FALSE);
+								VEHICLE::SET_VEHICLE_MOD(vehicle, VehicleModArmour, numberOfArmourMods - 1, FALSE);
+								VEHICLE::SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX(vehicle, NumberPlateTypeNorthYankton);
+								VEHICLE::TOGGLE_VEHICLE_MOD(vehicle, VehicleToggleModTurbo, TRUE);
+								VEHICLE::TOGGLE_VEHICLE_MOD(vehicle, VehicleToggleModXenonHeadlights, TRUE);
+							}
+						}
 						STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(hash);
 					}
 				});
@@ -500,6 +645,7 @@ namespace commands::features {
 				}
 				void seamlessTransition(toggleCommand* command) {
 					if (command->get(0).toggle) {
+						HUD::DISPLAY_RADAR(TRUE);
 						const eTransitionState state{ static_cast<eTransitionState>(global(1574993).at(3).value()->Int) };
 						if (STREAMING::IS_PLAYER_SWITCH_IN_PROGRESS()) {
 							if (state <= eTransitionState::FreemodeFinalSetupPlayer) {
@@ -666,23 +812,23 @@ namespace commands::features {
 				fiber::current()->sleep(200ms);
 				CPlayerListMenu* Menu = new CPlayerListMenu();
 				u32 Hash{ 0xDA4858C1 };
-				auto info{ pointers::g_getFriendsMenu(0) };
-				PBYTE data = (PBYTE)(info + 8);
-				if (data) {
-					int index = 0;
-					while ((uint8_t)*data <= 3u) {
-						if (*data == 3)
+				u64 Info{ pointers::g_getFriendsMenu(0) };
+				u8* Data{ reinterpret_cast<u8*>(Info + 0x8) };
+				if (Data) {
+					u8 Idx{};
+					while (*Data <= 3u) {
+						if (*Data == 3) {
 							break;
-
-						++index;
-						data += 0x10;
+						}
+						++Idx;
+						Data += 0x10;
 					}
-					if (index < 20) {
-						int64_t old = *(int64_t*)(info + 16i64 * index);
-						*(int64_t*)(info + 16i64 * index) = rid;
+					if (Idx < 20ui8) {
+						u64 OriginalRID{ *(u64*)(Info + 16ui64 * Idx) };
+						*(u64*)(Info + 16ui64 * Idx) = rid;
 						pointers::g_triggerPlayermenuAction(Menu, &Hash);
 						fiber::current()->sleep(400ms);
-						*(int64_t*)(info + 16i64 * index) = old;
+						*(u64*)(Info + 16ui64 * Idx) = OriginalRID;
 					}
 				}
 			});
@@ -868,6 +1014,18 @@ namespace commands::features {
 					}
 				}
 			}
+			void setTimeScale(floatCommand* command) {
+				MISC::SET_TIME_SCALE(command->get(0).floating_point);
+			}
+		}
+		namespace world {
+			void teleportToWaypoint(actionCommand* command) {
+				util::blip waypoint{ 8, util::eBlipHandleType::First };
+				if (waypoint.exists()) {
+					Vector3 coords{ waypoint.coords() };
+					g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
+				}
+			}
 		}
 	}
 	namespace settings {
@@ -918,6 +1076,9 @@ namespace commands::features {
 		//Self::Ped
 		g_manager.add(toggleCommand("tinyPed", "Tiny Ped", self::ped::tinyPed));
 		g_manager.add(toggleCommand("autoHeal", "Auto Heal", self::ped::autoHeal));
+		g_manager.add(toggleCommand("instantRespawn", "Instant Respawn", self::ped::instantRespawn));
+		g_manager.add(toggleCommand("keepLastCoordinatesOnDeath", "Keep Last Coordinates On Death", self::ped::keepLastCoordinatesOnDeath));
+		g_manager.add(actionCommand("clearTasks", "Clear Tasks", self::ped::clearTasks));
 		g_manager.add(actionCommand("clone", "Clone", self::ped::clone));
 		g_manager.add(actionCommand("suicide", "Suicide", self::ped::suicide));
 		//Self::Movement
@@ -932,11 +1093,13 @@ namespace commands::features {
 		g_manager.add(toggleFloatCommand("superRun", "Super Run", self::movement::superRun));
 		g_manager.add(toggleFloatCommand("noClip", "No Clip", self::movement::noClip));
 		g_manager.add(toggleCommand("coordSmash", "Coord Smash", "Builds up momentum by setting you in the air and infinite falling", self::movement::coordSmash));
+		g_manager.add(toggleCommand("autoTeleportToWaypoint", "Auto Teleport To Waypoint", self::movement::autoTeleportToWaypoint));
 		g_manager.add(toggleCommand("walkOnAir", "Walk On Air", self::movement::walkOnAir));
 		//Self::World
 		g_manager.add(toggleCommand("walkOnWater", "Walk On Water", "Walk on water, instead of swimming", self::world::walkOnWater));
 		g_manager.add(toggleCommand("walkThroughWater", "Walk Through Water", "Allows you to walk right through water", self::world::walkThroughWater));
 		g_manager.add(toggleCommand("slowMotion", "Slow Motion", "Time moves slower", self::world::slowMotion));
+		g_manager.add(variadicCommand("teleportToCoords", "Teleport To Coords", "Teleports to the specific coordinates", { { eValueType::FloatingPoint }, { eValueType::FloatingPoint }, { eValueType::FloatingPoint } }, self::world::teleportToCoords, false));
 		//Self::Police
 		g_manager.add(toggleCommand("neverWanted", "Never Wanted", "No police are spawned", self::police::neverWanted));
 		g_manager.add(toggleCommand("lockWantedLevel", "Lock Wanted Level", "Stays at the same level when toggled", self::police::lockWantedLevel));
@@ -944,6 +1107,7 @@ namespace commands::features {
 		g_manager.add(intCommand("fakeWantedLevel", "Fake Wanted Level", self::police::fakeWantedLevel, true));
 		//Self
 		g_manager.add(intCommand("alpha", "Alpha", "Woah, I'm seethrough", self::alpha, true));
+		g_manager.add(toggleCommand("noCollision", "No Collision", "Phase through objects like a ghost", self::noCollision));
 		g_manager.add(toggleCommand("noRagdoll", "No Ragdoll", "No more flinging across the map for you", self::noRagdoll));
 		g_manager.add(toggleCommand("invisibility", "Invisibility", "Poof goes your player", self::invisibility));
 		//Weapon::Ammo::Special
@@ -956,12 +1120,17 @@ namespace commands::features {
 		g_manager.add(actionCommand("refillAmmo", "Refill", "Refills all your ammo", weapon::ammo::refill));
 		//Weapon
 		g_manager.add(toggleCommand("teleportGun", "Teleport Gun", &weapon::teleportGun));
+		g_manager.add(toggleCommand("deleteGun", "Delete Gun", &weapon::deleteGun));
+		g_manager.add(toggleCommand("deadEye", "Dead Eye", &weapon::deadEye));
 		//Vehicle::Spawner
+		g_manager.add(toggleCommand("spawnInsideVehicle", "Spawn Inside Vehicle", &vehicle::spawner::spawnInsideVehicle));
+		g_manager.add(toggleCommand("spawnVehicleMaxed", "Spawn Vehicle Maxed", &vehicle::spawner::spawnVehicleMaxed));
+		g_manager.add(toggleCommand("deleteLastSpawnedVehicle", "Delete Last Spawned Vehicle", &vehicle::spawner::deleteLastSpawnedVehicle));
 		g_manager.add(hashCommand("spawnVehicle", "Spawn Vehicle", &vehicle::spawner::spawnVehicle));
 		//Network::Friends::Selected
-		g_manager.add(actionCommand("copyFriendRid", "Copy RID", "Copies their RID to your clipboard", network::friends::selected::copyRid));
-		g_manager.add(actionCommand("copyFriendName", "Copy Name", "Copies their name to your clipboard", network::friends::selected::copyName));
-		g_manager.add(actionCommand("joinFriend", "Join", "Joins their session if possible", network::friends::selected::join));
+		g_manager.add(actionCommand("copyFriendRid", "Copy Friend RID", "Copies their RID to your clipboard", network::friends::selected::copyRid));
+		g_manager.add(actionCommand("copyFriendName", "Copy Friend Name", "Copies their name to your clipboard", network::friends::selected::copyName));
+		g_manager.add(actionCommand("joinFriend", "Join Friend", "Joins their session if possible", network::friends::selected::join));
 		//Network::Friends
 		g_manager.add(stringCommand("removeFriend", "Remove Friend", "Sends a SCAPI request to remove a friend", network::friends::remove));
 		//Network::Tunables
@@ -1062,8 +1231,11 @@ namespace commands::features {
 		g_manager.add(toggleCommand("mobileRadio", "Mobile Radio", "Use the game's radio anywhere", miscellaneous::game::mobileRadio));
 		g_manager.add(toggleCommand("automp", "Auto Multiplayer", "Automatically load into multiplayer on startup", miscellaneous::game::autoMp));
 		g_manager.add(toggleCommand("exitInstantly", "Exit Instantly", "Exits the game instantly when exit is requested", miscellaneous::game::exitInstantly));
+		g_manager.add(floatCommand("setTimeScale", "Set Time Scale", miscellaneous::game::setTimeScale));
+		//Miscellaneous::World
+		g_manager.add(actionCommand("teleportToWaypoint", "Teleport To Waypoint", miscellaneous::world::teleportToWaypoint));
 		//Settings::Ui
-		g_manager.add(floatCommand("scale", "Scale", "Set the global UI scale", settings::ui::scale, true));
+		g_manager.add(floatCommand("scale", "Scale", "Sets the global UI scale", settings::ui::scale, true));
 		//Settings::Game
 		g_manager.add(actionCommand("unload", "Unload", "Removes " BRAND " from the game", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));

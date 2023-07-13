@@ -43,6 +43,9 @@ namespace commands {
 		typedValue(value value) : typedValue(value, eValueType::NotNeeded) {}
 		typedValue(eValueType type) : typedValue({}, type) {}
 		typedValue() {}
+		value& operator*() {
+			return m_value;
+		}
 		value m_value{};
 		eValueType m_type{};
 	};
