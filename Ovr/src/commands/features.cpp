@@ -1034,6 +1034,10 @@ namespace commands::features {
 				g_running = false;
 			}
 			void exit(actionCommand* command) {
+				if ("exitInstantly"_TC->get(0).toggle) {
+					abort();
+					return;
+				}
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
 					ONCE_PER_FRAME({ elements::openPopup("Close?"); });
 					ImVec2 center{ ImGui::GetMainViewport()->GetCenter() };
