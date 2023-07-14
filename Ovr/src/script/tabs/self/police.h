@@ -3,7 +3,7 @@
 
 namespace tabs::self {
 	inline void police() {
-		elements::tabItem("Police", [] {
+		elements::menu("Police", [] {
 			cintSlider("wantedLevel"_IC, 0, 5);
 			cintSlider("fakeWantedLevel"_IC, 0, 5);
 			ccheckbox("lockWantedLevel"_TC);

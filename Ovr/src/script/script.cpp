@@ -12,25 +12,41 @@
 #include "tabs/protections.h"
 #include "tabs/scripting.h"
 #include "tabs/miscellaneous.h"
+#include "tabs/recovery.h"
 #include "tabs/settings.h"
 #include "elements.h"
 #include "commands/gui/gui.h"
 
 namespace script {
+	inline bool shouldPosChange(ImVec2 pos) {
+		ImVec2 winPos{ elements::windowPos() };
+		return winPos.y != pos.y;
+	}
+	inline float g_width{ 300.f };
 	void onPresent() {
 		if (script::g_guiOpen) {
-			elements::window(BRAND, g_guiOpen, [] {
-				elements::tabBar(BRAND, [] {
-					elements::tabItem("Self", &tabs::self::tab);
-					elements::tabItem("Weapon", &tabs::weapon::tab);
-					elements::tabItem("Vehicle", &tabs::vehicle::tab);
-					elements::tabItem("Network", &tabs::network::tab);
-					elements::tabItem("Protections", &tabs::protections::tab);
-					elements::tabItem("Scripting", &tabs::scripting::tab);
-					elements::tabItem("Miscellaneous", &tabs::miscellaneous::tab);
-					elements::tabItem("Settings", &tabs::settings::tab);
-				});
-			});
+			elements::window(BRAND"Header", g_guiOpen, [] {
+				elements::setWindowPos({ 13.f, 100.f }, ImGuiCond_Once);
+				elements::setWindowSize({ g_width, 80.f });
+				
+			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+			ImGuiWindow* window{ elements::getWindow(BRAND"Header") };
+			ImVec2 windowPos{ elements::getWindowPos(window) };
+			ImVec2 windowSize{ elements::getWindowSize(window) };
+			elements::window(BRAND, g_guiOpen, [windowPos, windowSize] {
+				ImVec2 pos{ windowPos.x, windowPos.y + windowSize.y };
+				elements::setWindowPos(pos);
+				elements::setWindowSize({ g_width, 270.f }, ImGuiCond_Once);
+				tabs::self::tab();
+				tabs::weapon::tab();
+				tabs::vehicle::tab();
+				tabs::network::tab();
+				tabs::protections::tab();
+				tabs::scripting::tab();
+				tabs::miscellaneous::tab();
+				tabs::recovery::tab();
+				tabs::settings::tab();
+			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing);
 		}
 		elements::drawlist::text(g_renderer->m_tahoma, BRAND " developer", { 0.001f, 0.f }, { 255, 255, 255, 255 });
 	}
@@ -85,72 +101,67 @@ namespace script {
 		auto& style{ ImGui::GetStyle() };
 		auto& colors{ style.Colors };
 		auto& io{ ImGui::GetIO() };
-		style.Alpha = 1.f;
-		style.WindowTitleAlign = ImVec2(0.f, 0.5f);
-		style.WindowPadding = ImVec2(10, 5);
-		style.WindowRounding = 3.f;
-		style.FramePadding = ImVec2(8, 5);
+		style.WindowTitleAlign = { 0.5f, 0.5f };
+		style.WindowRounding = 5.5f;
+		style.ChildRounding = 0.1f;
 		style.FrameRounding = 4.f;
-		style.ItemSpacing = ImVec2(10, 10);
-		style.ItemInnerSpacing = ImVec2(4, 5);
-		style.IndentSpacing = 27.f;
-		style.ScrollbarSize = 9.f;
-		style.ScrollbarRounding = 12.f;
-		style.GrabMinSize = 7.f;
 		style.GrabRounding = 3.f;
-		style.TouchExtraPadding = ImVec2();
-		colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-		colors[ImGuiCol_TextDisabled] = ImVec4(0.33f, 0.33f, 0.34f, 1.00f);
-		colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
-		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_PopupBg] = ImVec4(0.11f, 0.11f, 0.11f, 1.00f);
-		colors[ImGuiCol_Border] = ImVec4(0.94f, 0.49f, 0.05f, 1.00f);
-		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_FrameBg] = ImVec4(0.11f, 0.11f, 0.10f, 1.00f);
-		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-		colors[ImGuiCol_FrameBgActive] = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
-		colors[ImGuiCol_TitleBg] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-		colors[ImGuiCol_TitleBgActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.15f, 0.15f, 0.15f, 0.75f);
-		colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
-		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-		colors[ImGuiCol_CheckMark] = ImVec4(0.94f, 0.49f, 0.05f, 1.00f);
-		colors[ImGuiCol_SliderGrab] = ImVec4(0.80f, 0.80f, 0.83f, 0.31f);
-		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-		colors[ImGuiCol_Button] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-		colors[ImGuiCol_ButtonHovered] = ImVec4(0.27f, 0.27f, 0.28f, 1.00f);
-		colors[ImGuiCol_ButtonActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_Header] = ImVec4(0.10f, 0.10f, 0.11f, 1.00f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-		colors[ImGuiCol_Separator] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-		colors[ImGuiCol_SeparatorActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.00f);
-		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_Tab] = ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
-		colors[ImGuiCol_TabHovered] = ImVec4(0.92f, 0.49f, 0.05f, 1.00f);
-		colors[ImGuiCol_TabActive] = ImVec4(0.94f, 0.49f, 0.05f, 1.00f);
-		colors[ImGuiCol_TabUnfocused] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
-		colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
-		colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
-		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
-		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
-		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);
-		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
-		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
-		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.19f, 0.59f, 0.99f, 1.00f);
-		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
-		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+		style.PopupRounding = 5.5f;
+		style.ScrollbarRounding = 12.f;
+		style.ScrollbarSize = 9.f;
+		style.FrameBorderSize = 0.f;
+		style.WindowBorderSize = 1.f;
+		style.IndentSpacing = 27.f;
+		style.AntiAliasedLines = true;
+		style.AntiAliasedFill = true;
+		style.CurveTessellationTol = 0.f;
+		colors[ImGuiCol_Text] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_TextSelectedBg] = ImColor(49, 151, 253, 255);
+		colors[ImGuiCol_TextDisabled] = ImColor(40, 40, 40, 255);
+		colors[ImGuiCol_WindowBg] = ImColor(15, 15, 15, 255);
+		colors[ImGuiCol_ChildBg] = ImColor(20, 20, 20, 255);
+		colors[ImGuiCol_PopupBg] = ImColor(20, 20, 20, 255);
+		colors[ImGuiCol_Border] = ImColor(255, 95, 140, 255);
+		colors[ImGuiCol_BorderShadow] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_FrameBg] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_FrameBgHovered] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_FrameBgActive] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_TitleBg] = ImColor(43, 43, 43, 255);
+		colors[ImGuiCol_TitleBgActive] = ImColor(49, 49, 49, 255);
+		colors[ImGuiCol_TitleBgCollapsed] = ImColor(0, 0, 0, 130);
+		colors[ImGuiCol_MenuBarBg] = ImColor(30, 30, 30, 255);
+		colors[ImGuiCol_ScrollbarBg] = ImColor(50, 50, 50, 255);
+		colors[ImGuiCol_ScrollbarGrab] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_CheckMark] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_SliderGrab] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_SliderGrabActive] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_Button] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_ButtonHovered] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_ButtonActive] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_Header] = ImColor(94, 94, 94, 130);
+		colors[ImGuiCol_HeaderHovered] = ImColor(97, 97, 97, 94);
+		colors[ImGuiCol_HeaderActive] = ImColor(94, 94, 94, 130);
+		colors[ImGuiCol_Separator] = ImColor(41, 41, 41, 255);
+		colors[ImGuiCol_SeparatorHovered] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_SeparatorActive] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_ResizeGrip] = ImColor(66, 66, 66, 255);
+		colors[ImGuiCol_ResizeGripHovered] = ImColor(80, 80, 80, 255);
+		colors[ImGuiCol_ResizeGripActive] = ImColor(90, 90, 90, 255);
+		colors[ImGuiCol_Tab] = ImColor(50, 50, 50, 255);
+		colors[ImGuiCol_TabHovered] = ImColor(80, 80, 80, 255);
+		colors[ImGuiCol_TabActive] = ImColor(80, 80, 80, 255);
+		colors[ImGuiCol_TabUnfocused] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_TabUnfocusedActive] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_PlotLines] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_PlotLinesHovered] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_PlotHistogram] = ImColor(230, 179, 0, 255);
+		colors[ImGuiCol_PlotHistogramHovered] = ImColor(255, 153, 0, 255);
+		colors[ImGuiCol_DragDropTarget] = ImColor(255, 255, 0, 230);
+		colors[ImGuiCol_NavHighlight] = ImColor(255, 255, 255, 255);
+		colors[ImGuiCol_NavWindowingHighlight] = ImColor(255, 255, 255, 179);
+		colors[ImGuiCol_NavWindowingDimBg] = ImColor(204, 204, 204, 50);
+		colors[ImGuiCol_ModalWindowDimBg] = ImColor(204, 204, 204, 90);
 	}
 }

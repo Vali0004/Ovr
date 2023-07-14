@@ -4,9 +4,8 @@
 
 namespace tabs::settings {
 	inline void game() {
-		elements::tabItem("Game", [] {
+		elements::menu("Game", [] {
 			cbutton("unload"_AC);
-			elements::sameLine();
 			cbutton("exit"_AC);
 		});
 	}

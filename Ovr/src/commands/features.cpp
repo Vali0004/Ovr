@@ -1,8 +1,9 @@
 #include "features.h"
 #include "script/script.h"
 #include "hooking/hooking.h"
-#include <renderer/renderer.h>
-#include <script/elements.h>
+#include "renderer/renderer.h"
+#include "script/elements.h"
+#include "commands/gui/gui.h"
 
 namespace commands::features {
 	namespace self {
@@ -181,10 +182,10 @@ namespace commands::features {
 					}
 					Vector3 coords{ playerPosition + cameraRotation * command->get(1).floating_point };
 					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, playerPosition, TRUE, TRUE, FALSE);
-					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlSprint)) {
+					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlSprint) && !gui::g_box.m_draw) {
 						coords = { playerPosition + cameraRotation * command->get(1).floating_point * 3.f };
 					}
-					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlMoveUpOnly)) {
+					if (PAD::IS_DISABLED_CONTROL_PRESSED(0, eControl::ControlMoveUpOnly) && !gui::g_box.m_draw) {
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, coords, TRUE, TRUE, FALSE);
 					}
 				}
@@ -399,7 +400,7 @@ namespace commands::features {
 							LOG_DIRECT(White, "Weapons", "The entity you're trying to delete is too far!");
 						}
 						else {
-							if (util::natives::requestControl(entity)) {
+							if (util::natives::forcefullyTakeControl(entity)) {
 								ENTITY::SET_ENTITY_AS_MISSION_ENTITY(entity, TRUE, TRUE);
 								ENTITY::DELETE_ENTITY(&entity);
 							}
@@ -459,7 +460,7 @@ namespace commands::features {
 						float heading{ ENTITY::GET_ENTITY_HEADING(ped) };
 						Vehicle vehicle{ VEHICLE::CREATE_VEHICLE(hash, pos, heading, TRUE, TRUE, FALSE) };
 						g_lastSpawnedVehicle = vehicle;
-						if (util::network::g_manager.online()) {
+						if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
 							DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
 							DECORATOR::DECOR_SET_INT(vehicle, "RandomID", NETWORK::NETWORK_HASH_FROM_PLAYER_HANDLE(player));
 							i32 networkId{ NETWORK::VEH_TO_NET(vehicle) };
@@ -891,9 +892,9 @@ namespace commands::features {
 				"invalidTrainTrackIndexCrashProtection"_PC->setFromSection(command->state());
 				"pedAttachCrashProtection"_PC->setFromSection(command->state());
 				"giveControlCrashProtection"_PC->setFromSection(command->state());
+				"ropeCrashProtection"_PC->setFromSection(command->state());
 				"invalidWordStateCrashProection"_PC->setFromSection(command->state());
 				"scriptEventIslandHeliLaunchCrashProtection"_PC->setFromSection(command->state());
-				"scriptEventSpawnVehicleCrashProtection"_PC->setFromSection(command->state());
 				"scriptEventSyncedIntractionCrashProtection"_PC->setFromSection(command->state());
 			}
 		}
@@ -949,10 +950,10 @@ namespace commands::features {
 				"vehicleKickProtection"_PC->setFromSection(command->state());
 				"mcTeleportProtection"_PC->setFromSection(command->state());
 				"startActivityProtection"_PC->setFromSection(command->state());
-				"markPlayerBeastProtection"_PC->setFromSection(command->state());
+				"kickFromInteriorProtection"_PC->setFromSection(command->state());
+				"interiorControlProtection"_PC->setFromSection(command->state());
 				"sendTextLabelSMSProtection"_PC->setFromSection(command->state());
 				"sendTextMessageProtection"_PC->setFromSection(command->state());
-				"tseCommandProtection"_PC->setFromSection(command->state());
 				"tseCommandRotateCamProtection"_PC->setFromSection(command->state());
 				"notificationProtection"_PC->setFromSection(command->state());
 				"customNotificationProtection"_PC->setFromSection(command->state());
@@ -1041,8 +1042,8 @@ namespace commands::features {
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
 					ONCE_PER_FRAME({ elements::openPopup("Close?"); });
 					ImVec2 center{ ImGui::GetMainViewport()->GetCenter() };
-					elements::setWindowPos(center, NULL, { 0.5f, 0.5f });
-					elements::setWindowSize({ 470.f, 235.f });
+					elements::setNextWindowPos(center, NULL, { 0.5f, 0.5f });
+					elements::setNextWindowSize({ 470.f, 235.f });
 					elements::font(g_renderer->m_tahoma, [&] {
 						elements::popupModal("Close?", [&] {
 							elements::text("Grand Theft Auto V will close.\nAre you sure you want to do this?\n\n");
@@ -1175,9 +1176,9 @@ namespace commands::features {
 		g_manager.add(protectionCommand("invalidTrainTrackIndexCrashProtection", "Invalid Train Track Index"));
 		g_manager.add(protectionCommand("pedAttachCrashProtection", "Infinite Ped Attachment"));
 		g_manager.add(protectionCommand("giveControlCrashProtection", "Invalid Give Control Type"));
+		g_manager.add(protectionCommand("ropeCrashProtection", "Invalid Rope Crash"));
 		g_manager.add(protectionCommand("invalidWordStateCrashProection", "Invalid World State"));
 		g_manager.add(protectionCommand("scriptEventIslandHeliLaunchCrashProtection", "Script Event Island Heli Launch"));
-		g_manager.add(protectionCommand("scriptEventSpawnVehicleCrashProtection", "Script Event Spawn Vehicle"));
 		g_manager.add(protectionCommand("scriptEventSyncedIntractionCrashProtection", "Script Event Synced Interaction"));
 		//Protections::Events::Network
 		g_manager.add(sectionProtectionCommand("allNetworkEventProtections", "All Network Event Protections", "Sets all network event protections", protections::networkEvents::allNetworkEventProtections));
@@ -1210,12 +1211,10 @@ namespace commands::features {
 		g_manager.add(protectionCommand("vehicleKickProtection", "Vehicle Kick"));
 		g_manager.add(protectionCommand("mcTeleportProtection", "MC Teleport"));
 		g_manager.add(protectionCommand("startActivityProtection", "Start Activity"));
-		g_manager.add(protectionCommand("markPlayerBeastProtection", "Mark Player Beast"));
 		g_manager.add(protectionCommand("kickFromInteriorProtection", "Kick From Interior"));
 		g_manager.add(protectionCommand("interiorControlProtection", "Interior Control"));
 		g_manager.add(protectionCommand("sendTextLabelSMSProtection", "Send Text Label SMS"));
 		g_manager.add(protectionCommand("sendTextMessageProtection", "Send Text Message"));
-		g_manager.add(protectionCommand("tseCommandProtection", "TSE Command"));
 		g_manager.add(protectionCommand("tseCommandRotateCamProtection", "TSE Command Rotate Cam"));
 		g_manager.add(protectionCommand("notificationProtection", "Notification"));
 		g_manager.add(protectionCommand("customNotificationProtection", "Custom Notification"));

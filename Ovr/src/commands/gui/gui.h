@@ -48,6 +48,7 @@ namespace commands::gui {
 		commandBoxClues m_clues{};
 		bool m_draw{};
 		bool m_lock{};
+		bool m_canUseBox{ true };
 		bool m_clearCommandBoxOnEnter{ true };
 	private:
 		i8 m_limit{ 3 };

@@ -4,34 +4,21 @@
 nlohmann::json j{};
 bool badTransaction(nlohmann::json& data, u32 hash, std::string msg) {
 	if (data["Category"].get<u32>() == hash) {
-		u32 category{ data["Category"].get<u32>() };
-		u32 id{ data["ID"].get<u32>() };
-		u32 action{ data["Action"].get<u32>() };
-		u32 target{ data["Target"].get<u32>() };
-		u32 count{ data["Count"].get<u32>() };
-		LOG(Debug, "[rage::CNetShopTransactionMgr::Push]: {} pushed.", msg);
-		LOG(Debug, "Data: 0x{:X}[{}], {} executing {} for {} {} times", category, id, action, target, count);
 		return true;
 	}
 	return false;
 }
 bool badAction(nlohmann::json& data, u32 hash, u32 actionHash, std::string msg) {
 	if (data["Category"].get<u32>() == hash && data["Action"].get<u32>() == actionHash) {
-		u32 category{ data["Category"].get<u32>() };
-		u32 id{ data["ID"].get<u32>() };
-		u32 action{ data["Action"].get<u32>() };
-		u32 target{ data["Target"].get<u32>() };
-		u32 count{ data["Count"].get<u32>() };
-		LOG(Debug, "[rage::CNetShopTransactionMgr::Push]: {} contained an bad action (0x{:X}).", msg, actionHash);
-		LOG(Debug, "Data: 0x{:X}[{}], {} executing {} for {} {} times", category, id, action, target, count);
 		return true;
 	}
 	return false;
 }
-bool hooks::addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items) {
+bool hooks::addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items) {
 	if (pTransactionMgr) {
-		for (auto node{ pTransactionMgr->m_first }; node; node = node->m_next) {
-			auto transaction{ node->m_transaction_basket };
+		auto nodes{ pTransactionMgr->m_transaction_nodes };
+		for (auto node{ nodes.m_head }; node; node->m_next) {
+			auto transaction{ node->m_data };
 			j[transaction->m_category] = {
 				{ "ID", transaction->m_transaction_id },
 				{ "Category", transaction->m_category },

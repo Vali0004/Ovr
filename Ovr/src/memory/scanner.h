@@ -41,9 +41,12 @@ inline bool doesMemoryMatch(u8* target, std::optional<u8> const* sig, u64 len) {
 	return true;
 }
 inline u64 findPatternBruteforce(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
-	for (u64 i{}; i != module.size() - bytes.size(); ++i) {
-		if (doesMemoryMatch(module.begin().add(i).as<u8*>(), bytes.data(), bytes.size())) {
-			return module.begin().as<u64>() + i;
+	mem memoryRegion{ module.begin() };
+	//We can skip the PE header and entry point
+	for (u64 data{ memoryRegion + 0x1100ui64 }; data != module.size(); data += 2) {
+		mem currentMemoryAddress{ memoryRegion.add(data) };
+		if (doesMemoryMatch(currentMemoryAddress.as<u8*>(), bytes.data(), bytes.size())) {
+			return currentMemoryAddress.as<u64>();
 		}
 	}
 	return NULL;

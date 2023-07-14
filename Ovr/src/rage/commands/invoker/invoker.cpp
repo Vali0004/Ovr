@@ -2,9 +2,10 @@
 #include "hooking/hooking.h"
 
 void invoker::cache() {
-	for (auto& p : g_table) {
-		m_cache.insert({ p.o, pointers::g_nativeRegistrationTable->get_handler(p.u) });
+	for (auto& p : util::game::commands::g_map) {
+		m_cache.insert({ p.oldHash, pointers::g_nativeRegistrationTable->get_handler(p.newHash) });
 	}
+	LOG(Info, "Cached {} native command handlers from the game's registry", m_cache.size());
 }
 void invoker::begin() {
 	m_context.reset();

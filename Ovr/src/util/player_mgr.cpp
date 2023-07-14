@@ -21,9 +21,9 @@ namespace util::network {
 			if (m_ped)
 				m_navigation = m_ped->m_navigation;
 			if (m_navigation)
-				m_pos = m_navigation->m_position;
+				m_pos = m_navigation->get_position();
 			if (m_navigation)
-				m_heading = m_navigation->m_heading;
+				m_heading = m_navigation->get_heading();
 			if (m_gamerInfo) {
 				m_address = m_gamerInfo->m_public_address;
 				m_ip = m_address.m_ip;

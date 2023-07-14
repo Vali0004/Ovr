@@ -5,18 +5,11 @@
 
 namespace tabs::scripting {
 	inline void scriptHookV() {
-		elements::tabItem("ScriptHookV", [] {
-			elements::listBox("ScriptHookV", { 350.f, 0.f }, [] {
-				fs::path path{ fs::path(std::getenv("appdata")).append(BRAND).append("Scripts") };
-				util::iteratorFilesInPath(path, ".asi", [](fs::path path, std::string filename) {
-					elements::selectable(path.stem().string(), g_selectedAsi == filename, [&] {
-						g_selectedAsi = path.filename().string();
-					});
-				});
-			});
-			if (!g_selectedAsi.empty()) {
-				elements::sameLine();
-				elements::listBox("SelectedAsi", { 350.f, 0.f }, [] {
+		elements::menu("ScriptHookV", [] {
+			fs::path path{ fs::path(std::getenv("appdata")).append(BRAND).append("Scripts") };
+			util::iteratorFilesInPath(path, ".asi", [](fs::path path, std::string filename) {
+				elements::menu(path.stem().string(), [&] {
+					g_selectedAsi = path.filename().string();
 					elements::text("ASI: {}", g_selectedAsi);
 					elements::text("Active: {}", shv::g_asiLoader.isScriptLoaded(g_selectedAsi) ? "Yes" : "No");
 					if (shv::g_asiLoader.isScriptLoaded(g_selectedAsi)) {
@@ -34,7 +27,7 @@ namespace tabs::scripting {
 						});
 					}
 				});
-			}
+			});
 		});
 	}
 }

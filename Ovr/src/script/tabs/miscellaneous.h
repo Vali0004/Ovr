@@ -5,7 +5,7 @@
 
 namespace tabs::miscellaneous {
 	inline void tab() {
-		elements::tabBar("Miscellaneous", [] {
+		elements::menu("Miscellaneous", [] {
 			miscellaneous::game();
 			miscellaneous::world();
 		});

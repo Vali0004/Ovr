@@ -87,7 +87,6 @@
 //ImGui Defines
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 //Namespace Defines
-using namespace std;
 using namespace std::chrono;
 using namespace std::chrono_literals;
 //Shortened types

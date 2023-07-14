@@ -57,9 +57,12 @@ namespace util::network {
 				m_ip = std::format("IP: {}.{}.{}.{}:{}", p->m_ip.m_field1, p->m_ip.m_field2, p->m_ip.m_field3, p->m_ip.m_field4, p->m_port);
 				if (p->m_vehicle && p->m_vehicleModelInfo) {
 					if (p->m_vehicleModelInfo->m_manufacturer) {
-						m_vehicle = std::format("Vehicle: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_manufacturer));
-						m_vehicle += " ";
-						m_vehicle += HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name);
+						m_vehicle = "Vehicle: ";
+						m_vehicle += HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_manufacturer);
+						if (p->m_vehicleModelInfo->m_name) {
+							m_vehicle += " ";
+							m_vehicle += HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name);
+						}
 					}
 					else if (p->m_vehicleModelInfo->m_name) {
 						m_vehicle = std::format("Vehicle: {}", HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(p->m_vehicleModelInfo->m_name));

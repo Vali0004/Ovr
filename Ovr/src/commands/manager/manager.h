@@ -59,6 +59,12 @@ inline commands::protectionCommand* operator ""_PC(const char* str, size_t) {
 inline commands::sectionProtectionCommand* operator ""_SPC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::sectionProtectionCommand>(str);
 }
+inline commands::stringCommand* operator ""_SC(const char* str, size_t) {
+	return commands::g_manager.getCommand<commands::stringCommand>(str);
+}
+inline commands::hashCommand* operator ""_HC(const char* str, size_t) {
+	return commands::g_manager.getCommand<commands::hashCommand>(str);
+}
 inline commands::variadicCommand* operator ""_VC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::variadicCommand>(str);
 }

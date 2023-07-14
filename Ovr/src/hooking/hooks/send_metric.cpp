@@ -60,8 +60,10 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 				}
 				fiber::current()->sleep(100ms);
 				Vector3 coords{ commands::features::self::ped::g_coordsAtDeath };
-				commands::g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
-				LOG(Info, "Spawning at {}, {}, {}", coords.x, coords.y, coords.z);
+				if (!coords.empty() && coords.valid()) {
+					commands::g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
+					LOG(Info, "Spawning at {}, {}, {}", coords.x, coords.y, coords.z);
+				}
 			});
 		}
 		else {

@@ -3,7 +3,7 @@
 
 namespace tabs::miscellaneous {
 	inline void world() {
-		elements::tabItem("World", [] {
+		elements::menu("World", [] {
 			cbutton("teleportToWaypoint"_AC);
 		});
 	}

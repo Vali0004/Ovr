@@ -3,8 +3,8 @@
 
 namespace tabs::network::session {
 	inline void browser() {
-		elements::tabItem("Browser", [] {
-			elements::section("Filters", [] {
+		elements::menu("Browser", [] {
+			elements::menu("Filters", [] {
 
 			});
 		});

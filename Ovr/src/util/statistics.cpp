@@ -18,10 +18,12 @@ void statistics::draw() {
 	draw("{} - X", util::classes::getPed()->get_position().x);
 	draw("{} - Y", util::classes::getPed()->get_position().y);
 	draw("{} - Z", util::classes::getPed()->get_position().z);
+	draw("{} - Heading", util::classes::getPed()->get_heading());
 	draw("{} Player{}", util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1, (util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1) == 1 ? "" : "s");
 	draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
 	draw("{} - Frame Count", m_frameCount);
-	draw("{} - Frame Time", m_frameTime);
+	draw("{} - Frame Time", roundf(m_frameTime));
+	draw("{} - FPS", roundf(ImGui::GetIO().Framerate));
 	draw("{} - Session", m_gameType);
 	draw("{} - Host", util::network::g_manager.online() ? m_host.m_name : "N/A");
 	draw("{} - Next Host", util::network::g_manager.online() ? (m_playerCount > 1 ? m_nextHost.m_name : "N/A") : "N/A");

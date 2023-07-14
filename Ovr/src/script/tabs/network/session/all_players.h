@@ -3,7 +3,7 @@
 
 namespace tabs::network::session::allPlayers {
 	inline void tab() {
-		elements::tabItem("All Players", [] {
+		elements::menu("All Players", [] {
 
 		});
 	}

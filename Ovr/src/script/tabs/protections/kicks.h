@@ -3,9 +3,9 @@
 
 namespace tabs::protections {
 	inline void kicks() {
-		elements::tabItem("Kicks", [] {
+		elements::menu("Kicks", [] {
 			elements::sectionProtectionToggle("allKickProtections");
-			elements::protectionToggle("desyncKickProtection", true);
+			elements::protectionToggle("desyncKickProtection");
 			elements::protectionToggle("lostConnectionKickProtection");
 			elements::protectionToggle("arrayOverrunKickProtection");
 		});

@@ -3,8 +3,8 @@
 
 namespace tabs::network {
 	inline void tunables() {
-		elements::tabItem("Tunables", [] {
-			ccheckbox("offradar"_TC);
+		elements::menu("Tunables", [] {
+			ccheckbox("offRadar"_TC);
 		});
 	}
 }

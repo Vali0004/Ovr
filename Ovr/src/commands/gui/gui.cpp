@@ -12,7 +12,7 @@ namespace commands::gui {
 			m_cmd = words[0];
 	}
 	void box::input() {
-		elements::setWindow(elements::convertCoordTypes({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase - m_padding }), elements::convertCoordTypes({ m_width + 0.001f, 0.04f }));
+		elements::setWindow(elements::convertCoordTypes({ m_pos.x - (m_inputBox.x / 2.f), m_drawBase }), elements::convertCoordTypes({ m_width + 0.001f, 0.04f }));
 		elements::window("Command Box Input", m_draw, [&] {
 			elements::setNextItemWidth(elements::convertCoordTypes({ m_width, 0.f }).x);
 			elements::setKeyboardFocusHere();

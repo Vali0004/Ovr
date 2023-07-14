@@ -3,7 +3,7 @@
 
 namespace tabs::self {
 	inline void movement() {
-		elements::tabItem("Movement", [] {
+		elements::menu("Movement", [] {
 			ctoggleFloatSlider("run"_TFC, 1.f, 5.f);
 			ctoggleFloatSlider("swim"_TFC, 1.f, 5.f);
 			ctoggleFloatSlider("stamina"_TFC, 11.f, 20.f);

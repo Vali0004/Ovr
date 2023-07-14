@@ -7,7 +7,7 @@
 
 namespace tabs::self {
 	inline void tab() {
-		elements::tabBar("Self", [] {
+		elements::menu("Self", [] {
 			self::ped();
 			self::movement();
 			self::world();

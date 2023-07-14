@@ -3,8 +3,8 @@
 
 namespace tabs::weapon {
 	inline void ammo() {
-		elements::tabItem("Ammo", [] {
-			elements::section("Special Ammo", [] {
+		elements::menu("Ammo", [] {
+			elements::menu("Special Ammo", [] {
 				ccheckbox("explosiveAmmo"_TC);
 			});
 			ccheckbox("infiniteAmmo"_TC);

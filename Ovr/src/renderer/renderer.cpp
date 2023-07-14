@@ -41,11 +41,11 @@ renderer::renderer() : m_swapchain(*pointers::g_swapChain) {
 	ImGui_ImplWin32_Init(pointers::g_hwnd);
 	script::presentInit();
 	static auto&& io{ ImGui::GetIO() };
-	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 19).c_str(), 40);
-	m_font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 19.f, &m_fontCfg);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial", 24).c_str(), 40);
+	m_font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 24.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
-	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial Bold", 22).c_str(), 40);
-	m_fontBold = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\ArialBD.ttf", 22.f, &m_fontCfg);
+	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Arial Bold", 24).c_str(), 40);
+	m_fontBold = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\ArialBD.ttf", 24.f, &m_fontCfg);
 	strncpy_s(m_fontCfg.Name, "", 40);
 	strncpy_s(m_fontCfg.Name, std::format("{}, {}px", "Tahoma", 28).c_str(), 40);
 	m_tahoma = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 36.f, &m_fontCfg);

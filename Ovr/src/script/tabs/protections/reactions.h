@@ -7,13 +7,11 @@
 
 namespace tabs::protections::reactions {
 	inline void tab() {
-		elements::tabItem("Reactions", [] {
-			elements::tabBar("Reactions", [] {
-				reactions::kick();
-				reactions::crash();
-				reactions::networkEvent();
-				reactions::scriptEvent();
-			});
+		elements::menu("Reactions", [] {
+			reactions::kick();
+			reactions::crash();
+			reactions::networkEvent();
+			reactions::scriptEvent();
 		});
 	}
 }

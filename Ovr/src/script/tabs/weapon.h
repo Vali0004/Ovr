@@ -5,7 +5,7 @@
 
 namespace tabs::weapon {
 	inline void tab() {
-		elements::tabBar("Weapon", [] {
+		elements::menu("Weapon", [] {
 			weapon::loadout();
 			weapon::ammo();
 		});

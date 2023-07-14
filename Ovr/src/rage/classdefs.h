@@ -17,10 +17,9 @@
 	public:
 
 class CNavigation;
-class CNetShopTransactionBase;
 class CNetShopTransaction;
-class CNetShopTransactionNode;
-class CNetShopTransactionMgr;
+class CNetShopTransactionBasket;
+class CNetworkShoppingMgr;
 class CHeaders;
 class CHttpRequest;
 class CGameScriptId;

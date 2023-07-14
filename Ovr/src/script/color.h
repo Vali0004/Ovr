@@ -4,6 +4,7 @@
 namespace elements {
 	class color {
 	public:
+		color() = default;
 		color(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {}
 		color(u8 r, u8 g, u8 b) : color(r, g, b, 255) {}
 		color(u32 packed) {

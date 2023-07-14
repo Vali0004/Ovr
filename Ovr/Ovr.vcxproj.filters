@@ -559,6 +559,13 @@
     <ClInclude Include="src\script\tabs\vehicle\spawner.h">
       <Filter>src\script\tabs\vehicle</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\transaction.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\recovery.h">
+      <Filter>src\script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\commands\dump_commands.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -897,6 +904,7 @@
     <ClCompile Include="src\util\message.cpp">
       <Filter>src\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\rage\commands\dump_commands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1048,6 +1056,9 @@
     </Filter>
     <Filter Include="src\script\tabs\miscellaneous\world">
       <UniqueIdentifier>{6a5b7200-fc69-43c7-852d-423ddc91165c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\script\tabs\recovery">
+      <UniqueIdentifier>{3d1e7933-feb5-4acf-928e-c385e1d72a64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

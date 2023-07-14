@@ -7,7 +7,7 @@
 
 namespace tabs::settings {
 	inline void tab() {
-		elements::tabBar("Settings", [] {
+		elements::menu("Settings", [] {
 			settings::game();
 			settings::command();
 			settings::ui();

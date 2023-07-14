@@ -189,6 +189,7 @@
     <ClInclude Include="src\commands\engine\engine.h" />
     <ClInclude Include="src\hooking\methods\native.h" />
     <ClInclude Include="src\rage\commands\conversion_table.h" />
+    <ClInclude Include="src\rage\commands\dump_commands.h" />
     <ClInclude Include="src\rage\commands\invoker\call_context.h" />
     <ClInclude Include="src\rage\commands\types.h" />
     <ClInclude Include="src\core\core.h" />
@@ -338,7 +339,9 @@
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\player_mgr.h" />
+    <ClInclude Include="src\script\tabs\recovery.h" />
     <ClInclude Include="src\util\statistics.h" />
+    <ClInclude Include="src\util\transaction.h" />
     <ClInclude Include="src\util\util.h" />
     <ClInclude Include="src\util\vehicle.h" />
     <ClInclude Include="src\zydis\Decoder.h" />
@@ -386,6 +389,7 @@
     <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
     <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
+    <ClCompile Include="src\rage\commands\dump_commands.cpp" />
     <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\core\core.cpp" />
     <ClCompile Include="src\directx\AlphaTestEffect.cpp" />

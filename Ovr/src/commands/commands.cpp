@@ -38,6 +38,22 @@ namespace commands {
 	void forceQuitToSp(actionCommand* command) {
 		NETWORK::SHUTDOWN_AND_LOAD_MOST_RECENT_SAVE();
 	}
+	void resetState(actionCommand* command) {
+		for (auto& entry : g_manager.getCommands()) {
+			auto& cmd{ entry.second };
+			switch (cmd->m_type) {
+			case eCommandType::ToggleIntCommand:
+			case eCommandType::ToggleFloatCommand:
+			case eCommandType::ToggleCommand: {
+				cmd->get(0).toggle = false;
+			} break;
+			}
+		}
+		features::onInit();
+		"useDirectMatchResults"_TC->get(0).toggle = true;
+		"autoCompleteCommands"_TC->get(0).toggle = true;
+		"clearCommandBoxOnEnter"_TC->get(0).toggle = true;
+	}
 	void init() {
 		g_manager.add(stringCommand("copyText", "Copy Text", "Copies text to clipboard", copyText));
 		g_manager.add(stringCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", copyScString));
@@ -48,6 +64,7 @@ namespace commands {
 		g_manager.add(toggleCommand("clearCommandBoxOnEnter", "Clear Command Box On Enter", clearCommandBoxOnEnter));
 		g_manager.add(stringCommand("print", "Print", "Prints a string", print));
 		g_manager.add(actionCommand("forceQuitToSp", "Force Quit To Story Mode", "Forcefully quits to SP", forceQuitToSp));
+		g_manager.add(actionCommand("resetState", "Reset Menu State", "Resets all commands and GUI elements", resetState));
 		features::init();
 		g_manager.init();
 	}

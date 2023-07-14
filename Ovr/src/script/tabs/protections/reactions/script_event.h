@@ -3,7 +3,7 @@
 
 namespace tabs::protections::reactions {
 	inline void scriptEvent() {
-		elements::tabItem("Script Event", [] {
+		elements::menu("Script Event", [] {
 
 		});
 	}

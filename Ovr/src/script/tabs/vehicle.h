@@ -4,7 +4,7 @@
 
 namespace tabs::vehicle {
 	inline void tab() {
-		elements::tabBar("Vehicle", [] {
+		elements::menu("Vehicle", [] {
 			vehicle::spawner();
 		});
 	}

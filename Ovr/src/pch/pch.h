@@ -173,6 +173,10 @@ namespace defines {
         }
         return matches;
     }
+    inline std::string getFileContents(std::filesystem::path path) {
+        std::ifstream file{ path };
+        return { (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>() };
+    }
     inline std::vector<std::string> splitString(const std::string& string, char split) {
         std::vector<std::string> output{};
         size_t previousPosition{};

@@ -3,7 +3,7 @@
 
 namespace tabs::miscellaneous {
 	inline void game() {
-		elements::tabItem("Game", [] {
+		elements::menu("Game", [] {
 			ccheckbox("mobileRadio"_TC);
 			ccheckbox("automp"_TC);
 			ccheckbox("exitInstantly"_TC);

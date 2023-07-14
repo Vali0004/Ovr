@@ -3,42 +3,42 @@
 
 namespace tabs::protections {
 	inline void scriptEvents() {
-		elements::tabItem("Script Events", [] {
+		elements::menu("Script Events", [] {
 			elements::sectionProtectionToggle("allScriptEventProtections");
-			elements::protectionToggle("ceoBanProtection", true);
-			elements::protectionToggle("ceoKickProtection", true);
+			elements::protectionToggle("ceoBanProtection");
+			elements::protectionToggle("ceoKickProtection");
 			elements::protectionToggle("ceoMoneyProtection");
-			elements::protectionToggle("clearWantedLevelProtection", true);
-			elements::protectionToggle("forceMissionProtection", true);
+			elements::protectionToggle("clearWantedLevelProtection");
+			elements::protectionToggle("forceMissionProtection");
 			elements::protectionToggle("giveCollectableProtection");
-			elements::protectionToggle("gtaBannerProtection", true);
-			elements::protectionToggle("networkBailProtection", true);
+			elements::protectionToggle("gtaBannerProtection");
+			elements::protectionToggle("networkBailProtection");
 			elements::protectionToggle("personalVehicleDestroyedProtection");
-			elements::protectionToggle("remoteOffRadarProtection", true);
-			elements::protectionToggle("sendToCutsceneProtection", true);
+			elements::protectionToggle("remoteOffRadarProtection");
+			elements::protectionToggle("sendToCutsceneProtection");
 			elements::protectionToggle("sendToIslandProtection");
-			elements::protectionToggle("sendToLocationProtection", true);
-			elements::protectionToggle("soundSpamProtection", true);
+			elements::protectionToggle("sendToLocationProtection");
+			elements::protectionToggle("soundSpamProtection");
 			elements::protectionToggle("spectateProtection");
-			elements::protectionToggle("teleportProtection", true);
-			elements::protectionToggle("teleportToWarehouseProtection", true);
+			elements::protectionToggle("teleportProtection");
+			elements::protectionToggle("teleportToWarehouseProtection");
 			elements::protectionToggle("vehicleKickProtection");
-			elements::protectionToggle("mcTeleportProtection", true);
-			elements::protectionToggle("startActivityProtection", true);
-			elements::protectionToggle("markPlayerBeastProtection");
-			elements::protectionToggle("sendTextLabelSMSProtection", true);
-			elements::protectionToggle("sendTextMessageProtection", true);
-			elements::protectionToggle("tseCommandProtection");
-			elements::protectionToggle("tseCommandRotateCamProtection", true);
-			elements::protectionToggle("notificationProtection", true);
+			elements::protectionToggle("mcTeleportProtection");
+			elements::protectionToggle("startActivityProtection");
+			elements::protectionToggle("kickFromInteriorProtection");
+			elements::protectionToggle("interiorControlProtection");
+			elements::protectionToggle("sendTextLabelSMSProtection");
+			elements::protectionToggle("sendTextMessageProtection");
+			elements::protectionToggle("tseCommandRotateCamProtection");
+			elements::protectionToggle("notificationProtection");
 			elements::protectionToggle("customNotificationProtection");
-			elements::protectionToggle("moneyBankedNotificationProtection", true);
-			elements::protectionToggle("moneyStolenNotificationProtection", true);
+			elements::protectionToggle("moneyBankedNotificationProtection");
+			elements::protectionToggle("moneyStolenNotificationProtection");
 			elements::protectionToggle("moneyRemovedNotificationProtection");
-			elements::protectionToggle("destoryPersonalVehicleProtection", true);
-			elements::protectionToggle("triggerCeoRaidProtection", true);
+			elements::protectionToggle("destoryPersonalVehicleProtection");
+			elements::protectionToggle("triggerCeoRaidProtection");
 			elements::protectionToggle("startScriptBeginProtection");
-			elements::protectionToggle("startScriptProceedProtection", true);
+			elements::protectionToggle("startScriptProceedProtection");
 		});
 	}
 }

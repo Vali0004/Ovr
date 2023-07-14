@@ -33,7 +33,7 @@ struct hooks {
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 	static bool processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
-	static bool addItemToBasket(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
+	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
 	static void sendNetworkEvent(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);

@@ -63,8 +63,17 @@ public:
 	char pad_0018[8]; //0x0018
 	rage::matrix44 m_transformation_matrix; //0x0020
 
+	rage::vector3& get_rotation() {
+		return reinterpret_cast<rage::vector3&>(m_transformation_matrix.rows[2]);
+	}
 	rage::vector3& get_position() {
 		return reinterpret_cast<rage::vector3&>(m_transformation_matrix.rows[3]);
+	}
+	float& get_heading() {
+		return m_transformation_matrix.data[0][0];
+	}
+	float& get_heading2() {
+		return m_transformation_matrix.data[0][1];
 	}
 	void model_to_world(const rage::vector3& model_coords, rage::vector3& world_coords) {
 		world_coords.x = model_coords.x * m_transformation_matrix.data[0][0] + model_coords.y * m_transformation_matrix.data[1][0] + model_coords.z * m_transformation_matrix.data[2][0] + m_transformation_matrix.data[3][0];
@@ -79,7 +88,7 @@ namespace rage {
 	public:
 		scrVector() {}
 		scrVector(float x, float y, float z) : x(x), y(y), z(z) {}
-		float x, y, z;
+		float x{}, y{}, z{};
 	};
 	#pragma optimize("", on)
 	class netLoggingInterface {
@@ -236,7 +245,6 @@ namespace rage {
 	class atDNode : public Base {
 	public:
 		T m_data;
-		void* m_unk;
 		atDNode<T, Base>* m_next;
 	};
 	template <typename Node>
@@ -864,7 +872,7 @@ namespace rage {
 			return Int == val.Int;
 		}
 	};
-#pragma pack(push, 8)
+	#pragma pack(push, 8)
 	class scrThread {
 	public:
 		virtual ~scrThread() = default;                   //0 (0x00)
@@ -943,9 +951,9 @@ namespace rage {
 		class CGameScriptHandlerNetComponent* m_net_component; //0x0118
 	}; //Size: 0x0128
 	static_assert(sizeof(scrThread) == 0x128);
-#pragma pack(pop)
+	#pragma pack(pop)
 	typedef void(*Cmd)(scrThread::Info*);
-#pragma pack(push, 8)
+	#pragma pack(push, 8)
 	class scrProgram : public pgBase {
 	public:
 		uint8_t** m_code_blocks; //0x0010
@@ -1019,7 +1027,7 @@ namespace rage {
 		}
 	}; //Size: 0x0080
 	static_assert(sizeof(scrProgram) == 0x80);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class scrProgramTableEntry {
 	public:
 		scrProgram* m_program; //0x0000
@@ -1109,14 +1117,14 @@ namespace rage {
 		virtual bool _0x68(void*) { return false; }
 	}; //Size: 0x0008
 	static_assert(sizeof(scriptIdBase) == 0x8);
-#pragma pack(push, 1)
+	#pragma pack(push, 1)
 	class scriptId : public scriptIdBase {
 	public:
 		uint32_t m_hash; //0x0008
 		char m_name[32]; //0x000C
 	}; //Size: 0x002C
 	static_assert(sizeof(scriptId) == 0x2C);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class scriptResource {
 	public:
 		virtual ~scriptResource() = default;
@@ -1559,6 +1567,21 @@ namespace rage {
 		uint32_t m_seed; //0x07F8
 		bool m_initialized; //0x07FC
 
+		void dumpHandlers() {
+			HMODULE handle{ GetModuleHandleA(NULL) };
+			std::vector<u64> natives{};
+			for (i32 i{}; i != 255; ++i) {
+				for (auto entry{ m_entries[i] }; entry; entry = entry->get_next_registration()) {
+					for (uint32_t j{}, end{ entry->get_num_entries() }; j < end; ++j) {
+						if (auto entry_hash{ entry->get_hash(j) }) {
+							natives.emplace_back(entry_hash);
+							printf("handler 0x%llX with hash 0x%llX (entry index %i with handler index %i)\n", (u64)entry->m_handlers[j] - (u64)handle, entry_hash, i, j);
+						}
+					}
+				}
+			}
+			printf("Found %lli natives\n", natives.size());
+		}
 		Cmd get_handler(uint64_t hash) {
 			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
@@ -2279,7 +2302,7 @@ namespace rage {
 	}; //Size: 0x00A0
 }
 #pragma pack(push, 1)
-class CNetShopTransactionBase {
+class CNetShopTransaction {
 public:
 	uint32_t m_id; //0x0000
 	uint32_t m_variation; //0x0004
@@ -2287,10 +2310,11 @@ public:
 	uint32_t m_multiplier; //0x000C
 	uint32_t m_value; //0x0010
 }; //Size: 0x0014
-static_assert(sizeof(CNetShopTransactionBase) == 0x14);
-class CNetShopTransaction {
+static_assert(sizeof(CNetShopTransaction) == 0x14);
+class CNetShopTransactionBasket {
 public:
-	char pad_0000[8]; //0x0000
+	virtual ~CNetShopTransactionBasket() = default;
+
 	uint32_t m_transaction_id; //0x0008
 	char pad_000C[12]; //0x000C
 	uint32_t m_category; //0x0018
@@ -2298,30 +2322,38 @@ public:
 	uint32_t m_action; //0x0020
 	uint32_t m_target; //0x0024
 	char pad_0002C[180]; //0x0002C
-	class CNetShopTransactionBase m_transactions[71]; //0x00E0
+	class CNetShopTransaction m_transactions[71]; //0x00E0
 	uint32_t m_transaction_count; //0x066C
 }; //Size: 0x0670
-static_assert(sizeof(CNetShopTransaction) == 0x670);
-class CNetShopTransactionNode {
+static_assert(sizeof(CNetShopTransactionBasket) == 0x670);
+class CNetworkShoppingMgr {
 public:
-	char pad_0000[8]; //0x0000
-	class CNetShopTransaction* m_transaction_basket; //0x0008
-	class CNetShopTransactionNode* m_next; //0x0010
-}; //Size: 0x0018
-static_assert(sizeof(CNetShopTransactionNode) == 0x18);
-class CNetShopTransactionMgr {
-public:
-	char pad_0000[32]; //0x0000
-	class CNetShopTransactionNode* m_first; //0x0020
-	class CNetShopTransactionNode* m_last; //0x0028
+	virtual ~CNetworkShoppingMgr() = default;
+
+	char pad_0008[24]; //0x0008
+	rage::atDList<rage::atDNode<CNetShopTransactionBasket*>> m_transaction_nodes; //0x0020
 	char pad_0030[9]; //0x0030
 	bool m_is_busy1; //0x0039
 	char pad_003A[14]; //0x003A
 	bool m_is_busy2; //0x0048
 	char pad_0049[7]; //0x0049
 	bool m_is_busy3; //0x0050
-}; //Size: 0x0051
-static_assert(sizeof(CNetShopTransactionMgr) == 0x51);
+	char pad_0051[79]; //0x0051
+	void* m_inventory_items; //0x00A0
+	char pad_00A8[24]; //0x00A8
+	char m_gs_token[36]; //0x00C0
+	char pad_00E4[28]; //0x00E4
+	uint32_t m_transaction_noce_seed; //0x0100
+	char pad_0104[44]; //0x0104
+	uint32_t m_transaction_count; //0x0130
+	char pad_0134[396]; //0x0134
+	char* m_balance; //0x02C0
+
+	uint32_t get_transaction_nonce() {
+		return m_transaction_noce_seed + m_transaction_count;
+	}
+}; //Size: 0x02C8
+static_assert(sizeof(CNetworkShoppingMgr) == 0x2C8);
 #pragma pack(pop)
 class CHeaders {
 public:
@@ -2996,6 +3028,9 @@ public:
 	}
 	bool empty() {
 		return x == 0.f && y == 0.f && z == 0.f;
+	}
+	bool valid() {
+		return x == 0.f || y == 0.f || z == 0.f;
 	}
 public:
 	Vector3 operator*(const float amount) {

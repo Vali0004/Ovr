@@ -7,7 +7,7 @@
 
 namespace tabs::network {
 	inline void tab() {
-		elements::tabBar("Network", [] {
+		elements::menu("Network", [] {
 			network::session::tab();
 			network::friends();
 			network::socialclub();

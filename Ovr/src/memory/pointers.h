@@ -35,7 +35,9 @@ namespace pointers {
 		using getEntityAttachedTo = rage::CDynamicEntity*(*)(rage::CDynamicEntity* Entity);
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
 		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
-		using addItemToBasket = bool(*)(CNetShopTransactionMgr* pTransactionMgr, i32* Items);
+		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
+		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Target);
+		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Item, u32 Action, i32 Value, u32 Target);
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
@@ -71,6 +73,8 @@ namespace pointers {
 	inline types::getGamerTaskResult g_getGamerTaskResult{};
 	inline types::findGameMatch g_findGameMatch{};
 	inline types::addItemToBasket g_addItemToBasket{};
+	inline types::beginService g_beginService{};
+	inline types::constructBasket g_constructBasket{};
 	inline types::request g_request{};
 	inline types::sendMetric g_sendMetric{};
 	inline types::sendNetworkEvent g_sendNetworkEvent{};
@@ -82,6 +86,7 @@ namespace pointers {
 	inline ScGameInfo* g_scGameInfo{};
 	inline FriendRegistry* g_friendRegistry{};
 	inline ScInfo* g_scInfo{};
+	inline CNetworkShoppingMgr** g_networkShoppingMgr{};
 	inline CNetworkPlayerMgr** g_networkPlayerMgr{};
 	inline CNetworkObjectMgr** g_networkObjectMgr{};
 	inline CNetwork** g_network{};
@@ -99,5 +104,6 @@ namespace pointers {
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
 	inline u64* g_reportModule{};
+	inline u64 g_nativeRegistration{};
 	inline HWND g_hwnd{};
 }

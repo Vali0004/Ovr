@@ -1,7 +1,7 @@
 #pragma once
 #include "pch/pch.h"
 #include "core/logger.h"
-#include "rage/commands/conversion_table.h"
+#include "rage/commands/dump_commands.h"
 #include "memory/pointers.h"
 #include "rage/classes.h"
 #include "call_context.h"
@@ -28,10 +28,8 @@ public:
 		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
 			return p->second;
 		}
-		for (auto& p : g_table) {
-			if (p.o == hash) {
-				return pointers::g_nativeRegistrationTable->get_handler(p.u);
-			}
+		if (auto lookup{ util::game::commands::getLookupFromHash(hash) }; lookup.newHash) {
+			return pointers::g_nativeRegistrationTable->get_handler(lookup.newHash);
 		}
 		return nullptr;
 	}

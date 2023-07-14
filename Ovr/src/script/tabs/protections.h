@@ -8,7 +8,7 @@
 
 namespace tabs::protections {
 	inline void tab() {
-		elements::tabBar("Protections", [] {
+		elements::menu("Protections", [] {
 			protections::kicks();
 			protections::crashes();
 			protections::networkEvents();

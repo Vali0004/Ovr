@@ -3,8 +3,8 @@
 
 namespace tabs::self {
 	inline void ped() {
-		elements::tabItem("Ped", [] {
-			elements::section("Proofs", [] {
+		elements::menu("Ped", [] {
+			elements::menu("Proofs", [] {
 				cbutton("setAllProofs"_AC);
 				ccheckbox("bulletProof"_TC);
 				ccheckbox("fireProof"_TC);
@@ -16,10 +16,10 @@ namespace tabs::self {
 				ccheckbox("drownProof"_TC);
 				ccheckbox("waterProof"_TC);
 			});
-			elements::section("Health", [] {
+			elements::menu("Health", [] {
 				cbutton("maxHealth"_AC);
 			});
-			elements::section("Armor", [] {
+			elements::menu("Armor", [] {
 				cbutton("maxArmor"_AC);
 			});
 			cintSlider("alpha"_IC, 0, 255);

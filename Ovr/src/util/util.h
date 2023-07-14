@@ -64,6 +64,19 @@ namespace util {
 			}
 			return nullptr;
 		}
+		inline void runUnderThread(GtaThread* thread, std::function<void()> callback) {
+			if (!callback)
+				return;
+			rage::tlsContext* context{ rage::tlsContext::get() };
+			if (!thread || !thread->m_serialised.m_thread_id)
+				return;
+			rage::scrThread* originalThread{ context->m_script_thread };
+			context->m_script_thread = thread;
+			context->m_is_script_thread_active = true;
+			callback();
+			context->m_script_thread = originalThread;
+			context->m_is_script_thread_active = originalThread != nullptr;
+		}
 		inline CGameScriptHandlerNetComponent* getScriptHandlerNetComponet(GtaThread* thr) {
 			return thr->m_net_component;
 		}
@@ -202,10 +215,12 @@ namespace util {
 				requestControl(ent, 1, false);
 				rage::netObject* netObj{ entity->m_net_object };
 				network::getObjectMgr()->ChangeOwner(netObj, playerMgr->m_local_net_player, 0); //Yoink
+				return true;
 			}
 			else {
-				requestControl(ent, 1, false);
+				return requestControl(ent, 30, false);
 			}
+			return false;
 		}
 	}
 	inline void async(std::function<void()> callback) {

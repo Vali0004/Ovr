@@ -4,7 +4,7 @@
 
 namespace tabs::scripting {
 	inline void tab() {
-		elements::tabBar("Scripting", [] {
+		elements::menu("Scripting", [] {
 			scripting::scriptHookV();
 		});
 	}

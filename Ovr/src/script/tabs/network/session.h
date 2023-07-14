@@ -7,13 +7,11 @@
 
 namespace tabs::network::session {
 	inline void tab() {
-		elements::tabItem("Session (" + g_statistics.m_gameType + ")", [] {
-			elements::tabBar("Session", [] {
-				session::starter();
-				session::browser();
-				session::players::tab();
-				session::allPlayers::tab();
-			});
+		elements::menu("Session (" + g_statistics.m_gameType + ")", [] {
+			session::starter();
+			session::browser();
+			session::players::tab();
+			session::allPlayers::tab();
 		});
 	}
 }

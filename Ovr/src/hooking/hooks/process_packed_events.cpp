@@ -50,12 +50,10 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(ScriptEventLeaveVehicle, "gentleVehicleKickProtection");
 	CASE(ScriptEventGroupWarp, "mcTeleportProtection");
 	CASE(ScriptEventGbNonBossChallengeRequest, "startActivityProtection");
-	CASE(ScriptEventHuntTheBeastUpdateGlobal, "markPlayerBeastProtection");
 	CASE(ScriptEventTriggerExitAllFromSimpleInterior, "kickFromInteriorProtection");
 	CASE(ScriptEventPlayersWarpInsideSimpleInterior, "interiorControlProtection");
 	CASE(ScriptEventSendBasicText, "sendTextLabelSMSProtection");
 	CASE(ScriptEventTextMessageUsingLiteral, "sendTextMessageProtection");
-	CASE(ScriptEventGeneral, "tseCommandProtection");
 	CASE(GeneralEventHeistPreplanExitGuestMode, "tseCommandRotateCamProtection");
 	CASE(ScriptEventTickerMessage, "notificationProtection");
 	CASE(ScriptEventTickerMessageCustom, "customNotificationProtection");
@@ -76,20 +74,6 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 		} break;
 		case eProtectionState::BlockAndNotify: {
 			LOG(Session, "S{} from {}", 0, Sender->GetName());
-			return true;
-		} break;
-		}
-	} break;
-	case eScriptEvents::ScriptEventRequestToSpawnVehicle: {
-		switch ("scriptEventSpawnVehicleCrashProtection"_PC->state()) {
-		case eProtectionState::Notify: {
-			LOG(Session, "S{} from {}", 1, Sender->GetName());
-		} break;
-		case eProtectionState::Block: {
-			return true;
-		} break;
-		case eProtectionState::BlockAndNotify: {
-			LOG(Session, "S{} from {}", 1, Sender->GetName());
 			return true;
 		} break;
 		}

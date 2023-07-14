@@ -3,9 +3,9 @@
 
 namespace tabs::weapon {
 	inline void loadout() {
-		elements::tabItem("Loadout", [] {
-			elements::section("Modify", [] {
-				elements::section("Add", [] {
+		elements::menu("Loadout", [] {
+			elements::menu("Modify", [] {
+				elements::menu("Add", [] {
 					elements::button("All", [] {
 						
 					});

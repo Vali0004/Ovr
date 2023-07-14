@@ -3,18 +3,20 @@
 
 namespace tabs::protections {
 	inline void crashes() {
-		elements::tabItem("Crashes", [] {
+		elements::menu("Crashes", [] {
 			elements::sectionProtectionToggle("allCrashProtections");
-			elements::protectionToggle("invalidRemoveWeaponCrashProtection", true);
+			elements::protectionToggle("invalidRemoveWeaponCrashProtection");
 			elements::protectionToggle("invalidObjectTypeCrashProtection");
-			elements::protectionToggle("mismatchObjectTypeCrashProtection", true);
+			elements::protectionToggle("mismatchObjectTypeCrashProtection");
 			elements::protectionToggle("invalidSectorPositionCrashProtection");
-			elements::protectionToggle("vehicleTempActionCrashProtection", true);
+			elements::protectionToggle("vehicleTempActionCrashProtection");
 			elements::protectionToggle("invalidTempActionCrashProtection");
-			elements::protectionToggle("invalidTrainTrackIndexCrashProtection", true);
+			elements::protectionToggle("invalidTrainTrackIndexCrashProtection");
 			elements::protectionToggle("pedAttachCrashProtection");
-			elements::protectionToggle("giveControlCrashProtection", true);
+			elements::protectionToggle("giveControlCrashProtection");
 			elements::protectionToggle("invalidWordStateCrashProection");
+			elements::protectionToggle("scriptEventIslandHeliLaunchCrashProtection");
+			elements::protectionToggle("scriptEventSyncedIntractionCrashProtection");
 		});
 	}
 }
