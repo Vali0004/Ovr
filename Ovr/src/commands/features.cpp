@@ -1036,7 +1036,7 @@ namespace commands::features {
 			}
 			void exit(actionCommand* command) {
 				if ("exitInstantly"_TC->get(0).toggle) {
-					abort();
+					exit(0);
 					return;
 				}
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
@@ -1046,9 +1046,15 @@ namespace commands::features {
 					elements::setNextWindowSize({ 470.f, 235.f });
 					elements::font(g_renderer->m_tahoma, [&] {
 						elements::popupModal("Close?", [&] {
+							util::onPress(VK_ACCEPT, [&] {
+								exit(0); elements::closeCurrentPopup(); active = false;
+							});
+							util::onPress(VK_RETURN, [&] {
+								elements::closeCurrentPopup(); active = false;
+							});
 							elements::text("Grand Theft Auto V will close.\nAre you sure you want to do this?\n\n");
 							elements::separator();
-							elements::button("Yes", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
+							elements::button("Yes", [&] { exit(0); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
 							elements::setItemDefaultFocus();
 							elements::button("No", [&] { elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f });
 						}, ImGuiWindowFlags_NoResize);
