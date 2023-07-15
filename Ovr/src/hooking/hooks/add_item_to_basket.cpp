@@ -19,29 +19,10 @@ bool hooks::addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items) {
 		auto nodes{ pTransactionMgr->m_transaction_nodes };
 		for (auto node{ nodes.m_head }; node; node->m_next) {
 			auto transaction{ node->m_data };
-			j[transaction->m_category] = {
-				{ "ID", transaction->m_transaction_id },
-				{ "Category", transaction->m_category },
-				{ "Action", transaction->m_action },
-				{ "Target", transaction->m_target },
-				{ "Count", transaction->m_transaction_count },
-				{ "Transactions", {} }
-			};
-			for (i32 i{}; i != transaction->m_transaction_count; ++i) {
-				auto& item{ transaction->m_transactions[i] };
-				j[transaction->m_category]["Transactions"][item.m_id] = {
-					{ "ID", item.m_id },
-					{ "Variation", item.m_variation },
-					{ "Price", item.m_price },
-					{ "Multiplier", item.m_multiplier },
-					{ "Value", item.m_value },
-				};
-			}
-			LOG(Debug, j.dump(4));
-			if (badTransaction(j[transaction->m_category], "SERVICE_BONUS"_joaat, "Transaction report hash")) {
+			if (transaction->m_category == "SERVICE_BONUS"_joaat) {
 				return false;
 			}
-			if (badAction(j[transaction->m_category], "CATEGORY_SERVICE_WITH_THRESHOLD"_joaat, "NET_SHOP_ACTION_BONUS"_joaat, "Category Service (Threshold)")) {
+			if (transaction->m_category == "CATEGORY_SERVICE_WITH_THRESHOLD"_joaat && transaction->m_action == "NET_SHOP_ACTION_BONUS"_joaat) {
 				return false;
 			}
 		}

@@ -94,6 +94,10 @@ namespace script {
 				g_sessionType = eSessionTypes::Offline;
 				g_statistics.setGameType();
 			}
+			if (NETWORK::NETWORK_TEXT_CHAT_IS_TYPING()) {
+				commands::gui::g_box.m_canUseBox = false;
+			}
+			commands::gui::g_box.m_canUseBox = true;
 			fiber::current()->sleep();
 		}
 	}

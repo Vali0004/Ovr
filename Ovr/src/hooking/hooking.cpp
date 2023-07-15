@@ -155,7 +155,6 @@ void hooking::enable() {
 	//createNativeShim("maintransition"_joaat, 0x8D32347D6D4C40A2, [](rage::scrThread::Info* info) { //NETWORK_RESURRECT_LOCAL_PLAYER
 	//	if (!"seamlessTransition"_TC->get(0).toggle) {
 	//		Vector3 _pos{ info->Params[0].Float, info->Params[1].Float, info->Params[2].Float };
-
 	//		NETWORK::NETWORK_RESURRECT_LOCAL_PLAYER(_pos, info->Params[3].Float, info->Params[4].Int, info->Params[5].Int, info->Params[6].Int, info->Params[7].Int, info->Params[8].Int);
 	//	}
 	//});

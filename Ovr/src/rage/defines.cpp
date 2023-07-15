@@ -2,7 +2,6 @@
 #include "classes.h"
 #include "memory/pointers.h"
 
-
 uint64_t rage::datBitBuffer::WriteBitsSingle(uint32_t value, int32_t bits) {
 	return pointers::g_writeBitsSingle(m_data, value, bits, m_bitsRead + m_bitOffset);
 }

@@ -65,10 +65,13 @@ namespace core {
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
 		g_manager.add("transactions", &util::transactions::tickQueue);
-		engine::createThread(&g_manager);
 		fs::path path{ std::getenv("appdata") };
 		path /= BRAND"\\Sounds\\injection_sound.wav";
 		sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
+		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
+			std::this_thread::sleep_for(100ms);
+		}
+		engine::createThread(&g_manager);
 	}
 	void destroy() {
 		g_fiberPool.add(&commands::features::uninit);

@@ -322,7 +322,7 @@ namespace commands {
 	class hashCommand : public abstractCommand {
 	public:
 		hashCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(hashCommand*)> callback) :
-			abstractCommand(id, name, description, {}, eCommandType::StringCommand, false), m_callback(callback) {
+			abstractCommand(id, name, description, {}, eCommandType::HashCommand, false), m_callback(callback) {
 		}
 		hashCommand(const std::string& id, const std::string& name, fnptr<void(hashCommand*)> callback) :
 			hashCommand(id, name, {}, callback) {

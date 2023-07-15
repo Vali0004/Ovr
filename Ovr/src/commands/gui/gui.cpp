@@ -91,6 +91,9 @@ namespace commands::gui {
 		if (!m_inputBuffer) {
 			clear();
 		}
+		if (!m_canUseBox) {
+			return;
+		}
 		util::onPress('U', [this] { m_draw = m_lock = true; });
 		if (m_draw) {
 			util::onPress(VK_ESCAPE, [this] { stop(); });

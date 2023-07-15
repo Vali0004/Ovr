@@ -33,6 +33,8 @@ namespace util::transactions {
 	}
 	inline void basket(u32 category, u32 action, u32 target, std::vector<std::array<i32, 5>> items) {
 		g_queue.push([&] {
+			const char* thrName{ SCRIPT::GET_THIS_SCRIPT_NAME() };
+			printf("current thread from native: %s\n", thrName);
 			if (NETSHOPPING::NET_GAMESERVER_BASKET_IS_ACTIVE()) {
 				NETSHOPPING::NET_GAMESERVER_BASKET_END();
 			}

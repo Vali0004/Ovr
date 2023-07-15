@@ -12,6 +12,8 @@ namespace tabs::weapon {
 			ccheckbox("infiniteStickyBombs"_TC);
 			ccheckbox("infiniteFlares"_TC);
 			ccheckbox("teleportGun"_TC);
+			ccheckbox("deleteGun"_TC);
+			ccheckbox("deadEye"_TC);
 			cbutton("refillAmmo"_AC);
 		});
 	}
