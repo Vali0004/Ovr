@@ -48,7 +48,7 @@ namespace core {
 		pointers::scanLSS();
 		//We need Arxan to intialise first
 		if (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
-			std::this_thread::sleep_for(15s);
+			std::this_thread::sleep_for(20s);
 		}
 		switch (*pointers::g_loadingScreenState) {
 		case eLoadingScreenState::PreLegal: {
