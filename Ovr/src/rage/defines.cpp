@@ -33,6 +33,17 @@ bool rage::datBitBuffer::ReadArray(void* array, int32_t size) {
 	return pointers::g_readBitbufArray(this, array, size, 0);
 }
 
+CStreaming* CStreaming::Get() {
+	return pointers::g_streaming;
+}
+
+rage::strStreamingModule* rage::strStreamingModuleMgr::GetModuleFromExtension(cc* Extension) {
+	return pointers::g_getStreamingModuleFromExtension(this, Extension);
+}
+rage::strStreamingModuleMgr& rage::strStreamingModuleMgr::Get() {
+	return CStreaming::Get()->m_module_mgr;
+}
+
 int CGameScriptHandlerNetComponent::get_participant_index(CNetGamePlayer* player) {
 	if (player == (*pointers::g_networkPlayerMgr)->m_local_net_player)
 		return m_local_participant_index;

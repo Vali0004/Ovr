@@ -2,6 +2,7 @@
 #include "memory/pointers.h"
 #include "hooking/methods/native.h"
 #include "commands/features.h"
+#include "util/game_vm_guard.h"
 
 hooking::hooking() :
 	m_minhook(),
@@ -17,6 +18,9 @@ hooking::hooking() :
 	m_canApplyData("CAD", pointers::g_canApplyData, &hooks::canApplyData),
 	m_findGameMatch("FGM", pointers::g_findGameMatch, &hooks::findGameMatch, false),
 	m_processMatchmakingFind("PMF", pointers::g_processMatchmakingFind, &hooks::processMatchmakingFind, false),
+	m_calculateMipLevel("CML", pointers::g_calculateMipLevel, &hooks::calculateMipLevel),
+	m_hasRosPrivilege("HRP", pointers::g_hasRosPrivilege, &hooks::hasRosPrivilege),
+	m_insertStreamingModule("ISM", pointers::g_insertStreamingModule, &hooks::insertStreamingModule),
 	m_addItemToBasket("AITB", pointers::g_addItemToBasket, &hooks::addItemToBasket),
 	m_request("R", pointers::g_request, &hooks::request),
 	m_sendMetric("SM", pointers::g_sendMetric, &hooks::sendMetric),
@@ -44,6 +48,107 @@ void hooking::enable() {
 	createNativeShim("all_scripts"_joaat, 0x158C16F5E4CF41F8, [](rage::scrThread::Info* info) {
 		info->ResultPtr->Int = TRUE;
 	});
+
+	/*//Ban shit
+	createNativeShim("all_scripts"_joaat, 0x1753344C770358AE, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x82E4A58BABC15AE7, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x930DE22F07B1CCE3, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xF13FE2A80C05C561, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x6F72CD94F7B5B68C, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x6F361B8889A792A3, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xF2E07819EF1A5289, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x1077788E268557C2, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x054354A99211EB96, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x9A4CF4F48AD77302, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x924426BFFD82E915, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x85E5F8B9B898B20A, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x84B418E93894AC1C, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xF25D331DC2627BBC, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x74556E1420867ECA, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x26D7399B9587FE89, [](rage::scrThread::Info* info) {
+		
+	});
+	createNativeShim("all_scripts"_joaat, 0xA78B8FA58200DA56, [](rage::scrThread::Info* info) {
+		
+	});
+	createNativeShim("all_scripts"_joaat, 0xE4E53E1419D81127, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xAF50DA1A3F8B1BA4, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+		NETWORK::NETWORK_REQUEST_CLOUD_BACKGROUND_SCRIPTS();
+		NETWORK::NETWORK_REQUEST_CLOUD_TUNABLES();
+	});
+	createNativeShim("all_scripts"_joaat, 0x3A3D5568AF297CD5, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x4F18196C8D38768D, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x7E782A910C362C25, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x0CF6CC51AA18F0F8, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x85443FF4C328F53B, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x5EA784D197556507, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x25CB5A9F37BFD063, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x1353F87E89946207, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x4237E822315D8BA9, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x78321BEA235FD8CD, [](rage::scrThread::Info* info) {
+		NETWORK::NETWORK_SET_PRIVILEGE_CHECK_RESULT_NOT_NEEDED();
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x64E5C4CC82847B73, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = FALSE;
+	});
+	createNativeShim("all_scripts"_joaat, 0x67A5589628E0CFF6, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});
+	createNativeShim("all_scripts"_joaat, 0xBA9775570DB788CF, [](rage::scrThread::Info* info) {
+		info->ResultPtr->Int = TRUE;
+	});*/
 	/*createNativeShim("all_scripts"_joaat, 0x40EB1EFD921822BC, [](rage::scrThread::Info* info) {});
 	createNativeShim("all_scripts"_joaat, 0x340A36A700E99699, [](rage::scrThread::Info* info) {});
 	createNativeShim("all_scripts"_joaat, 0x8E580AB902917360, [](rage::scrThread::Info* info) {});*/
@@ -124,17 +229,17 @@ void hooking::enable() {
 	//	}
 	//});
 	////Currently has a logic error causing the coords to be at 0, 0, 1
-	////createNativeShim("maintransition"_joaat, 0x06843DA7060A026B, [](rage::scrThread::Info* info) { //SET_ENTITY_COORDS_NO_OFFSET
-	////	Entity entity{ info->Params[0].Int };
-	////	Vector3 pos_{ info->Params[1].Float, info->Params[2].Float, info->Params[3].Float };
-	////	BOOL xAxis{ info->Params[4].Int };
-	////	BOOL yAxis{ info->Params[5].Int };
-	////	BOOL zAxis{ info->Params[6].Int };
-	////	eTransitionState state{ static_cast<eTransitionState>(global(1574993).value()->Int) };
-	////	if (!"seamlessTransition"_TC->get(0).toggle || state == eTransitionState::ConfirmFreemodeSessionJoining || entity != PLAYER::PLAYER_PED_ID()) {
-	////		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, pos_, xAxis, yAxis, zAxis);
-	////	}
-	////});
+	//createNativeShim("maintransition"_joaat, 0x06843DA7060A026B, [](rage::scrThread::Info* info) { //SET_ENTITY_COORDS_NO_OFFSET
+	//	Entity entity{ info->Params[0].Int };
+	//	Vector3 pos_{ info->Params[1].Float, info->Params[2].Float, info->Params[3].Float };
+	//	BOOL xAxis{ info->Params[4].Int };
+	//	BOOL yAxis{ info->Params[5].Int };
+	//	BOOL zAxis{ info->Params[6].Int };
+	//	eTransitionState state{ static_cast<eTransitionState>(global(1574993).value()->Int) };
+	//	if (!"seamlessTransition"_TC->get(0).toggle || state == eTransitionState::ConfirmFreemodeSessionJoining || entity != PLAYER::PLAYER_PED_ID()) {
+	//		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, pos_, xAxis, yAxis, zAxis);
+	//	}
+	//});
 	//createNativeShim("maintransition"_joaat, 0x1A9205C1B9EE827F, [](rage::scrThread::Info* info) { //SET_ENTITY_COLLISION
 	//	Entity entity{ info->Params[0].Int };
 	//	if (!"seamlessTransition"_TC->get(0).toggle || entity != PLAYER::PLAYER_PED_ID()) {
@@ -164,6 +269,10 @@ void hooking::enable() {
 	m_DX.enable();
 	detour::enableAll();
 	MH_ApplyQueued();
+	//g_GlobalGameVMGuard.WaitUntilGuardIsCreated("shop_controller"_joaat, [](GameVMGuard* guard) {
+	//	LOG_DEBUG("Guard for shop_controller is created");
+	//	//guard->addPatch("dspnByps"_joaat, "2D 01 04 00 00 2C ? ? ? 56 ? ? 71", 5, { 0x71, 0x2E, 0x01, 0x01 }, true);
+	//});
 }
 void hooking::disable() {
 	//Sometimes the pointer is deallocated, but disabled wasn't called.

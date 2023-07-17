@@ -4,21 +4,21 @@ void hooks::sendNetworkEvent(rage::netEventMgr* pEventMgr, rage::netGameEvent* p
 	if (pEvent) {
 		switch (static_cast<ePackedEvents>(pEvent->m_id)) {
 		case ePackedEvents::CUpdateFxnEvent: {
-			LOG(Debug, "Tripped Report Myself");
+			LOG_DEBUG("Tripped Report Myself");
 			pEvent->~netGameEvent();
 			if (pEvent)
 				delete pEvent;
 			return;
 		} break;
 		case ePackedEvents::CReportCashSpawnEvent: {
-			LOG(Debug, "Tripped Report Cash Spawn");
+			LOG_DEBUG("Tripped Report Cash Spawn");
 			pEvent->~netGameEvent();
 			if (pEvent)
 				delete pEvent;
 			return;
 		} break;
 		case ePackedEvents::CNetworkCheckCodeCrcsEvent: {
-			LOG(Debug, "Tripped Code CRCs");
+			LOG_DEBUG("Tripped Code CRCs");
 			pEvent->~netGameEvent();
 			if (pEvent)
 				delete pEvent;

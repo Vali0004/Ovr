@@ -565,7 +565,11 @@
     <ClInclude Include="src\script\tabs\recovery.h">
       <Filter>src\script\tabs</Filter>
     </ClInclude>
-    <ClInclude Include="src\rage\commands\dump_commands.h" />
+    <ClInclude Include="src\rage\commands\dump_commands.h">
+      <Filter>src\rage\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\jitasm\jitasm.h" />
+    <ClInclude Include="src\util\game_vm_guard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -904,7 +908,14 @@
     <ClCompile Include="src\util\message.cpp">
       <Filter>src\util</Filter>
     </ClCompile>
-    <ClCompile Include="src\rage\commands\dump_commands.cpp" />
+    <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp">
+      <Filter>src\hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rage\commands\dump_commands.cpp">
+      <Filter>src\rage\commands</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
+    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1059,6 +1070,9 @@
     </Filter>
     <Filter Include="src\script\tabs\recovery">
       <UniqueIdentifier>{3d1e7933-feb5-4acf-928e-c385e1d72a64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\jitasm">
+      <UniqueIdentifier>{08e79eba-e13f-4daa-850f-2bdb226bb002}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

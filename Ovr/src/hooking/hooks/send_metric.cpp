@@ -70,7 +70,7 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 			LOG(Info, "Spawning at {}, {}, {}", newCoords.x, newCoords.y, newCoords.z);
 		}
 	}
-	LOG(Debug, "[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
+	LOG_DEBUG("[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
 	if (pMetric->using_c()) {
 		if (pMetric->crc_flag()) {
 			return false;

@@ -2,6 +2,11 @@
 #include "pch/pch.h"
 #define LOG_DIRECT(c, t, s, ...) g_logger.get()->send(eLogColor::c, t, s, __VA_ARGS__);
 #define LOG(t, s, ...) g_logger.get()->send(eLogType::t, s, __VA_ARGS__);
+#ifdef DEBUG
+	#define LOG_DEBUG(s, ...) LOG(Debug, s, __VA_ARGS__);
+#elif
+	#define LOG_DEBUG(s, ...) ;
+#endif
 
 enum class eLogColor : u16 {
 	Red = FOREGROUND_RED,

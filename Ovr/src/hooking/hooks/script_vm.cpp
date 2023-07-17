@@ -1,6 +1,7 @@
 #include "hooking/hooking.h"
 #include "hooking/methods/native.h"
 #include "commands/manager/manager.h"
+#include "util/game_vm_guard.h"
 #define CASE(c) case c:
 #define DEFAULT default:
 #define FETCH_INSN {
@@ -14,9 +15,10 @@
 #define LoadImmS16 ((pc+=2), *(i16*)(pc-1))
 #define LoadImm24 ((pc+=3), *(u32*)(pc-3) >> 8)
 #define LoadImm32 ((pc+=4), *(u32*)(pc-3))
+#define HAS_ADDED_FUNCTIONALITY
 
-void scrItoa(char* dest, int value) {
-	char stack[16]{}, *sp{ stack };
+void scr_itoa(char* dest, int value) {
+	char stack[16]{}, * sp{ stack };
 	if (value < 0) {
 		*dest++ = '-';
 		value = -value;
@@ -34,23 +36,28 @@ void scrItoa(char* dest, int value) {
 		*dest++ = *--sp;
 	*dest = 0;
 }
-void scrAssignString(char* dst, unsigned size, const char* src) {
+void scr_assign_string(char* dst, unsigned size, const char* src) {
 	if (src) {
 		while (*src && --size)
 			*dst++ = *src++;
 	}
 	*dst = '\0';
 }
-void scrAppendString(char* dst, unsigned size, const char* src) {
+void scr_append_string(char* dst, unsigned size, const char* src) {
 	while (*dst)
 		dst++, --size;
-	scrAssignString(dst, size, src);
+	scr_assign_string(dst, size, src);
 }
-
+//namespace rage {
+//	class scrThread
+//	static u32 Run(scrValue * __restrict stack,scrValue * __restrict globals,const scrProgram &pt,Serialized * __restrict ser);
 rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser) {
 	if (ser->m_script_hash == "valentinerpreward2"_joaat)
 		return ser->m_state = rage::eThreadState::aborted;
 	u8** opcodesTbl{ pt->m_code_blocks };
+	#ifdef HAS_ADDED_FUNCTIONALITY
+	GameVMGuard* guard{ g_GlobalGameVMGuard.CreateGuardForThread(pt, ser, opcodesTbl) };
+	#endif
 	rage::scrValue* sp{ stack + ser->m_stack_pointer - 1 };
 	rage::scrValue* fp{ stack + ser->m_frame_pointer };
 	u8* pc{};
@@ -124,12 +131,14 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_frame_pointer = (i32)(fp - stack);
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				g_statistics.m_nativesInvoked++;
 				if (g_nativeHooks.first) {
 					for (auto& e : g_nativeHooks.second) {
 						e->set(pt, imm, cmd);
 					}
 				}
+				#endif
 				cmd(&curInfo);
 				if (ser->m_state != rage::eThreadState::running)
 					return ser->m_state;
@@ -192,6 +201,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				--sp;
 				rage::scrValue* r{ sp[1].Reference };
 				size_t idx{ sp[0].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -209,6 +219,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm8;
 				sp[0].Reference = r;
 			NEXT_INSN;
@@ -217,6 +232,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				--sp;
 				rage::scrValue* r{ sp[1].Reference };
 				size_t idx{ sp[0].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -234,6 +250,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm8;
 				sp[0].Any = r->Any;
 			NEXT_INSN;
@@ -242,6 +263,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				sp -= 3;
 				rage::scrValue* r{ sp[3].Reference };
 				size_t idx{ sp[2].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -259,6 +281,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm8;
 				r->Any = sp[1].Any;
 			NEXT_INSN;
@@ -291,6 +318,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				--sp;
 				rage::scrValue* r{ sp[1].Reference };
 				size_t idx{ sp[0].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -308,6 +336,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm16;
 				sp[0].Reference = r;
 			NEXT_INSN;
@@ -316,6 +349,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				--sp;
 				rage::scrValue* r{ sp[1].Reference };
 				size_t idx{ sp[0].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -333,6 +367,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm16;
 				sp[0].Any = r->Any;
 			NEXT_INSN;
@@ -341,6 +380,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				sp -= 3;
 				rage::scrValue* r{ sp[3].Reference };
 				u32 idx{ sp[2].Uns };
+				#ifdef HAS_ADDED_FUNCTIONALITY
 				if (idx >= r->Uns) {
 					switch ("arrayOverrunKickProtection"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -358,6 +398,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 						FAULT("Array overrun, {} >= {}", idx, r->Uns);
 					}
 				}
+				#elif
+				if (idx >= r->Uns) {
+					FAULT("Array overrun, {} >= {}", idx, r->Uns);
+				}
+				#endif
 				r += 1U + idx * LoadImm16;
 				r->Any = sp[1].Any;
 			NEXT_INSN;
@@ -443,47 +488,47 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				sp -= 2;
 				char* dest{ const_cast<char*>(sp[2].String) };
 				const char* src{ sp[1].String };
-				scrAssignString(dest, LoadImm8, src);
+				scr_assign_string(dest, LoadImm8, src);
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_ASSIGN_INT) FETCH_INSN;
 				sp -= 2;
 				char* dest{ const_cast<char*>(sp[2].String) };
 				i32 value{ sp[1].Int };
-				scrItoa(buf, value);
-				scrAssignString(dest, LoadImm8, buf);
+				scr_itoa(buf, value);
+				scr_assign_string(dest, LoadImm8, buf);
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_APPEND_STRING) FETCH_INSN;
 				sp -= 2;
 				char* dest{ const_cast<char*>(sp[2].String) };
 				const char* src{ sp[1].String };
-				scrAppendString(dest, LoadImm8, src);
+				scr_append_string(dest, LoadImm8, src);
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_APPEND_INT) FETCH_INSN;
 				sp -= 2;
 				char* dest{ const_cast<char*>(sp[2].String) };
 				i32 value{ sp[1].Int };
-				scrItoa(buf, value);
-				scrAppendString(dest, LoadImm8, buf);
+				scr_itoa(buf, value);
+				scr_append_string(dest, LoadImm8, buf);
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_COPY) FETCH_INSN;
 				sp -= 3;
-				rage::scrValue* dest = sp[3].Reference;
-				int destSize = sp[2].Int;
-				int srcSize = sp[1].Int;
-				// Remove excess
+				rage::scrValue* dest{ sp[3].Reference };
+				i32 destSize{ sp[2].Int };
+				i32 srcSize{ sp[1].Int };
+				//Remove excess
 				while (srcSize > destSize) {
 					--srcSize;
 					--sp;
 				}
-				// Do the bulk of the copy
-				for (int i = 0; i < srcSize; i++)
+				//Do the bulk of the copy
+				for (i32 i{}; i != srcSize; ++i)
 					dest[srcSize - 1 - i].Reference = (sp--)->Reference;
-				// Make sure it's still NUL-terminated
-				char* cDest = (char*)dest;
+				//Make sure it's still NUL-terminated
+				char* cDest{ (char*)dest };
 				cDest[(srcSize * sizeof(rage::scrValue)) - 1] = '\0';
 			NEXT_INSN;
 

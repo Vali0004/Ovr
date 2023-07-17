@@ -20,7 +20,7 @@ HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags)
 		ONCE(init, {
 			msg.clear();
 			msg.add({ "Currently in a loading screen", 1 });
-			msg.add({ "Assets that do not exist are being requested", 1 });
+			msg.add({ "Assets are not ready yet, waiting for the game to load", 1 });
 			msg.add({ "", 1 });
 			msg.add({ "Please wait...", 1 });
 		});
@@ -33,7 +33,7 @@ HRESULT hooks::present(IDXGISwapChain* swapChain, UINT syncInterval, UINT flags)
 		shv::onPresent(g_renderer.get());
 	}
 	if (GetAsyncKeyState(VK_F11)) {
-		LOG(Debug, "Blocked a game frame from being updated");
+		LOG_DEBUG("Blocked a game frame from being updated");
 		return S_OK;
 	}
 	return VMT_CALL(DX, present, swapChain, syncInterval, flags);

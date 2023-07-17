@@ -49,12 +49,12 @@
 #include <io.h>
 #include <regex>
 #include <variant>
+#include <Mmsystem.h>
 #pragma comment(lib, "winmm")
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "wldap32")
 #pragma comment(lib, "crypt32")
 //DirectXTK Includes
-
 #include "directx/DirectXHelpers.h"
 #include "directx/DDSTextureLoader.h"
 #include "directx/CommonStates.h"

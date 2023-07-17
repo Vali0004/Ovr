@@ -188,6 +188,7 @@
     <ClInclude Include="src\core\logger.h" />
     <ClInclude Include="src\commands\engine\engine.h" />
     <ClInclude Include="src\hooking\methods\native.h" />
+    <ClInclude Include="src\jitasm\jitasm.h" />
     <ClInclude Include="src\rage\commands\conversion_table.h" />
     <ClInclude Include="src\rage\commands\dump_commands.h" />
     <ClInclude Include="src\rage\commands\invoker\call_context.h" />
@@ -336,6 +337,7 @@
     <ClInclude Include="src\stackwalker\stackwalker.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
+    <ClInclude Include="src\util\game_vm_guard.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\player_mgr.h" />
@@ -377,8 +379,11 @@
     <ClCompile Include="src\commands\commands.cpp" />
     <ClCompile Include="src\commands\gui\gui.cpp" />
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
+    <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
     <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
+    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
+    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
     <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
     <ClCompile Include="src\hooking\hooks\request.cpp" />
     <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />

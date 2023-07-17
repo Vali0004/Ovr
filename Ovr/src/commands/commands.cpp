@@ -54,6 +54,9 @@ namespace commands {
 		"autoCompleteCommands"_TC->get(0).toggle = true;
 		"clearCommandBoxOnEnter"_TC->get(0).toggle = true;
 	}
+	void nut(actionCommand* command) {
+		util::playSound("NUT");
+	}
 	void init() {
 		g_manager.add(stringCommand("copyText", "Copy Text", "Copies text to clipboard", copyText));
 		g_manager.add(stringCommand("copyScString", "Copy Socialclub String", "Copies a string from socialclub.dll to clipboard", copyScString));
@@ -65,6 +68,7 @@ namespace commands {
 		g_manager.add(stringCommand("print", "Print", "Prints a string", print));
 		g_manager.add(actionCommand("forceQuitToSp", "Force Quit To Story Mode", "Forcefully quits to SP", forceQuitToSp));
 		g_manager.add(actionCommand("resetState", "Reset Menu State", "Resets all commands and GUI elements", resetState));
+		g_manager.add(actionCommand("nut", "NUT", nut));
 		features::init();
 		g_manager.init();
 	}

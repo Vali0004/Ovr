@@ -9,13 +9,13 @@ public:
 		std::lock_guard lck(m_mutex);
 		m_fibers.insert({ id, MakeSmartPointer<fiber>(fn, stackSize) });
 		if (log)
-			LOG(Debug, "Created fiber {}", id);
+			LOG_DEBUG("Created fiber {}", id);
 	}
 	void add(ccp id, u64 count, fnptr<void()> fn, std::optional<u64> stackSize = std::nullopt) {
 		for (u64 i{ count }; i; --i) {
 			add(std::format("{}_{}", id, i).c_str(), fn, false, stackSize);
 		}
-		LOG(Debug, "Created fiber group '{}' with {} fibers", id, count);
+		LOG_DEBUG("Created fiber group '{}' with {} fibers", id, count);
 	}
 	void remove(ccp id) {
 		std::lock_guard lck(m_mutex);

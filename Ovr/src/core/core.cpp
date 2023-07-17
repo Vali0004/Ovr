@@ -6,7 +6,6 @@
 #include "memory/patch.h"
 #include "memory/scanner.h"
 #include "util/transaction.h"
-#include <Mmsystem.h>
 
 namespace core {
 	namespace thread {
@@ -26,6 +25,9 @@ namespace core {
 			CloseHandle(g_thread);
 		}
 		DWORD entry(LPVOID paramater) {
+			while (!FindWindowA("grcWindow", nullptr) || !GetModuleHandleA("socialclub.dll")) {
+				std::this_thread::sleep_for(500ms);
+			}
 			core::create();
 			loop();
 			core::destroy();
@@ -37,23 +39,28 @@ namespace core {
 		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b2101)");
 		g_scyllaHide = MakeSmartPointer<scyllaHide>();
 		if (g_scyllaHide->getModule()) {
-			LOG(Debug, "ScyllaHide loaded.");
+			LOG_DEBUG("ScyllaHide loaded.");
 		}
 		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
 		//if (shv::g_shvLoader->getModule())
-			//LOG(Debug, "SHV module loaded.");
+			//LOG_DEBUG("SHV module loaded.");
 		exceptions::initExceptionHandler();
-		pointers::scanAll();
-		util::game::commands::intialize();
+		pointers::scanLSS();
+		//We need Arxan to intialise first
+		if (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
+			std::this_thread::sleep_for(15s);
+		}
 		switch (*pointers::g_loadingScreenState) {
 		case eLoadingScreenState::PreLegal: {
 			*pointers::g_loadingScreenState = eLoadingScreenState::Legals;
-			std::this_thread::sleep_for(200ms);
+			std::this_thread::sleep_for(500ms);
 		} break;
 		case eLoadingScreenState::Legals: {
 			*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
 		} break;
 		}
+		pointers::scanAll();
+		util::game::commands::intialize();
 		std::this_thread::sleep_for(100ms);
 		pointers::doPatches();
 		g_invoker.cache();
@@ -65,9 +72,7 @@ namespace core {
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
 		g_manager.add("transactions", &util::transactions::tickQueue);
-		fs::path path{ std::getenv("appdata") };
-		path /= BRAND"\\Sounds\\injection_sound.wav";
-		sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
+		util::playSound("injection_sound");
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
 		}

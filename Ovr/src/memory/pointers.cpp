@@ -3,6 +3,9 @@
 #include "memory/patch.h"
 
 namespace pointers {
+    void scanLSS() {
+        g_loadingScreenState = scan("LSS", "83 3D ? ? ? ? ? 75 17 8B 43 20 25").lea().add(1).as<decltype(g_loadingScreenState)>();
+    }
 	void scanAll() {
         g_scrThreadInit = scan("STI", "83 89 ? ? ? ? ? 83 A1 ? ? ? ? ? 80 A1 ? ? ? ? ?").as<decltype(g_scrThreadInit)>();
         g_scrThreadTick = scan("STT", "80 B9 ? ? ? ? ? 8B FA 48 8B D9 74 05").sub(0xF).as<decltype(g_scrThreadTick)>();
@@ -40,8 +43,14 @@ namespace pointers {
         g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
         g_triggerPlayermenuAction = scan("TPA", "48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B D9").as<decltype(g_triggerPlayermenuAction)>();
         g_getFriendsMenu = scan("GFM", "75 1C E8 ? ? ? ? 48 85 C0").sub(0xB).as<decltype(g_getFriendsMenu)>();
+        g_getArchetype = scan("GA", "89 44 24 40 8B 4F 08 80 E3 01 E8").add(0xA).call().as<decltype(g_getArchetype)>();
+        g_calculateMipLevel = scan("CML", "8B 47 58 0F B6 49 5C 89 44 24 20 E8").add(0xB).call().as<decltype(g_calculateMipLevel)>();
+        g_getStreamingModuleFromExtension = scan("GSMFE", "40 53 48 83 EC 20 48 8B C2 48 8B D9 33 D2 48 8B C8 E8 ? ? ? ? 33 D2 44 8B D0 F7 35 ? ? ? ? 44 8B C2 48 8B 15 ? ? ? ? 46 8B 0C 82 41").as<decltype(g_getStreamingModuleFromExtension)>();
+        g_insertStreamingModule = scan("ISM", "76 16 48 8B 41 18 44 0F B7 41 20 4E").sub(0xF).as<decltype(g_insertStreamingModule)>();
+        g_hasRosPrivilege = scan("HRP", "E8 ? ? ? ? EB 0B 8B CB").call().as<decltype(g_hasRosPrivilege)>();
  
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
+        g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();
         g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();
         g_presenceData = scan("PD", "48 8D 05 ? ? ? ? 48 8B F1 48 89 01 48 83 C1 08 E8 ? ? ? ? 33 ED 48 8D 8E 68 5B 00 00", { "socialclub.dll" }).mov().as<decltype(g_presenceData)>();
         g_friendRegistry = scan("FR", "41 8B F4 3B C5").sub(0xB).lea().as<decltype(g_friendRegistry)>();
@@ -59,11 +68,11 @@ namespace pointers {
         g_hashTable = scan("MT", "4C 03 05 ? ? ? ? EB 03").mov().as<decltype(g_hashTable)>();
         g_gtaThreads = scan("GT", "F5 8B FD 73").add(5).mov().as<decltype(g_gtaThreads)>();
         g_globals = scan("G", "48 8B 8D ? ? ? ? 4C 8D 4D 08").add(0xB).mov().as<decltype(g_globals)>();
-        g_loadingScreenState = scan("LSS", "83 3D ? ? ? ? ? 75 17 8B 43 20 25").lea().add(1).as<decltype(g_loadingScreenState)>();
         g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
         g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
         g_reportModule = scan("RM", "48 8D 0D ? ? ? ? 88 05 ? ? ? ? 48 8D 05").mov().as<decltype(g_reportModule)>();
         g_nativeRegistration = scan("NR", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 B9 20 03 00 00").add(0x1E).call().as<decltype(g_nativeRegistration)>();
+        g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_nativeRegistration)>();
         g_hwnd = FindWindowA("grcWindow", nullptr);
         LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
     }
@@ -74,15 +83,19 @@ namespace pointers {
                 g_arxPatches.addInteg(target.as<u8*>());
             }
             if (g_arxPatches.count()) {
-                LOG(Debug, "Patched {} ARX functions ({} checkers)", g_arxPatches.count(), g_arxPatches.integCount());
+                LOG_DEBUG("Patched {} ARX functions ({} checkers)", g_arxPatches.count(), g_arxPatches.integCount());
             }
             else {
-                LOG(Debug, "ARX functions were already patched.");
+                LOG_DEBUG("ARX functions were already patched.");
             }
         }
         catch (...) {
-            LOG(Debug, "ARX function patches failed to patch, checking if they were already applied.");
+            LOG_DEBUG("ARX function patches failed to patch, checking if they were already applied.");
         }
-        //g_patches.add("ISMV", scan("ISMV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
+        u8* ismsv{ scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>() };
+       /* ismsv[0] = 0xB0;
+        ismsv[1] = 0x01;
+        ismsv[2] = 0xC3;*/
+        //g_patches.add("ISMSV", scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
     }
 }

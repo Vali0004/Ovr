@@ -1,5 +1,6 @@
 #pragma once
 #include "pch/pch.h"
+#include "jitasm/jitasm.h"
 
 class patch {
 public:
@@ -96,3 +97,7 @@ private:
 	std::vector<patch*> m_codeHealerPatches{};
 };
 inline arxPatches g_arxPatches{};
+template <typename v, typename a>
+inline void put(a address, v value) {
+	memcpy((void*)address, &value, sizeof(value));
+}

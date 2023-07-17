@@ -525,7 +525,7 @@ namespace commands::features {
 				clipboard.set();
 				nlohmann::json body = { { "RockstarId", rid } };
 				auto res = socialclub::backend::jRequest(body, "https://scapi.rockstargames.com/friends/remove");
-				LOG(Debug, "Body: {}", body.dump(4));
+				LOG_DEBUG("Body: {}", body.dump(4));
 			}
 		}		
 		namespace session {
@@ -990,6 +990,9 @@ namespace commands::features {
 			void autoMp(toggleCommand* command) {
 				LOADINGSCREEN::LOBBY_SET_AUTO_MULTIPLAYER(command->get(0).toggle);
 			}
+			void setPrologueComplete(actionCommand* command) {
+				STATS::SET_PROFILE_SETTING_PROLOGUE_COMPLETE();
+			}
 			void exitInstantly(toggleCommand* command) {
 				if (HUD::IS_WARNING_MESSAGE_ACTIVE()) {
 					switch (HUD::GET_WARNING_SCREEN_MESSAGE_HASH()) {
@@ -1046,15 +1049,11 @@ namespace commands::features {
 					elements::setNextWindowSize({ 470.f, 235.f });
 					elements::font(g_renderer->m_tahoma, [&] {
 						elements::popupModal("Close?", [&] {
-							util::onPress(VK_ACCEPT, [&] {
-								exit(0); elements::closeCurrentPopup(); active = false;
-							});
-							util::onPress(VK_RETURN, [&] {
-								elements::closeCurrentPopup(); active = false;
-							});
+							util::onPress(VK_ACCEPT, [&] { abort(); elements::closeCurrentPopup(); active = false; });
+							util::onPress(VK_RETURN, [&] { elements::closeCurrentPopup(); active = false; });
 							elements::text("Grand Theft Auto V will close.\nAre you sure you want to do this?\n\n");
 							elements::separator();
-							elements::button("Yes", [&] { exit(0); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
+							elements::button("Yes", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
 							elements::setItemDefaultFocus();
 							elements::button("No", [&] { elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f });
 						}, ImGuiWindowFlags_NoResize);
@@ -1238,7 +1237,8 @@ namespace commands::features {
 		g_manager.add(protectionCommand("chatSpamProtection", "Chat Spam", "Stops chat spam from being displayed"));
 		//Miscellaneous::Game
 		g_manager.add(toggleCommand("mobileRadio", "Mobile Radio", "Use the game's radio anywhere", miscellaneous::game::mobileRadio));
-		g_manager.add(toggleCommand("automp", "Auto Multiplayer", "Automatically load into multiplayer on startup", miscellaneous::game::autoMp));
+		g_manager.add(toggleCommand("autoMp", "Auto Multiplayer", "Automatically load into multiplayer on startup", miscellaneous::game::autoMp));
+		g_manager.add(actionCommand("setPrologueComplete", "Set Prologue Complete", miscellaneous::game::setPrologueComplete));
 		g_manager.add(toggleCommand("exitInstantly", "Exit Instantly", "Exits the game instantly when exit is requested", miscellaneous::game::exitInstantly));
 		g_manager.add(floatCommand("setTimeScale", "Set Time Scale", miscellaneous::game::setTimeScale));
 		//Miscellaneous::World

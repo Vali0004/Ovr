@@ -9,7 +9,6 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 		rage::datBitBuffer buffer(pEvent->m_data, pEvent->m_length);
 		buffer.m_flagBits = 1;
 		if (eNetMessage type{}; player && util::network::deserialiseNetMessage(type, buffer)) {
-			LOG(Debug, "Net message 0x{:X} sent", (u32)type);
 			g_statistics.m_incomingNetworkEvents++;
 			switch (type) {
 			case eNetMessage::CMsgLostConnectionToHost: {
@@ -99,8 +98,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 					LOG(Session, "You got kicked by {}",  player.m_name);
 					pointers::g_joinBySessionInfo(util::network::get(), &util::network::get()->m_last_joined_session.m_session_info, 1, 1 | 2 | 4, nullptr, 0);
 				} break;
-				}
-				
+				}			
 				return false;
 			} break;
 			case eNetMessage::CMsgTextMessage: {
@@ -108,7 +106,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
 				buffer.ReadBool(&msg.m_is_team);
-				LOG(Debug, "balls");
+				LOG_DEBUG("balls");
 				if (util::isSpamMessage(msg.m_message)) {
 					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {
@@ -130,7 +128,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnecti
 				CMsgTextMessage2 msg{};
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
-				LOG(Debug, "balls");
+				LOG_DEBUG("balls");
 				if (util::isSpamMessage(msg.m_message)) {
 					switch ("chatSpam"_PC->state()) {
 					case eProtectionState::Notify: {

@@ -2300,7 +2300,105 @@ namespace rage {
 		sysModuleVtbl* m_vtable;
 		char pad_0008[152];
 	}; //Size: 0x00A0
+	class atPool;
+	class strStreamingModule;
+	class streamingDataEntry;
+	class streamingListEntry;
+	class strStreamingModuleMgr;
+	class atPool {
+	public:
+		int8_t* m_data; //0x0000
+		int8_t* m_flags; //0x0008
+		uint32_t m_max; //0x0010
+		uint32_t m_size; //0x0014
+		uint32_t m_count; //0x0018
+
+		template <typename T>
+		T* GetAt(int index) {
+			if (m_flags[index] < 0)
+				return nullptr;
+			return (T*)(m_data + (index * m_size));
+		}
+	}; //Size: 0x0020
+	static_assert(sizeof(atPool) == 0x20);
+	class strStreamingModule {
+	public:
+		uintptr_t m_vtable; //0x0000
+		uint32_t m_base_index; //0x0008
+		atArray<char> m_name; //0x0014
+		char pad_000C[24]; //0x000C
+		atPool m_pool; //0x0038
+
+		std::string get_name() {
+			return m_name.data();
+		}
+	}; //Size: 0x0058
+	static_assert(sizeof(strStreamingModule) == 0x58);
+	class streamingDataEntry {
+	public:
+		uint32_t m_handle; //0x0000
+		uint32_t m_flags; //0x0004
+	}; //Size: 0x0008
+	static_assert(sizeof(streamingDataEntry) == 0x8);
+	class streamingListEntry {
+	public:
+		atDList<streamingListEntry> m_list; //0x0000
+		uint32_t m_index; //0x0010
+	}; //Size: 0x0014
+	class strStreamingModuleMgr {
+	public:
+		strStreamingModuleMgr() {}
+		virtual ~strStreamingModuleMgr() = default;
+		char pad_0008[16]; //0x0008
+		atArray<strStreamingModule*> m_modules; //0x0018
+
+		strStreamingModule* GetModuleFromExtension(cc* Extension);
+		std::string GetStreamingNameForIndex(u32 Index) {
+			for (auto& entry : m_modules) {
+				if (entry->m_base_index == Index) {
+					return entry->get_name();
+				}
+			}
+			return "";
+		}
+		static strStreamingModuleMgr& Get();
+	};
 }
+struct Asset {
+	int Value;
+	bool Valid() {
+		return Value != -1;
+	}
+	void Set(Asset v) {
+		Value = v.Value;
+	}
+	void Set(int v) {
+		Value = v;
+	}
+};
+class CStreaming {
+public:
+	static CStreaming* Get();
+	rage::streamingDataEntry* Entry(Asset asset) {
+		if (asset.Valid())
+			return &m_entries[asset.Value];
+		return nullptr;
+	}
+
+	rage::streamingDataEntry* m_entries; //0x0000
+	char pad_0008[16]; //0x0008
+	int32_t m_num_entries; //0x0018
+	int32_t unk_001C; //0x001C
+	char pad_0020[64]; //0x0020
+	rage::streamingListEntry* m_request_list_head; //0x0060
+	rage::streamingListEntry* m_request_list_tail; //0x0068
+	char pad_0070[328]; //0x0070
+	rage::strStreamingModuleMgr m_module_mgr; //0x01B8
+	int32_t m_num_pending_requests; //0x01E0
+	int32_t m_num_pending_requests_unk; //0x01E4
+	int32_t m_num_pending_requests_preious; //0x01E8
+}; //Size: 0x01F0
+static_assert(sizeof(CStreaming) == 0x1F0);
 #pragma pack(push, 1)
 class CNetShopTransaction {
 public:

@@ -13,6 +13,7 @@ namespace commands {
 	extern void print(stringCommand* command);
 	extern void forceQuitToSp(actionCommand* command);
 	extern void resetState(actionCommand* command);
+	extern void nut(actionCommand* command);
 	extern void init();
 	extern void onInit();
 	extern void onTick();

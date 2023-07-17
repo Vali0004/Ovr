@@ -18,6 +18,7 @@ namespace shv {
 			fs::path _path{ std::getenv("appdata") };
 			_path /= BRAND;
 			m_module = LoadLibraryA(_path.append(path.string()).string().c_str());
+			LOG_DEBUG("Module path: {}", _path.string());
 		}
 		virtual void free() {
 			if (m_module && m_module != INVALID_HANDLE_VALUE)
@@ -28,7 +29,9 @@ namespace shv {
 	};
 	class asiModule : public dynamicModule {
 	public:
-		asiModule(std::string name) : m_name(name), dynamicModule(fs::path("Scripts").append(m_name)) {}
+		asiModule(std::string name) : m_name(name), dynamicModule(fs::path("Scripts").append(name)) {
+			printf("name: %s\n", name.c_str());
+		}
 		~asiModule() {}
 	public:
 		std::string str() {

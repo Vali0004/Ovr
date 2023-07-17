@@ -20,6 +20,8 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
+extern std::string getCurrentStreamingName();
+extern u32 getCurrentStreamingIndex();
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);
@@ -33,6 +35,9 @@ struct hooks {
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 	static bool processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
+	static i32 calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
+	static i32 insertStreamingModule(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
+	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
@@ -84,6 +89,9 @@ public:
 	detour m_canApplyData;
 	detour m_findGameMatch;
 	detour m_processMatchmakingFind;
+	detour m_hasRosPrivilege;
+	detour m_calculateMipLevel;
+	detour m_insertStreamingModule;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

@@ -5,6 +5,7 @@
 #include "core/logger.h"
 
 namespace pointers {
+	extern void scanLSS();
 	extern void scanAll();
 	extern void doPatches();
 	namespace types {
@@ -44,6 +45,11 @@ namespace pointers {
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 		using triggerPlayermenuAction = bool(*)(CPlayerListMenu* pMenu, u32* pHash);
 		using getFriendsMenu = u64(*)(u32 Index);
+		using getArchetype = rage::fwArchetype*(*)(u32 Hash, u64* pUnk);
+		using calculateMipLevel = i32(*)(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
+		using getStreamingModuleFromExtension = rage::strStreamingModule* (*)(rage::strStreamingModuleMgr* pMgr, cc* Extension);
+		using insertStreamingModule = i32(*)(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
+		using hasRosPrivilege = bool(*)(u64* _This, i32 Privilege);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -81,8 +87,14 @@ namespace pointers {
 	inline types::processMatchmakingFind g_processMatchmakingFind{};
 	inline types::triggerPlayermenuAction g_triggerPlayermenuAction{};
 	inline types::getFriendsMenu g_getFriendsMenu{};
+	inline types::getArchetype g_getArchetype{};
+	inline types::calculateMipLevel g_calculateMipLevel{};
+	inline types::getStreamingModuleFromExtension g_getStreamingModuleFromExtension{};
+	inline types::insertStreamingModule g_insertStreamingModule{};
+	inline types::hasRosPrivilege g_hasRosPrivilege{};
 
 	inline rage::grcTextureStore* g_textureStore{};
+	inline CStreaming* g_streaming{};
 	inline ScGameInfo* g_scGameInfo{};
 	inline FriendRegistry* g_friendRegistry{};
 	inline ScInfo* g_scInfo{};
@@ -105,5 +117,6 @@ namespace pointers {
 	inline uint32_t* g_threadCount{};
 	inline u64* g_reportModule{};
 	inline u64 g_nativeRegistration{};
+	inline u64 g_vehicleModelInfoVtbl{};
 	inline HWND g_hwnd{};
 }
