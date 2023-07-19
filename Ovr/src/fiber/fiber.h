@@ -4,31 +4,29 @@
 
 class fiber {
 public:
-	fiber(fnptr<void()> fn, std::optional<std::size_t> stackSize = std::nullopt) : m_func(fn), m_stackSize(stackSize) {
-		create(fn);
+	fiber(fnptr<void()> fn) : m_func(fn) {
+		m_fibers.first = CreateFiber(0, &fiber::routine, this);
 	}
 	~fiber() {
-		destroy();
+		if (m_fibers.first) {
+			DeleteFiber(m_fibers.first);
+		}
 	}
 public:
-	void create(fnptr<void()> func) {
-		m_fibers.second = CreateFiber(m_stackSize.has_value() ? m_stackSize.value() : 0, &fiber::routine, this);
-	}
-	void destroy() {
-		if (m_fibers.second)
-			DeleteFiber(m_fibers.second);
-	}
 	void sleep(std::optional<std::chrono::high_resolution_clock::duration> time = std::nullopt) {
-		if (time.has_value() && time.value() != 0ms)
+		if (time.has_value()) {
 			m_time = std::chrono::high_resolution_clock::now() + time.value();
-		else
+		}
+		else {
 			m_time = std::nullopt;
-		SwitchToFiber(m_fibers.first);
+		}
+		SwitchToFiber(m_fibers.second);
 	}
 	void tick() {
-		m_fibers.first = GetCurrentFiber();
-		if (!m_time.has_value() || m_time.value() <= std::chrono::high_resolution_clock::now())
-			SwitchToFiber(m_fibers.second);
+		m_fibers.second = GetCurrentFiber();
+		if (!m_time.has_value() || m_time.value() <= std::chrono::high_resolution_clock::now()) {
+			SwitchToFiber(m_fibers.first);
+		}
 	}
 	static void routine(PVOID param) {
 		fiber* f{ static_cast<fiber*>(param) };
@@ -49,5 +47,4 @@ public:
 	std::pair<void*, void*> m_fibers{};
 	fnptr<void()> m_func{};
 	std::optional<std::chrono::high_resolution_clock::time_point> m_time{};
-	std::optional<std::size_t> m_stackSize{};
 };

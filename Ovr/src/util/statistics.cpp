@@ -23,7 +23,7 @@ void statistics::draw() {
 	draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
 	draw("{} - Frame Count", m_frameCount);
 	draw("{} - Frame Time", m_frameTime);
-	draw("{} - FPS", roundf(ImGui::GetIO().Framerate));
+	draw("{} - FPS", roundf(ImGui::GetIO().Framerate / 1.5f));
 	draw("{} - Session", m_gameType);
 	draw("{} - Host", util::network::g_manager.online() ? m_host.m_name : "N/A");
 	draw("{} - Next Host", util::network::g_manager.online() ? (m_playerCount > 1 ? m_nextHost.m_name : "N/A") : "N/A");

@@ -87,6 +87,11 @@ namespace commands {
 			static_cast<stringCommand*>(command)->set_string(command->m_buffer[0]);
 		} break;
 		case eCommandType::HashCommand: {
+			command->m_buffer.clear();
+			command->m_context = context;
+			size_t index{ context.find(arguments[1]) };
+			command->m_buffer.push_back(context.substr(index));
+			static_cast<hashCommand*>(command)->set_string(command->m_buffer[0]);
 			command->get(0).string = arguments[1].c_str();
 		} break;
 		case eCommandType::VariadicCommand: {
@@ -208,7 +213,7 @@ namespace commands {
 			if (words.size() == 2) {
 				switch (command->m_type) {
 				case eCommandType::ToggleIntCommand: {
-					if (containsANumber(words[1]) || isNumber(words[1]))
+					if (containsAnNumber(words[1]) || isNumber(words[1]))
 						command->get(1).i32 = convertData<i32>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
@@ -216,7 +221,7 @@ namespace commands {
 					return true;
 				} break;
 				case eCommandType::ToggleFloatCommand: {
-					if (containsANumber(words[1]) || isNumber(words[1]))
+					if (containsAnNumber(words[1]) || isNumber(words[1]))
 						command->get(1).floating_point = convertData<fp>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
@@ -282,7 +287,7 @@ namespace commands {
 		if (isNumber(str)) {
 			return (t)stod(str);
 		}
-		else if (containsANumber(str)) {
+		else if (containsAnNumber(str)) {
 			if (str.find('.') == std::string::npos) {
 				if (str.find("0x") != std::string::npos || str.find("0X") != std::string::npos) {
 					return (t)stoull(str);

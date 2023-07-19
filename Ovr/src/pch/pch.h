@@ -132,7 +132,7 @@ namespace defines {
                 return false;
         return true;
     }
-    inline bool containsANumber(std::string str) {
+    inline bool containsAnNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c))
                 return true;

@@ -34,18 +34,11 @@ namespace commands {
 			auto& c{ e.second };
 			if (c->m_type == eCommandType::ProtectionCommand || c->m_type == eCommandType::SectionProtectionCommand)
 				continue;
-			if (c->m_type != eCommandType::VariadicCommand) {
-				if (c->m_looped) {
-					c->run();
-				}
-				else if (c->m_hotkey.pressed()) {
-					ONCE_PER_FRAME({ c->run(); });
-				}
+			if (c->m_looped) {
+				c->run();
 			}
-			else {
-				if (dynamic_cast<variadicCommand*>(c)->looped()) {
-					c->run();
-				}
+			else if (c->m_hotkey.pressed()) {
+				ONCE_PER_FRAME({ c->run(); });
 			}
 		}
 	}

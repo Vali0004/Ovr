@@ -52,8 +52,9 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_value.m_value.toggle ^= true;
 			}
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	public:
@@ -82,8 +83,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	public:
@@ -116,8 +118,9 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_toggleValue.m_value.toggle ^= true;
 			}
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	public:
@@ -147,8 +150,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	public:
@@ -181,8 +185,9 @@ namespace commands {
 			if (m_hotkey.pressed()) {
 				m_toggleValue.m_value.toggle ^= true;
 			}
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	public:
@@ -211,8 +216,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 	private:
@@ -269,8 +275,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 		void update(ccp n) {
@@ -301,8 +308,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 		void set_string(const std::string& str) {
@@ -332,8 +340,9 @@ namespace commands {
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
 		}
 		std::string get_key() {
@@ -341,17 +350,10 @@ namespace commands {
 		}
 		u32 get_hash() {
 			std::string key{ get_key() };
-			u32 hash{};
-			if (isNumber(key)) {
-				hash = stoi(key);
-			}
-			else if (containsANumber(key) && (key.size() == 8 || key.size() == 6 || (key[0] == '0' && key[1] == 'x'))) {
-				hash = stoul(key);
-			}
-			else {
-				hash = rage::joaat(key);
-			}
-			return hash;
+			return rage::joaat(key);
+		}
+		void set_string(const std::string& str) {
+			m_stringValue.m_value.string = str.c_str();
 		}
 	private:
 		typedValue m_stringValue{};
@@ -367,19 +369,16 @@ namespace commands {
 			variadicCommand(id, name, {}, values, callback, looped) {
 		}
 		void init() override {
-			m_looped = m_loop;
 			for (auto& v : m_values) {
 				push_value(v);
 			}
 			abstractCommand::init();
 		}
 		void run() override {
-			if (m_callback)
+			if (m_callback) {
 				m_callback(this);
+			}
 			abstractCommand::run();
-		}
-		bool looped() {
-			return m_loop && m_looped;
 		}
 	private:
 		fnptr<void(variadicCommand*)> m_callback{};
