@@ -6,7 +6,7 @@ bool hooks::findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilte
 	u32 discriminator{ pFilter->m_param_values[0] };
 	if (pFilter->m_filter_type == 1) {
 		pStatus->m_state = 1;
-		g_fiberPool.add([&] {
+		g_pool.add([&] {
 			bool result{ commands::features::network::session::browser::backend::g_browser.matchmake(discriminator) };
 			if (result) {
 				for (i32 i{}; i != commands::features::network::session::browser::backend::g_browser.count(); ++i) {

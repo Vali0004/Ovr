@@ -53,7 +53,7 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 		Vector3 newCoords{ stof(words[0]), stof(words[1]), stof(words[2]) };
 		//I am so fucking glad I kept this debug shit in here
 		if ("keepLastCoordinatesOnDeath"_TC->get(0).toggle) {
-			g_fiberPool.add([&] {
+			g_pool.add([&] {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
 				while (ENTITY::IS_ENTITY_DEAD(ped, FALSE)) {
 					fiber::current()->sleep(100ms);

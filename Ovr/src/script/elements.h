@@ -250,7 +250,7 @@ namespace elements {
 		if (ImGui::Checkbox(label.c_str(), &value)) {
 			if (cb) {
 				if (runUnderFiber) {
-					g_fiberPool.add(cb);
+					g_pool.add(cb);
 					return;
 				}
 				cb();
@@ -261,7 +261,7 @@ namespace elements {
 		if (ImGui::Selectable(label.c_str(), selected)) {
 			if (cb) {
 				if (runUnderFiber) {
-					g_fiberPool.add(cb);
+					g_pool.add(cb);
 					return;
 				}
 				cb();
@@ -278,7 +278,7 @@ namespace elements {
 		if (ImGui::Button(label.c_str(), size)) {
 			if (cb) {
 				if (runUnderFiber) {
-					g_fiberPool.add(cb);
+					g_pool.add(cb);
 					return;
 				}
 				cb();

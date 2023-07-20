@@ -440,7 +440,7 @@ namespace commands::features {
 
 			}
 			void spawnVehicle(hashCommand* command) {
-				g_fiberPool.add([command] {
+				g_pool.add([command] {
 					u32 hash{ command->get_hash() };
 					if (!STREAMING::IS_MODEL_VALID(hash)) {
 						LOG(Commands, "{} is not a valid hash!", command->get_key());
@@ -627,7 +627,7 @@ namespace commands::features {
 							return;
 						}
 					}
-					g_fiberPool.add([] {
+					g_pool.add([] {
 						global(2695915).value()->Int = type == tables::eSessionType::SCTV;
 						if (type == tables::eSessionType::Leave) {
 							global(1574589).at(2).value()->Int = -1;
@@ -804,7 +804,7 @@ namespace commands::features {
 		}
 		void join(stringCommand* command) {
 			u64 rid{ socialclub::backend::getRidFromCommand(command->get_string()) };
-			g_fiberPool.add([rid] {
+			g_pool.add([rid] {
 				if (HUD::GET_CURRENT_FRONTEND_MENU_VERSION() != 0xFFFFFFFF) {
 					HUD::ACTIVATE_FRONTEND_MENU("FE_MENU_VERSION_SP_PAUSE"_joaat, false, 2);
 					fiber::current()->sleep(200ms);

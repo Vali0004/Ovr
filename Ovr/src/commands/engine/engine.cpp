@@ -91,7 +91,8 @@ namespace commands {
 			command->m_context = context;
 			size_t index{ context.find(arguments[1]) };
 			command->m_buffer.push_back(context.substr(index));
-			static_cast<hashCommand*>(command)->set_string(command->m_buffer[0]);
+			static_cast<hashCommand*>(command)->set_string(arguments[1]);
+			printf("arg: %s\n", arguments[1].c_str());
 			command->get(0).string = arguments[1].c_str();
 		} break;
 		case eCommandType::VariadicCommand: {

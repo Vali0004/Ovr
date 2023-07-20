@@ -3,7 +3,7 @@
 #include "fiber.h"
 #include "manager.h"
 
-class fiberPool {
+class pool {
 public:
     void create();
     void add(std::function<void()> func);
@@ -14,4 +14,4 @@ private:
     std::recursive_mutex m_mutex{};
     std::stack<std::function<void()>> m_jobs{};
 };
-inline fiberPool g_fiberPool{};
+inline pool g_pool{};

@@ -350,9 +350,20 @@ namespace commands {
 		}
 		u32 get_hash() {
 			std::string key{ get_key() };
-			return rage::joaat(key);
+			printf("key: %s\n", key.c_str());
+			u32 hash{};
+			/*if (isNumber(key)) {
+				hash = stoi(key);
+			}
+			else if (containsAnNumber(key) && (key.size() == 8 || key.size() == 6)) {
+				hash = stoul(key);
+			}
+			else {
+				hash = rage::joaat(key);
+			}*/
+			return hash;
 		}
-		void set_string(const std::string& str) {
+		void set_string(std::string str) {
 			m_stringValue.m_value.string = str.c_str();
 		}
 	private:

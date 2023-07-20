@@ -142,7 +142,7 @@ namespace commands::gui {
 		}
 	}
 	void box::stop() {
-		g_fiberPool.add([this] {
+		g_pool.add([this] {
 			m_draw = false;
 			clear(false, true);
 			fiber::current()->sleep(100ms);

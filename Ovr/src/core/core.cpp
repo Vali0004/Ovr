@@ -63,7 +63,7 @@ namespace core {
 		std::this_thread::sleep_for(100ms);
 		pointers::doPatches();
 		g_invoker.cache();
-		g_fiberPool.create();
+		g_pool.create();
 		g_renderer = MakeSmartPointer<renderer>();
 		g_hooking = MakeSmartPointer<hooking>();
 		g_hooking->enable();
@@ -78,7 +78,7 @@ namespace core {
 		engine::createThread(&g_manager);
 	}
 	void destroy() {
-		g_fiberPool.add(&commands::features::uninit);
+		g_pool.add(&commands::features::uninit);
 		//We'd like ped flags and other things to be reset because of cases like no-clip
 		std::this_thread::sleep_for(500ms);
 		engine::cleanupThreads();
