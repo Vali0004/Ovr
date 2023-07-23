@@ -29,6 +29,7 @@ namespace tabs::self {
 			ccheckbox("autoHeal"_TC);
 			ccheckbox("instantRespawn"_TC);
 			ccheckbox("keepLastCoordinatesOnDeath"_TC);
+			ccheckbox("infiniteOxygen"_TC);
 			cbutton("clearTasks"_AC);
 			cbutton("clone"_AC);
 			cbutton("suicide"_AC);

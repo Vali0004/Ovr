@@ -12,7 +12,6 @@ namespace tabs::protections {
 			elements::protectionToggle("forceMissionProtection");
 			elements::protectionToggle("giveCollectableProtection");
 			elements::protectionToggle("gtaBannerProtection");
-			elements::protectionToggle("networkBailProtection");
 			elements::protectionToggle("personalVehicleDestroyedProtection");
 			elements::protectionToggle("remoteOffRadarProtection");
 			elements::protectionToggle("sendToCutsceneProtection");
@@ -26,7 +25,6 @@ namespace tabs::protections {
 			elements::protectionToggle("mcTeleportProtection");
 			elements::protectionToggle("startActivityProtection");
 			elements::protectionToggle("kickFromInteriorProtection");
-			elements::protectionToggle("interiorControlProtection");
 			elements::protectionToggle("sendTextLabelSMSProtection");
 			elements::protectionToggle("sendTextMessageProtection");
 			elements::protectionToggle("tseCommandRotateCamProtection");

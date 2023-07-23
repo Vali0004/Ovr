@@ -185,6 +185,20 @@ namespace tables {
 	};
 	constexpr u32 g_invalidObjects[46]{
 		"prop_dummy_01"_joaat,
+		"prop_fragtest_cnst_02"_joaat,
+		"prop_fragtest_cnst_03"_joaat,
+		"prop_fragtest_cnst_04"_joaat,
+		"prop_fragtest_cnst_05"_joaat,
+		"prop_fragtest_cnst_06"_joaat,
+		"prop_fragtest_cnst_06b"_joaat,
+		"prop_fragtest_cnst_07"_joaat,
+		"prop_fragtest_cnst_08"_joaat,
+		"prop_fragtest_cnst_08b"_joaat,
+		"prop_fragtest_cnst_08c"_joaat,
+		"prop_fragtest_cnst_09"_joaat,
+		"prop_fragtest_cnst_09b"_joaat,
+		"prop_fragtest_cnst_10"_joaat,
+		"prop_fragtest_cnst_11"_joaat,
 		"prop_dummy_car"_joaat,
 		"prop_dummy_light"_joaat,
 		"prop_dummy_plane"_joaat,
@@ -230,6 +244,11 @@ namespace tables {
 		"v_med_curtainsnewcloth2"_joaat,
 		"bh1_07_flagpoles"_joaat,
 		92962485
+	};
+	constexpr u32 g_modelBlacklist[]{
+		"apa_mp_apa_yacht_jacuzzi_ripple"_joaat,
+		"apa_mp_apa_yacht_jacuzzi_ripple2"_joaat,
+		"apa_mp_apa_yacht_jacuzzi_ripple003"_joaat,
 	};
 }
 class nodeId {

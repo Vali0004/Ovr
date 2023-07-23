@@ -34,6 +34,11 @@ eAckCode hooks::receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sen
 		}
 		if (CObject* object{ netObject->GetGameObject() }) {
 			if (rage::CBaseModelInfo* modelInfo{ object->m_model_info }) {
+				for (u8 i{}; i != COUNT(tables::g_modelBlacklist); ++i) {
+					if (modelInfo->m_hash == tables::g_modelBlacklist[i]) {
+						return eAckCode::Fail;
+					}
+				}
 				for (u8 i{}; i != COUNT(tables::g_invalidLodModels); ++i) {
 					if (modelInfo->m_hash == tables::g_invalidLodModels[i]) {
 						switch ("invalidModelLODCrashProtection"_PC->state()) {

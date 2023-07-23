@@ -7,6 +7,8 @@ namespace tabs::protections {
 			elements::sectionProtectionToggle("allKickProtections");
 			elements::protectionToggle("desyncKickProtection");
 			elements::protectionToggle("lostConnectionKickProtection");
+			elements::protectionToggle("bailKickProtection");
+			elements::protectionToggle("nullFunctionKickProtection");
 			elements::protectionToggle("arrayOverrunKickProtection");
 		});
 	}

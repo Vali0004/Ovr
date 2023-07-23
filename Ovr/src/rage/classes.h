@@ -2063,7 +2063,7 @@ namespace rage {
 	static_assert(sizeof(grcLockedTexture) == 0x28);
 	struct grcTextureStored {
 		char* m_name;
-		ID3D11Resource* m_texture;
+		ID3D11Resource* m_resource;
 		ID3D11ShaderResourceView* m_shader;
 		uint16_t m_width;
 		uint16_t m_height;
@@ -2104,7 +2104,7 @@ namespace rage {
 		uint8_t m_resource_type; //0x0032
 		uint8_t m_layers; //0x0033
 		char pad_0034[4]; //0x0034
-		ID3D11Resource* m_texture; //0x0038
+		ID3D11Resource* m_resource; //0x0038
 		uint32_t m_physical_size; //0x0040
 		uint32_t m_handle; //0x0044
 		uint32_t m_flags; //0x0048
@@ -2124,17 +2124,26 @@ namespace rage {
 		ID3D11ShaderResourceView* m_shader; //0x0078
 		char pad_0080[40]; //0x0080
 	public:
+		void SetShader(ID3D11ShaderResourceView* shader, ID3D11Resource* resource = nullptr) {
+			m_shader = shader;
+			if (!resource) {
+				m_shader->GetResource(&resource);
+			}
+			m_resource = resource;
+		}
+		void SetSize(rage::vector2 size) {
+			m_width = static_cast<uint16_t>(size.x);
+			m_height = static_cast<uint16_t>(size.y);
+		}
 		void Set(std::string file, ID3D11ShaderResourceView* shader, rage::vector2 size) {
 			m_name = new char[file.length() + 1]; //Yes, I know this is never deleted. The game will handle it, so hush...
 			strcpy_s(m_name, file.length() + 1, file.c_str());
-			m_shader = shader;
-			m_shader->GetResource(&m_texture);
-			m_width = static_cast<uint16_t>(size.x);
-			m_height = static_cast<uint16_t>(size.y);
+			SetShader(shader);
+			SetSize(size);
 			m_depth = 1;
 		}
 		void Swap(grcTexture* texure, bool retainOrginialSizes = false) {
-			m_texture = texure->m_texture;
+			m_resource = texure->m_resource;
 			m_shader = texure->m_shader;
 			if (!retainOrginialSizes) {
 				m_width = texure->m_width;
@@ -2143,7 +2152,7 @@ namespace rage {
 			}
 		}
 		void Swap(grcTextureStored texure, bool retainOrginialSizes = false) {
-			m_texture = texure.m_texture;
+			m_resource = texure.m_resource;
 			m_shader = texure.m_shader;
 			m_width = texure.m_width;
 			m_height = texure.m_height;
@@ -2152,7 +2161,7 @@ namespace rage {
 		grcTextureStored CreateCopy() {
 			grcTextureStored data{};
 			data.m_name = m_name;
-			data.m_texture = m_texture;
+			data.m_resource = m_resource;
 			data.m_shader = m_shader;
 			data.m_width = m_width;
 			data.m_height = m_height;
@@ -2528,6 +2537,12 @@ public:
 	int m_index; //0x0000
 	char pad_0004[12]; //0x0004
 	rage::vector4 m_value; //0x0010
+	void setValueRGBA(u8 r, u8 g, u8 b, u8 a) {
+		m_value.x = (r & 0xFF) / 255.f;
+		m_value.y = (g & 0xFF) / 255.f;
+		m_value.z = (b & 0xFF) / 255.f;
+		m_value.w = (a & 0xFF) / 255.f;
+	}
 }; //Size: 0x0020
 static_assert(sizeof(UIElement) == 0x20);
 class UIElementConstant {
@@ -2537,6 +2552,12 @@ public:
 	float m_position; //0x0014
 	char pad_0018[4]; //0x0018
 	int m_index; //0x001C
+	void setValueRGBA(u8 r, u8 g, u8 b, u8 a) {
+		m_value.x = (r & 0xFF) / 255.f;
+		m_value.y = (g & 0xFF) / 255.f;
+		m_value.z = (b & 0xFF) / 255.f;
+		m_value.w = (a & 0xFF) / 255.f;
+	}
 }; //Size: 0x0020
 static_assert(sizeof(UIElementConstant) == 0x20);
 class UIIndex {
@@ -2553,7 +2574,10 @@ static_assert(sizeof(UIElementInt) == 0x8);
 class UIElementShader {
 public:
 	uint64_t m_raw_element; //0x0000
-	rage::grcTexture* m_shader; //0x0008
+	rage::grcTexture* m_texture; //0x0008
+	void setShader(ID3D11ShaderResourceView* shader, ID3D11Resource* resource = nullptr) {
+		m_texture->SetShader(shader, resource);
+	}
 }; //Size: 0x0010
 static_assert(sizeof(UIElementShader) == 0x10);
 class TimecycleKeyframeData {

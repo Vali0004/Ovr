@@ -93,6 +93,11 @@ namespace commands::features {
 					g_coordsAtDeath = pos;
 				}
 			}
+			void infiniteOxygen(toggleCommand* command) {
+				if (command->get(0).toggle) {
+					cPed->m_ped_intelligence->m_oxygen_time = 0.f;
+				}
+			}
 			void clearTasks(actionCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
 				TASK::CLEAR_PED_TASKS_IMMEDIATELY(ped);
@@ -462,7 +467,7 @@ namespace commands::features {
 						g_lastSpawnedVehicle = vehicle;
 						if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
 							DECORATOR::DECOR_SET_INT(vehicle, "MPBitset", 0);
-							DECORATOR::DECOR_SET_INT(vehicle, "RandomID", NETWORK::NETWORK_HASH_FROM_PLAYER_HANDLE(player));
+							DECORATOR::DECOR_SET_INT(vehicle, "RandomID", cPed->m_net_object->m_object_id);
 							i32 networkId{ NETWORK::VEH_TO_NET(vehicle) };
 							if (NETWORK::NETWORK_GET_ENTITY_IS_NETWORKED(vehicle)) {
 								NETWORK::SET_NETWORK_ID_EXISTS_ON_ALL_MACHINES(networkId, true);
@@ -870,6 +875,8 @@ namespace commands::features {
 			void allKickProtections(sectionProtectionCommand* command) {
 				"desyncKickProtection"_PC->setFromSection(command->state());
 				"lostConnectionKickProtection"_PC->setFromSection(command->state());
+				"bailKickProtection"_PC->setFromSection(command->state());
+				"nullFunctionKickProtection"_PC->setFromSection(command->state());
 				"arrayOverrunKickProtection"_PC->setFromSection(command->state());
 			}
 		}
@@ -946,7 +953,6 @@ namespace commands::features {
 				"forceMissionProtection"_PC->setFromSection(command->state());
 				"giveCollectableProtection"_PC->setFromSection(command->state());
 				"gtaBannerProtection"_PC->setFromSection(command->state());
-				"networkBailProtection"_PC->setFromSection(command->state());
 				"personalVehicleDestroyedProtection"_PC->setFromSection(command->state());
 				"remoteOffRadarProtection"_PC->setFromSection(command->state());
 				"sendToCutsceneProtection"_PC->setFromSection(command->state());
@@ -960,7 +966,6 @@ namespace commands::features {
 				"mcTeleportProtection"_PC->setFromSection(command->state());
 				"startActivityProtection"_PC->setFromSection(command->state());
 				"kickFromInteriorProtection"_PC->setFromSection(command->state());
-				"interiorControlProtection"_PC->setFromSection(command->state());
 				"sendTextLabelSMSProtection"_PC->setFromSection(command->state());
 				"sendTextMessageProtection"_PC->setFromSection(command->state());
 				"tseCommandRotateCamProtection"_PC->setFromSection(command->state());
@@ -1097,6 +1102,7 @@ namespace commands::features {
 		g_manager.add(toggleCommand("autoHeal", "Auto Heal", self::ped::autoHeal));
 		g_manager.add(toggleCommand("instantRespawn", "Instant Respawn", self::ped::instantRespawn));
 		g_manager.add(toggleCommand("keepLastCoordinatesOnDeath", "Keep Last Coordinates On Death", self::ped::keepLastCoordinatesOnDeath));
+		g_manager.add(toggleCommand("infiniteOxygen", "Infinite Oxygen", self::ped::infiniteOxygen));
 		g_manager.add(actionCommand("clearTasks", "Clear Tasks", self::ped::clearTasks));
 		g_manager.add(actionCommand("clone", "Clone", self::ped::clone));
 		g_manager.add(actionCommand("suicide", "Suicide", self::ped::suicide));
@@ -1177,7 +1183,9 @@ namespace commands::features {
 		//Protections::Kicks
 		g_manager.add(sectionProtectionCommand("allKickProtections", "All Kick Protections", "Sets all kick protections", protections::kicks::allKickProtections));
 		g_manager.add(protectionCommand("desyncKickProtection", "Desync", "May cause an modder detction"));
-		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"));
+		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"))
+		g_manager.add(protectionCommand("bailKickProtection", "Bail"));
+		g_manager.add(protectionCommand("nullFunctionKickProtection", "Null Function"));
 		g_manager.add(protectionCommand("arrayOverrunKickProtection", "ScriptVM Overrun Kick", "This protects against all script event kicks that cause an array overflow"));
 		//Protections::Crashes
 		g_manager.add(sectionProtectionCommand("allCrashProtections", "All Crash Protections", "Sets all crash protections", protections::crashes::allCrashProtections));
@@ -1221,7 +1229,6 @@ namespace commands::features {
 		g_manager.add(protectionCommand("forceMissionProtection", "Force Mission"));
 		g_manager.add(protectionCommand("giveCollectableProtection", "Give Collectable"));
 		g_manager.add(protectionCommand("gtaBannerProtection", "GTA Banner"));
-		g_manager.add(protectionCommand("networkBailProtection", "Network Bail"));
 		g_manager.add(protectionCommand("personalVehicleDestroyedProtection", "Personal Vehicle Destroyed"));
 		g_manager.add(protectionCommand("remoteOffRadarProtection", "Remote Off-Radar"));
 		g_manager.add(protectionCommand("sendToCutsceneProtection", "Send To Cutscene"));
@@ -1235,7 +1242,6 @@ namespace commands::features {
 		g_manager.add(protectionCommand("mcTeleportProtection", "MC Teleport"));
 		g_manager.add(protectionCommand("startActivityProtection", "Start Activity"));
 		g_manager.add(protectionCommand("kickFromInteriorProtection", "Kick From Interior"));
-		g_manager.add(protectionCommand("interiorControlProtection", "Interior Control"));
 		g_manager.add(protectionCommand("sendTextLabelSMSProtection", "Send Text Label SMS"));
 		g_manager.add(protectionCommand("sendTextMessageProtection", "Send Text Message"));
 		g_manager.add(protectionCommand("tseCommandRotateCamProtection", "TSE Command Rotate Cam"));

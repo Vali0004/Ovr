@@ -46,6 +46,7 @@ namespace commands::features {
 			extern void instantRespawn(toggleCommand* command);
 			inline Vector3 g_coordsAtDeath{};
 			extern void keepLastCoordinatesOnDeath(toggleCommand* command);
+			extern void infiniteOxygen(toggleCommand* command);
 			extern void clearTasks(actionCommand* command);
 			extern void clone(actionCommand* command);
 			extern void suicide(actionCommand* command);

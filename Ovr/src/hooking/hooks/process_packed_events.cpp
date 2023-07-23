@@ -1,6 +1,7 @@
 #include "hooking/hooking.h"
 #include "commands/manager/manager.h"
 #include "util/util.h"
+#include "util/global.h"
 #define PROT_CHECK(c) switch (c##_PC->state()) { \
 	case eProtectionState::Notify: { \
 		LOG(Session, "{} from {}", c##_PC->m_name, Sender->GetName()); \
@@ -37,7 +38,6 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(ScriptEventBossShouldLaunchWvm, "forceMissionProtection");
 	CASE(ScriptEventCollectibleCollected, "giveCollectableProtection");
 	CASE(ScriptEventFmDeliverableDelivery, "gtaBannerProtection");
-	CASE(ScriptEventBailMeForSctv, "networkBailProtection");
 	CASE(ScriptEventCarInsurance, "personalVehicleDestroyedProtection");
 	CASE(ScriptEventOffTheRadar, "remoteOffRadarProtection");
 	CASE(ScriptEventCasinoPlayHeistCutscene, "sendToCutsceneProtection");
@@ -51,7 +51,6 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(ScriptEventGroupWarp, "mcTeleportProtection");
 	CASE(ScriptEventGbNonBossChallengeRequest, "startActivityProtection");
 	CASE(ScriptEventTriggerExitAllFromSimpleInterior, "kickFromInteriorProtection");
-	CASE(ScriptEventPlayersWarpInsideSimpleInterior, "interiorControlProtection");
 	CASE(ScriptEventSendBasicText, "sendTextLabelSMSProtection");
 	CASE(ScriptEventTextMessageUsingLiteral, "sendTextMessageProtection");
 	CASE(GeneralEventHeistPreplanExitGuestMode, "tseCommandRotateCamProtection");
@@ -106,6 +105,68 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 		} break;
 		case eProtectionState::BlockAndNotify: {
 			LOG(Session, "S{} from {}", 2, Sender->GetName());
+			return true;
+		} break;
+		}
+	} break;
+	case eScriptEvents::ScriptEventPlayersWarpInsideSimpleInterior: {
+		if (!pEvent->m_args[2]) {
+			switch ("nullFunctionKickProtection"_PC->state()) {
+			case eProtectionState::Notify: {
+				LOG(Session, "N{} kick from {}", 0, Sender->GetName());
+			} break;
+			case eProtectionState::Block: {
+				return true;
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				LOG(Session, "N{} kick from {}", 0, Sender->GetName());
+				return true;
+			} break;
+			}
+		}
+	} break;
+	case eScriptEvents::ScriptEventPlayersWarpInsideSimpleInteriorOnDelivery: {
+		if (!pEvent->m_args[2]) {
+			switch ("nullFunctionKickProtection"_PC->state()) {
+			case eProtectionState::Notify: {
+				LOG(Session, "N{} kick from {}", 1, Sender->GetName());
+			} break;
+			case eProtectionState::Block: {
+				return true;
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				LOG(Session, "N{} kick from {}", 1, Sender->GetName());
+				return true;
+			} break;
+			}
+		}
+	} break;
+	case eScriptEvents::ScriptEventWarpBuysellScriptVehicle: {
+		if (!pEvent->m_args[2]) {
+			switch ("nullFunctionKickProtection"_PC->state()) {
+			case eProtectionState::Notify: {
+				LOG(Session, "N{} kick from {}", 2, Sender->GetName());
+			} break;
+			case eProtectionState::Block: {
+				return true;
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				LOG(Session, "N{} kick from {}", 2, Sender->GetName());
+				return true;
+			} break;
+			}
+		}
+	} break;
+	case eScriptEvents::ScriptEventBailMeForSctv: {
+		switch ("bailKickProtection"_PC->state()) {
+		case eProtectionState::Notify: {
+			LOG(Session, "B{} kick from {}", 0, Sender->GetName());
+		} break;
+		case eProtectionState::Block: {
+			return true;
+		} break;
+		case eProtectionState::BlockAndNotify: {
+			LOG(Session, "B{} kick from {}", 0, Sender->GetName());
 			return true;
 		} break;
 		}
@@ -253,8 +314,13 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 		if (CPed* ped{ util::classes::getPed() }) {
 			if (CVehicle* vehicle{ ped->m_vehicle }) {
 				if (rage::netObject* netObject{ vehicle->m_net_object }) {
-					if (netObject->m_object_id == networkId && vehicle->m_driver == ped) {
-						EVNT_PROT_CHECK("requestControlProtection");
+					if (netObject->m_object_id == networkId) {
+						Vehicle pv{ global(2794162).at(299).value()->Int };
+						Vehicle veh{ util::classes::getSGUIDFromEntity(vehicle) };
+						i32 id{ DECORATOR::DECOR_GET_INT(veh, "RandomId") };
+						if (!NETWORK::NETWORK_IS_ACTIVITY_SESSION() || pv == veh || id == ped->m_net_object->m_object_id) {
+							EVNT_PROT_CHECK("requestControlProtection");
+						}
 					}
 				}
 			}
