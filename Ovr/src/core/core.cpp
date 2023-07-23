@@ -80,12 +80,10 @@ namespace core {
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
 		}
-		HHOOK dummy{ SetWindowsHookA(WH_KEYBOARD_LL, [](int code, WPARAM wParam, LPARAM lParam) -> LRESULT { return -1; }) };
-		UnhookWindowsHookEx(dummy);
 		engine::createThread(&g_manager);
-		util::delayedThread(g_running, 2000ms, [] {
-			commands::g_engine.commandFromStream();
-		});
+		//util::delayedThread(g_running, 2000ms, [] {
+		//	//commands::g_engine.commandFromStream();
+		//});
 	}
 	void destroy() {
 		g_pool.add(&commands::features::uninit);

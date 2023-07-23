@@ -886,6 +886,10 @@ namespace commands::features {
 				"invalidRemoveWeaponCrashProtection"_PC->setFromSection(command->state());
 				"invalidObjectTypeCrashProtection"_PC->setFromSection(command->state());
 				"mismatchObjectTypeCrashProtection"_PC->setFromSection(command->state());
+				"invalidModelLODCrashProtection"_PC->setFromSection(command->state());
+				"invalidModelCrashProtection"_PC->setFromSection(command->state());
+				"invalidModelVehicleCrashProtection"_PC->setFromSection(command->state());
+				"invalidModelPedCrashProtection"_PC->setFromSection(command->state());
 				"invalidSectorPositionCrashProtection"_PC->setFromSection(command->state());
 				"vehicleTempActionCrashProtection"_PC->setFromSection(command->state());
 				"invalidTempActionCrashProtection"_PC->setFromSection(command->state());
@@ -894,7 +898,12 @@ namespace commands::features {
 				"giveControlCrashProtection"_PC->setFromSection(command->state());
 				"ropeCrashProtection"_PC->setFromSection(command->state());
 				"invalidWordStateCrashProection"_PC->setFromSection(command->state());
+				"pedMountFlagCrashProtection"_PC->setFromSection(command->state());
+				"pedStateGadgetOverflowCrashProtection"_PC->setFromSection(command->state());
+				"invalidGadgetCrashProtection"_PC->setFromSection(command->state());
+				"submarineCarCrashProtection"_PC->setFromSection(command->state());
 				"scriptEventIslandHeliLaunchCrashProtection"_PC->setFromSection(command->state());
+				"scriptEventRequestVehicleSpawnCrashProtection"_PC->setFromSection(command->state());
 				"scriptEventSyncedIntractionCrashProtection"_PC->setFromSection(command->state());
 			}
 		}
@@ -1175,6 +1184,10 @@ namespace commands::features {
 		g_manager.add(protectionCommand("invalidRemoveWeaponCrashProtection", "Invalid Weapon Remove"));
 		g_manager.add(protectionCommand("invalidObjectTypeCrashProtection", "Invalid Object Type"));
 		g_manager.add(protectionCommand("mismatchObjectTypeCrashProtection", "Mismatch Object Type"));
+		g_manager.add(protectionCommand("invalidModelLODCrashProtection", "Invalid LOD Model"));
+		g_manager.add(protectionCommand("invalidModelCrashProtection", "Invalid Model"));
+		g_manager.add(protectionCommand("invalidModelVehicleCrashProtection", "Invalid Vehicle Model"));
+		g_manager.add(protectionCommand("invalidModelPedCrashProtection", "Invalid Ped Model"));
 		g_manager.add(protectionCommand("invalidSectorPositionCrashProtection", "Invalid Sector Position"));
 		g_manager.add(protectionCommand("vehicleTempActionCrashProtection", "Vehicle Temp Action"));
 		g_manager.add(protectionCommand("invalidTempActionCrashProtection", "Invalid Temp Action"));
@@ -1183,7 +1196,12 @@ namespace commands::features {
 		g_manager.add(protectionCommand("giveControlCrashProtection", "Invalid Give Control Type"));
 		g_manager.add(protectionCommand("ropeCrashProtection", "Invalid Rope Crash"));
 		g_manager.add(protectionCommand("invalidWordStateCrashProection", "Invalid World State"));
+		g_manager.add(protectionCommand("pedMountFlagCrashProtection", "Ped Mount Flag"));
+		g_manager.add(protectionCommand("pedStateGadgetOverflowCrashProtection", "Ped State Gadget Overflow"));
+		g_manager.add(protectionCommand("invalidGadgetCrashProtection", "Invalid Gadget"));
+		g_manager.add(protectionCommand("submarineCarCrashProtection", "Submarine Car"));
 		g_manager.add(protectionCommand("scriptEventIslandHeliLaunchCrashProtection", "Script Event Island Heli Launch"));
+		g_manager.add(protectionCommand("scriptEventRequestVehicleSpawnCrashProtection", "Script Event Request Vehicle Spawn"));
 		g_manager.add(protectionCommand("scriptEventSyncedIntractionCrashProtection", "Script Event Synced Interaction"));
 		//Protections::Events::Network
 		g_manager.add(sectionProtectionCommand("allNetworkEventProtections", "All Network Event Protections", "Sets all network event protections", protections::networkEvents::allNetworkEventProtections));

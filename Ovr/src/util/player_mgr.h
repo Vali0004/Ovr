@@ -148,7 +148,7 @@ namespace util::network {
 			u64 lastHostToken{ m_players[0] };
 			for (auto& entry : m_players) {
 				auto& player{ entry.second };
-				if (player.m_peerAddress > lastHostToken && !player.m_host) {
+				if (player.m_peerAddress < lastHostToken && !player.m_host) {
 					lastHostToken = player.m_peerAddress;
 				}
 			}

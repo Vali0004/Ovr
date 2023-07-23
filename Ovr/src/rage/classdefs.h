@@ -44,6 +44,7 @@ class CPedCreationDataNode;
 class CVehicleCreationDataNode;
 class CPlayerCreationDataNode;
 class CPlayerGameStateDataNode;
+class CPedGameStateDataNode;
 class CPhysicalAttachDataNode;
 class CPedAttachDataNode;
 class CPedComponents;
@@ -218,11 +219,13 @@ namespace rage {
 	class rlMatchmakingFindResult;
 	class netGamePlayerData;
 	class netConnectionManager;
+	class netPeerAddress;
+	class netQueuedMessage;
+	class netMessageQueue;
+	class netPackedMessage;
+	class netPackedMessageQueue;
+	class netConnectionQueue;
 	class netConnectionPeer;
-	namespace netConnection {
-		class InFrame;
-	}
-	class netConMgr;
 	class netEventMgr;
 	class snPlayer;
 	class snPeer;

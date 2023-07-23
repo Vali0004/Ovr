@@ -96,11 +96,11 @@ namespace rage {
 	};
 	class nonPhysicalPlayerDataBase {
 	public:
-		virtual ~nonPhysicalPlayerDataBase() = default;    // 0 (0x00)
-		virtual void unk_008() = 0;                       // 1 (0x08)
-		virtual void unk_010() = 0;                       // 2 (0x10)
-		virtual void unk_018() = 0;                       // 3 (0x18)
-		virtual void log(netLoggingInterface* logger) = 0; // 4 (0x20)
+		virtual ~nonPhysicalPlayerDataBase() = default;    //0 (0x00)
+		virtual void unk_008() = 0;                       //1 (0x08)
+		virtual void unk_010() = 0;                       //2 (0x10)
+		virtual void unk_018() = 0;                       //3 (0x18)
+		virtual void log(netLoggingInterface* logger) = 0; //4 (0x20)
 	};
 	union netAddress {
 		uint32_t m_packed; //0x0000
@@ -158,7 +158,7 @@ namespace rage {
 			uint64_t m_platform_data; //0x00C8
 			rlGamerHandle m_unk_gamer_handle; //0x00D0
 			//As of ov1.67, these aren't always in all instances.
-			// Some classes contain m_platform_data, and vice versa
+			//Some classes contain m_platform_data, and vice versa
 		};
 		uint32_t m_ros_privilege; //0x00E0
 		char m_name[17]; //0x00E4
@@ -284,7 +284,7 @@ namespace rage {
 		void* m_extensible_unk; //0x0018
 		template <typename T>
 		bool is_of_type() {
-			static auto name = (typeid(T).name()) + 6; // Skip "class "
+			static auto name = (typeid(T).name()) + 6; //Skip "class "
 			static auto name_hash = joaat(name);
 			return is_of_type(name_hash);
 		}
@@ -332,7 +332,7 @@ namespace rage {
 		virtual fwEntity* CreateEntity() = 0;
 
 		char pad_0008[16]; //0x0008
-		int32_t m_hash; //0x0018
+		uint32_t m_hash; //0x0018
 		char unk_001C[4]; //0x001C
 		vector3 m_bounding_sphere_center; //0x0020
 		float m_bounding_sphere_radius; //0x002C
@@ -367,6 +367,14 @@ namespace rage {
 		}
 		bool is_type(eModelType type) {
 			return get_type() == static_cast<uint8_t>(type);
+		}
+		bool of_any_type(std::vector<eModelType> types) {
+			for (eModelType& type : types) {
+				if (is_type(type)) {
+					return true;
+				}
+			}
+			return false;
 		}
 	}; //Size: 0x00B0
 	static_assert(sizeof(CBaseModelInfo) == 0xB0);
@@ -440,34 +448,34 @@ namespace rage {
 	public:
 		DEFINE_AT_RTTI(fwEntity)
 		virtual void* _0x38(void*, void*) = 0;
-		virtual void AddExtension(void* extension) = 0; // 0x40
-		virtual void _0x48() = 0; // not implemented
-		virtual void _0x50() = 0; // only implemented by CEntityBatch
+		virtual void AddExtension(void* extension) = 0; //0x40
+		virtual void _0x48() = 0; //not implemented
+		virtual void _0x50() = 0; //only implemented by CEntityBatch
 		virtual void _0x58() = 0;
-		virtual void SetModelInfo(std::uint16_t* model_index) = 0; // 0x60
+		virtual void SetModelInfo(std::uint16_t* model_index) = 0; //0x60
 		virtual void _0x68(int, vector4*) = 0;
 		virtual void* _0x70(int) = 0;
-		virtual CNavigation* GetNavigation() = 0; // 0x78
-		virtual CMoveObjectPooledObject* CreateMoveObject() = 0; // 0x80
-		virtual std::uint32_t* GetType() = 0; // 0x88
+		virtual CNavigation* GetNavigation() = 0; //0x78
+		virtual CMoveObjectPooledObject* CreateMoveObject() = 0; //0x80
+		virtual std::uint32_t* GetType() = 0; //0x88
 		virtual void _0x90() = 0;
 		virtual float _0x98() = 0;
-		virtual bool TryRequestInverseKinematics(rage::crmtRequestPose* pose, rage::crmtRequestIk* ik) = 0; // 0xA0 implemented only by CPed
-		virtual bool TryRequestFacialAnims(void*) = 0; // 0xA8 implemented only by CPed
+		virtual bool TryRequestInverseKinematics(rage::crmtRequestPose* pose, rage::crmtRequestIk* ik) = 0; //0xA0 implemented only by CPed
+		virtual bool TryRequestFacialAnims(void*) = 0; //0xA8 implemented only by CPed
 		virtual void* _0xB0() = 0;
-		virtual std::uint8_t _0xB8() = 0; // implemented only by CPed
-		virtual rage::crFrameFilter* GetFrameFilter() = 0; // 0xC0
-		virtual rage::fwAudEntity* GetEntityAudio() = 0; // 0xC8
+		virtual std::uint8_t _0xB8() = 0; //implemented only by CPed
+		virtual rage::crFrameFilter* GetFrameFilter() = 0; //0xC0
+		virtual rage::fwAudEntity* GetEntityAudio() = 0; //0xC8
 		virtual void _0xD0() = 0;
-		virtual void SetTransform(matrix44* matrix, bool update_pos) = 0; // 0xD8
-		virtual void SetTransform2(matrix44* matrix, bool update_pos) = 0; // 0xE0
-		virtual void SetPosition(vector4* pos, bool update_pos) = 0; // 0xE8
-		virtual void SetHeading(float heading, bool update_pos) = 0; // 0xF0
-		virtual void SetEntityTypeFlags() = 0; // 0xF8
-		virtual void _0x100() = 0; // not implemented
-		virtual void UpdatePhysics(CNavigation* navigation) = 0; // 0x108
-		virtual void UpdatePhysics2(CNavigation* navigation) = 0; // 0x110
-		virtual void UpdatePosition() = 0; // 0x118
+		virtual void SetTransform(matrix44* matrix, bool update_pos) = 0; //0xD8
+		virtual void SetTransform2(matrix44* matrix, bool update_pos) = 0; //0xE0
+		virtual void SetPosition(vector4* pos, bool update_pos) = 0; //0xE8
+		virtual void SetHeading(float heading, bool update_pos) = 0; //0xF0
+		virtual void SetEntityTypeFlags() = 0; //0xF8
+		virtual void _0x100() = 0; //not implemented
+		virtual void UpdatePhysics(CNavigation* navigation) = 0; //0x108
+		virtual void UpdatePhysics2(CNavigation* navigation) = 0; //0x110
+		virtual void UpdatePosition() = 0; //0x118
 
 		class CBaseModelInfo* m_model_info; //0x0020
 		uint8_t m_entity_type; //0x0028
@@ -894,11 +902,11 @@ namespace rage {
 		public:
 			Info(scrValue* resultPtr, int parameterCount, scrValue* params) :
 				ResultPtr(resultPtr), ParamCount(parameterCount), Params(params), BufferCount(0) { }
-			// Return result, if applicable
+			//Return result, if applicable
 			scrValue* ResultPtr;
-			// Parameter count
+			//Parameter count
 			int ParamCount;
-			// Pointer to parameter values
+			//Pointer to parameter values
 			scrValue* Params;
 			int BufferCount;
 			scrValue* Orig[4];
@@ -1133,32 +1141,32 @@ namespace rage {
 	public:
 		class atDScriptObjectNode : public atDNode<scriptHandlerObject*> {};
 	public:
-		virtual ~scriptHandler() = default;                                                                   //  0 (0x00)
-		virtual bool _0x08() = 0;                                                                             //  1 (0x08)
-		virtual void _0x10() = 0;                                                                             //  2 (0x10)
-		virtual void cleanup_objects() = 0;                                                                   //  3 (0x18)
-		virtual scriptId* _0x20() = 0;                                                                        //  4 (0x20)
-		virtual scriptId* get_id() = 0;                                                                       //  5 (0x28)
+		virtual ~scriptHandler() = default;                                                                   // 0 (0x00)
+		virtual bool _0x08() = 0;                                                                             // 1 (0x08)
+		virtual void _0x10() = 0;                                                                             // 2 (0x10)
+		virtual void cleanup_objects() = 0;                                                                   // 3 (0x18)
+		virtual scriptId* _0x20() = 0;                                                                        // 4 (0x20)
+		virtual scriptId* get_id() = 0;                                                                       // 5 (0x28)
 		//Returns whether the script handler belongs to a networked script.
-		virtual bool is_networked() = 0;                                                                      //  6 (0x30)
+		virtual bool is_networked() = 0;                                                                      // 6 (0x30)
 		//Initializes the network component for the script handler.
-		virtual void init_net_component() = 0;                                                                //  7 (0x38)
+		virtual void init_net_component() = 0;                                                                // 7 (0x38)
 		//Deletes the script handler's network component, if it exists.
-		virtual void reset_net_component() = 0;                                                               //  8 (0x40)
+		virtual void reset_net_component() = 0;                                                               // 8 (0x40)
 		//Destroys the script handler.
-		virtual bool destroy() = 0;                                                                           //  9 (0x48)
+		virtual bool destroy() = 0;                                                                           // 9 (0x48)
 		//Adds the object to the script handler's list of objects.
-		virtual void add_object(scriptHandlerObject*, bool is_network, bool is_network_and_scriptcheck) = 0; // 10 (0x50)
+		virtual void add_object(scriptHandlerObject*, bool is_network, bool is_network_and_scriptcheck) = 0; //10 (0x50)
 		//Something related to reservations.
-		virtual void _0x58(void*) = 0;                                                                        // 11 (0x58)
-		virtual void register_resource(scriptResource*, void*) = 0;                                           // 12 (0x60)
-		virtual void _0x68() = 0;                                                                             // 13 (0x68)
-		virtual void _0x70() = 0;                                                                             // 14 (0x70)
-		virtual void _0x78() = 0;                                                                             // 15 (0x78)
-		virtual void _0x80() = 0;                                                                             // 16 (0x80)
-		virtual void _0x88() = 0;                                                                             // 17 (0x88)
-		virtual void _0x90() = 0;                                                                             // 18 (0x90)
-		virtual void _0x98() = 0;                                                                             // 19 (0x98)
+		virtual void _0x58(void*) = 0;                                                                        //11 (0x58)
+		virtual void register_resource(scriptResource*, void*) = 0;                                           //12 (0x60)
+		virtual void _0x68() = 0;                                                                             //13 (0x68)
+		virtual void _0x70() = 0;                                                                             //14 (0x70)
+		virtual void _0x78() = 0;                                                                             //15 (0x78)
+		virtual void _0x80() = 0;                                                                             //16 (0x80)
+		virtual void _0x88() = 0;                                                                             //17 (0x88)
+		virtual void _0x90() = 0;                                                                             //18 (0x90)
+		virtual void _0x98() = 0;                                                                             //19 (0x98)
 	public:
 		void* unk_0008; //0x0008
 		void* unk_0010; //0x0010
@@ -1201,19 +1209,19 @@ namespace rage {
 		virtual short _0xB0(void*, void*) = 0;
 		virtual bool register_host_broadcast_data(int* data, int size, char* debugString) = 0;
 		virtual bool register_player_broadcast_data(int data, int size, bool sync) = 0;
-		virtual bool _0xC8() = 0; // something to do to joining session
+		virtual bool _0xC8() = 0; //something to do to joining session
 		virtual bool _0xD0() = 0;
 		virtual bool add_player_to_script(CNetGamePlayer* player, short* outParticipantID, short* outSlot, int* outFailReason) = 0;
-		virtual bool add_player_to_script_internal(CNetGamePlayer* player, short participantID, short slot) = 0; // player aka participant
+		virtual bool add_player_to_script_internal(CNetGamePlayer* player, short participantID, short slot) = 0; //player aka participant
 		virtual bool remove_player_from_script(CNetGamePlayer* player) = 0;
 		virtual void* player_left_impl(CNetGamePlayer*, bool) = 0;
-		virtual bool do_host_migration(CNetGamePlayer* player, short host_token, bool unk) = 0; // aka _0xF8
-		virtual void* leave_from_script() = 0; // calls above function with player = nullptr
+		virtual bool do_host_migration(CNetGamePlayer* player, short host_token, bool unk) = 0; //aka _0xF8
+		virtual void* leave_from_script() = 0; //calls above function with player = nullptr
 		virtual bool _0x108() = 0;
 		virtual void* _0x110() = 0;
-		virtual bool _0x118() = 0; // related to above function
+		virtual bool _0x118() = 0; //related to above function
 	public:
-		scriptHandler* m_script_handler; // 0x08
+		scriptHandler* m_script_handler; //0x08
 	};
 	class rlSessionInfo {
 	public:
@@ -1313,7 +1321,7 @@ namespace rage {
 		virtual void m_F0() = 0;
 		virtual void m_F8() = 0;
 		virtual void Update() = 0;
-		virtual bool m_108_1604() = 0; // added in 1604
+		virtual bool m_108_1604() = 0; //added in 1604
 		virtual void m_108() = 0;
 		virtual void m_110() = 0;
 		virtual void m_118() = 0;
@@ -1424,34 +1432,34 @@ namespace rage {
 	static_assert(sizeof(CEntityDrawHandler) == 0x2C);
 	class CEntity : public fwEntity {
 	public:
-		virtual void* _0x120() = 0; // implemented only by CPed
-		virtual void UpdatePositionImpl() = 0; // 0x128
+		virtual void* _0x120() = 0; //implemented only by CPed
+		virtual void UpdatePositionImpl() = 0; //0x128
 		virtual void _0x130() = 0;
 		virtual void _0x138(void*) = 0;
 		virtual void _0x140() = 0;
 		virtual void _0x148(int) = 0;
 		virtual bool _0x150() = 0;
-		virtual CEntityDrawHandler* CreateDrawHandler() = 0; // 0x158
-		virtual int GetTypeFlags() = 0; // 0x160
-		virtual int GetTypeFlags2() = 0; // 0x168
-		virtual bool _0x170() = 0; // implemented only by CPickup
+		virtual CEntityDrawHandler* CreateDrawHandler() = 0; //0x158
+		virtual int GetTypeFlags() = 0; //0x160
+		virtual int GetTypeFlags2() = 0; //0x168
+		virtual bool _0x170() = 0; //implemented only by CPickup
 		virtual bool _0x178() = 0;
 		virtual void _0x180(bool) = 0;
 		virtual bool _0x188() = 0;
 		virtual bool _0x190() = 0;
-		virtual void ClearDecals() = 0; // 0x198
-		virtual void GetModelBounds(rage::vector3* bounds) = 0; // 0x1A0
-		virtual void GetModelBounds2(rage::vector3* bounds) = 0; // 0x1A8
-		virtual float GetBoundingBoxSize() = 0; // 0x1B0
+		virtual void ClearDecals() = 0; //0x198
+		virtual void GetModelBounds(rage::vector3* bounds) = 0; //0x1A0
+		virtual void GetModelBounds2(rage::vector3* bounds) = 0; //0x1A8
+		virtual float GetBoundingBoxSize() = 0; //0x1B0
 		virtual float _0x1B8(void*) = 0;
 		virtual float _0x1C0(void*) = 0;
 		virtual rage::vector3* _0x1C8() = 0;
-		virtual rage::vector3* GetCameraOffset() = 0; // 0x1D0
-		virtual void GetCameraBasePosition(rage::vector3* pos) = 0; // 0x1D8
+		virtual rage::vector3* GetCameraOffset() = 0; //0x1D0
+		virtual void GetCameraBasePosition(rage::vector3* pos) = 0; //0x1D8
 		virtual bool _0x1E0() = 0;
-		virtual bool Update() = 0; // 0x1E8 always returns true
+		virtual bool Update() = 0; //0x1E8 always returns true
 		virtual bool _0x1F0() = 0;
-		virtual void Warp(rage::vector3* pos, float heading, bool update_pos) = 0; // 0x1F8
+		virtual void Warp(rage::vector3* pos, float heading, bool update_pos) = 0; //0x1F8
 
 		void set_position(rage::vector3 v) {
 			rage::vector4 v4{ v.x, v.y, v.z, 0.f };
@@ -1560,28 +1568,13 @@ namespace rage {
 		}
 	}; //Size: 0x00C0
 	static_assert(sizeof(scrNativeRegistration) == 0xC0);
-#pragma pack(push, 1)
+	#pragma pack(push, 1)
 	class scrNativeRegistrationTable {
 	public:
 		scrNativeRegistration* m_entries[255]; //0x0000
 		uint32_t m_seed; //0x07F8
 		bool m_initialized; //0x07FC
 
-		void dumpHandlers() {
-			HMODULE handle{ GetModuleHandleA(NULL) };
-			std::vector<u64> natives{};
-			for (i32 i{}; i != 255; ++i) {
-				for (auto entry{ m_entries[i] }; entry; entry = entry->get_next_registration()) {
-					for (uint32_t j{}, end{ entry->get_num_entries() }; j < end; ++j) {
-						if (auto entry_hash{ entry->get_hash(j) }) {
-							natives.emplace_back(entry_hash);
-							printf("handler 0x%llX with hash 0x%llX (entry index %i with handler index %i)\n", (u64)entry->m_handlers[j] - (u64)handle, entry_hash, i, j);
-						}
-					}
-				}
-			}
-			printf("Found %lli natives\n", natives.size());
-		}
 		Cmd get_handler(uint64_t hash) {
 			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
@@ -1594,8 +1587,8 @@ namespace rage {
 		}
 	}; //Size: 0x07FD
 	static_assert(sizeof(scrNativeRegistrationTable) == 0x7FD);
-#pragma pack(pop)
-#pragma pack(push, 1)
+	#pragma pack(pop)
+	#pragma pack(push, 1)
 	class JSONSerialiser {
 	public:
 		JSONSerialiser(uint32_t length) : m_buffer(new char[length]), m_max_length(length), m_read(TRUE) {}
@@ -1617,7 +1610,7 @@ namespace rage {
 		}
 	}; //Size: 0x0020
 	static_assert(sizeof(JSONSerialiser) == 0x1D);
-#pragma pack(pop)
+	#pragma pack(pop)
 	class JSONNode {
 	public:
 		char* m_key;                    //0x0000
@@ -1672,7 +1665,7 @@ namespace rage {
 		operator t() {
 			return getData();
 		}
-#if _WIN32
+		#if _WIN32
 		void setData(t val) {
 			auto seed = time(nullptr);
 			m_unk3 = seed;
@@ -1686,7 +1679,7 @@ namespace rage {
 		void operator =(t val) {
 			setData(val);
 		}
-#endif
+		#endif
 	private:
 		t m_unk1;
 		t m_unk2;
@@ -1737,21 +1730,66 @@ namespace rage {
 		char pad_002D[3]; //0x002D
 	}; //Size: 0x0030
 	static_assert(sizeof(rage::netGamePlayerData) == 0x30);
-#pragma pack(push, 8)
-	class netConnectionPeer {
+	#pragma pack(push, 4)
+	class netPeerAddress {
 	public:
-		uint32_t m_platform_data; //0x0000
-		netSocketAddress m_internal_address; //0x0004
-		netSocketAddress m_external_address; //0x000C
-		uint64_t m_peer_id; //0x0018
-		uint32_t unk_0020; //0x0020
-		uint16_t unk_0024; //0x0024
-		uint8_t m_platform; //0x0026
-	}; //Size: 0x0028
-	static_assert(sizeof(netConnectionPeer) == 0x28);
-#pragma pack(pop)
-	namespace netConnection {
-#pragma pack(push, 1)
+		uint32_t m_internal_ip; //0x0000
+		uint16_t m_internal_port; //0x0004
+		uint32_t m_external_ip; //0x0008
+		uint16_t m_external_port; //0x000C
+		uint64_t m_peer_id; //0x0010
+		uint32_t unk_0018; //0x0018
+		uint16_t unk_001C; //0x001C
+		uint8_t m_platform; //0x001
+	}; //Size: 0x0020
+	static_assert(sizeof(netPeerAddress) == 0x20);
+	#pragma pack(pop)
+	#pragma pack(push, 1)
+	class netQueuedMessage {
+	public:
+		uint8_t* m_data_buffer; //0x0000
+		void* unk_0008; //0x0008
+		void* unk_0010; //0x0010
+		void* unk_0018; //0x0018
+		rage::netQueuedMessage* m_next; //0x0020
+		void* unk_0028; //0x0028
+		char unk_0030[8]; //0x0030
+		int m_creation_time; //0x0038
+		int m_last_send_time; //0x003C
+		int m_resend_count; //0x0040
+		char pad_0044[4]; //0x0044
+		int unk_0048; //0x0048
+		uint16_t unk_004C; //0x004C
+		char unk_004E; //0x004E
+	}; //Size: 0x004F
+	static_assert(sizeof(netQueuedMessage) == 0x4F);
+	#pragma pack(pop)
+	#pragma pack(push, 1)
+	class netMessageQueue {
+	public:
+		rage::netQueuedMessage* m_first; //0x0000
+		rage::netQueuedMessage* m_last; //0x0008
+		uint64_t m_count; //0x0010
+	}; //Size: 0x0018
+	#pragma pack(pop)
+	#pragma pack(push, 1)
+	class netPackedMessage {
+	public:
+		uint8_t* m_data_buffer; //0x0000
+		rage::sysMemAllocator* m_allocator; //0x0008
+		void* unk_0010; //0x0010
+		void* unk_0018; //0x0018
+	}; //Size: 0x0020
+	#pragma pack(pop)
+	class netPackedMessageQueue {
+	public:
+		rage::netPackedMessage* m_first; //0x0000
+		rage::netPackedMessage* m_last; //0x0008
+		uint64_t m_count; //0x0010
+	};
+	#pragma pack(push, 1)
+	class netConnection {
+	public:
 		class InFrame {
 		public:
 			virtual ~InFrame() = default;
@@ -1759,25 +1797,57 @@ namespace rage {
 			virtual uint32_t GetId() = 0;
 			virtual uint32_t GetPayloadSize() = 0;
 			virtual bool IsChanneled() = 0;
-
+			
 			uint32_t m_timestamp; //0x0008
 			char pad_0008[52]; //0x000C
 			uint32_t m_msg_id; //0x0040
 			uint32_t m_connection_identifier; //0x0044
 			InFrame* m_this; //0x0048
-			netConnectionPeer m_peer; //0x0050
-			char pad_0070[8]; //0x0084
+			uint32_t m_peer_id; //0x0050
+			char pad_0058[44]; //0x0058
 			uint32_t m_length; //0x0080
-			char pad_007C[4]; //0x0084
-			void* m_data; //0x0088
+			char pad_0084[4]; //0x0084
+			uint8_t* m_data; //0x0088
 		}; //Size: 0x0090
-		static_assert(sizeof(InFrame) == 0x90);
+		static_assert(sizeof(rage::netConnection::InFrame) == 0x90);
+		char pad_0000[8]; //0x0000
+		rage::netConnectionPeer* m_connection_peer; //0x0008
+		int m_msg_id; //0x0010
+		uint32_t m_connection_id; //0x0014
+		rage::sysMemAllocator* m_allocator; //0x0018
+		uint32_t m_connection_state; //0x0020
+		uint32_t m_last_send_time; //0x0024
+		uint32_t m_last_receive_time; //0x0028
+		uint32_t m_num_failed_messages; //0x002C
+		char pad_0030[8]; //0x0030
+		uint32_t m_timeout_reason; //0x0038
+		uint32_t unk_003C; //0x003C
+		uint32_t m_timeout; //0x0040
+		uint32_t unk_0044; //0x0044
+		uint32_t m_resend_threshold; //0x0048
+		char unk_004C[4]; //0x004C
+		rage::netMessageQueue m_reliables_resend_queue; //0x0050
+		rage::netMessageQueue m_normal_message_queue; //0x0068
+		rage::netQueuedMessage* m_unacked_reliable_message_list; //0x0080
+		int m_unacked_reliable_message_count; //0x0088
+		char pad_008C[36]; //0x008C
+		netConnectionManager* m_net_connection_mgr; //0x00B0
+		char pad_00B8[8]; //0x00B8
+		uint32_t pad_00C0; //0x00C0
+		int16_t m_msg_counter; //0x00C4
+		int16_t unk_00C6; //0x00C6
+		char pad_00C8[2]; //0x00C8
+		int16_t m_last_reliable_msg_counter; //0x00CB
+		char m_flags; //0x00CC
+		char pad_00CD[3]; //0x00CD
+		int m_failed_allocation_size; //0x00D0
+		int32_t m_failed_allocations; //0x00D4
+		rage::netConnection* m_next; //0x00D8
+		char pad_00E0[208]; //0x00E0
+		int m_flags2; //0x01B0
+		char pad_01B4[69]; //0x01B4
+	}; //Size: 0x1F9
 #pragma pack(pop)
-	}
-	class netConMgr {
-	public:
-		char pad_0000[0x1280];
-	}; //Size: 0x1280
 	class snPlayer {
 	public:
 		uint64_t m_msg_id; //0x0000
@@ -1901,7 +1971,7 @@ namespace rage {
 	public:
 		uint64_t m_session_id; //0x0000
 		class rlGamerInfo m_gamer_info; //0x0008
-		class netConnectionPeer m_net_connection_peer; //0x00A0
+		class netPeerAddress m_peer_address; //0x00A0
 		uint32_t unk_00C0; //0x00C0
 		uint32_t m_unk_struct_size; //0x00C4
 		char m_unk_struct[512]; //0x00C8
@@ -2241,16 +2311,16 @@ namespace rage {
 #pragma pack(push, 8)
 	class netSyncNodeBase {
 	public:
-		virtual ~netSyncNodeBase() = default;                                                                                                            // 0x00
-		virtual bool IsDataNode() { return false; };                                                                                                     // 0x08
-		virtual bool IsParentNode() { return false; };                                                                                                   // 0x10
-		virtual void MoveCommonDataOpsVFT() {};                                                                                                          // 0x18
-		virtual void ClearChildren() {};                                                                                                                 // 0x20
-		virtual void _0x28(void*, void*, void*, int* out_count) {};                                                                                      // 0x28
-		virtual bool Serialize(int flags, int flags2, void*, rage::datBitBuffer* buffer, int, void*, bool, int*, int* num_serialized) { return false; }  // 0x30
-		virtual bool Deserialize(int flags, int flags2, rage::datBitBuffer* buffer, void*) { return false; }                                             // 0x38
-		virtual int CalculateSize(int flags, int flags2, void*) { return 0; }                                                                            // 0x40
-		virtual int CalculateSize2(int flags, int flags2, bool) { return 0; }                                                                            // 0x48
+		virtual ~netSyncNodeBase() = default;                                                                                                            //0x00
+		virtual bool IsDataNode() { return false; };                                                                                                     //0x08
+		virtual bool IsParentNode() { return false; };                                                                                                   //0x10
+		virtual void MoveCommonDataOpsVFT() {};                                                                                                          //0x18
+		virtual void ClearChildren() {};                                                                                                                 //0x20
+		virtual void _0x28(void*, void*, void*, int* out_count) {};                                                                                      //0x28
+		virtual bool Serialize(int flags, int flags2, void*, rage::datBitBuffer* buffer, int, void*, bool, int*, int* num_serialized) { return false; }  //0x30
+		virtual bool Deserialize(int flags, int flags2, rage::datBitBuffer* buffer, void*) { return false; }                                             //0x38
+		virtual int CalculateSize(int flags, int flags2, void*) { return 0; }                                                                            //0x40
+		virtual int CalculateSize2(int flags, int flags2, bool) { return 0; }                                                                            //0x48
 
 		netSyncNodeBase* m_next_sibling; //0x0008
 		netSyncNodeBase* m_prev_sibling; //0x0010
@@ -2267,15 +2337,15 @@ namespace rage {
 #pragma pack(push, 8)
 	class netSyncDataNode : public netSyncNodeBase {
 	public:
-		uint32_t flags; //0x40
-		uint32_t pad3; //0x44
-		uint64_t pad4; //0x48
+		uint32_t m_flags; //0x40
+		uint32_t unk_0044; //0x44
+		uint64_t unk_0048; //0x48
 
-		netSyncDataNode* parentData; //0x50
-		uint32_t childCount; //0x58
-		netSyncDataNode* children[8]; //0x5C
-		uint8_t syncFrequencies[8]; //0x9C
-		void* commonDataOpsVFT; //0xA8 wtf
+		netSyncDataNode* m_parent; //0x50
+		uint32_t m_child_count; //0x58
+		netSyncDataNode* m_children[8]; //0x5C
+		uint8_t m_sync_frequencies[8]; //0x9C
+		void* m_common_data_operation_vtable; //0xA8
 	};
 	static_assert(sizeof(netSyncDataNode) == 0xB0);
 #pragma pack(pop)
@@ -2627,47 +2697,47 @@ static_assert(sizeof(CGameScriptObjInfo) == 0x50);
 class NodeCommonDataOperations {
 public:
 	virtual ~NodeCommonDataOperations() = default;
-	virtual void ReadFromBuffer(rage::netSyncDataNode* node) {};            // 0x08
-	virtual void WriteToBuffer(rage::netSyncDataNode* node) {};             // 0x10
-	virtual void Unk() {};                                                  // 0x18
-	virtual int CalculateSize(rage::netSyncDataNode* node) { return 0; };   // 0x20
-	virtual int CalculateSize2(rage::netSyncDataNode* node) { return 0; };  // 0x28
-	virtual void LogSyncData(rage::netSyncDataNode* node) {};               // 0x30
-	virtual void LogSyncData2(rage::netSyncDataNode* node) {};              // 0x38
+	virtual void ReadFromBuffer(rage::netSyncDataNode* node) {};            //0x08
+	virtual void WriteToBuffer(rage::netSyncDataNode* node) {};             //0x10
+	virtual void Unk() {};                                                  //0x18
+	virtual int CalculateSize(rage::netSyncDataNode* node) { return 0; };   //0x20
+	virtual int CalculateSize2(rage::netSyncDataNode* node) { return 0; };  //0x28
+	virtual void LogSyncData(rage::netSyncDataNode* node) {};               //0x30
+	virtual void LogSyncData2(rage::netSyncDataNode* node) {};              //0x38
 
 	rage::datBitBuffer* m_buffer; //0x008
 };
 static_assert(sizeof(NodeCommonDataOperations) == 0x10);
 class CProjectBaseSyncDataNode : public rage::netSyncDataNode {
 public:
-	virtual bool IsSyncNode() { return false; }                                 // 0x50
-	virtual bool _0x58() { return false; }                                      // 0x58
-	virtual bool IsGlobalFlags() { return false; }                              // 0x60
-	virtual void DoPreCache(rage::netSyncData* data) {}                         // 0x68
-	virtual std::uint8_t GetSyncFrequency(int index) { return 0; }              // 0x70
-	virtual int GetSyncInterval(int index) { return 0; }                        // 0x78
-	virtual int GetBandwidthForPlayer(int player) { return 200; }               // 0x80 (should always return 200)
-	virtual void _0x88(void*) {}                                                // 0x88
-	virtual bool _0x90(void*, void*, int, int, int) { return false; }           // 0x90
-	virtual int CalculateSize() { return 0; }                                   // 0x98 need to verify later
-	virtual bool IsPreCacheDisabled() { return false; }                         // 0xA0
-	virtual bool CanApply(rage::netObject* object) { return false; }            // 0xA8
-	virtual int GetPlayersInScope() { return -1; }                              // 0xB0
-	virtual void DeserializeImpl() {}                                           // 0xB8 need to verify later
-	virtual void SerializeImpl() {}                                             // 0xC0 need to verify later
-	virtual int CalculateSize2() { return 0; }                                  // 0xC8
-	virtual int _0xD0() { return 0; }                                           // 0xD0 calls NodeCommonDataOperations::Unk()
-	virtual void Log() {}                                                       // 0xD8
-	virtual bool CanPreCache(int) { return false; }                             // 0xE0 arg is always zero afaik
-	virtual bool CanBeEmpty() { return false; }                                 // 0xE8
-	virtual bool IsEmpty() { return false; }                                    // 0xF0 returns true if all data is default
-	virtual void SetEmpty() {}                                                  // 0xF8 sets all data to their default values
-	virtual void Log2() {}                                                      // 0x100
-	virtual void ResetScriptData() {}                                           // 0x108
-	virtual bool _0x110() { return false; }                                     // 0x110
+	virtual bool IsSyncNode() { return false; }                                 //0x50
+	virtual bool _0x58() { return false; }                                      //0x58
+	virtual bool IsGlobalFlags() { return false; }                              //0x60
+	virtual void DoPreCache(rage::netSyncData* data) {}                         //0x68
+	virtual std::uint8_t GetSyncFrequency(int index) { return 0; }              //0x70
+	virtual int GetSyncInterval(int index) { return 0; }                        //0x78
+	virtual int GetBandwidthForPlayer(int player) { return 200; }               //0x80 (should always return 200)
+	virtual void _0x88(void*) {}                                                //0x88
+	virtual bool _0x90(void*, void*, int, int, int) { return false; }           //0x90
+	virtual int CalculateSize() { return 0; }                                   //0x98 need to verify later
+	virtual bool IsPreCacheDisabled() { return false; }                         //0xA0
+	virtual bool CanApply(rage::netObject* object) { return false; }            //0xA8
+	virtual int GetPlayersInScope() { return -1; }                              //0xB0
+	virtual void DeserializeImpl() {}                                           //0xB8 need to verify later
+	virtual void SerializeImpl() {}                                             //0xC0 need to verify later
+	virtual int CalculateSize2() { return 0; }                                  //0xC8
+	virtual int _0xD0() { return 0; }                                           //0xD0 calls NodeCommonDataOperations::Unk()
+	virtual void Log() {}                                                       //0xD8
+	virtual bool CanPreCache(int) { return false; }                             //0xE0 arg is always zero afaik
+	virtual bool CanBeEmpty() { return false; }                                 //0xE8
+	virtual bool IsEmpty() { return false; }                                    //0xF0 returns true if all data is default
+	virtual void SetEmpty() {}                                                  //0xF8 sets all data to their default values
+	virtual void Log2() {}                                                      //0x100
+	virtual void ResetScriptData() {}                                           //0x108
+	virtual bool _0x110() { return false; }                                     //0x110
 
 private:
-	NodeCommonDataOperations m_common_data_operations; // 0xB0 this is generally invalidated by MoveCommonDataOpsVFT()
+	NodeCommonDataOperations m_common_data_operations; //0xB0 this is generally invalidated by MoveCommonDataOpsVFT()
 };
 static_assert(sizeof(CProjectBaseSyncDataNode) == 0xC0);
 class CSyncDataNodeFrequent : public CProjectBaseSyncDataNode {};
@@ -2821,6 +2891,42 @@ public:
 static_assert(sizeof(CVehicleCreationDataNode) == 0x180);
 #pragma pack(pop)
 #pragma pack(push, 4)
+class CVehicleControlDataNode : CSyncDataNodeFrequent {
+public:
+	uint32_t m_num_wheels; //0x00C0
+	uint32_t unk_00C4; //0x00C4
+	uint32_t m_brake_control; //0x00C8
+	uint32_t unk_00CC; //0x00CC
+	uint32_t m_road_node_address; //0x00D0
+	bool m_kers_active; //0x00D4
+	bool m_bringing_vehicle_to_halt; //0x00D5
+	float m_halt_distance; //0x00D6
+	bool m_control_vertical_velocity; //0x00DA
+	bool m_has_suspension_data; //0x00DB
+	bool unk_00DE; //0x00DE
+	float m_suspension_heights[10]; //0x00DF
+	bool unk_0108; //0x0108
+	bool unk_0109; //0x0109
+	bool unk_010A; //0x010A
+	bool unk_010B; //0x010B
+	bool unk_010C; //0x010C
+	bool unk_010D; //0x010D
+	bool unk_010E; //0x010E
+	float unk_0110; //0x0110
+	uint32_t unk_0114; //0x0114
+	bool unk_0118; //0x0118
+	bool m_is_submarine_car; //0x0119
+	char pad_011A[2]; //0x011A
+	float m_rudder_rotation_x; //0x011C
+	float m_rudder_rotation_y; //0x0120
+	float m_rudder_rotation_z; //0x0124
+	bool unk_0128; //0x0128
+	bool unk_0129; //0x0129
+	char pad_0130[5]; //0x0130
+}; //Size: 0x0130
+static_assert(sizeof(CVehicleControlDataNode) == 0x130);
+#pragma pack(pop)
+#pragma pack(push, 4)
 class CPlayerCreationDataNode : CProjectBaseSyncDataNode {
 public:
 	uint32_t m_model; //0x00C0
@@ -2925,9 +3031,9 @@ public:
 	uint32_t m_vehicle_weapon_index; //0x0154
 	bool m_has_vehicle_weapon_index; //0x0158
 	uint32_t m_decor_count; //0x015C
-	uint32_t m_decor_type[3]; // 0x0160
-	uint32_t m_decor_value[3]; // 0x016C
-	uint32_t m_decor_name_hash[3]; // 0x0178
+	uint32_t m_decor_type[3]; //0x0160
+	uint32_t m_decor_value[3]; //0x016C
+	uint32_t m_decor_name_hash[3]; //0x0178
 	bool m_friendly_fire_allowed; //0x0184
 	bool unk_0185; //0x0185
 	uint8_t m_current_garage_instance_index; //0x0186
@@ -2974,6 +3080,78 @@ public:
 	bool unk_01F5; //0x01F5
 }; //Size: 0x01F8
 static_assert(sizeof(CPlayerGameStateDataNode) == 0x1F8);
+#pragma pack(pop)
+#pragma pack(push,2)
+class CPedGameStateDataNode : CSyncDataNodeInfrequent {
+public:
+	bool m_weapon_component_something[12]; //0x0C0
+	uint32_t m_weapon_component_hash[12]; //0x0CC
+	uint32_t m_gadget_hash[3]; //0x0F8
+	uint32_t unk_0104; //0x0104
+	uint32_t unk_0108; //0x0108
+	uint32_t unk_010C; //0x010C
+	float unk_0110; //0x0110
+	float unk_0114; //0x0114
+	float unk_0118; //0x0118
+	bool unk_011C; //0x011C
+	char pad_011D[3]; //0x011D
+	uint32_t m_arrest_state; //0x0120
+	uint32_t m_death_state; //0x0124
+	uint32_t m_weapon_hash; //0x0128
+	uint32_t m_num_weapon_components; //0x012C
+	uint32_t m_num_equiped_gadgets; //0x0130
+	uint32_t m_seat; //0x0134
+	uint32_t m_action_mode_override; //0x0138
+	uint32_t unk_013C; //0x013C
+	uint16_t m_vehicle; //0x0140
+	uint16_t m_mount_id; //0x0142
+	uint16_t m_custodian_id; //0x0144
+	uint16_t unk_0146; //0x0146
+	bool m_tint_index; //0x0148
+	char pad_0149; //0x0149
+	uint8_t unk_014A; //0x014A
+	bool m_is_handcuffed; //0x014B
+	bool m_can_preform_arrest; //0x014C
+	bool m_can_preform_uncuff; //0x014D
+	bool m_can_be_arrested; //0x014E
+	bool m_is_in_custody; //0x014F
+	char pad_0150; //0x0150
+	bool m_weapon_exists; //0x0151
+	bool m_weapon_visible; //0x0152
+	bool m_weapon_has_ammo; //0x0153
+	bool m_weapon_attach_left; //0x0154
+	char pad_0155; //0x0155
+	bool m_in_seat; //0x0156
+	bool m_in_vehicle; //0x0157
+	bool m_on_mount; //0x0158
+	bool m_has_custodian_or_arrest_flags; //0x0159
+	char pad_015A; //0x015A
+	bool m_action_mode_enabled; //0x015B
+	bool m_stealth_mode_enabled; //0x015C
+	bool unk_015D; //0x015D
+	bool unk_015E; //0x015E
+	bool unk_015F; //0x015F
+	bool unk_0160; //0x0160
+	bool unk_0161; //0x0161
+	bool unk_0162; //0x0162
+	bool unk_0163; //0x0163
+	bool unk_0164; //0x0164
+	bool unk_0165; //0x0165
+	bool unk_0166; //0x0166
+	bool unk_0167; //0x0167
+	bool unk_0168; //0x0168
+	bool unk_0169; //0x0169
+	bool unk_016A; //0x016A
+	bool unk_016B; //0x016B
+	bool unk_016C; //0x016C
+	bool unk_016D; //0x016D
+	bool unk_016E; //0x016E
+	bool unk_016F; //0x016F
+	bool unk_0170; //0x0170
+	bool unk_0171; //0x0171
+	bool unk_0172; //0x0172
+}; //Size: 0x0174
+static_assert(sizeof(CPedGameStateDataNode) == 0x178);
 #pragma pack(pop)
 #pragma pack(push, 4)
 class CPhysicalAttachDataNode : CSyncDataNodeInfrequent {
@@ -3604,7 +3782,7 @@ public:
 	char pad_0130[12]; //0x0130
 	uint32_t m_ai_handling_hash; //0x013C
 	char pad_140[24]; //0x140
-	rage::atArray<CBaseSubHandlingData*> m_sub_handling_data; // 0x158
+	rage::atArray<CBaseSubHandlingData*> m_sub_handling_data; //0x158
 }; //Size: 0x0160
 static_assert(sizeof(CHandlingData) == 0x168);
 #pragma pack(push, 1)
@@ -3874,12 +4052,12 @@ public:
 		IS_PLAYER = (1 << 1)
 	};
 	virtual ~CPedFactory() = default;
-	virtual CPed* CreatePed(std::uint8_t* flags, std::uint16_t* model_index, rage::matrix44* matrix, bool default_component_variation, bool register_network_object, bool give_default_loadout, bool, bool) = 0; // 0x08
-	virtual CPed* CreateClone(std::uint8_t* flags, std::uint16_t* model_index, rage::matrix44* matrix, bool default_component_variation, bool, bool register_network_object, bool) = 0;                          // 0x10
-	virtual CPed* ClonePed(CPed* ped, bool register_network_object, bool link_blends, bool clone_compressed_damage) = 0;                                                                                          // 0x18
-	virtual CPed* ClonePedToTarget(CPed* source, CPed* target, bool clone_compressed_damage) = 0;                                                                                                                 // 0x20
-	virtual CPed* CreatePlayer(std::uint8_t* flags, std::uint16_t model_index, rage::matrix44* matrix, CPlayerInfo* player_info) = 0;                                                                            // 0x28
-	virtual void DestroyPed(CPed* ped) = 0;                                                                                                                                                                       // 0x30
+	virtual CPed* CreatePed(std::uint8_t* flags, std::uint16_t* model_index, rage::matrix44* matrix, bool default_component_variation, bool register_network_object, bool give_default_loadout, bool, bool) = 0; //0x08
+	virtual CPed* CreateClone(std::uint8_t* flags, std::uint16_t* model_index, rage::matrix44* matrix, bool default_component_variation, bool, bool register_network_object, bool) = 0;                          //0x10
+	virtual CPed* ClonePed(CPed* ped, bool register_network_object, bool link_blends, bool clone_compressed_damage) = 0;                                                                                          //0x18
+	virtual CPed* ClonePedToTarget(CPed* source, CPed* target, bool clone_compressed_damage) = 0;                                                                                                                 //0x20
+	virtual CPed* CreatePlayer(std::uint8_t* flags, std::uint16_t model_index, rage::matrix44* matrix, CPlayerInfo* player_info) = 0;                                                                            //0x28
+	virtual void DestroyPed(CPed* ped) = 0;                                                                                                                                                                       //0x30
 
 	class CPed* m_local_ped; //0x0008
 }; //Size: 0x0010

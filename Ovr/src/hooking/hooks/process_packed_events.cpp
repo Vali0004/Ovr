@@ -65,17 +65,35 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(ScriptEventConfirmationLaunchMission, "startScriptBeginProtection");
 	CASE(ScriptEventForcePlayerOntoMission, "startScriptProceedProtection");
 	case eScriptEvents::ScriptEventIslandBackupHeliLaunch: {
-		switch ("scriptEventIslandHeliLaunchCrashProtection"_PC->state()) {
-		case eProtectionState::Notify: {
-			LOG(Session, "S{} from {}", 0, Sender->GetName());
-		} break;
-		case eProtectionState::Block: {
-			return true;
-		} break;
-		case eProtectionState::BlockAndNotify: {
-			LOG(Session, "S{} from {}", 0, Sender->GetName());
-			return true;
-		} break;
+		if (pEvent->m_args[2] > 0xA0) {
+			switch ("scriptEventIslandHeliLaunchCrashProtection"_PC->state()) {
+			case eProtectionState::Notify: {
+				LOG(Session, "S{} from {}", 0, Sender->GetName());
+			} break;
+			case eProtectionState::Block: {
+				return true;
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				LOG(Session, "S{} from {}", 0, Sender->GetName());
+				return true;
+			} break;
+			}
+		}
+	} break;
+	case eScriptEvents::ScriptEventRequestToSpawnVehicle: {
+		if (isnan(*(float*)&pEvent->m_args[3]) || isnan(*(float*)&pEvent->m_args[4])) {
+			switch ("scriptEventRequestVehicleSpawnCrashProtection"_PC->state()) {
+			case eProtectionState::Notify: {
+				LOG(Session, "S{} from {}", 1, Sender->GetName());
+			} break;
+			case eProtectionState::Block: {
+				return true;
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				LOG(Session, "S{} from {}", 1, Sender->GetName());
+				return true;
+			} break;
+			}
 		}
 	} break;
 	case eScriptEvents::ScriptEventLaunchSyncedInteraction: {

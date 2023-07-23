@@ -2,9 +2,9 @@
 #include "commands/manager/manager.h"
 #include "util/util.h"
 
-bool hooks::dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent) {
+bool hooks::dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::netConnection::InFrame* pEvent) {
 	if (pEvent->GetId() == 0 || pEvent->GetId() == 4) {
-		util::network::player player{ util::network::g_manager.getBySnPlayerPlatformData(pEvent->m_peer.m_platform_data) };
+		util::network::player player{ util::network::g_manager.getBySnPlayerPlatformData(pEvent->m_peer_id) };
 		util::network::player localPlayer{ util::network::g_manager.local() };
 		rage::datBitBuffer buffer(pEvent->m_data, pEvent->m_length);
 		buffer.m_flagBits = 1;

@@ -317,13 +317,14 @@ namespace elements {
 	template <u64 size>
 	inline void inputText(const std::string& label, char(&output)[size], float width = -1.f, std::function<void()> cb = {}, bool hidden = false) {
 		setNextItemWidth(width);
-		setStyleVars({ { ImGuiStyleVar_FramePadding, { 10.f, 8.f } }, { ImGuiStyleVar_FrameRounding, { 4.f, 0.f } } }, [&] {
-			if (ImGui::InputTextWithHint(("##_" + label).c_str(), label.c_str(), output, size, hidden ? ImGuiInputTextFlags_Password : ImGuiInputTextFlags_None)) {
-				if (cb) {
-					cb();
-				}
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 10.f, 8.f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.f);
+		if (ImGui::InputTextWithHint(("##_" + label).c_str(), label.c_str(), output, size, hidden ? ImGuiInputTextFlags_Password : ImGuiInputTextFlags_None)) {
+			if (cb) {
+				cb();
 			}
-		});
+		}
+		ImGui::PopStyleVar(2);
 	}
 	inline void popup(const std::string& id, std::function<void()> cb = {}) {
 		if (ImGui::BeginPopup(id.c_str())) {

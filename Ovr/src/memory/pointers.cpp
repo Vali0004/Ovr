@@ -1,6 +1,4 @@
 #include "memory/pointers.h"
-#include "memory/scanner.h"
-#include "memory/patch.h"
 
 namespace pointers {
     void scanSegment(ccp seg) {
@@ -36,7 +34,6 @@ namespace pointers {
             g_receiveCloneCreate = scan("RCC", "48 8B C4 66 44 89 48").as<decltype(g_receiveCloneCreate)>();
             g_canApplyData = scan("CAD", "E8 ? ? ? ? 84 C0 0F 84 AF 01 00 00 48 8B 03").call().as<decltype(g_canApplyData)>();
             g_getSyncTreeForType = scan("GSTFT", "0F B7 CA 83 F9 07").as<decltype(g_getSyncTreeForType)>();
-            g_getEntityAttachedTo = scan("GEAT", "48 83 EC 28 48 8B 51 50 48 85 D2 74 04").as<decltype(g_getEntityAttachedTo)>();
             g_getGamerTaskResult = scan("GGTR", "E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 8B 05 ? ? ? ? 48 8D 4C 24").call().as<decltype(g_getGamerTaskResult)>();
             g_findGameMatch = scan("FGM", "E8 ? ? ? ? 84 C0 0F 84 F6 FE FF FF").call().as<decltype(g_findGameMatch)>();
             g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
@@ -54,6 +51,10 @@ namespace pointers {
             g_insertStreamingModule = scan("ISM", "76 16 48 8B 41 18 44 0F B7 41 20 4E").sub(0xF).as<decltype(g_insertStreamingModule)>();
             g_hasRosPrivilege = scan("HRP", "E8 ? ? ? ? EB 0B 8B CB").call().as<decltype(g_hasRosPrivilege)>();
             g_updateTimecycleData = scan("TCD", "48 83 EC 18 48 8B 0D").as<decltype(g_updateTimecycleData)>();
+            g_allocateReliable = scan("AR", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 20 48 8B D9 48 8B 49 18").as<decltype(g_allocateReliable)>();
+            g_conMgrTryFree = scan("CMTR", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 20 48 8B D9 48 8B 49 18").add(0x51).call().as<decltype(g_conMgrTryFree)>();
+            g_removeMessageFromQueue = scan("RMFQ", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").call().as<decltype(g_removeMessageFromQueue)>();
+            g_removeMessageFromUnacknowledgedReliables = scan("RMFUR", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").add(0x18).call().as<decltype(g_removeMessageFromUnacknowledgedReliables)>();
         } break;
         case "s3"_joaat: {
             if (g_scanState == 2)
@@ -107,10 +108,10 @@ namespace pointers {
         if (mem target{ scan("CCRCEP", "41 BD 01 00 00 00 48 89 05").add(9).rip() }; *target.as<u8**>() != moduleName.data()) {
             g_patches.add("CCRCEP", *target.as<u8**>(), moduleName, true);
         }
-        //u8* ismsv{ scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>() };
-       /* ismsv[0] = 0xB0;
-        ismsv[1] = 0x01;
-        ismsv[2] = 0xC3;*/
         //g_patches.add("ISMSV", scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
+        g_patches.add("FEE", scan("FEE", "48 8B 5C 24 40 48 8B 6C 24 48 48 8B 74 24 50 48 8B 7C 24 58 48 83 C4 30 41 5E C3 48 8B 0D").add(0x31).as<u8*>(), { 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8 });
+        g_patches.add("MTC", scan("MTC", "48 3B F8 74 ? 8B 1D").add(4).as<u8*>(), { 0x00ui8 });
+        g_windowHook = scan("WH", "48 83 EC 28 33 C9 FF 15 ? ? ? ? 45 33 C9");
+        g_patches.add("WH", g_windowHook.as<u8*>(), { 0xC3ui8, 0x90ui8, 0x90ui8, 0x90ui8 });
     }
 }

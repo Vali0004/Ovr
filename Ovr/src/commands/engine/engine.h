@@ -23,11 +23,13 @@ namespace commands {
 			std::string stream{};
 			std::getline(file, stream);
 			file.close();
-			{
-				auto file{ util::files::output("command.txt") };
-				util::files::destory(file);
+			if (!stream.empty()) {
+				{
+					auto file{ util::files::output("command.txt") };
+					util::files::destory(file);
+				}
+				execute(stream);
 			}
-			execute(stream);
 		}
 		bool m_useDirectMatchResults{};
 		bool m_autoComplete{};

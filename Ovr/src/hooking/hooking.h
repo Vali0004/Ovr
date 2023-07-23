@@ -29,7 +29,7 @@ struct hooks {
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);
 	static void runAsyncModuleRequest(u64* Module);
 	static bool hasIntervalElapsed(u32 Timestamp, u32 Interval);
-	static bool dispatchEvent(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent);
+	static bool dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::netConnection::InFrame* pEvent);
 	static rage::eThreadState scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser);
 	static void proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, u16 Id, i32 Index, i32 HandledBitset, i32 BufferSize, rage::datBitBuffer* Buffer);
 	static eAckCode receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, u16 ObjectId, rage::datBitBuffer* Buffer, u16 Unknown, u32 Timestamp);
@@ -40,6 +40,7 @@ struct hooks {
 	static i32 calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
 	static i32 insertStreamingModule(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
 	static i64 updateTimecycleData(u64* _This, TimecycleKeyframeData* pData);
+	static void* allocateReliable(rage::netConnection* pCon, i32 RequiredMemory);
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
@@ -96,6 +97,7 @@ public:
 	detour m_calculateMipLevel;
 	detour m_insertStreamingModule;
 	detour m_updateTimecycleData;
+	detour m_allocateReliable;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

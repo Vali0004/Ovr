@@ -1,6 +1,9 @@
 #include "handler.h"
 #include "minhook/hde/hde64.h"
 #include "zydis/Zydis.h"
+#include "util/util.h"
+#include "util/player_mgr.h"
+#include "util/statistics.h"
 
 namespace exceptions {
 	uint8_t getInstructionLength(uint8_t* code) {
@@ -66,6 +69,13 @@ namespace exceptions {
 		ctx.printRegisters();
 		LOG(Exception, "Showing callstack...");
 		sw.ShowCallstack(GetCurrentThread(), &ctx.m_context);
+		if (g_recoveryCount >= 5) {
+			LOG(Session, "Was In Session: {}", util::network::g_manager.online() ? "Yes" : "No");
+			LOG(Session, "Host: {}", util::network::g_manager.online() ? g_statistics.m_host.m_name : "N/A");
+			LOG(Session, "Coords: {}, {}, {}", util::classes::getPed()->get_position().x, util::classes::getPed()->get_position().y, util::classes::getPed()->get_position().z);
+			LOG(Session, "Last Script: {}", rage::tlsContext::get()->m_script_thread->m_name);
+			LOG(Session, "Last Script Event Sender: {}", util::network::g_manager.online() ? g_statistics.m_lastScriptEventSender.m_name : "N/A");
+		}
 		if (attemptStackRecovery(exceptionInfo)) {
 			return EXCEPTION_CONTINUE_EXECUTION;
 		}

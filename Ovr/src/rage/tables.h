@@ -171,6 +171,66 @@ namespace tables {
 		{ "Drunk Howling", { "switch@trevor@drunk_howling", "loop" } },
 		{ "Pee", { "misscarsteal2peeing", "peeing_intro" } }
 	};
+	inline constexpr u32 g_invalidLodModels[3]{
+		"slod_human"_joaat,
+		"slod_large_quadped"_joaat,
+		"slod_small_quadped"_joaat
+	};
+	inline constexpr u32 g_invalidVehicleModels[5]{
+		"arbitergt"_joaat,
+		"astron2"_joaat,
+		"cyclone2"_joaat,
+		"ignus2"_joaat,
+		"s95"_joaat
+	};
+	constexpr u32 g_invalidObjects[46]{
+		"prop_dummy_01"_joaat,
+		"prop_dummy_car"_joaat,
+		"prop_dummy_light"_joaat,
+		"prop_dummy_plane"_joaat,
+		"prop_distantcar_night"_joaat,
+		"prop_distantcar_day"_joaat,
+		"hei_bh1_08_details4_em_night"_joaat,
+		"dt1_18_sq_night_slod"_joaat,
+		"ss1_12_night_slod"_joaat,
+		-1288391198,
+		"h4_prop_bush_bgnvla_med_01"_joaat,
+		"h4_prop_bush_bgnvla_lrg_01"_joaat,
+		"h4_prop_bush_buddleia_low_01"_joaat,
+		"h4_prop_bush_ear_aa"_joaat,
+		"h4_prop_bush_ear_ab"_joaat,
+		"h4_prop_bush_fern_low_01"_joaat,
+		"h4_prop_bush_fern_tall_cc"_joaat,
+		"h4_prop_bush_mang_ad"_joaat,
+		"h4_prop_bush_mang_low_aa"_joaat,
+		"h4_prop_bush_mang_low_ab"_joaat,
+		"h4_prop_bush_seagrape_low_01"_joaat,
+		"prop_h4_ground_cover"_joaat,
+		"h4_prop_weed_groundcover_01"_joaat,
+		"h4_prop_grass_med_01"_joaat,
+		"h4_prop_grass_tropical_lush_01"_joaat,
+		"h4_prop_grass_wiregrass_01"_joaat,
+		"h4_prop_weed_01_plant"_joaat,
+		"h4_prop_weed_01_row"_joaat,
+		"urbanweeds02_l1"_joaat,
+		"proc_forest_grass01"_joaat,
+		"prop_small_bushyba"_joaat,
+		"v_res_d_dildo_a"_joaat,
+		"v_res_d_dildo_b"_joaat,
+		"v_res_d_dildo_c"_joaat,
+		"v_res_d_dildo_d"_joaat,
+		"v_res_d_dildo_e"_joaat,
+		"v_res_d_dildo_f"_joaat,
+		"v_res_skateboard"_joaat,
+		"prop_battery_01"_joaat,
+		"prop_barbell_01"_joaat,
+		"prop_barbell_02"_joaat,
+		"prop_bandsaw_01"_joaat,
+		"prop_bbq_3"_joaat,
+		"v_med_curtainsnewcloth2"_joaat,
+		"bh1_07_flagpoles"_joaat,
+		92962485
+	};
 }
 class nodeId {
 public:

@@ -220,6 +220,7 @@
     <ClCompile Include="src\fiber\pool.cpp" />
     <ClCompile Include="src\hooking\hooking.cpp" />
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
+    <ClCompile Include="src\hooking\hooks\allocate_reliable.cpp" />
     <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
     <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp" />

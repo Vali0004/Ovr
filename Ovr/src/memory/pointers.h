@@ -3,6 +3,8 @@
 #include "rage/classes.h"
 #include "rage/commands/types.h"
 #include "core/logger.h"
+#include "memory/scanner.h"
+#include "memory/patch.h"
 
 namespace pointers {
 	inline int g_scanState{};
@@ -22,7 +24,7 @@ namespace pointers {
 		using cTaskFallConstructor = void*(*)(u64 _This, u32 Flags);
 		using runAsyncModuleRequest = void(*)(u64* Module);
 		using hasIntervalElapsed = bool(*)(u32 Timestamp, u32 Interval);
-		using dispatchEvent = bool(*)(u64 _This, rage::netConMgr* pConMgr, rage::netConnection::InFrame* pEvent);
+		using dispatchEvent = bool(*)(u64 _This, rage::netConnectionManager* pConMgr, rage::netConnection::InFrame* pEvent);
 		using scriptVm = rage::eThreadState(*)(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser);
 		using scGetGameInfoIndex = int(*)(const char* StringId, u64 Unk, u32 GameId);
 		using joinBySessionInfo = bool(*)(CNetwork* Network, rage::rlSessionInfo* Info, i32 Unk, i32 Flags, rage::rlGamerHandle* Handles, i32 HandleCount);
@@ -33,7 +35,6 @@ namespace pointers {
 		using receiveCloneCreate = bool(*)(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp);
 		using canApplyData = bool(*)(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 		using getSyncTreeForType = rage::netSyncTree*(*)(CNetworkObjectMgr* pObjMgr, u16 SyncType);
-		using getEntityAttachedTo = rage::CDynamicEntity*(*)(rage::CDynamicEntity* Entity);
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
 		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
@@ -51,6 +52,10 @@ namespace pointers {
 		using insertStreamingModule = i32(*)(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
 		using hasRosPrivilege = bool(*)(u64* _This, i32 Privilege);
 		using updateTimecycleData = i64(*)(u64* _This, TimecycleKeyframeData* pData);
+		using allocateReliable = void* (*)(rage::netConnection* pCon, i32 RequiredMemory);
+		using conMgrTryFree = void(*)(rage::netConnectionManager* pConMgr);
+		using removeMessageFromQueue = void(*)(rage::netMessageQueue* pQueue, rage::netQueuedMessage* pMsg);
+		using removeMessageFromUnacknowledgedReliables = void(*)(rage::netQueuedMessage** pList, u16* pUnk);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -76,7 +81,6 @@ namespace pointers {
 	inline types::receiveCloneCreate g_receiveCloneCreate{};
 	inline types::canApplyData g_canApplyData{};
 	inline types::getSyncTreeForType g_getSyncTreeForType{};
-	inline types::getEntityAttachedTo g_getEntityAttachedTo{};
 	inline types::getGamerTaskResult g_getGamerTaskResult{};
 	inline types::findGameMatch g_findGameMatch{};
 	inline types::addItemToBasket g_addItemToBasket{};
@@ -94,6 +98,10 @@ namespace pointers {
 	inline types::insertStreamingModule g_insertStreamingModule{};
 	inline types::hasRosPrivilege g_hasRosPrivilege{};
 	inline types::updateTimecycleData g_updateTimecycleData{};
+	inline types::allocateReliable g_allocateReliable{};
+	inline types::conMgrTryFree g_conMgrTryFree{};
+	inline types::removeMessageFromQueue g_removeMessageFromQueue{};
+	inline types::removeMessageFromUnacknowledgedReliables g_removeMessageFromUnacknowledgedReliables{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
@@ -120,5 +128,6 @@ namespace pointers {
 	inline u64* g_reportModule{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
+	inline mem g_windowHook{};
 	inline HWND g_hwnd{};
 }

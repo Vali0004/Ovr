@@ -79,8 +79,8 @@ enum class eVehicleType : uint32_t {
 enum class eModelType : uint8_t {
 	Invalid,
 	Object,
-	Interior,
-	Window,
+	MLO,
+	Time,
 	Weapon,
 	Vehicle,
 	Ped,

@@ -118,6 +118,9 @@ namespace commands {
 		size_t value_count() {
 			return m_values.size();
 		}
+		bool protection() {
+			return m_type == eCommandType::SectionProtectionCommand || m_type == eCommandType::ProtectionCommand;
+		}
 	public:
 		eCommandType m_type{};
 		std::string m_id{};

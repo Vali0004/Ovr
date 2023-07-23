@@ -31,20 +31,22 @@ namespace commands::gui {
 	void box::fetch() {
 		captureCmd(m_context);
 		m_matches = g_engine.findMatches(m_cmd);
+		std::string appendText{ " (Protection)" };
 		if (m_matches.size() > 1) {
 			if (g_engine.m_useDirectMatchResults) {
 				for (auto& match : m_matches) {
 					if (match->m_id == m_cmd || match->m_name == m_cmd) {
 						m_items.clear();
-						addItem(match->m_name);
+						addItem(match->m_name + (match->protection() ? appendText : ""));
 						return;
 					}
 				}
 			}
 			else if (g_engine.m_useFirstResultOnTooManyResults) {
-				if (m_matches[0]->m_id == m_cmd || m_matches[0]->m_name == m_cmd) {
+				auto& match{ m_matches[0] };
+				if (match->m_id == m_cmd || match->m_name == m_cmd) {
 					m_items.clear();
-					addItem(m_matches[0]->m_name);
+					addItem(match->m_name + (match->protection() ? appendText : ""));
 					return;
 				}
 			}
@@ -56,17 +58,18 @@ namespace commands::gui {
 		}
 		if (m_matches.size() < m_limit) {
 			for (auto& match : m_matches) {
+				std::string name{ match->m_name + (match->protection() ? appendText : "") };
 				if (match->m_description.size()) {
-					std::string text{ std::format("{} - {}", match->m_name, match->m_description) };
+					std::string text{ std::format("{} - {}", name, match->m_description)};
 					if (elements::getTextSize(g_renderer->m_tahoma, text).x < m_item.x - 0.005f) {
 						addItem(text);
 					}
 					else {
-						addItem(match->m_name);
+						addItem(name);
 					}
 				}
 				else {
-					addItem(match->m_name);
+					addItem(name);
 				}
 			}
 		}
