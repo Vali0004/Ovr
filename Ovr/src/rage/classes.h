@@ -661,7 +661,7 @@ namespace rage {
 			return true;
 		}
 		bool WriteString(char* string, uint32_t length) {
-			uint32_t len{ min(length, (uint32_t)strlen(string) + 1) };
+			uint32_t len{ std::min(length, (uint32_t)strlen(string) + 1) };
 			bool extended{ len > 127 };
 			WriteBool(extended);
 			WriteDword(len, extended ? 15 : 7);

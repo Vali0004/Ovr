@@ -1,5 +1,4 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
 //Windows Includes (SDKs)
 #include <winsdkver.h>
 #include <sdkddkver.h>

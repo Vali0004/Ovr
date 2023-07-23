@@ -1,10 +1,4 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "src\\curl\\libcurl.lib")
 
 #include "framework.h"
 #include "rage/enums.h"

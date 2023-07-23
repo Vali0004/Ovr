@@ -20,3 +20,6 @@
 *.lib
 *.txt
 *.exp
+*.recipe
+*.map
+*.exe

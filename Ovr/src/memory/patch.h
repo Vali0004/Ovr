@@ -33,8 +33,7 @@ private:
 };
 class patches {
 public:
-	template <typename t>
-	void add(ccp id, t* ptr, std::vector<t> bytes, bool apply = true) {
+	void add(ccp id, u8* ptr, std::vector<u8> bytes, bool apply = true) {
 		m_patches.push_back(MakeSmartPointer<patch>(id, ptr, bytes));
 		if (apply)
 			m_patches.back()->apply();

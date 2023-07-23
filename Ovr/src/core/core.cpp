@@ -36,7 +36,7 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b2101)");
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b2411)");
 		g_scyllaHide = MakeSmartPointer<scyllaHide>();
 		if (g_scyllaHide->getModule()) {
 			LOG_DEBUG("ScyllaHide loaded.");

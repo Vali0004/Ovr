@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="generated">
+      <UniqueIdentifier>{54368C0D-C0A0-4084-09DF-F12975881ED9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="internal">
+      <UniqueIdentifier>{222D348C-0EFA-8E97-3713-7D3F233FC425}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Decoder.h" />
+    <ClInclude Include="DecoderTypes.h" />
+    <ClInclude Include="Defines.h" />
+    <ClInclude Include="Disassembler.h" />
+    <ClInclude Include="Encoder.h" />
+    <ClInclude Include="Formatter.h" />
+    <ClInclude Include="FormatterBuffer.h" />
+    <ClInclude Include="MetaInfo.h" />
+    <ClInclude Include="Mnemonic.h" />
+    <ClInclude Include="Register.h" />
+    <ClInclude Include="Segment.h" />
+    <ClInclude Include="SharedTypes.h" />
+    <ClInclude Include="ShortString.h" />
+    <ClInclude Include="Status.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Zydis.h" />
+    <ClInclude Include="generated\EnumISAExt.h">
+      <Filter>generated</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\EnumISASet.h">
+      <Filter>generated</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\EnumInstructionCategory.h">
+      <Filter>generated</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\EnumMnemonic.h">
+      <Filter>generated</Filter>
+    </ClInclude>
+    <ClInclude Include="generated\EnumRegister.h">
+      <Filter>generated</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\DecoderData.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\EncoderData.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\FormatterATT.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\FormatterBase.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\FormatterIntel.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\SharedData.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\String.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Decoder.c" />
+    <ClCompile Include="DecoderData.c" />
+    <ClCompile Include="Disassembler.c" />
+    <ClCompile Include="Encoder.c" />
+    <ClCompile Include="EncoderData.c" />
+    <ClCompile Include="Formatter.c" />
+    <ClCompile Include="FormatterATT.c" />
+    <ClCompile Include="FormatterBase.c" />
+    <ClCompile Include="FormatterBuffer.c" />
+    <ClCompile Include="FormatterIntel.c" />
+    <ClCompile Include="MetaInfo.c" />
+    <ClCompile Include="Mnemonic.c" />
+    <ClCompile Include="Register.c" />
+    <ClCompile Include="Segment.c" />
+    <ClCompile Include="SharedData.c" />
+    <ClCompile Include="String.c" />
+    <ClCompile Include="Utils.c" />
+    <ClCompile Include="Zydis.c" />
+  </ItemGroup>
+</Project>

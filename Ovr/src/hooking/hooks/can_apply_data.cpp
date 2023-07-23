@@ -38,6 +38,7 @@ bool isAttachmentInfinite(rage::CDynamicEntity* Object, uint16_t AttachedTo) {
 		Object = pointers::g_getEntityAttachedTo(Object);
 		i++;
 	}
+	return false;
 }
 bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netObject* Object) {
 	if (pNode->IsParentNode()) {

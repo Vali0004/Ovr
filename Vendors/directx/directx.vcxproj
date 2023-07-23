@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1803B512-84E2-33AE-8DFA-BE84F9589A0F}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>directx</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\Bin\$(Configuration)\Deps\</OutDir>
+    <IntDir>..\..\Bin\$(Configuration)\Deps\Int\Debug\directx\</IntDir>
+    <TargetName>directx</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\Bin\$(Configuration)\Deps\</OutDir>
+    <IntDir>..\..\Bin\$(Configuration)\Deps\Int\Release\directx\</IntDir>
+    <TargetName>directx</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4100;4201;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x601;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4100;4201;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x601;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AlignedNew.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Bezier.h" />
+    <ClInclude Include="BinaryReader.h" />
+    <ClInclude Include="BufferHelpers.h" />
+    <ClInclude Include="CommonStates.h" />
+    <ClInclude Include="DDS.h" />
+    <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="DemandCreate.h" />
+    <ClInclude Include="DirectXHelpers.h" />
+    <ClInclude Include="EffectCommon.h" />
+    <ClInclude Include="Effects.h" />
+    <ClInclude Include="GamePad.h" />
+    <ClInclude Include="GeometricPrimitive.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GraphicsMemory.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="LoaderHelpers.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PlatformHelpers.h" />
+    <ClInclude Include="PostProcess.h" />
+    <ClInclude Include="PrimitiveBatch.h" />
+    <ClInclude Include="SDKMesh.h" />
+    <ClInclude Include="ScreenGrab.h" />
+    <ClInclude Include="SharedResourcePool.h" />
+    <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="SpriteBatch.h" />
+    <ClInclude Include="SpriteFont.h" />
+    <ClInclude Include="VertexTypes.h" />
+    <ClInclude Include="WICTextureLoader.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="vbo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AlphaTestEffect.cpp" />
+    <ClCompile Include="BasicEffect.cpp" />
+    <ClCompile Include="BasicPostProcess.cpp" />
+    <ClCompile Include="BinaryReader.cpp" />
+    <ClCompile Include="BufferHelpers.cpp" />
+    <ClCompile Include="CommonStates.cpp" />
+    <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="DGSLEffect.cpp" />
+    <ClCompile Include="DGSLEffectFactory.cpp" />
+    <ClCompile Include="DebugEffect.cpp" />
+    <ClCompile Include="DirectXHelpers.cpp" />
+    <ClCompile Include="DualPostProcess.cpp" />
+    <ClCompile Include="DualTextureEffect.cpp" />
+    <ClCompile Include="EffectCommon.cpp" />
+    <ClCompile Include="EffectFactory.cpp" />
+    <ClCompile Include="EnvironmentMapEffect.cpp" />
+    <ClCompile Include="GamePad.cpp" />
+    <ClCompile Include="GeometricPrimitive.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GraphicsMemory.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelLoadCMO.cpp" />
+    <ClCompile Include="ModelLoadSDKMESH.cpp" />
+    <ClCompile Include="ModelLoadVBO.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="NormalMapEffect.cpp" />
+    <ClCompile Include="PBREffect.cpp" />
+    <ClCompile Include="PBREffectFactory.cpp" />
+    <ClCompile Include="PrimitiveBatch.cpp" />
+    <ClCompile Include="ScreenGrab.cpp" />
+    <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="SkinnedEffect.cpp" />
+    <ClCompile Include="SpriteBatch.cpp" />
+    <ClCompile Include="SpriteFont.cpp" />
+    <ClCompile Include="ToneMapPostProcess.cpp" />
+    <ClCompile Include="VertexTypes.cpp" />
+    <ClCompile Include="WICTextureLoader.cpp" />
+    <ClCompile Include="pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestEqNe.inc" />
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.inc" />
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestLtGt.inc" />
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.inc" />
+    <None Include="shaders\AlphaTestEffect_VSAlphaTest.inc" />
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestNoFog.inc" />
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestVc.inc" />
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestVcNoFog.inc" />
+    <None Include="shaders\BasicEffect_PSBasic.inc" />
+    <None Include="shaders\BasicEffect_PSBasicNoFog.inc" />
+    <None Include="shaders\BasicEffect_PSBasicPixelLighting.inc" />
+    <None Include="shaders\BasicEffect_PSBasicPixelLightingTx.inc" />
+    <None Include="shaders\BasicEffect_PSBasicTx.inc" />
+    <None Include="shaders\BasicEffect_PSBasicTxNoFog.inc" />
+    <None Include="shaders\BasicEffect_PSBasicVertexLighting.inc" />
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingNoFog.inc" />
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingTx.inc" />
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingTxNoFog.inc" />
+    <None Include="shaders\BasicEffect_VSBasic.inc" />
+    <None Include="shaders\BasicEffect_VSBasicNoFog.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLight.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightTx.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxVcBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicOneLightVcBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLighting.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTx.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxVcBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingVcBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicTx.inc" />
+    <None Include="shaders\BasicEffect_VSBasicTxNoFog.inc" />
+    <None Include="shaders\BasicEffect_VSBasicTxVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicTxVcNoFog.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVcNoFog.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLighting.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTx.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxVcBn.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingVc.inc" />
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingVcBn.inc" />
+    <None Include="shaders\DGSLEffect_main.inc" />
+    <None Include="shaders\DGSLEffect_main1Bones.inc" />
+    <None Include="shaders\DGSLEffect_main1BonesVc.inc" />
+    <None Include="shaders\DGSLEffect_main2Bones.inc" />
+    <None Include="shaders\DGSLEffect_main2BonesVc.inc" />
+    <None Include="shaders\DGSLEffect_main4Bones.inc" />
+    <None Include="shaders\DGSLEffect_main4BonesVc.inc" />
+    <None Include="shaders\DGSLEffect_mainVc.inc" />
+    <None Include="shaders\DGSLLambert_main.inc" />
+    <None Include="shaders\DGSLLambert_mainTk.inc" />
+    <None Include="shaders\DGSLLambert_mainTx.inc" />
+    <None Include="shaders\DGSLLambert_mainTxTk.inc" />
+    <None Include="shaders\DGSLPhong_main.inc" />
+    <None Include="shaders\DGSLPhong_mainTk.inc" />
+    <None Include="shaders\DGSLPhong_mainTx.inc" />
+    <None Include="shaders\DGSLPhong_mainTxTk.inc" />
+    <None Include="shaders\DGSLUnlit_main.inc" />
+    <None Include="shaders\DGSLUnlit_mainTk.inc" />
+    <None Include="shaders\DGSLUnlit_mainTx.inc" />
+    <None Include="shaders\DGSLUnlit_mainTxTk.inc" />
+    <None Include="shaders\DebugEffect_PSHemiAmbient.inc" />
+    <None Include="shaders\DebugEffect_PSRGBBiTangents.inc" />
+    <None Include="shaders\DebugEffect_PSRGBNormals.inc" />
+    <None Include="shaders\DebugEffect_PSRGBTangents.inc" />
+    <None Include="shaders\DebugEffect_VSDebug.inc" />
+    <None Include="shaders\DebugEffect_VSDebugBn.inc" />
+    <None Include="shaders\DebugEffect_VSDebugBnInst.inc" />
+    <None Include="shaders\DebugEffect_VSDebugInst.inc" />
+    <None Include="shaders\DebugEffect_VSDebugVc.inc" />
+    <None Include="shaders\DebugEffect_VSDebugVcBn.inc" />
+    <None Include="shaders\DebugEffect_VSDebugVcBnInst.inc" />
+    <None Include="shaders\DebugEffect_VSDebugVcInst.inc" />
+    <None Include="shaders\DualTextureEffect_PSDualTexture.inc" />
+    <None Include="shaders\DualTextureEffect_PSDualTextureNoFog.inc" />
+    <None Include="shaders\DualTextureEffect_VSDualTexture.inc" />
+    <None Include="shaders\DualTextureEffect_VSDualTextureNoFog.inc" />
+    <None Include="shaders\DualTextureEffect_VSDualTextureVc.inc" />
+    <None Include="shaders\DualTextureEffect_VSDualTextureVcNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMap.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpecular.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMap.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapBn.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapFresnel.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLight.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc" />
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc" />
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTx.inc" />
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc" />
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc" />
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTx.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxBn.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxInst.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVc.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc" />
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.inc" />
+    <None Include="shaders\NormalMapEffect_VSSkinnedPixelLightingTx.inc" />
+    <None Include="shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.inc" />
+    <None Include="shaders\PBREffect_PSConstant.inc" />
+    <None Include="shaders\PBREffect_PSTextured.inc" />
+    <None Include="shaders\PBREffect_PSTexturedEmissive.inc" />
+    <None Include="shaders\PBREffect_PSTexturedEmissiveVelocity.inc" />
+    <None Include="shaders\PBREffect_PSTexturedVelocity.inc" />
+    <None Include="shaders\PBREffect_VSConstant.inc" />
+    <None Include="shaders\PBREffect_VSConstantBn.inc" />
+    <None Include="shaders\PBREffect_VSConstantBnInst.inc" />
+    <None Include="shaders\PBREffect_VSConstantInst.inc" />
+    <None Include="shaders\PBREffect_VSConstantVelocity.inc" />
+    <None Include="shaders\PBREffect_VSConstantVelocityBn.inc" />
+    <None Include="shaders\PBREffect_VSSkinned.inc" />
+    <None Include="shaders\PBREffect_VSSkinnedBn.inc" />
+    <None Include="shaders\PostProcess_PSBloomBlur.inc" />
+    <None Include="shaders\PostProcess_PSBloomCombine.inc" />
+    <None Include="shaders\PostProcess_PSBloomExtract.inc" />
+    <None Include="shaders\PostProcess_PSCopy.inc" />
+    <None Include="shaders\PostProcess_PSDownScale2x2.inc" />
+    <None Include="shaders\PostProcess_PSDownScale4x4.inc" />
+    <None Include="shaders\PostProcess_PSGaussianBlur5x5.inc" />
+    <None Include="shaders\PostProcess_PSMerge.inc" />
+    <None Include="shaders\PostProcess_PSMonochrome.inc" />
+    <None Include="shaders\PostProcess_PSSepia.inc" />
+    <None Include="shaders\PostProcess_VSQuad.inc" />
+    <None Include="shaders\SkinnedEffect_PSSkinnedPixelLighting.inc" />
+    <None Include="shaders\SkinnedEffect_PSSkinnedVertexLighting.inc" />
+    <None Include="shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightFourBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightOneBone.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc" />
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc" />
+    <None Include="shaders\SpriteEffect_SpritePixelShader.inc" />
+    <None Include="shaders\SpriteEffect_SpriteVertexShader.inc" />
+    <None Include="shaders\ToneMap_PSACESFilmic.inc" />
+    <None Include="shaders\ToneMap_PSACESFilmic_SRGB.inc" />
+    <None Include="shaders\ToneMap_PSCopy.inc" />
+    <None Include="shaders\ToneMap_PSHDR10.inc" />
+    <None Include="shaders\ToneMap_PSReinhard.inc" />
+    <None Include="shaders\ToneMap_PSReinhard_SRGB.inc" />
+    <None Include="shaders\ToneMap_PSSaturate.inc" />
+    <None Include="shaders\ToneMap_PSSaturate_SRGB.inc" />
+    <None Include="shaders\ToneMap_PS_SRGB.inc" />
+    <None Include="shaders\ToneMap_VSQuad.inc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

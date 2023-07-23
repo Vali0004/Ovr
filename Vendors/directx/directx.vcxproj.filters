@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{0F45D591-7B24-542D-843C-DF03F09ABA8E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AlignedNew.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Bezier.h" />
+    <ClInclude Include="BinaryReader.h" />
+    <ClInclude Include="BufferHelpers.h" />
+    <ClInclude Include="CommonStates.h" />
+    <ClInclude Include="DDS.h" />
+    <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="DemandCreate.h" />
+    <ClInclude Include="DirectXHelpers.h" />
+    <ClInclude Include="EffectCommon.h" />
+    <ClInclude Include="Effects.h" />
+    <ClInclude Include="GamePad.h" />
+    <ClInclude Include="GeometricPrimitive.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GraphicsMemory.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="LoaderHelpers.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PlatformHelpers.h" />
+    <ClInclude Include="PostProcess.h" />
+    <ClInclude Include="PrimitiveBatch.h" />
+    <ClInclude Include="SDKMesh.h" />
+    <ClInclude Include="ScreenGrab.h" />
+    <ClInclude Include="SharedResourcePool.h" />
+    <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="SpriteBatch.h" />
+    <ClInclude Include="SpriteFont.h" />
+    <ClInclude Include="VertexTypes.h" />
+    <ClInclude Include="WICTextureLoader.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="vbo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AlphaTestEffect.cpp" />
+    <ClCompile Include="BasicEffect.cpp" />
+    <ClCompile Include="BasicPostProcess.cpp" />
+    <ClCompile Include="BinaryReader.cpp" />
+    <ClCompile Include="BufferHelpers.cpp" />
+    <ClCompile Include="CommonStates.cpp" />
+    <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="DGSLEffect.cpp" />
+    <ClCompile Include="DGSLEffectFactory.cpp" />
+    <ClCompile Include="DebugEffect.cpp" />
+    <ClCompile Include="DirectXHelpers.cpp" />
+    <ClCompile Include="DualPostProcess.cpp" />
+    <ClCompile Include="DualTextureEffect.cpp" />
+    <ClCompile Include="EffectCommon.cpp" />
+    <ClCompile Include="EffectFactory.cpp" />
+    <ClCompile Include="EnvironmentMapEffect.cpp" />
+    <ClCompile Include="GamePad.cpp" />
+    <ClCompile Include="GeometricPrimitive.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GraphicsMemory.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelLoadCMO.cpp" />
+    <ClCompile Include="ModelLoadSDKMESH.cpp" />
+    <ClCompile Include="ModelLoadVBO.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="NormalMapEffect.cpp" />
+    <ClCompile Include="PBREffect.cpp" />
+    <ClCompile Include="PBREffectFactory.cpp" />
+    <ClCompile Include="PrimitiveBatch.cpp" />
+    <ClCompile Include="ScreenGrab.cpp" />
+    <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="SkinnedEffect.cpp" />
+    <ClCompile Include="SpriteBatch.cpp" />
+    <ClCompile Include="SpriteFont.cpp" />
+    <ClCompile Include="ToneMapPostProcess.cpp" />
+    <ClCompile Include="VertexTypes.cpp" />
+    <ClCompile Include="WICTextureLoader.cpp" />
+    <ClCompile Include="pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestEqNe.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestLtGt.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_VSAlphaTest.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\AlphaTestEffect_VSAlphaTestVcNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasic.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicPixelLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicTxNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicVertexLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_PSBasicVertexLightingTxNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasic.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLight.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightTxVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicOneLightVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingTxVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicPixelLightingVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicTxNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicTxVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicTxVcNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVcNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingTxVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicEffect_VSBasicVertexLightingVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main1Bones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main1BonesVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main2Bones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main2BonesVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main4Bones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_main4BonesVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLEffect_mainVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLLambert_main.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLLambert_mainTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLLambert_mainTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLLambert_mainTxTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLPhong_main.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLPhong_mainTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLPhong_mainTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLPhong_mainTxTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLUnlit_main.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLUnlit_mainTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLUnlit_mainTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DGSLUnlit_mainTxTk.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_PSHemiAmbient.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_PSRGBBiTangents.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_PSRGBNormals.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_PSRGBTangents.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebug.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugBnInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugVcBnInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DebugEffect_VSDebugVcInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_PSDualTexture.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_PSDualTextureNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_VSDualTexture.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_VSDualTextureNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_VSDualTextureVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\DualTextureEffect_VSDualTextureVcNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMap.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpecular.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMap.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapFresnel.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLight.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVc.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSSkinnedPixelLightingTx.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_PSConstant.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_PSTextured.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_PSTexturedEmissive.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_PSTexturedEmissiveVelocity.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_PSTexturedVelocity.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstant.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstantBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstantBnInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstantInst.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstantVelocity.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSConstantVelocityBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSSkinned.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PBREffect_VSSkinnedBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSBloomBlur.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSBloomCombine.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSBloomExtract.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSCopy.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSDownScale2x2.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSDownScale4x4.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSGaussianBlur5x5.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSMerge.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSMonochrome.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_PSSepia.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\PostProcess_VSQuad.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_PSSkinnedPixelLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_PSSkinnedVertexLighting.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightFourBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightOneBone.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SpriteEffect_SpritePixelShader.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\SpriteEffect_SpriteVertexShader.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSACESFilmic.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSACESFilmic_SRGB.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSCopy.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSHDR10.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSReinhard.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSReinhard_SRGB.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSSaturate.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PSSaturate_SRGB.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_PS_SRGB.inc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ToneMap_VSQuad.inc">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

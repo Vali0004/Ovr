@@ -19,10 +19,11 @@ namespace elements {
 		return ImGui::GetIO().DisplaySize;
 	}
 	inline const ImVec2& convertCoordTypes(const ImVec2& pos, bool isDC = false) {
+		const ImVec2& res{ getResolution() };
 		if (isDC) {
-			return pos / getResolution();
+			return pos / res;
 		}
-		return pos * getResolution();
+		return pos * res;
 	}
 	inline void dummy(const ImVec2& size) {
 		ImGui::Dummy(size);

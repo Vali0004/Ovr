@@ -79,7 +79,7 @@ namespace pointers {
     void doPatches() {
         try {
             for (auto& h : getAllResults("48 8D 45 ? 48 89 45 ? 48 8D 05 ? ? ? ? 48 89 45")) {
-                auto target{ h.add(8) };
+                mem target{ h.add(8) };
                 g_arxPatches.addInteg(target.as<u8*>());
             }
             if (g_arxPatches.count()) {
@@ -91,6 +91,12 @@ namespace pointers {
         }
         catch (...) {
             LOG_DEBUG("ARX function patches failed to patch, checking if they were already applied.");
+        }
+        std::vector<u8> moduleName(MAX_PATH + 1);
+        GetModuleFileNameA(GetModuleHandleA(0), (char*)moduleName.data(), moduleName.size());     
+        if (mem target{ scan("CCRCEP", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").add(6).mov() }) {//; target.as<u8*>() != moduleName.data()) {
+            printf("target: %s\n", target.as<ccp>());
+            //g_patches.add("CCRCEP", target.as<u8*>(), moduleName, true);
         }
         u8* ismsv{ scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>() };
        /* ismsv[0] = 0xB0;

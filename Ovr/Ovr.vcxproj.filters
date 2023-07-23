@@ -1,2253 +1,553 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="src\rage\classes.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\classdefs.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\enums.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imconfig.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imgui.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imgui_internal.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imstb_rectpack.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imstb_textedit.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\imstb_truetype.h">
-      <Filter>src\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\backends\imgui_impl_dx11.h">
-      <Filter>src\imgui\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="src\imgui\backends\imgui_impl_win32.h">
-      <Filter>src\imgui\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\commands\list.h">
-      <Filter>src\rage\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\commands\conversion_table.h">
-      <Filter>src\rage\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\commands\types.h">
-      <Filter>src\rage\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\engine.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fiber\pool.h">
-      <Filter>src\fiber</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fiber\manager.h">
-      <Filter>src\fiber</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fiber\fiber.h">
-      <Filter>src\fiber</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory\scanner.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory\mem.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory\module.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="src\hooking\hooking.h">
-      <Filter>src\hooking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\hooking\methods\vmt.h">
-      <Filter>src\hooking\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory\pointers.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="src\hooking\methods\detour.h">
-      <Filter>src\hooking\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\buffer.h">
-      <Filter>src\minhook</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\MinHook.h">
-      <Filter>src\minhook</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\trampoline.h">
-      <Filter>src\minhook</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\hde\hde32.h">
-      <Filter>src\minhook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\hde\hde64.h">
-      <Filter>src\minhook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\hde\pstdint.h">
-      <Filter>src\minhook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\hde\table32.h">
-      <Filter>src\minhook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="src\minhook\hde\table64.h">
-      <Filter>src\minhook\hde</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\commands\invoker\invoker.h">
-      <Filter>src\rage\commands\invoker</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer\renderer.h">
-      <Filter>src\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\commands\invoker\call_context.h">
-      <Filter>src\rage\commands\invoker</Filter>
-    </ClInclude>
-    <ClInclude Include="src\pch\pch.h">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\script.h">
-      <Filter>src\script</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\self.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\settings.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\vehicle.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\weapon.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\includes.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\commands\features.h">
-      <Filter>src\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\elements.h">
-      <Filter>src\script</Filter>
-    </ClInclude>
-    <ClInclude Include="src\commands\math.h">
-      <Filter>src\commands</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exceptions\disassembler.h">
-      <Filter>src\exceptions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exceptions\handler.h">
-      <Filter>src\exceptions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stackwalker\stackwalker.h">
-      <Filter>src\stackwalker</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\joaat.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\core.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\self\police.h">
-      <Filter>src\script\tabs\self</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\self\ped.h">
-      <Filter>src\script\tabs\self</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\self\movement.h">
-      <Filter>src\script\tabs\self</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\weapon\ammo.h">
-      <Filter>src\script\tabs\weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\weapon\loadout.h">
-      <Filter>src\script\tabs\weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\util.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\AlignedNew.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Audio.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Bezier.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\BinaryReader.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\BufferHelpers.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\CommonStates.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\DDS.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\DDSTextureLoader.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\DemandCreate.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\DirectXHelpers.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\EffectCommon.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Effects.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\GamePad.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\GeometricPrimitive.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Geometry.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\GraphicsMemory.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Keyboard.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\LoaderHelpers.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Model.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\Mouse.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\pch.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\PlatformHelpers.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\PostProcess.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\PrimitiveBatch.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\ScreenGrab.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\SDKMesh.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\SharedResourcePool.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\SimpleMath.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\SpriteBatch.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\SpriteFont.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\vbo.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\VertexTypes.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\directx\WICTextureLoader.h">
-      <Filter>src\directx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\curl.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\curlver.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\easy.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\mprintf.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\multi.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\options.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\stdcheaders.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\system.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\typecheck-gcc.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\curl\urlapi.h">
-      <Filter>src\curl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\curl_wrapper.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer\dxtk\state_saver.h">
-      <Filter>src\renderer\dxtk</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h">
-      <Filter>src\renderer\dxtk</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shv\scripthookv.h">
-      <Filter>src\shv</Filter>
-    </ClInclude>
-    <ClInclude Include="src\shv\dynamic_loader.h">
-      <Filter>src\shv</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\global.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\scripting.h">
-      <Filter>src\script\tabs\scripting</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session.h">
-      <Filter>src\script\tabs\network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\players.h">
-      <Filter>src\script\tabs\network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\socialclub.h">
-      <Filter>src\script\tabs\network\session</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\all_players.h">
-      <Filter>src\script\tabs\network\session</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\friends.h">
-      <Filter>src\script\tabs\network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\browser.h">
-      <Filter>src\script\tabs\network\session</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\scripting\script_hook_v.h">
-      <Filter>src\script\tabs\scripting</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\players\selected_player\teleports.h">
-      <Filter>src\script\tabs\network\session\players\selected_player</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\players\selected_player.h">
-      <Filter>src\script\tabs\network\session\players</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\memory\patch.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="src\commands\manager\types.h">
-      <Filter>src\commands\manager</Filter>
-    </ClInclude>
-    <ClInclude Include="src\commands\manager\manager.h">
-      <Filter>src\commands\manager</Filter>
-    </ClInclude>
-    <ClInclude Include="src\commands\manager\abstract.h">
-      <Filter>src\commands\manager</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\settings\commands.h">
-      <Filter>src\script\tabs\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\settings\game.h">
-      <Filter>src\script\tabs\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\settings\ui.h">
-      <Filter>src\script\tabs\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rage\tables.h">
-      <Filter>src\rage</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\session\starter.h">
-      <Filter>src\script\tabs\network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\clipboard.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\network\tunables.h">
-      <Filter>src\script\tabs\network</Filter>
-    </ClInclude>
-    <ClInclude Include="src\json\json.h">
-      <Filter>src\json</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\crashes.h">
-      <Filter>src\script\tabs\protections</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\kicks.h">
-      <Filter>src\script\tabs\protections</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\script_events.h">
-      <Filter>src\script\tabs\protections</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\network_events.h">
-      <Filter>src\script\tabs\protections</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\reactions\network_event.h">
-      <Filter>src\script\tabs\protections\reactions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\reactions\kick.h">
-      <Filter>src\script\tabs\protections\reactions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\reactions\crash.h">
-      <Filter>src\script\tabs\protections\reactions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\reactions\script_event.h">
-      <Filter>src\script\tabs\protections\reactions</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\protections\reactions.h">
-      <Filter>src\script\tabs\protections</Filter>
-    </ClInclude>
-    <ClInclude Include="src\pch\framework.h">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\logger.h">
-      <Filter>src\core</Filter>
-    </ClInclude>
+    <Filter Include="commands">
+      <UniqueIdentifier>{37C2D63F-238F-314B-4CA8-1FF338D466D9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\engine">
+      <UniqueIdentifier>{FC3C180E-68C8-85D2-71D9-08C7DDE3E1D2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\gui">
+      <UniqueIdentifier>{2B9166F5-17F4-F599-C079-2E50ACBBC11C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\manager">
+      <UniqueIdentifier>{81DD181B-6DD6-376D-9608-1DF282601779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{4E40957C-3A77-960D-E363-7C10CF79120F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="exceptions">
+      <UniqueIdentifier>{67C00D32-5378-4F7F-BC7F-28DBA856EA6F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fiber">
+      <UniqueIdentifier>{AD05700F-191A-98C0-E29B-3B204E6F94F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooking">
+      <UniqueIdentifier>{54036A54-C0E2-E8EF-C9FA-73C635594F51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooking\hooks">
+      <UniqueIdentifier>{C760F721-3321-7358-FC5B-BCD568DBB734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooking\methods">
+      <UniqueIdentifier>{B7193BE7-23A5-A8AB-2CB6-2BA098C004AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="memory">
+      <UniqueIdentifier>{DEA8820D-CA4A-ADE3-B305-C1379F463434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{809C880B-ECA5-887C-7521-9F7CE129947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rage">
+      <UniqueIdentifier>{043D9D7C-F073-9E0D-9960-841085761A0F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rage\commands">
+      <UniqueIdentifier>{E558F8B8-5119-74EF-1A54-BD6C86D3B8CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rage\commands\invoker">
+      <UniqueIdentifier>{B2E10727-1E4E-C321-E741-5B7F536DE589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{9C6AA017-8837-FB22-B150-E9CA9D7C30B1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer\dxtk">
+      <UniqueIdentifier>{86CFE28D-F28F-5EC4-BBCA-A741274AA3A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script">
+      <UniqueIdentifier>{BA0F601B-A6B1-8AF1-8F6C-9E457BAD1142}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\notifications">
+      <UniqueIdentifier>{A3AB3FA0-8F3A-C969-3859-DD6424C7D90F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs">
+      <UniqueIdentifier>{53B934EA-BF6E-ADDF-4863-A7B6B417A4E3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\miscellaneous">
+      <UniqueIdentifier>{F6C32F81-6286-630B-AB36-F29717383CE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\network">
+      <UniqueIdentifier>{ECD6E1F7-5838-BF05-E1A5-05B84D06F6C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\network\session">
+      <UniqueIdentifier>{5F498A9A-CB56-B880-543D-B46BC0498437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\network\session\players">
+      <UniqueIdentifier>{8E658E4B-FA1E-F9F5-837E-13D0EF36AF65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\network\session\players\selected_player">
+      <UniqueIdentifier>{921B4A1A-FE2C-F2C0-877E-8400F38E7BFA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\protections">
+      <UniqueIdentifier>{9C18B541-0850-FDD8-115A-61FC7D1024D2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\protections\reactions">
+      <UniqueIdentifier>{53D0F38A-BF3E-490A-0828-040A74D53EA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\scripting">
+      <UniqueIdentifier>{3552142B-A1BE-CF25-6AB2-6783D6DDF18D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\self">
+      <UniqueIdentifier>{6CD03FBA-58C9-5E0C-81FB-43916D533E18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\settings">
+      <UniqueIdentifier>{F3372C91-DFC6-B55A-88E5-C9557453C600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\vehicle">
+      <UniqueIdentifier>{C2B5D25E-2E17-B06C-B784-F61E23E5E62B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\tabs\weapon">
+      <UniqueIdentifier>{0C6FC452-F852-85A8-61B3-7FFB4DB66F2A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shv">
+      <UniqueIdentifier>{F6A9880B-62B3-887C-EB2E-9F7C5737947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stb">
+      <UniqueIdentifier>{6EAB880B-DAB4-887C-6330-9F7CCF38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{43339F7C-2F6A-A00D-D856-8610C46C1C0F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="src\commands\commands.h">
-      <Filter>src\commands</Filter>
+      <Filter>commands</Filter>
     </ClInclude>
     <ClInclude Include="src\commands\engine\engine.h">
-      <Filter>src\commands\engine</Filter>
+      <Filter>commands\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\features.h">
+      <Filter>commands</Filter>
     </ClInclude>
     <ClInclude Include="src\commands\gui\gui.h">
-      <Filter>src\commands\gui</Filter>
+      <Filter>commands\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\manager\abstract.h">
+      <Filter>commands\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\manager\manager.h">
+      <Filter>commands\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\manager\types.h">
+      <Filter>commands\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\commands\math.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\logger.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exceptions\disassembler.h">
+      <Filter>exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exceptions\handler.h">
+      <Filter>exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fiber\fiber.h">
+      <Filter>fiber</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fiber\manager.h">
+      <Filter>fiber</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fiber\pool.h">
+      <Filter>fiber</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hooking\hooking.h">
+      <Filter>hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hooking\methods\detour.h">
+      <Filter>hooking\methods</Filter>
     </ClInclude>
     <ClInclude Include="src\hooking\methods\native.h">
-      <Filter>src\hooking\methods</Filter>
+      <Filter>hooking\methods</Filter>
     </ClInclude>
-    <ClInclude Include="src\script\notifications\notifications.h">
-      <Filter>src\script\notifications</Filter>
+    <ClInclude Include="src\hooking\methods\vmt.h">
+      <Filter>hooking\methods</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Decoder.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\memory\mem.h">
+      <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\DecoderTypes.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\memory\module.h">
+      <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Defines.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\memory\patch.h">
+      <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Disassembler.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\memory\pointers.h">
+      <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Encoder.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\memory\scanner.h">
+      <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Formatter.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\pch\framework.h">
+      <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\FormatterBuffer.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\pch\pch.h">
+      <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\MetaInfo.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\rage\classdefs.h">
+      <Filter>rage</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Mnemonic.h">
-      <Filter>src\zydis</Filter>
+    <ClInclude Include="src\rage\classes.h">
+      <Filter>rage</Filter>
     </ClInclude>
-    <ClInclude Include="src\zydis\Register.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\Segment.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\SharedTypes.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\ShortString.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\Status.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\Utils.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\Zydis.h">
-      <Filter>src\zydis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\DecoderData.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\EncoderData.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\FormatterATT.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\FormatterBase.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\FormatterIntel.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\SharedData.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\internal\String.h">
-      <Filter>src\zydis\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\generated\EnumInstructionCategory.h">
-      <Filter>src\zydis\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\generated\EnumISAExt.h">
-      <Filter>src\zydis\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\generated\EnumISASet.h">
-      <Filter>src\zydis\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\generated\EnumMnemonic.h">
-      <Filter>src\zydis\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="src\zydis\generated\EnumRegister.h">
-      <Filter>src\zydis\generated</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\player_mgr.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stb\image_write.h">
-      <Filter>src\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stb\image.h">
-      <Filter>src\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\statistics.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\color.h">
-      <Filter>src\script</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\miscellaneous.h">
-      <Filter>src\script\tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\self\world.h">
-      <Filter>src\script\tabs\self</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\miscellaneous\game.h">
-      <Filter>src\script\tabs\miscellaneous</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\miscellaneous\world.h">
-      <Filter>src\script\tabs\miscellaneous</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\message.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\vehicle.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\vehicle\spawner.h">
-      <Filter>src\script\tabs\vehicle</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\transaction.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\script\tabs\recovery.h">
-      <Filter>src\script\tabs</Filter>
+    <ClInclude Include="src\rage\commands\conversion_table.h">
+      <Filter>rage\commands</Filter>
     </ClInclude>
     <ClInclude Include="src\rage\commands\dump_commands.h">
-      <Filter>src\rage\commands</Filter>
+      <Filter>rage\commands</Filter>
     </ClInclude>
-    <ClInclude Include="src\jitasm\jitasm.h" />
-    <ClInclude Include="src\util\game_vm_guard.h" />
+    <ClInclude Include="src\rage\commands\invoker\call_context.h">
+      <Filter>rage\commands\invoker</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\commands\invoker\invoker.h">
+      <Filter>rage\commands\invoker</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\commands\list.h">
+      <Filter>rage\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\commands\types.h">
+      <Filter>rage\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\engine.h">
+      <Filter>rage</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\enums.h">
+      <Filter>rage</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\joaat.h">
+      <Filter>rage</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\tables.h">
+      <Filter>rage</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h">
+      <Filter>renderer\dxtk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\dxtk\state_saver.h">
+      <Filter>renderer\dxtk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer\renderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\color.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\elements.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\notifications\notifications.h">
+      <Filter>script\notifications</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\script.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\includes.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous\game.h">
+      <Filter>script\tabs\miscellaneous</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\miscellaneous\world.h">
+      <Filter>script\tabs\miscellaneous</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\friends.h">
+      <Filter>script\tabs\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session.h">
+      <Filter>script\tabs\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\all_players.h">
+      <Filter>script\tabs\network\session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\browser.h">
+      <Filter>script\tabs\network\session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\players.h">
+      <Filter>script\tabs\network\session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\players\selected_player.h">
+      <Filter>script\tabs\network\session\players</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\players\selected_player\teleports.h">
+      <Filter>script\tabs\network\session\players\selected_player</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\session\starter.h">
+      <Filter>script\tabs\network\session</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\socialclub.h">
+      <Filter>script\tabs\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\network\tunables.h">
+      <Filter>script\tabs\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\crashes.h">
+      <Filter>script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\kicks.h">
+      <Filter>script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\network_events.h">
+      <Filter>script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions.h">
+      <Filter>script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\crash.h">
+      <Filter>script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\kick.h">
+      <Filter>script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\network_event.h">
+      <Filter>script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\reactions\script_event.h">
+      <Filter>script\tabs\protections\reactions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\protections\script_events.h">
+      <Filter>script\tabs\protections</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\recovery.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\scripting.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\scripting\script_hook_v.h">
+      <Filter>script\tabs\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self\movement.h">
+      <Filter>script\tabs\self</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self\ped.h">
+      <Filter>script\tabs\self</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self\police.h">
+      <Filter>script\tabs\self</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\self\world.h">
+      <Filter>script\tabs\self</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\settings.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\settings\commands.h">
+      <Filter>script\tabs\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\settings\game.h">
+      <Filter>script\tabs\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\settings\ui.h">
+      <Filter>script\tabs\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\vehicle.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\vehicle\spawner.h">
+      <Filter>script\tabs\vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\weapon.h">
+      <Filter>script\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\weapon\ammo.h">
+      <Filter>script\tabs\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\script\tabs\weapon\loadout.h">
+      <Filter>script\tabs\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shv\dynamic_loader.h">
+      <Filter>shv</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shv\scripthookv.h">
+      <Filter>shv</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb\image.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb\image_write.h">
+      <Filter>stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\clipboard.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\curl_wrapper.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\game_vm_guard.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\global.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\message.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\player_mgr.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\statistics.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\transaction.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\vehicle.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\imgui\imgui.cpp">
-      <Filter>src\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\imgui_demo.cpp">
-      <Filter>src\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\imgui_draw.cpp">
-      <Filter>src\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\imgui_tables.cpp">
-      <Filter>src\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\imgui_widgets.cpp">
-      <Filter>src\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\backends\imgui_impl_dx11.cpp">
-      <Filter>src\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="src\imgui\backends\imgui_impl_win32.cpp">
-      <Filter>src\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooking.cpp">
-      <Filter>src\hooking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\minhook\buffer.c">
-      <Filter>src\minhook</Filter>
-    </ClCompile>
-    <ClCompile Include="src\minhook\hook.c">
-      <Filter>src\minhook</Filter>
-    </ClCompile>
-    <ClCompile Include="src\minhook\trampoline.c">
-      <Filter>src\minhook</Filter>
-    </ClCompile>
-    <ClCompile Include="src\minhook\hde\hde32.c">
-      <Filter>src\minhook\hde</Filter>
-    </ClCompile>
-    <ClCompile Include="src\minhook\hde\hde64.c">
-      <Filter>src\minhook\hde</Filter>
-    </ClCompile>
-    <ClCompile Include="src\memory\pointers.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\resize_buffers.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\present.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer\renderer.cpp">
-      <Filter>src\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rage\commands\invoker\invoker.cpp">
-      <Filter>src\rage\commands\invoker</Filter>
-    </ClCompile>
-    <ClCompile Include="src\pch\pch.cpp">
-      <Filter>src\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="src\script\script.cpp">
-      <Filter>src\script</Filter>
-    </ClCompile>
-    <ClCompile Include="src\commands\features.cpp">
-      <Filter>src\commands</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\exceptions\handler.cpp">
-      <Filter>src\exceptions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stackwalker\stackwalker.cpp">
-      <Filter>src\stackwalker</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\core.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\AlphaTestEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\BasicEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\BasicPostProcess.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\BinaryReader.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\BufferHelpers.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\CommonStates.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DDSTextureLoader.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DebugEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DGSLEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DGSLEffectFactory.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DirectXHelpers.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DualPostProcess.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\DualTextureEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\EffectCommon.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\EffectFactory.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\EnvironmentMapEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\GamePad.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\GeometricPrimitive.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\Geometry.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\GraphicsMemory.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\Keyboard.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\Model.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\ModelLoadCMO.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\ModelLoadSDKMESH.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\ModelLoadVBO.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\Mouse.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\NormalMapEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\PBREffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\PBREffectFactory.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\pch.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\PrimitiveBatch.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\ScreenGrab.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\SimpleMath.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\SkinnedEffect.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\SpriteBatch.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\SpriteFont.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\ToneMapPostProcess.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\VertexTypes.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\directx\WICTextureLoader.cpp">
-      <Filter>src\directx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shv\scripthookv.cpp">
-      <Filter>src\shv</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\get_proc_address.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\has_interval_elapsed.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\run_async_module_request.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\commands\manager\manager.cpp">
-      <Filter>src\commands\manager</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\dispatch_event.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fiber\pool.cpp">
-      <Filter>src\fiber</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\script_vm.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\can_apply_data.cpp">
-      <Filter>src\hooking\hooks</Filter>
+    <ClCompile Include="src\commands\commands.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
     <ClCompile Include="src\commands\engine\engine.cpp">
-      <Filter>src\commands\engine</Filter>
+      <Filter>commands\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\commands\features.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
     <ClCompile Include="src\commands\gui\gui.cpp">
-      <Filter>src\commands\gui</Filter>
+      <Filter>commands\gui</Filter>
     </ClCompile>
-    <ClCompile Include="src\commands\commands.cpp">
-      <Filter>src\commands</Filter>
+    <ClCompile Include="src\commands\manager\manager.cpp">
+      <Filter>commands\manager</Filter>
     </ClCompile>
-    <ClCompile Include="src\script\notifications\notifications.cpp">
-      <Filter>src\script\notifications</Filter>
+    <ClCompile Include="src\core\core.cpp">
+      <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\zydis\Decoder.c">
-      <Filter>src\zydis</Filter>
+    <ClCompile Include="src\exceptions\handler.cpp">
+      <Filter>exceptions</Filter>
     </ClCompile>
-    <ClCompile Include="src\zydis\DecoderData.c">
-      <Filter>src\zydis</Filter>
+    <ClCompile Include="src\fiber\pool.cpp">
+      <Filter>fiber</Filter>
     </ClCompile>
-    <ClCompile Include="src\zydis\Disassembler.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Encoder.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\EncoderData.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Formatter.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\FormatterATT.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\FormatterBase.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\FormatterBuffer.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\FormatterIntel.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\MetaInfo.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Mnemonic.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Register.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Segment.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\SharedData.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\String.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Utils.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\zydis\Zydis.c">
-      <Filter>src\zydis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\find_game_match.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util\player_mgr.cpp">
-      <Filter>src\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util\statistics.cpp">
-      <Filter>src\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\request.cpp">
-      <Filter>src\hooking\hooks</Filter>
+    <ClCompile Include="src\hooking\hooking.cpp">
+      <Filter>hooking</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\send_metric.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hooking\hooks\send_network_event.cpp">
-      <Filter>src\hooking\hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rage\defines.cpp">
-      <Filter>src\rage</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util\message.cpp">
-      <Filter>src\util</Filter>
+      <Filter>hooking\hooks</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp">
-      <Filter>src\hooking\hooks</Filter>
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\can_apply_data.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\dispatch_event.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\find_game_match.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\get_proc_address.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\has_interval_elapsed.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\present.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\request.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\resize_buffers.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\run_async_module_request.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\script_vm.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\send_metric.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\send_network_event.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\memory\pointers.cpp">
+      <Filter>memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch\pch.cpp">
+      <Filter>pch</Filter>
     </ClCompile>
     <ClCompile Include="src\rage\commands\dump_commands.cpp">
-      <Filter>src\rage\commands</Filter>
+      <Filter>rage\commands</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
-    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{79349065-aebb-4bff-93fb-4785aab3feef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\rage">
-      <UniqueIdentifier>{2a7cf785-09cd-4f8c-95fd-57668b37b10a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\fiber">
-      <UniqueIdentifier>{e013f802-338c-489f-b4b8-739899fdf553}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\hooking">
-      <UniqueIdentifier>{4de353e7-5f19-4bc2-b219-b1e5d502f773}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\hooking\methods">
-      <UniqueIdentifier>{c50a4431-02bd-416f-a317-d925c7293c00}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\imgui">
-      <UniqueIdentifier>{2ec12100-b2d0-4619-b1b1-951ac094a65e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\imgui\backends">
-      <UniqueIdentifier>{f0980e4f-79de-461f-9bfa-c02fbb34b766}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\memory">
-      <UniqueIdentifier>{69c0f72a-ba84-4346-a9d1-8373a0ffe5a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\minhook">
-      <UniqueIdentifier>{0a95a1e2-8c89-4963-9a6e-3a14c752766b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\minhook\hde">
-      <UniqueIdentifier>{aa4d0610-a37a-4c89-b27f-39acd5b2a614}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\hooking\hooks">
-      <UniqueIdentifier>{deb295bf-9b66-426d-9d1e-63be0d6313fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\renderer">
-      <UniqueIdentifier>{68e96c16-bf06-43cc-ac13-57dfe31e51f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\pch">
-      <UniqueIdentifier>{76359420-b742-481e-8c90-71614a540eb8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script">
-      <UniqueIdentifier>{fb8447c5-fd24-4b98-ae2b-b620ca0d5600}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs">
-      <UniqueIdentifier>{a4c77a71-394c-4097-b15b-acee51aed0ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\self">
-      <UniqueIdentifier>{e2a14c8f-9874-4282-ac79-3a117f858085}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\vehicle">
-      <UniqueIdentifier>{bc6459bc-88a0-4536-9b39-02d1546a766c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\network">
-      <UniqueIdentifier>{a7e62f7c-94cb-40ee-821b-f216162d2f6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\settings">
-      <UniqueIdentifier>{8534549b-47ca-4ef0-9487-a9ed5f1fc97f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\weapon">
-      <UniqueIdentifier>{1a35e8cd-a477-4d7d-8619-37270855d8d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\exceptions">
-      <UniqueIdentifier>{632a6eaa-21fd-4e63-949d-ab7efa2a17e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core">
-      <UniqueIdentifier>{ee9cca48-bcc1-44ab-aa7e-684ec5e1ad84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\util">
-      <UniqueIdentifier>{eca949cf-136c-428e-9bc0-b31c8162439f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\curl">
-      <UniqueIdentifier>{5ee96af2-7b45-4b3b-a1dd-540fb46de7aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\directx">
-      <UniqueIdentifier>{4109bde9-d613-400d-8065-c5daf1c757b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\directx\shaders">
-      <UniqueIdentifier>{49188956-42fe-4044-8e85-53fca3f5ee43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\renderer\dxtk">
-      <UniqueIdentifier>{170a059d-7b6a-4333-8712-68b6e61a6621}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\scripting">
-      <UniqueIdentifier>{bf16c572-3db0-43fd-82d4-3065bf0adc44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\network\session">
-      <UniqueIdentifier>{7113cc23-42d8-4807-a28d-aad537689a1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\network\session\players">
-      <UniqueIdentifier>{1b4a8723-8e85-47d6-9b5a-04dbe80289bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\network\session\players\selected_player">
-      <UniqueIdentifier>{07c7b559-17e0-4c52-9e71-f78d2db41b7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\protections">
-      <UniqueIdentifier>{075120c6-08a4-427f-96c4-71c821c58ce5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\network\session\all_players">
-      <UniqueIdentifier>{43751a40-4ef2-4e53-a4a2-13616abfa9c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\rage\commands">
-      <UniqueIdentifier>{249371e8-9078-468c-b367-dc61cd28fe80}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\rage\commands\invoker">
-      <UniqueIdentifier>{8501430d-f7d9-41e1-b25c-d2231959c142}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\protections\reactions">
-      <UniqueIdentifier>{124209a6-035e-4e62-8864-95d36bc4c59c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\shv">
-      <UniqueIdentifier>{e92b33cc-3672-4bbf-9ccb-e0aea59c17bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands">
-      <UniqueIdentifier>{969b8493-73db-4c8b-af4d-b12a40c328a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands\manager">
-      <UniqueIdentifier>{111f5a30-54e3-49ec-b439-0fa6f44ce859}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands\gui">
-      <UniqueIdentifier>{25e769e7-b176-401a-aa9e-1e06c1101e53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\commands\engine">
-      <UniqueIdentifier>{5ee1f297-fd72-465d-8521-614dc3b4e47f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\notifications">
-      <UniqueIdentifier>{ed46c74b-d969-4c78-960c-f7f397fbc013}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\zydis">
-      <UniqueIdentifier>{fcba03fa-2c51-4bfe-ab1a-3044bc8a17f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\zydis\internal">
-      <UniqueIdentifier>{ec41231a-7ee5-45b3-ae3b-db7a769c9311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\zydis\generated">
-      <UniqueIdentifier>{c412be79-89f2-4874-821a-f7cb76a6aa12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\stackwalker">
-      <UniqueIdentifier>{88ada561-add3-4a96-a725-00bc35ae199d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\json">
-      <UniqueIdentifier>{769bffd1-01ea-4790-9a50-fbbece982d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\stb">
-      <UniqueIdentifier>{851d4248-f913-404e-b6f3-b79401bd440f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\miscellaneous">
-      <UniqueIdentifier>{6a1d1ba2-b4fb-4983-9ccd-92e0142a9c0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\miscellaneous\world">
-      <UniqueIdentifier>{6a5b7200-fc69-43c7-852d-423ddc91165c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\script\tabs\recovery">
-      <UniqueIdentifier>{3d1e7933-feb5-4acf-928e-c385e1d72a64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\jitasm">
-      <UniqueIdentifier>{08e79eba-e13f-4daa-850f-2bdb226bb002}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\directx\SimpleMath.inl">
-      <Filter>src\directx</Filter>
-    </None>
-    <None Include="src\directx\TeapotData.inc">
-      <Filter>src\directx</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGt.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGt.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTest.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTest.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVcNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVcNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasic.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasic.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTxNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTxNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTxNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTxNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasic.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasic.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLight.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLight.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVcNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVcNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVcNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVcNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSHemiAmbient.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSHemiAmbient.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBBiTangents.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBBiTangents.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBNormals.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBNormals.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBTangents.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_PSRGBTangents.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebug.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebug.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBnInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBnInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBnInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBnInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main1Bones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main1Bones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main1BonesVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main1BonesVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main2Bones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main2Bones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main2BonesVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main2BonesVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main4Bones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main4Bones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main4BonesVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_main4BonesVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_mainVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLEffect_mainVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_main.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_main.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTxTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLLambert_mainTxTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_main.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_main.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTxTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLPhong_mainTxTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_main.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_main.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTxTk.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DGSLUnlit_mainTxTk.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTexture.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTexture.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTextureNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTextureNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTexture.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTexture.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVcNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVcNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMap.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMap.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecular.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecular.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMap.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMap.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnel.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnel.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLight.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLight.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVc.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVc.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTx.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTx.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSConstant.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSConstant.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTextured.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTextured.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissive.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissive.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissiveVelocity.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissiveVelocity.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedVelocity.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_PSTexturedVelocity.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstant.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstant.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantBnInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantBnInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantInst.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantInst.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocity.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocity.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocityBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocityBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSSkinned.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSSkinned.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSSkinnedBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PBREffect_VSSkinnedBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomBlur.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomBlur.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomCombine.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomCombine.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomExtract.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSBloomExtract.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSCopy.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSCopy.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSDownScale2x2.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSDownScale2x2.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSDownScale4x4.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSDownScale4x4.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSGaussianBlur5x5.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSGaussianBlur5x5.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSMerge.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSMerge.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSMonochrome.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSMonochrome.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSSepia.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_PSSepia.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_VSQuad.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\PostProcess_VSQuad.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedPixelLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedPixelLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLighting.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLighting.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBone.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBone.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SpriteEffect_SpritePixelShader.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SpriteEffect_SpritePixelShader.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SpriteEffect_SpriteVertexShader.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\SpriteEffect_SpriteVertexShader.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PS_SRGB.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PS_SRGB.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic_SRGB.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic_SRGB.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSCopy.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSCopy.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSHDR10.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSHDR10.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSReinhard.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSReinhard.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSReinhard_SRGB.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSReinhard_SRGB.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSSaturate.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSSaturate.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSSaturate_SRGB.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_PSSaturate_SRGB.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_VSQuad.inc">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\directx\shaders\ToneMap_VSQuad.pdb">
-      <Filter>src\directx\shaders</Filter>
-    </None>
-    <None Include="src\zydis\generated\AccessedFlags.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\DecoderTables.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EncoderTables.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EnumInstructionCategory.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EnumISAExt.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EnumISASet.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EnumMnemonic.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\EnumRegister.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\FormatterStrings.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\GetRelInfo.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\InstructionDefinitions.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\InstructionEncodings.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\OperandDefinitions.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\RegisterClassLookup.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
-    <None Include="src\zydis\generated\RegisterLookup.inc">
-      <Filter>src\zydis\generated</Filter>
-    </None>
+    <ClCompile Include="src\rage\commands\invoker\invoker.cpp">
+      <Filter>rage\commands\invoker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rage\defines.cpp">
+      <Filter>rage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\renderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\script\notifications\notifications.cpp">
+      <Filter>script\notifications</Filter>
+    </ClCompile>
+    <ClCompile Include="src\script\script.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shv\scripthookv.cpp">
+      <Filter>shv</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\message.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\player_mgr.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\statistics.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="STB">
+      <UniqueIdentifier>{0E1F880B-7A28-887C-03A4-9E7C6FAC937C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Draw.hpp" />
+    <ClInclude Include="Elements.hpp" />
+    <ClInclude Include="Framework.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="JSON.hpp" />
+    <ClInclude Include="Joaat.hpp" />
+    <ClInclude Include="Path.hpp" />
+    <ClInclude Include="Pch.hpp" />
+    <ClInclude Include="Process.hpp" />
+    <ClInclude Include="Registry.hpp" />
+    <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="STB\STBImage.hpp">
+      <Filter>STB</Filter>
+    </ClInclude>
+    <ClInclude Include="STB\STBImageWrite.hpp">
+      <Filter>STB</Filter>
+    </ClInclude>
+    <ClInclude Include="Threading.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Draw.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Pch.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Threading.cpp" />
+  </ItemGroup>
+</Project>

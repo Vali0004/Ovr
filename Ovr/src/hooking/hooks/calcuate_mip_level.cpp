@@ -31,4 +31,5 @@ i32 hooks::calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Form
 			}
 		}
 	}
+	return targetLevel;
 }

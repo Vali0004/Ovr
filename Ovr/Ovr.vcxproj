@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -19,53 +11,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{9C12880B-081C-887C-9197-9E7CFD9F937C}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0b7eb3a1-17b3-4f3f-8299-94d3c3f37ad2}</ProjectGuid>
-    <RootNamespace>ModelSwapping</RootNamespace>
+    <RootNamespace>Ovr</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Ovr</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\marmasm.props" />
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\ShaderGraphContentTask.props" />
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -74,216 +42,112 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Int\$(Configuration)\</IntDir>
-    <IncludePath>src;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Int\$(Configuration)\</IntDir>
-    <IncludePath>src;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Int\$(Configuration)\</IntDir>
-    <IncludePath>src;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <OutDir>..\Bin\$(Configuration)\</OutDir>
+    <IntDir>..\Bin\$(Configuration)\Int\Debug\</IntDir>
+    <TargetName>Ovr</TargetName>
+    <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)Bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Bin\Int\$(Configuration)\</IntDir>
-    <IncludePath>src;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <OutDir>..\Bin\$(Configuration)\</OutDir>
+    <IntDir>..\Bin\$(Configuration)\Int\Release\</IntDir>
+    <TargetName>Ovr</TargetName>
+    <TargetExt>.dll</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;MODELSWAPPING_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4100;4201;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x601;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;..\Vendors;..\Vendors\imgui\backends;..\Vendors\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;dxgi.lib;winmm.lib;ws2_32.lib;wldap32.lib;crypt32.lib;imgui.lib;libcurl.lib;directx.lib;minhook.lib;stackwalker.lib;zycore.lib;zydis.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Bin\$(Configuration)\Deps;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\Bin\$(Configuration)\Ovr.lib</ImportLibrary>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4100;4201;4307;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x601;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;..\Vendors;..\Vendors\imgui\backends;..\Vendors\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;OVR_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <CallingConvention>Cdecl</CallingConvention>
-      <DisableSpecificWarnings>4996;</DisableSpecificWarnings>
-      <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;dxgi.lib;winmm.lib;ws2_32.lib;wldap32.lib;crypt32.lib;imgui.lib;libcurl.lib;directx.lib;minhook.lib;stackwalker.lib;zycore.lib;zydis.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Bin\$(Configuration)\Deps;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\Bin\$(Configuration)\Ovr.lib</ImportLibrary>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\commands\commands.h" />
-    <ClInclude Include="src\commands\gui\gui.h" />
-    <ClInclude Include="src\core\logger.h" />
     <ClInclude Include="src\commands\engine\engine.h" />
-    <ClInclude Include="src\hooking\methods\native.h" />
-    <ClInclude Include="src\jitasm\jitasm.h" />
-    <ClInclude Include="src\rage\commands\conversion_table.h" />
-    <ClInclude Include="src\rage\commands\dump_commands.h" />
-    <ClInclude Include="src\rage\commands\invoker\call_context.h" />
-    <ClInclude Include="src\rage\commands\types.h" />
-    <ClInclude Include="src\core\core.h" />
-    <ClInclude Include="src\curl\curl.h" />
-    <ClInclude Include="src\curl\curlver.h" />
-    <ClInclude Include="src\curl\easy.h" />
-    <ClInclude Include="src\curl\mprintf.h" />
-    <ClInclude Include="src\curl\multi.h" />
-    <ClInclude Include="src\curl\options.h" />
-    <ClInclude Include="src\curl\stdcheaders.h" />
-    <ClInclude Include="src\curl\system.h" />
-    <ClInclude Include="src\curl\typecheck-gcc.h" />
-    <ClInclude Include="src\curl\urlapi.h" />
-    <ClInclude Include="src\directx\AlignedNew.h" />
-    <ClInclude Include="src\directx\Audio.h" />
-    <ClInclude Include="src\directx\Bezier.h" />
-    <ClInclude Include="src\directx\BinaryReader.h" />
-    <ClInclude Include="src\directx\BufferHelpers.h" />
-    <ClInclude Include="src\directx\CommonStates.h" />
-    <ClInclude Include="src\directx\DDS.h" />
-    <ClInclude Include="src\directx\DDSTextureLoader.h" />
-    <ClInclude Include="src\directx\DemandCreate.h" />
-    <ClInclude Include="src\directx\DirectXHelpers.h" />
-    <ClInclude Include="src\directx\EffectCommon.h" />
-    <ClInclude Include="src\directx\Effects.h" />
-    <ClInclude Include="src\directx\GamePad.h" />
-    <ClInclude Include="src\directx\GeometricPrimitive.h" />
-    <ClInclude Include="src\directx\Geometry.h" />
-    <ClInclude Include="src\directx\GraphicsMemory.h" />
-    <ClInclude Include="src\directx\Keyboard.h" />
-    <ClInclude Include="src\directx\LoaderHelpers.h" />
-    <ClInclude Include="src\directx\Model.h" />
-    <ClInclude Include="src\directx\Mouse.h" />
-    <ClInclude Include="src\directx\pch.h" />
-    <ClInclude Include="src\directx\PlatformHelpers.h" />
-    <ClInclude Include="src\directx\PostProcess.h" />
-    <ClInclude Include="src\directx\PrimitiveBatch.h" />
-    <ClInclude Include="src\directx\ScreenGrab.h" />
-    <ClInclude Include="src\directx\SDKMesh.h" />
-    <ClInclude Include="src\directx\SharedResourcePool.h" />
-    <ClInclude Include="src\directx\SimpleMath.h" />
-    <ClInclude Include="src\directx\SpriteBatch.h" />
-    <ClInclude Include="src\directx\SpriteFont.h" />
-    <ClInclude Include="src\directx\vbo.h" />
-    <ClInclude Include="src\directx\VertexTypes.h" />
-    <ClInclude Include="src\directx\WICTextureLoader.h" />
-    <ClInclude Include="src\exceptions\disassembler.h" />
-    <ClInclude Include="src\exceptions\handler.h" />
     <ClInclude Include="src\commands\features.h" />
+    <ClInclude Include="src\commands\gui\gui.h" />
     <ClInclude Include="src\commands\manager\abstract.h" />
     <ClInclude Include="src\commands\manager\manager.h" />
     <ClInclude Include="src\commands\manager\types.h" />
     <ClInclude Include="src\commands\math.h" />
+    <ClInclude Include="src\core\core.h" />
+    <ClInclude Include="src\core\logger.h" />
+    <ClInclude Include="src\exceptions\disassembler.h" />
+    <ClInclude Include="src\exceptions\handler.h" />
     <ClInclude Include="src\fiber\fiber.h" />
     <ClInclude Include="src\fiber\manager.h" />
     <ClInclude Include="src\fiber\pool.h" />
-    <ClInclude Include="src\hooking\methods\detour.h" />
     <ClInclude Include="src\hooking\hooking.h" />
-    <ClInclude Include="src\imgui\backends\imgui_impl_dx11.h" />
-    <ClInclude Include="src\imgui\backends\imgui_impl_win32.h" />
-    <ClInclude Include="src\imgui\imconfig.h" />
-    <ClInclude Include="src\imgui\imgui.h" />
-    <ClInclude Include="src\imgui\imgui_internal.h" />
-    <ClInclude Include="src\imgui\imstb_rectpack.h" />
-    <ClInclude Include="src\imgui\imstb_textedit.h" />
-    <ClInclude Include="src\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\rage\commands\invoker\invoker.h" />
-    <ClInclude Include="src\rage\commands\list.h" />
-    <ClInclude Include="src\json\json.h" />
-    <ClInclude Include="src\memory\patch.h" />
-    <ClInclude Include="src\memory\pointers.h" />
-    <ClInclude Include="src\minhook\buffer.h" />
-    <ClInclude Include="src\minhook\hde\hde32.h" />
-    <ClInclude Include="src\minhook\hde\hde64.h" />
-    <ClInclude Include="src\minhook\hde\pstdint.h" />
-    <ClInclude Include="src\minhook\hde\table32.h" />
-    <ClInclude Include="src\minhook\hde\table64.h" />
-    <ClInclude Include="src\minhook\MinHook.h" />
-    <ClInclude Include="src\minhook\trampoline.h" />
-    <ClInclude Include="src\rage\classdefs.h" />
-    <ClInclude Include="src\rage\classes.h" />
-    <ClInclude Include="src\rage\engine.h" />
-    <ClInclude Include="src\rage\enums.h" />
-    <ClInclude Include="src\pch\framework.h" />
+    <ClInclude Include="src\hooking\methods\detour.h" />
+    <ClInclude Include="src\hooking\methods\native.h" />
+    <ClInclude Include="src\hooking\methods\vmt.h" />
     <ClInclude Include="src\memory\mem.h" />
     <ClInclude Include="src\memory\module.h" />
+    <ClInclude Include="src\memory\patch.h" />
+    <ClInclude Include="src\memory\pointers.h" />
+    <ClInclude Include="src\memory\scanner.h" />
+    <ClInclude Include="src\pch\framework.h" />
     <ClInclude Include="src\pch\pch.h" />
+    <ClInclude Include="src\rage\classdefs.h" />
+    <ClInclude Include="src\rage\classes.h" />
+    <ClInclude Include="src\rage\commands\conversion_table.h" />
+    <ClInclude Include="src\rage\commands\dump_commands.h" />
+    <ClInclude Include="src\rage\commands\invoker\call_context.h" />
+    <ClInclude Include="src\rage\commands\invoker\invoker.h" />
+    <ClInclude Include="src\rage\commands\list.h" />
+    <ClInclude Include="src\rage\commands\types.h" />
+    <ClInclude Include="src\rage\engine.h" />
+    <ClInclude Include="src\rage\enums.h" />
     <ClInclude Include="src\rage\joaat.h" />
     <ClInclude Include="src\rage\tables.h" />
     <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h" />
+    <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\renderer\renderer.h" />
-    <ClInclude Include="src\memory\scanner.h" />
-    <ClInclude Include="src\hooking\methods\vmt.h" />
     <ClInclude Include="src\script\color.h" />
     <ClInclude Include="src\script\elements.h" />
     <ClInclude Include="src\script\notifications\notifications.h" />
@@ -297,7 +161,13 @@
     <ClInclude Include="src\script\tabs\network\session.h" />
     <ClInclude Include="src\script\tabs\network\session\all_players.h" />
     <ClInclude Include="src\script\tabs\network\session\browser.h" />
+    <ClInclude Include="src\script\tabs\network\session\players.h" />
+    <ClInclude Include="src\script\tabs\network\session\players\selected_player.h" />
+    <ClInclude Include="src\script\tabs\network\session\players\selected_player\teleports.h" />
+    <ClInclude Include="src\script\tabs\network\session\starter.h" />
+    <ClInclude Include="src\script\tabs\network\socialclub.h" />
     <ClInclude Include="src\script\tabs\network\tunables.h" />
+    <ClInclude Include="src\script\tabs\protections.h" />
     <ClInclude Include="src\script\tabs\protections\crashes.h" />
     <ClInclude Include="src\script\tabs\protections\kicks.h" />
     <ClInclude Include="src\script\tabs\protections\network_events.h" />
@@ -307,594 +177,87 @@
     <ClInclude Include="src\script\tabs\protections\reactions\network_event.h" />
     <ClInclude Include="src\script\tabs\protections\reactions\script_event.h" />
     <ClInclude Include="src\script\tabs\protections\script_events.h" />
-    <ClInclude Include="src\script\tabs\self\world.h" />
-    <ClInclude Include="src\script\tabs\vehicle\spawner.h" />
-    <ClInclude Include="src\stb\image.h" />
-    <ClInclude Include="src\stb\image_write.h" />
-    <ClInclude Include="src\util\clipboard.h" />
-    <ClInclude Include="src\script\tabs\network\session\players.h" />
-    <ClInclude Include="src\script\tabs\network\session\players\selected_player.h" />
-    <ClInclude Include="src\script\tabs\network\session\players\selected_player\teleports.h" />
-    <ClInclude Include="src\script\tabs\network\session\starter.h" />
-    <ClInclude Include="src\script\tabs\network\socialclub.h" />
-    <ClInclude Include="src\script\tabs\protections.h" />
+    <ClInclude Include="src\script\tabs\recovery.h" />
     <ClInclude Include="src\script\tabs\scripting.h" />
     <ClInclude Include="src\script\tabs\scripting\script_hook_v.h" />
     <ClInclude Include="src\script\tabs\self.h" />
     <ClInclude Include="src\script\tabs\self\movement.h" />
     <ClInclude Include="src\script\tabs\self\ped.h" />
     <ClInclude Include="src\script\tabs\self\police.h" />
+    <ClInclude Include="src\script\tabs\self\world.h" />
     <ClInclude Include="src\script\tabs\settings.h" />
     <ClInclude Include="src\script\tabs\settings\commands.h" />
     <ClInclude Include="src\script\tabs\settings\game.h" />
     <ClInclude Include="src\script\tabs\settings\ui.h" />
     <ClInclude Include="src\script\tabs\vehicle.h" />
+    <ClInclude Include="src\script\tabs\vehicle\spawner.h" />
     <ClInclude Include="src\script\tabs\weapon.h" />
     <ClInclude Include="src\script\tabs\weapon\ammo.h" />
     <ClInclude Include="src\script\tabs\weapon\loadout.h" />
     <ClInclude Include="src\shv\dynamic_loader.h" />
     <ClInclude Include="src\shv\scripthookv.h" />
-    <ClInclude Include="src\stackwalker\stackwalker.h" />
+    <ClInclude Include="src\stb\image.h" />
+    <ClInclude Include="src\stb\image_write.h" />
+    <ClInclude Include="src\util\clipboard.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
-    <ClInclude Include="src\renderer\dxtk\state_saver.h" />
     <ClInclude Include="src\util\game_vm_guard.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\player_mgr.h" />
-    <ClInclude Include="src\script\tabs\recovery.h" />
     <ClInclude Include="src\util\statistics.h" />
     <ClInclude Include="src\util\transaction.h" />
     <ClInclude Include="src\util\util.h" />
     <ClInclude Include="src\util\vehicle.h" />
-    <ClInclude Include="src\zydis\Decoder.h" />
-    <ClInclude Include="src\zydis\DecoderTypes.h" />
-    <ClInclude Include="src\zydis\Defines.h" />
-    <ClInclude Include="src\zydis\Disassembler.h" />
-    <ClInclude Include="src\zydis\Encoder.h" />
-    <ClInclude Include="src\zydis\Formatter.h" />
-    <ClInclude Include="src\zydis\FormatterBuffer.h" />
-    <ClInclude Include="src\zydis\generated\EnumInstructionCategory.h" />
-    <ClInclude Include="src\zydis\generated\EnumISAExt.h" />
-    <ClInclude Include="src\zydis\generated\EnumISASet.h" />
-    <ClInclude Include="src\zydis\generated\EnumMnemonic.h" />
-    <ClInclude Include="src\zydis\generated\EnumRegister.h" />
-    <ClInclude Include="src\zydis\internal\DecoderData.h" />
-    <ClInclude Include="src\zydis\internal\EncoderData.h" />
-    <ClInclude Include="src\zydis\internal\FormatterATT.h" />
-    <ClInclude Include="src\zydis\internal\FormatterBase.h" />
-    <ClInclude Include="src\zydis\internal\FormatterIntel.h" />
-    <ClInclude Include="src\zydis\internal\SharedData.h" />
-    <ClInclude Include="src\zydis\internal\String.h" />
-    <ClInclude Include="src\zydis\MetaInfo.h" />
-    <ClInclude Include="src\zydis\Mnemonic.h" />
-    <ClInclude Include="src\zydis\Register.h" />
-    <ClInclude Include="src\zydis\Segment.h" />
-    <ClInclude Include="src\zydis\SharedTypes.h" />
-    <ClInclude Include="src\zydis\ShortString.h" />
-    <ClInclude Include="src\zydis\Status.h" />
-    <ClInclude Include="src\zydis\Utils.h" />
-    <ClInclude Include="src\zydis\Zydis.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp" />
+    <ClCompile Include="src\commands\engine\engine.cpp" />
+    <ClCompile Include="src\commands\features.cpp" />
     <ClCompile Include="src\commands\gui\gui.cpp" />
+    <ClCompile Include="src\commands\manager\manager.cpp" />
+    <ClCompile Include="src\core\core.cpp" />
+    <ClCompile Include="src\exceptions\handler.cpp" />
+    <ClCompile Include="src\fiber\pool.cpp" />
+    <ClCompile Include="src\hooking\hooking.cpp" />
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
     <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
-    <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
-    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
-    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
-    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
-    <ClCompile Include="src\hooking\hooks\request.cpp" />
-    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />
-    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp" />
-    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
-    <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
-    <ClCompile Include="src\commands\engine\engine.cpp" />
-    <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
-    <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
-    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
-    <ClCompile Include="src\rage\commands\dump_commands.cpp" />
-    <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
-    <ClCompile Include="src\core\core.cpp" />
-    <ClCompile Include="src\directx\AlphaTestEffect.cpp" />
-    <ClCompile Include="src\directx\BasicEffect.cpp" />
-    <ClCompile Include="src\directx\BasicPostProcess.cpp" />
-    <ClCompile Include="src\directx\BinaryReader.cpp" />
-    <ClCompile Include="src\directx\BufferHelpers.cpp" />
-    <ClCompile Include="src\directx\CommonStates.cpp" />
-    <ClCompile Include="src\directx\DDSTextureLoader.cpp" />
-    <ClCompile Include="src\directx\DebugEffect.cpp" />
-    <ClCompile Include="src\directx\DGSLEffect.cpp" />
-    <ClCompile Include="src\directx\DGSLEffectFactory.cpp" />
-    <ClCompile Include="src\directx\DirectXHelpers.cpp" />
-    <ClCompile Include="src\directx\DualPostProcess.cpp" />
-    <ClCompile Include="src\directx\DualTextureEffect.cpp" />
-    <ClCompile Include="src\directx\EffectCommon.cpp" />
-    <ClCompile Include="src\directx\EffectFactory.cpp" />
-    <ClCompile Include="src\directx\EnvironmentMapEffect.cpp" />
-    <ClCompile Include="src\directx\GamePad.cpp" />
-    <ClCompile Include="src\directx\GeometricPrimitive.cpp" />
-    <ClCompile Include="src\directx\Geometry.cpp" />
-    <ClCompile Include="src\directx\GraphicsMemory.cpp" />
-    <ClCompile Include="src\directx\Keyboard.cpp" />
-    <ClCompile Include="src\directx\Model.cpp" />
-    <ClCompile Include="src\directx\ModelLoadCMO.cpp" />
-    <ClCompile Include="src\directx\ModelLoadSDKMESH.cpp" />
-    <ClCompile Include="src\directx\ModelLoadVBO.cpp" />
-    <ClCompile Include="src\directx\Mouse.cpp" />
-    <ClCompile Include="src\directx\NormalMapEffect.cpp" />
-    <ClCompile Include="src\directx\PBREffect.cpp" />
-    <ClCompile Include="src\directx\PBREffectFactory.cpp" />
-    <ClCompile Include="src\directx\pch.cpp" />
-    <ClCompile Include="src\directx\PrimitiveBatch.cpp" />
-    <ClCompile Include="src\directx\ScreenGrab.cpp" />
-    <ClCompile Include="src\directx\SimpleMath.cpp" />
-    <ClCompile Include="src\directx\SkinnedEffect.cpp" />
-    <ClCompile Include="src\directx\SpriteBatch.cpp" />
-    <ClCompile Include="src\directx\SpriteFont.cpp" />
-    <ClCompile Include="src\directx\ToneMapPostProcess.cpp" />
-    <ClCompile Include="src\directx\VertexTypes.cpp" />
-    <ClCompile Include="src\directx\WICTextureLoader.cpp" />
-    <ClCompile Include="src\exceptions\handler.cpp" />
-    <ClCompile Include="src\commands\features.cpp" />
-    <ClCompile Include="src\commands\manager\manager.cpp" />
-    <ClCompile Include="src\fiber\pool.cpp" />
     <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp" />
     <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\dispatch_event.cpp" />
+    <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp" />
     <ClCompile Include="src\hooking\hooks\has_interval_elapsed.cpp" />
+    <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
+    <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
     <ClCompile Include="src\hooking\hooks\present.cpp" />
+    <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
+    <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />
+    <ClCompile Include="src\hooking\hooks\receive_clone_create.cpp" />
+    <ClCompile Include="src\hooking\hooks\receive_clone_sync.cpp" />
+    <ClCompile Include="src\hooking\hooks\request.cpp" />
     <ClCompile Include="src\hooking\hooks\resize_buffers.cpp" />
     <ClCompile Include="src\hooking\hooks\run_async_module_request.cpp" />
-    <ClCompile Include="src\memory\pointers.cpp" />
+    <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
+    <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
+    <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
+    <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\hooking\hooking.cpp" />
-    <ClCompile Include="src\imgui\backends\imgui_impl_dx11.cpp" />
-    <ClCompile Include="src\imgui\backends\imgui_impl_win32.cpp" />
-    <ClCompile Include="src\imgui\imgui.cpp" />
-    <ClCompile Include="src\imgui\imgui_demo.cpp" />
-    <ClCompile Include="src\imgui\imgui_draw.cpp" />
-    <ClCompile Include="src\imgui\imgui_tables.cpp" />
-    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\minhook\buffer.c" />
-    <ClCompile Include="src\minhook\hde\hde32.c" />
-    <ClCompile Include="src\minhook\hde\hde64.c" />
-    <ClCompile Include="src\minhook\hook.c" />
-    <ClCompile Include="src\minhook\trampoline.c" />
-    <ClCompile Include="src\pch\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="src\memory\pointers.cpp" />
+    <ClCompile Include="src\pch\pch.cpp" />
+    <ClCompile Include="src\rage\commands\dump_commands.cpp" />
+    <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\rage\defines.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\script\notifications\notifications.cpp" />
     <ClCompile Include="src\script\script.cpp" />
     <ClCompile Include="src\shv\scripthookv.cpp" />
-    <ClCompile Include="src\stackwalker\stackwalker.cpp" />
     <ClCompile Include="src\util\message.cpp" />
     <ClCompile Include="src\util\player_mgr.cpp" />
     <ClCompile Include="src\util\statistics.cpp" />
-    <ClCompile Include="src\zydis\Decoder.c" />
-    <ClCompile Include="src\zydis\DecoderData.c" />
-    <ClCompile Include="src\zydis\Disassembler.c" />
-    <ClCompile Include="src\zydis\Encoder.c" />
-    <ClCompile Include="src\zydis\EncoderData.c" />
-    <ClCompile Include="src\zydis\Formatter.c" />
-    <ClCompile Include="src\zydis\FormatterATT.c" />
-    <ClCompile Include="src\zydis\FormatterBase.c" />
-    <ClCompile Include="src\zydis\FormatterBuffer.c" />
-    <ClCompile Include="src\zydis\FormatterIntel.c" />
-    <ClCompile Include="src\zydis\MetaInfo.c" />
-    <ClCompile Include="src\zydis\Mnemonic.c" />
-    <ClCompile Include="src\zydis\Register.c" />
-    <ClCompile Include="src\zydis\Segment.c" />
-    <ClCompile Include="src\zydis\SharedData.c" />
-    <ClCompile Include="src\zydis\String.c" />
-    <ClCompile Include="src\zydis\Utils.c" />
-    <ClCompile Include="src\zydis\Zydis.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNe.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestEqNeNoFog.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGt.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGt.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_PSAlphaTestLtGtNoFog.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTest.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTest.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestNoFog.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestNoFog.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVc.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVc.pdb" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVcNoFog.inc" />
-    <None Include="src\directx\shaders\AlphaTestEffect_VSAlphaTestVcNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasic.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasic.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLighting.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLighting.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLightingTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicPixelLightingTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTxNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicTxNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLighting.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLighting.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTxNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_PSBasicVertexLightingTxNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasic.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasic.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLight.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLight.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightTxVcBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicOneLightVcBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLighting.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLighting.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingTxVcBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicPixelLightingVcBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVcNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicTxVcNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVcNoFog.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVcNoFog.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLighting.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLighting.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTx.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTx.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingTxVcBn.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVc.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVc.pdb" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVcBn.inc" />
-    <None Include="src\directx\shaders\BasicEffect_VSBasicVertexLightingVcBn.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_PSHemiAmbient.inc" />
-    <None Include="src\directx\shaders\DebugEffect_PSHemiAmbient.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBBiTangents.inc" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBBiTangents.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBNormals.inc" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBNormals.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBTangents.inc" />
-    <None Include="src\directx\shaders\DebugEffect_PSRGBTangents.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebug.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebug.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBn.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBn.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBnInst.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugBnInst.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugInst.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugInst.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVc.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVc.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBn.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBn.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBnInst.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcBnInst.pdb" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcInst.inc" />
-    <None Include="src\directx\shaders\DebugEffect_VSDebugVcInst.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main1Bones.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main1Bones.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main1BonesVc.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main1BonesVc.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main2Bones.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main2Bones.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main2BonesVc.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main2BonesVc.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main4Bones.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main4Bones.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_main4BonesVc.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_main4BonesVc.pdb" />
-    <None Include="src\directx\shaders\DGSLEffect_mainVc.inc" />
-    <None Include="src\directx\shaders\DGSLEffect_mainVc.pdb" />
-    <None Include="src\directx\shaders\DGSLLambert_main.inc" />
-    <None Include="src\directx\shaders\DGSLLambert_main.pdb" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTk.inc" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTk.pdb" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTx.inc" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTx.pdb" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTxTk.inc" />
-    <None Include="src\directx\shaders\DGSLLambert_mainTxTk.pdb" />
-    <None Include="src\directx\shaders\DGSLPhong_main.inc" />
-    <None Include="src\directx\shaders\DGSLPhong_main.pdb" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTk.inc" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTk.pdb" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTx.inc" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTx.pdb" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTxTk.inc" />
-    <None Include="src\directx\shaders\DGSLPhong_mainTxTk.pdb" />
-    <None Include="src\directx\shaders\DGSLUnlit_main.inc" />
-    <None Include="src\directx\shaders\DGSLUnlit_main.pdb" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTk.inc" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTk.pdb" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTx.inc" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTx.pdb" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTxTk.inc" />
-    <None Include="src\directx\shaders\DGSLUnlit_mainTxTk.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTexture.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTexture.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTextureNoFog.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_PSDualTextureNoFog.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTexture.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTexture.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureNoFog.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureNoFog.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVc.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVc.pdb" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVcNoFog.inc" />
-    <None Include="src\directx\shaders\DualTextureEffect_VSDualTextureVcNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMap.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMap.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLighting.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecular.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecular.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpecularNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLighting.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMap.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMap.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapBn.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapBn.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnel.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnel.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapFresnelBn.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLight.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLight.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightBn.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnel.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLighting.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBn.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.pdb" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc" />
-    <None Include="src\directx\shaders\EnvironmentMapEffect_VSEnvMapPixelLightingSM4.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTx.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTx.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFog.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_PSNormalPixelLightingTxNoSpec.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTx.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTx.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBn.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBn.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxBnInst.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxInst.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxInst.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVc.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVc.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBn.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSNormalPixelLightingTxVcInst.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTx.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTx.pdb" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.inc" />
-    <None Include="src\directx\shaders\NormalMapEffect_VSSkinnedPixelLightingTxBn.pdb" />
-    <None Include="src\directx\shaders\PBREffect_PSConstant.inc" />
-    <None Include="src\directx\shaders\PBREffect_PSConstant.pdb" />
-    <None Include="src\directx\shaders\PBREffect_PSTextured.inc" />
-    <None Include="src\directx\shaders\PBREffect_PSTextured.pdb" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissive.inc" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissive.pdb" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissiveVelocity.inc" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedEmissiveVelocity.pdb" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedVelocity.inc" />
-    <None Include="src\directx\shaders\PBREffect_PSTexturedVelocity.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstant.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstant.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantBn.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantBn.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantBnInst.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantBnInst.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantInst.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantInst.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocity.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocity.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocityBn.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSConstantVelocityBn.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSSkinned.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSSkinned.pdb" />
-    <None Include="src\directx\shaders\PBREffect_VSSkinnedBn.inc" />
-    <None Include="src\directx\shaders\PBREffect_VSSkinnedBn.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomBlur.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomBlur.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomCombine.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomCombine.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomExtract.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSBloomExtract.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSCopy.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSCopy.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSDownScale2x2.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSDownScale2x2.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSDownScale4x4.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSDownScale4x4.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSGaussianBlur5x5.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSGaussianBlur5x5.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSMerge.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSMerge.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSMonochrome.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSMonochrome.pdb" />
-    <None Include="src\directx\shaders\PostProcess_PSSepia.inc" />
-    <None Include="src\directx\shaders\PostProcess_PSSepia.pdb" />
-    <None Include="src\directx\shaders\PostProcess_VSQuad.inc" />
-    <None Include="src\directx\shaders\PostProcess_VSQuad.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedPixelLighting.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedPixelLighting.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLighting.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLighting.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_PSSkinnedVertexLightingNoFog.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightFourBonesBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBone.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBone.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightOneBoneBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBone.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBone.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBones.pdb" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc" />
-    <None Include="src\directx\shaders\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.pdb" />
-    <None Include="src\directx\shaders\SpriteEffect_SpritePixelShader.inc" />
-    <None Include="src\directx\shaders\SpriteEffect_SpritePixelShader.pdb" />
-    <None Include="src\directx\shaders\SpriteEffect_SpriteVertexShader.inc" />
-    <None Include="src\directx\shaders\SpriteEffect_SpriteVertexShader.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic_SRGB.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSACESFilmic_SRGB.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSCopy.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSCopy.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSHDR10.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSHDR10.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSReinhard.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSReinhard.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSReinhard_SRGB.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSReinhard_SRGB.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSSaturate.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSSaturate.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PSSaturate_SRGB.inc" />
-    <None Include="src\directx\shaders\ToneMap_PSSaturate_SRGB.pdb" />
-    <None Include="src\directx\shaders\ToneMap_PS_SRGB.inc" />
-    <None Include="src\directx\shaders\ToneMap_PS_SRGB.pdb" />
-    <None Include="src\directx\shaders\ToneMap_VSQuad.inc" />
-    <None Include="src\directx\shaders\ToneMap_VSQuad.pdb" />
-    <None Include="src\directx\SimpleMath.inl" />
-    <None Include="src\directx\TeapotData.inc" />
-    <None Include="src\zydis\generated\AccessedFlags.inc" />
-    <None Include="src\zydis\generated\DecoderTables.inc" />
-    <None Include="src\zydis\generated\EncoderTables.inc" />
-    <None Include="src\zydis\generated\EnumInstructionCategory.inc" />
-    <None Include="src\zydis\generated\EnumISAExt.inc" />
-    <None Include="src\zydis\generated\EnumISASet.inc" />
-    <None Include="src\zydis\generated\EnumMnemonic.inc" />
-    <None Include="src\zydis\generated\EnumRegister.inc" />
-    <None Include="src\zydis\generated\FormatterStrings.inc" />
-    <None Include="src\zydis\generated\GetRelInfo.inc" />
-    <None Include="src\zydis\generated\InstructionDefinitions.inc" />
-    <None Include="src\zydis\generated\InstructionEncodings.inc" />
-    <None Include="src\zydis\generated\OperandDefinitions.inc" />
-    <None Include="src\zydis\generated\RegisterClassLookup.inc" />
-    <None Include="src\zydis\generated\RegisterLookup.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\marmasm.targets" />
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\ShaderGraphContentTask.targets" />
   </ImportGroup>
 </Project>
