@@ -9,6 +9,9 @@ public:
 public:
 	template <typename T>
 	static bool Create(T Target, T Detour, T* Originial) {
+		if (!Target || !Detour) {
+			return false;
+		}
 		MH_STATUS Status{ MH_CreateHook(Target, LPVOID(Detour), (LPVOID*)Originial) };
 		if (Status == MH_STATUS::MH_OK) {
 			return true;
@@ -43,19 +46,18 @@ public:
 	template <typename T>
 	static std::optional<LPVOID> GetCorrectedTarget(T Target) {
 		uint8_t* Bytes{ decltype(Bytes)(Target) };
-		for (int8_t i{}; i != 0xF; ++i) {
+		for (int8_t i{}; i != 0xF; ++i) { //Fix jumps
 			if (Bytes[i] == 0xE8) {
 				Bytes = *(uint8_t**)(&Bytes[i]);
 				break;
 			}
 		}
-		//More correction to hook into a tramopline needed
 		return Bytes;
 	}
 };
 class detour {
 public:
-	detour(char const* name, void* ptr, void* dtr, bool hook = true) : m_name(name), m_ptr(ptr), m_og(ptr), m_dtr(dtr), m_hook(hook) {
+	detour(ccp name, void* ptr, void* dtr, bool hook = true) : m_name(name), m_ptr(ptr), m_og(ptr), m_dtr(dtr), m_hook(hook) {
 		if (m_hook) {
 			MinHook::Create(m_ptr, m_dtr, &m_og);
 		}

@@ -223,8 +223,39 @@ namespace util {
 			return false;
 		}
 	}
+	namespace files {
+		inline void destory(std::ofstream& file) {
+			file.clear();
+			file = {};
+			file.close();
+		}
+		inline std::ifstream input(fs::path relative) {
+			fs::path path{ std::getenv("appdata") };
+			path /= BRAND;
+			path /= relative;
+			return std::ifstream(path);
+		}
+		inline std::ofstream output(fs::path relative) {
+			fs::path path{ std::getenv("appdata") };
+			path /= BRAND;
+			path /= relative;
+			return std::ofstream(path);
+		}
+		inline std::string read(std::ifstream& file) {
+			return { (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>() };
+		}
+	}
 	inline void async(std::function<void()> callback) {
 		std::thread(callback).detach();
+	}
+	inline void delayedThread(bool& running, std::chrono::milliseconds ms, std::function<void()> callback) {
+		async([&] {
+			while (running) {
+				if (callback)
+					callback();
+				std::this_thread::sleep_for(ms);
+			}
+		});
 	}
 	inline void playSound(cc* name) {
 		async([name] {

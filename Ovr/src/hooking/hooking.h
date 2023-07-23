@@ -20,6 +20,8 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
+inline TimecycleKeyframeData* g_timecycleKeyframeData{};
+inline bool g_timecycleKeyframeDataUpdate{ true};
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
 struct hooks {
@@ -37,6 +39,7 @@ struct hooks {
 	static bool processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 	static i32 calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
 	static i32 insertStreamingModule(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
+	static i64 updateTimecycleData(u64* _This, TimecycleKeyframeData* pData);
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
@@ -92,6 +95,7 @@ public:
 	detour m_hasRosPrivilege;
 	detour m_calculateMipLevel;
 	detour m_insertStreamingModule;
+	detour m_updateTimecycleData;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

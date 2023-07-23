@@ -118,7 +118,6 @@ namespace script {
 		style.IndentSpacing = 27.f;
 		style.AntiAliasedLines = true;
 		style.AntiAliasedFill = true;
-		style.CurveTessellationTol = 0.f;
 		colors[ImGuiCol_Text] = ImColor(255, 255, 255, 255);
 		colors[ImGuiCol_TextSelectedBg] = ImColor(49, 151, 253, 255);
 		colors[ImGuiCol_TextDisabled] = ImColor(40, 40, 40, 255);

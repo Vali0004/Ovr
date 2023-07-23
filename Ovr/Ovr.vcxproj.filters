@@ -549,5 +549,6 @@
     <ClCompile Include="src\util\statistics.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp" />
   </ItemGroup>
 </Project>

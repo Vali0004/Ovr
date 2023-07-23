@@ -107,34 +107,43 @@ public:
 	}
 public:
 	void addPatch(u32 id, std::string pattern, i32 offset, std::vector<u8> patch, bool apply = true) {
+		std::unique_lock lock(m_mutex);
 		m_patchManager->createPatch(id, pattern, offset, patch);
 		if (apply) {
 			applyPatch(id);
 		}
 	}
 	void applyPatch(u32 id) {
+		std::unique_lock lock(m_mutex);
 		m_patchManager->set(id);
 	}
 	void restorePatch(u32 id) {
+		std::unique_lock lock(m_mutex);
 		m_patchManager->set(id, true);
 	}
 public:
-	void setCallbackOnThread(u32 hash, std::function<void()> callback) {
-		m_callbacks[hash] = callback;
+	void setCallbackOnThread(std::function<void()> callback) {
+		std::unique_lock lock(m_mutex);
+		m_callbacks.push(callback);
 	}
 	void runCallbacks() {
-		for (auto& pair : m_callbacks) {
-			if (pair.first == m_thread->m_script_hash) {
-				pair.second();
+		std::unique_lock lock(m_mutex);
+		if (!m_callbacks.empty()) {
+			auto fn{ std::move(m_callbacks.top()) };
+			m_callbacks.pop();
+			lock.unlock();
+			if (fn) {
+				fn();
 			}
 		}
 	}
 private:
+	std::recursive_mutex m_mutex{};
 	std::unique_ptr<GameVMPatchManager> m_patchManager{};
 	rage::scrThread::Serialised* m_thread{};
 	rage::scrProgram* m_program{};
 	u8** m_unmodifiedOpcodes{};
-	std::map<u32, std::function<void()>> m_callbacks{};
+	std::stack<std::function<void()>> m_callbacks{};
 };
 class GlobalGameVMGuard {
 public:
@@ -143,7 +152,7 @@ public:
 	GameVMGuard* CreateGuardForThread(rage::scrProgram* program, rage::scrThread::Serialised* thread, u8** opcodeTable) {
 		GameVMGuard* guard{ new GameVMGuard(program, thread, opcodeTable) };
 		m_guards.insert({ program->m_name_hash, std::move(guard) });
-		return guard;
+		return m_guards[program->m_name_hash];
 	}
 	GameVMGuard* GetGuard(u32 hash) {
 		if (auto it{ m_guards.find(hash) }; it != m_guards.end()) {

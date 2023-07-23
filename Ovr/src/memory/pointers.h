@@ -5,8 +5,8 @@
 #include "core/logger.h"
 
 namespace pointers {
-	extern void scanLSS();
-	extern void scanAll();
+	inline int g_scanState{};
+	extern void scanSegment(ccp seg);
 	extern void doPatches();
 	namespace types {
 		using scrThreadInit = void(*)(rage::scrThread* thread);
@@ -50,6 +50,7 @@ namespace pointers {
 		using getStreamingModuleFromExtension = rage::strStreamingModule* (*)(rage::strStreamingModuleMgr* pMgr, cc* Extension);
 		using insertStreamingModule = i32(*)(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);
 		using hasRosPrivilege = bool(*)(u64* _This, i32 Privilege);
+		using updateTimecycleData = i64(*)(u64* _This, TimecycleKeyframeData* pData);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -92,6 +93,7 @@ namespace pointers {
 	inline types::getStreamingModuleFromExtension g_getStreamingModuleFromExtension{};
 	inline types::insertStreamingModule g_insertStreamingModule{};
 	inline types::hasRosPrivilege g_hasRosPrivilege{};
+	inline types::updateTimecycleData g_updateTimecycleData{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};

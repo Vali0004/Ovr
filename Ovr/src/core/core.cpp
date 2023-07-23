@@ -45,7 +45,7 @@ namespace core {
 		//if (shv::g_shvLoader->getModule())
 			//LOG_DEBUG("SHV module loaded.");
 		exceptions::initExceptionHandler();
-		pointers::scanLSS();
+		pointers::scanSegment("s1");
 		//We need Arxan to intialise first
 		switch (*pointers::g_loadingScreenState) {
 		case eLoadingScreenState::PreLegal: {
@@ -56,9 +56,15 @@ namespace core {
 		case eLoadingScreenState::Legals: {
 			std::this_thread::sleep_for(14s);
 			*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
+			util::async([] { pointers::scanSegment("s2"); });
 		} break;
 		}
-		pointers::scanAll();
+		util::async([] { pointers::scanSegment("s3"); });
+		while (!pointers::g_hwnd)
+			std::this_thread::sleep_for(10ms);
+		if (pointers::g_scanState != 3)
+			pointers::scanSegment("s2");
+		LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
 		util::game::commands::intialize();
 		std::this_thread::sleep_for(100ms);
 		pointers::doPatches();
@@ -70,12 +76,16 @@ namespace core {
 		g_manager.add("script", &script::onTick);
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
-		g_manager.add("transactions", &util::transactions::tickQueue);
 		util::playSound("injection_sound");
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
 		}
+		HHOOK dummy{ SetWindowsHookA(WH_KEYBOARD_LL, [](int code, WPARAM wParam, LPARAM lParam) -> LRESULT { return -1; }) };
+		UnhookWindowsHookEx(dummy);
 		engine::createThread(&g_manager);
+		util::delayedThread(g_running, 2000ms, [] {
+			commands::g_engine.commandFromStream();
+		});
 	}
 	void destroy() {
 		g_pool.add(&commands::features::uninit);

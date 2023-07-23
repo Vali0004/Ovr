@@ -3,6 +3,7 @@
 #include "hooking/methods/native.h"
 #include "commands/features.h"
 #include "util/game_vm_guard.h"
+#include "util/transaction.h"
 
 hooking::hooking() :
 	m_minhook(),
@@ -21,7 +22,8 @@ hooking::hooking() :
 	m_calculateMipLevel("CML", pointers::g_calculateMipLevel, &hooks::calculateMipLevel),
 	m_hasRosPrivilege("HRP", pointers::g_hasRosPrivilege, &hooks::hasRosPrivilege),
 	m_insertStreamingModule("ISM", pointers::g_insertStreamingModule, &hooks::insertStreamingModule),
-	m_addItemToBasket("AITB", pointers::g_addItemToBasket, &hooks::addItemToBasket),
+	m_updateTimecycleData("TCD", pointers::g_updateTimecycleData, &hooks::updateTimecycleData),
+	m_addItemToBasket("AITB", pointers::g_addItemToBasket, &hooks::addItemToBasket, false),
 	m_request("R", pointers::g_request, &hooks::request),
 	m_sendMetric("SM", pointers::g_sendMetric, &hooks::sendMetric),
 	m_sendNetworkEvent("SNE", pointers::g_sendNetworkEvent, &hooks::sendNetworkEvent),
@@ -149,6 +151,7 @@ void hooking::enable() {
 	createNativeShim("all_scripts"_joaat, 0xBA9775570DB788CF, [](rage::scrThread::Info* info) {
 		info->ResultPtr->Int = TRUE;
 	});*/
+	//Has fucked coords, needs fixing (seamless transition)
 	/*createNativeShim("all_scripts"_joaat, 0x40EB1EFD921822BC, [](rage::scrThread::Info* info) {});
 	createNativeShim("all_scripts"_joaat, 0x340A36A700E99699, [](rage::scrThread::Info* info) {});
 	createNativeShim("all_scripts"_joaat, 0x8E580AB902917360, [](rage::scrThread::Info* info) {});*/

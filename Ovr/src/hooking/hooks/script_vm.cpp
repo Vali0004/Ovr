@@ -140,6 +140,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				}
 				#endif
 				cmd(&curInfo);
+				guard->runCallbacks();
 				if (ser->m_state != rage::eThreadState::running)
 					return ser->m_state;
 				curInfo.CopyReferencedParametersOut();

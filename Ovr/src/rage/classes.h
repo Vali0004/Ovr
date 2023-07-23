@@ -2453,6 +2453,125 @@ public:
 }; //Size: 0x02C8
 static_assert(sizeof(CNetworkShoppingMgr) == 0x2C8);
 #pragma pack(pop)
+class UIElement {
+public:
+	int m_index; //0x0000
+	char pad_0004[12]; //0x0004
+	rage::vector4 m_value; //0x0010
+}; //Size: 0x0020
+static_assert(sizeof(UIElement) == 0x20);
+class UIElementConstant {
+public:
+	rage::vector4 m_value; //0x0000
+	float m_intensity; //0x0010
+	float m_position; //0x0014
+	char pad_0018[4]; //0x0018
+	int m_index; //0x001C
+}; //Size: 0x0020
+static_assert(sizeof(UIElementConstant) == 0x20);
+class UIIndex {
+public:
+	int m_index; //0x0000
+}; //Size: 0x0004
+static_assert(sizeof(UIIndex) == 0x4);
+class UIElementInt {
+public:
+	UIIndex m_index; //0x0000
+	float m_value; //0x0004
+}; //Size: 0x0008
+static_assert(sizeof(UIElementInt) == 0x8);
+class UIElementShader {
+public:
+	uint64_t m_raw_element; //0x0000
+	rage::grcTexture* m_shader; //0x0008
+}; //Size: 0x0010
+static_assert(sizeof(UIElementShader) == 0x10);
+class TimecycleKeyframeData {
+public:
+	char pad_0000[16]; //0x0000
+	UIElement m_azimuth_east_color; //0x0010
+	float m_azimuth_east_intensity; //0x0030
+	char pad_0034[12]; //0x0034
+	UIElement m_azimuth_west_color; //0x0040
+	float m_azimuth_west_intensity; //0x0060
+	char pad_0064[12]; //0x0064
+	UIElement m_azimuth_transition_color; //0x0070
+	float m_azimuth_transition_intensity; //0x0090
+	UIElementInt m_azimuth_transition_position; //0x0094
+	char pad_009C[4]; //0x009C
+	UIElement m_zenith_color; //0x00B8
+	float m_zenith_intensity; //0x00C0
+	char pad_00C4[12]; //0x00C4
+	UIElement m_zenith_transition_color; //0x00D0
+	char pad_00F0[4]; //0x00F0
+	UIElementConstant m_zenith_constants; //0x00F0
+	char pad_0114[28]; //0x0114
+	UIElement m_sky_plane_color; //0x0130
+	char pad_0150[16]; //0x0150
+	UIIndex m_sky_plane_params; //0x0160
+	char pad_0164[40]; //0x0164
+	bool m_update_sky_attributes; //0x018C
+	char pad_018D[11]; //0x018D
+	UIIndex m_sun_direction; //0x0198
+	UIIndex m_sun_position; //0x019C
+	char pad_01A0[16]; //0x01A0
+	UIElement m_sun_color; //0x01B0
+	UIElement m_sun_color_hdr; //0x01D0
+	char pad_01F0[16]; //0x01F0
+	UIElement m_sun_disc_color_hdr; //0x0200
+	char pad_0220[32]; //0x0220
+	UIElement m_sun_constants; //0x0240
+	UIElementShader m_high_detail_noise; //0x0260
+	UIElementConstant m_cloud_constant1; //0x0270
+	char pad_0290[16]; //0x0290
+	UIElementConstant m_cloud_constant2; //0x02A0
+	char pad_02C0[16]; //0x02C0
+	UIElementConstant m_cloud_constant3; //0x02D0
+	char pad_02F0[16]; //0x02F0
+	UIElementConstant m_cloud_detail_constants; //0x0300
+	char pad_0320[48]; //0x0320
+	UIElement m_cloud_base_minus_mid_colour; //0x0350
+	UIElement m_cloud_mid_color; //0x0370
+	UIElement m_cloud_shadow_minus_base_colour_times_shadow_strength; //0x0390
+	UIElementConstant m_small_cloud_constants; //0x03B0
+	char pad_03D0[32]; //0x03D0
+	UIElement m_small_cloud_color_hdr; //0x03F0
+	char pad_0410[16]; //0x0410
+	UIIndex m_cloudgen_frequency; //0x0420
+	char pad_0424[28]; //0x0424
+	UIElement m_noise_phase; //0x0440
+	char pad_0460[32]; //0x0460
+	UIIndex m_speed_constants; //0x0480
+	char pad_0484[28]; //0x0484
+	UIElementInt m_horizon_level; //0x04A0
+	char pad_04A8[16]; //0x04A8
+	UIElementShader m_dither; //0x04B8
+	char pad_04C8[24]; //0x04C8
+	UIElementShader m_star_field; //0x04E0
+	UIElementInt m_starfield_intensity; //0x04F0
+	UIElementShader m_moon; //0x04F8
+	char pad_0508[40]; //0x0508
+	UIElementInt m_moon_intensity; //0x0530
+	char pad_0538[8]; //0x0538
+	UIElement m_moon_color; //0x0540
+	char pad_0560[16]; //0x0560
+	UIIndex m_lunar_cycle; //0x0570
+	char pad_0574[28]; //0x0574
+	UIIndex m_moon_direction; //0x0590
+	UIIndex m_moon_position; //0x0594
+	char pad_0598[24]; //0x0598
+	UIElementInt m_noise_frequency; //0x05A8
+	UIElementInt m_noise_scale; //0x05B0
+	UIElementInt m_noise_threshold; //0x05B8
+	UIElementInt m_noise_softness; //0x05C0
+	UIElementInt m_noise_density_offset; //0x05C8
+	UIElementShader m_noise; //0x05D8
+
+	void set_sky(bool enabled) {
+		*(bool*)((uint64_t)this - 0x60) = enabled;
+	}
+}; //Size: 0x05E8
+static_assert(sizeof(TimecycleKeyframeData) == 0x5E8);
 class CHeaders {
 public:
 	char m_header_data[465]; //0x0000

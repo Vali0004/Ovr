@@ -243,6 +243,7 @@
     <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
     <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
+    <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\memory\pointers.cpp" />
     <ClCompile Include="src\pch\pch.cpp" />
