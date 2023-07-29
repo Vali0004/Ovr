@@ -12,7 +12,6 @@ i32 hooks::calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Form
 			int limit{ (Format == 21 || Format == 32) ? 512 : 1024 };
 			auto newWidth{ Width };
 			auto newHeight{ Height };
-
 			for (i32 i{}; i != targetLevel; ++i) {
 				newWidth /= 2;
 				newHeight /= 2;
@@ -25,8 +24,7 @@ i32 hooks::calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Form
 				newHeight /= 2;
 				targetLevel++;
 			}
-			if (targetLevel != oldTargetLevel)
-			{
+			if (targetLevel != oldTargetLevel) {
 				LOG_DEBUG("Limited texture level in{} from{}x{} to{}x{}\n", strName, Width, Height, newWidth, newHeight);
 			}
 		}

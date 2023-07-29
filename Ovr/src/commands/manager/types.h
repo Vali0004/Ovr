@@ -57,6 +57,14 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["toggle"] = (*m_value).toggle;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_value).toggle = m_json[m_id]["toggle"].get<bool>();
+		}
 	public:
 		typedValue m_value{};
 	private:
@@ -87,6 +95,14 @@ namespace commands {
 				m_callback(this);
 			}
 			abstractCommand::run();
+		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["value"] = (*m_value).i32;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_value).i32 = m_json[m_id]["value"].get<i32>();
 		}
 	public:
 		typedValue m_value{};
@@ -123,6 +139,16 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["toggle"] = (*m_toggleValue).toggle;
+			m_json[m_id]["value"] = (*m_numberValue).i32;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_toggleValue).toggle = m_json[m_id]["toggle"].get<bool>();
+			(*m_numberValue).i32 = m_json[m_id]["value"].get<i32>();
+		}
 	public:
 		typedValue m_toggleValue{};
 		typedValue m_numberValue{};
@@ -154,6 +180,14 @@ namespace commands {
 				m_callback(this);
 			}
 			abstractCommand::run();
+		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["value"] = (*m_value).floating_point;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_value).floating_point = m_json[m_id]["value"].get<fp>();
 		}
 	public:
 		typedValue m_value{};
@@ -189,6 +223,16 @@ namespace commands {
 				m_callback(this);
 			}
 			abstractCommand::run();
+		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["toggle"] = (*m_toggleValue).toggle;
+			m_json[m_id]["value"] = (*m_numberValue).floating_point;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_toggleValue).toggle = m_json[m_id]["toggle"].get<bool>();
+			(*m_numberValue).floating_point = m_json[m_id]["value"].get<fp>();
 		}
 	public:
 		typedValue m_toggleValue{};
@@ -242,8 +286,31 @@ namespace commands {
 		void run() override {
 			abstractCommand::run();
 		}
+		void serialise() override {
+			abstractCommand::serialise();
+			std::string state{};
+			switch (m_state) {
+			case eProtectionState::Disabled: {
+				state = "Disabled";
+			} break;
+			case eProtectionState::Notify: {
+				state = "Notify";
+			} break;
+			case eProtectionState::Block: {
+				state = "Block";
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				state = "Block And Notify";
+			} break;
+			}
+			m_json[m_id]["state"] = state;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			update(m_json[m_id]["state"].get<std::string>().c_str());
+		}
 		void update(ccp n) {
-			m_value.m_value.string = n;
+			m_value.m_value.string = (char*)n;
 			setState();
 		}
 		void setFromSection(eProtectionState state) {
@@ -280,8 +347,31 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
+		void serialise() override {
+			abstractCommand::serialise();
+			std::string state{};
+			switch (m_state) {
+			case eProtectionState::Disabled: {
+				state = "Disabled";
+			} break;
+			case eProtectionState::Notify: {
+				state = "Notify";
+			} break;
+			case eProtectionState::Block: {
+				state = "Block";
+			} break;
+			case eProtectionState::BlockAndNotify: {
+				state = "Block And Notify";
+			} break;
+			}
+			m_json[m_id]["state"] = state;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			update(m_json[m_id]["state"].get<std::string>().c_str());
+		}
 		void update(ccp n) {
-			m_value.m_value.string = n;
+			m_value.m_value.string = (char*)n;
 			setState();
 		}
 		void setState() {
@@ -314,7 +404,8 @@ namespace commands {
 			abstractCommand::run();
 		}
 		void set_string(const std::string& str) {
-			m_stringValue.m_value.string = str.c_str();
+			m_storedString = str;
+			m_stringValue.m_value.string = (char*)m_storedString.c_str();
 		}
 		std::string get_string() {
 			return m_stringValue.m_value.string;
@@ -324,6 +415,7 @@ namespace commands {
 			return m_context.substr(m_context.find(words.at(0)) + words[0].size());
 		}
 	private:
+		std::string m_storedString{};
 		typedValue m_stringValue{};
 		fnptr<void(stringCommand*)> m_callback{};
 	};
@@ -345,14 +437,17 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
+		void set_key(std::string str) {
+			m_storedKey = str;
+			m_stringValue.m_value.string = (char*)m_storedKey.c_str();
+		}
 		std::string get_key() {
 			return m_stringValue.m_value.string;
 		}
 		u32 get_hash() {
 			std::string key{ get_key() };
-			printf("key: %s\n", key.c_str());
 			u32 hash{};
-			/*if (isNumber(key)) {
+			if (isNumber(key)) {
 				hash = stoi(key);
 			}
 			else if (containsAnNumber(key) && (key.size() == 8 || key.size() == 6)) {
@@ -360,13 +455,11 @@ namespace commands {
 			}
 			else {
 				hash = rage::joaat(key);
-			}*/
+			}
 			return hash;
 		}
-		void set_string(std::string str) {
-			m_stringValue.m_value.string = str.c_str();
-		}
 	private:
+		std::string m_storedKey{};
 		typedValue m_stringValue{};
 		fnptr<void(hashCommand*)> m_callback{};
 	};

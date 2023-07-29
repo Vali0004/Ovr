@@ -5,6 +5,7 @@
 #include "rage/commands/list.h"
 #include "fiber/fiber.h"
 #include "commands/math.h"
+#include "base64.h"
 
 namespace util {
 	namespace classes {
@@ -81,7 +82,7 @@ namespace util {
 			return thr->m_net_component;
 		}
 		inline rage::CDynamicEntity* getEntityFromSGUID(Entity sguid) {
-			return dynamic_cast<rage::CDynamicEntity*>(pointers::g_handleToPointer(sguid));
+			return reinterpret_cast<rage::CDynamicEntity*>(pointers::g_handleToPointer(sguid));
 		}
 		inline Entity getSGUIDFromEntity(rage::CEntity* entity) {
 			Entity sguid{ -1 };
@@ -160,6 +161,21 @@ namespace util {
 				}
 			}
 		}
+		inline std::string base64Handle(u64 rid) {
+			u8 payloadData[16]{};
+			for (u8 i{}; i != 4; ++i) {
+				payloadData[i] = rid >> i * 8;
+			}
+			payloadData[8] = 3;
+			std::string payload{};
+			payload.resize(COUNT(payloadData));
+			memcpy(payload.data(), payloadData, payload.size());
+			return base64Encode(payload);
+		}
+		inline bool isHost(u8 index) {
+			auto player{ (*pointers::g_networkPlayerMgr)->m_player_list[index] };
+			return player && player->IsConnected() && player->IsNetworkHost();
+		}
 		inline CNetGamePlayer* getScriptHostNetGamePlayer() {
 			if (GtaThread* thr{ classes::getGtaThread("freemode"_joaat) }) {
 				if (CGameScriptHandlerNetComponent* netComponet{ classes::getScriptHandlerNetComponet(thr) }) {
@@ -224,22 +240,30 @@ namespace util {
 		}
 	}
 	namespace files {
+		inline fs::path getPath(fs::path nonRelative) {
+			fs::path relative{ std::getenv("appdata") };
+			relative /= BRAND;
+			relative /= nonRelative;
+			return relative;
+		}
 		inline void destory(std::ofstream& file) {
 			file.clear();
 			file = {};
 			file.close();
 		}
-		inline std::ifstream input(fs::path relative) {
-			fs::path path{ std::getenv("appdata") };
-			path /= BRAND;
-			path /= relative;
-			return std::ifstream(path);
+		inline std::ifstream input(fs::path nonRelative) {
+			return std::ifstream(getPath(nonRelative));
 		}
-		inline std::ofstream output(fs::path relative) {
-			fs::path path{ std::getenv("appdata") };
-			path /= BRAND;
-			path /= relative;
-			return std::ofstream(path);
+		inline std::ofstream output(fs::path nonRelative) {
+			return std::ofstream(getPath(nonRelative));
+		}
+		inline std::ofstream initWithData(fs::path relative, const std::string& data, bool endLine = true) {
+			std::ofstream stream{ output(relative) };
+			stream << data;
+			if (endLine) {
+				stream << std::endl;
+			}
+			return std::move(stream);
 		}
 		inline std::string read(std::ifstream& file) {
 			return { (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>() };
@@ -305,7 +329,7 @@ namespace util {
 		}
 		return false;
 	}
-	inline void iteratorFilesInPath(fs::path path, std::string ext, std::function<void(fs::path, std::string)> cb) {
+	inline void iteratorFilesInPath(const fs::path& path, const std::string& ext, std::function<void(fs::path, const std::string&)> cb) {
 		if (fs::exists(path)) {
 			fs::directory_iterator iterator{ path.string() };
 			for (auto&& entry : iterator) {
@@ -342,14 +366,14 @@ namespace util {
 			objects.push_back(inf->m_list->addr(i));
 		}
 		for (int32_t i{}; i != objects.size(); ++i) {
-			arr[i] = pointers::g_pointerToHandle((rage::CEntity*)objects[i]);
+			arr[i] = classes::getSGUIDFromEntity((rage::CEntity*)objects[i]);
 		}
 		return objects.size();
 	}
-	inline std::wstring strToWstr(std::string str) {
+	inline std::wstring strToWstr(const std::string& str) {
 		return fs::path(str).wstring();
 	}
-	inline std::string time(std::string format) {
+	inline std::string time(const std::string& format) {
 		char timeBuf[256]{};
 		i64 timeSinceEpoch{ std::time(nullptr) };
 		tm localtime{};
@@ -361,16 +385,19 @@ namespace util {
 		"qq",
 		"www.",
 		".gg",
+		". gg",
 		".c",
+		". c",
 		"http",
-		"/Menu",
-		"Money/",
-		"Money\\",
+		"/menu",
+		"money/",
+		"money\\",
 		"--->",
 		"shopgta5",
 		"<b>",
 		"P888",
 		"gtacash",
+		"trustpilot",
 		"\xE5\xBE\xAE\xE4\xBF\xA1", //"wechat" - Chinese
 		"<font s",
 		"sellix.io",
@@ -390,15 +417,16 @@ namespace util {
 		//Known advertisers
 		"wavy",
 		"krutka",
-		"ItzGoated",
+		"itzgoated",
 		"warlord",
 		"doit#",
-		"OrangeMango",
-		"Faynx"
+		"orangeMmango",
+		"faynx",
+		"thecashlounge"
 	};
-	inline bool isSpamMessage(std::string message) {
+	inline bool isSpamMessage(const std::string& message) {
 		for (auto& string : g_advertisementStrings) {
-			if (message.find(string) != std::string::npos)
+			if (lStr(message).find(string) != std::string::npos)
 				return true;
 		}
 		return false;

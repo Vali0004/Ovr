@@ -16,7 +16,7 @@ public:
 	mem end() {
 		return begin().add(size());
 	}
-	size_t size() {
+	i64 size() {
 		return m_size;
 	}
 public:
@@ -32,5 +32,5 @@ private:
 	std::string_view m_name{};
 	HMODULE m_handle{};
 	mem m_base{};
-	size_t m_size{};
+	i64 m_size{};
 };

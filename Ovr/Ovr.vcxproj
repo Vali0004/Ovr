@@ -198,6 +198,7 @@
     <ClInclude Include="src\shv\scripthookv.h" />
     <ClInclude Include="src\stb\image.h" />
     <ClInclude Include="src\stb\image_write.h" />
+    <ClInclude Include="src\util\base64.h" />
     <ClInclude Include="src\util\clipboard.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\util\game_vm_guard.h" />

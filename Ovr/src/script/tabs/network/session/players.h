@@ -5,18 +5,17 @@
 namespace tabs::network::session::players {
 	inline void tab() {
 		elements::menu("Players", [] {
-			for (auto& entry : util::network::g_manager) {
-				if (auto& player{ entry.second }; player.valid()) {
-					elements::menu(player.m_name, [&] {
-						g_selectedPlayer = player.m_index;
-						if (util::network::g_manager.online()) {
-							util::network::player& player{ util::network::g_manager.m_players[g_selectedPlayer] };
+			if (util::network::g_manager.online()) {
+				for (auto& entry : util::network::g_manager) {
+					if (auto& player{ entry.second }; player && player.m_name.size()) {
+						elements::menu(player.m_name, [player] {
+							g_selectedPlayer = player.m_index;
 							selectedPlayer::tab(player);
-						}
-					});
+						});
+					}
 				}
 			}
-			if (!util::network::g_manager.online()) {
+			else {
 				elements::text("You're in story mode! Please join a session.");
 			}
 		});

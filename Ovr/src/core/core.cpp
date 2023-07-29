@@ -41,29 +41,11 @@ namespace core {
 		if (g_scyllaHide->getModule()) {
 			LOG_DEBUG("ScyllaHide loaded.");
 		}
-		//shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
-		//if (shv::g_shvLoader->getModule())
-			//LOG_DEBUG("SHV module loaded.");
+		shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
+		if (shv::g_shvLoader->getModule())
+			LOG_DEBUG("SHV module loaded.");
 		exceptions::initExceptionHandler();
-		pointers::scanSegment("s1");
-		//We need Arxan to intialise first
-		switch (*pointers::g_loadingScreenState) {
-		case eLoadingScreenState::PreLegal: {
-			std::this_thread::sleep_for(24s);
-			*pointers::g_loadingScreenState = eLoadingScreenState::Legals;
-			std::this_thread::sleep_for(500ms);
-		} break;
-		case eLoadingScreenState::Legals: {
-			std::this_thread::sleep_for(14s);
-			*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
-			util::async([] { pointers::scanSegment("s2"); });
-		} break;
-		}
-		util::async([] { pointers::scanSegment("s3"); });
-		while (!pointers::g_hwnd)
-			std::this_thread::sleep_for(10ms);
-		if (pointers::g_scanState != 3)
-			pointers::scanSegment("s2");
+		pointers::scanAll();
 		LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
 		util::game::commands::intialize();
 		std::this_thread::sleep_for(100ms);
@@ -76,7 +58,17 @@ namespace core {
 		g_manager.add("script", &script::onTick);
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
-		util::playSound("injection_sound");
+		g_manager.add("commandStream", [] {
+			while (true) {
+				if (commands::g_setConfig) {
+					commands::g_manager.toFile("Config");
+					commands::g_setConfig = false;
+				}
+				commands::g_engine.commandFromStream();
+				fiber::current()->sleep(2s);
+			}
+		});
+		util::playSound("InjectionSound");
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
 		}
@@ -96,7 +88,7 @@ namespace core {
 		g_renderer.reset();
 		g_hooking.reset();
 		shv::g_asiLoader.clear();
-		//shv::g_shvLoader.reset();
+		shv::g_shvLoader.reset();
 		g_patches.reset();
 		commands::g_manager.clear();
 		exceptions::uninitExceptionHandler();

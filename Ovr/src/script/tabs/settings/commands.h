@@ -8,7 +8,7 @@ namespace tabs::settings {
 			ccheckbox("useDirectMatchResults"_TC);
 			ccheckbox("autoCompleteCommands"_TC);
 			ccheckbox("useFirstCommandOnMultipleResults"_TC);
-			ccheckbox("clearCommandBoxOnEnter"_TC);
+			ccheckbox("clearCommandBoxOnEnter"_TC)
 		});
 	}
 }

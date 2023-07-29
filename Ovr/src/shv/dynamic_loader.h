@@ -73,6 +73,7 @@ namespace shv {
 		void clear() {
 			std::lock_guard lock(m_mutex);
 			m_modules.clear();
+			util::files::initWithData({ "Cache\\Unload.txt" }, "true");
 		}
 		bool isScriptLoaded(std::string name) {
 			std::lock_guard lock(m_mutex);

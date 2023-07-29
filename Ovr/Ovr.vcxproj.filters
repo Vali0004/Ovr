@@ -411,6 +411,9 @@
     <ClInclude Include="src\util\vehicle.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\base64.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp">
@@ -549,7 +552,11 @@
     <ClCompile Include="src\util\statistics.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp" />
-    <ClCompile Include="src\hooking\hooks\allocate_reliable.cpp" />
+    <ClCompile Include="src\hooking\hooks\allocate_reliable.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

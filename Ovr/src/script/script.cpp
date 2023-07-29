@@ -16,6 +16,7 @@
 #include "tabs/settings.h"
 #include "elements.h"
 #include "commands/gui/gui.h"
+#include <hooking/hooking.h>
 
 namespace script {
 	inline bool shouldPosChange(ImVec2 pos) {
@@ -28,7 +29,6 @@ namespace script {
 			elements::window(BRAND"Header", g_guiOpen, [] {
 				elements::setWindowPos({ 13.f, 100.f }, ImGuiCond_Once);
 				elements::setWindowSize({ g_width, 80.f });
-				
 			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 			ImGuiWindow* window{ elements::getWindow(BRAND"Header") };
 			ImVec2 windowPos{ elements::getWindowPos(window) };

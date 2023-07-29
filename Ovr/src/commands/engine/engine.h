@@ -19,13 +19,12 @@ namespace commands {
 		template <typename t>
 		t convertData(const std::string& str);
 		void commandFromStream() {
-			auto file{ util::files::input("command.txt") };
-			std::string stream{};
-			std::getline(file, stream);
+			auto file{ util::files::input("Command.txt") };
+			std::string stream{ util::files::read(file) };
 			file.close();
 			if (!stream.empty()) {
 				{
-					auto file{ util::files::output("command.txt") };
+					auto file{ util::files::output("Command.txt") };
 					util::files::destory(file);
 				}
 				execute(stream);

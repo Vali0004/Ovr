@@ -8,12 +8,15 @@ namespace util::network {
 			m_snPlayer = session->m_players[m_netGamePlayer->m_player_id];
 			m_snPeer = session->m_peers[m_netGamePlayer->m_player_id];
 			m_index = m_netGamePlayer->m_player_id;
-			m_host = m_netGamePlayer->IsNetworkHost();
-			m_gamerInfo = m_netGamePlayer->GetGamerInfo();
-			m_name = m_netGamePlayer->GetName();
+			m_host = util::network::isHost(m_index);
 			m_playerInfo = m_netGamePlayer->m_player_info;
-			if (m_playerInfo)
+			if (m_playerInfo) {
 				m_ped = m_playerInfo->m_ped;
+				m_gamerInfo = &m_playerInfo->m_gamer_info;
+				if (m_gamerInfo) {
+					m_name = m_gamerInfo->m_name;
+				}
+			}
 			if (m_ped)
 				m_vehicle = m_ped->m_vehicle;
 			if (m_vehicle)
@@ -52,9 +55,6 @@ namespace util::network {
 			for (u16 i{ m_playerCount }; i; --i) {
 				m_players[i].update(getPlayer(i));
 			}
-		}
-		else {
-			m_players.clear();
 		}
 	}
 }

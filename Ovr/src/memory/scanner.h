@@ -2,6 +2,7 @@
 #include "pch/pch.h"
 #include "mem.h"
 #include "module.h"
+#include "exceptions/handler.h"
 
 inline u16 g_foundSigCount{};
 inline u16 g_totalSigCount{};
@@ -40,23 +41,23 @@ inline bool doesMemoryMatch(u8* target, std::optional<u8> const* sig, u64 len) {
 	}
 	return true;
 }
-inline u64 findPatternBruteforce(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
+inline u64 findPatternBruteforce(std::optional<u8>* bytes, u64 count, hmodule module = {}) {
 	mem memoryRegion{ module.begin() };
 	//We can skip the PE header and entry point
 	for (u64 data{ memoryRegion + 0x1100ui64 }; data != module.size(); data += 2) {
 		mem currentMemoryAddress{ memoryRegion.add(data) };
-		if (doesMemoryMatch(currentMemoryAddress.as<u8*>(), bytes.data(), bytes.size())) {
+		if (doesMemoryMatch(currentMemoryAddress.as<u8*>(), bytes, count)) {
 			return currentMemoryAddress.as<u64>();
 		}
 	}
 	return NULL;
 }
 inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
-	u64 maxShift{ bytes.size() };
-	u64 maxIdx{ maxShift - 1 };
+	i64 maxShift{ static_cast<i64>(bytes.size()) }; //signed unsigned bullshit...
+	i64 maxIdx{ maxShift - 1 };
 	//Get wildcard index, and store max shifable byte count
-	u64 wildCardIdx{ u64(-1) };
-	for (i32 i{ i32(maxIdx - 1) }; i >= 0; --i) {
+	i64 wildCardIdx{ -1 };
+	for (i64 i{ maxIdx - 1 }; i >= 0; --i) {
 		if (!bytes[i]) {
 			maxShift = maxIdx - i;
 			wildCardIdx = i;
@@ -64,22 +65,28 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 		}
 	}
 	//Store max shiftable bytes for non wildcards.
-	u64 shiftTable[UINT8_MAX + 1]{};
-	for (u64 i{}; i <= UINT8_MAX; ++i)
+	i64 shiftTable[UINT8_MAX + 1]{};
+	for (i64 i{}; i <= UINT8_MAX; ++i)
 		shiftTable[i] = maxShift;
-	for (u64 i{ wildCardIdx + 1 }; i != maxIdx; ++i)
+	for (i64 i{ wildCardIdx + 1 }; i != maxIdx; ++i)
 		shiftTable[*bytes[i]] = maxIdx - i;
 	//Loop data
-	for (u64 curIdx{}; curIdx != module.size() - bytes.size();) {
-		for (u64 sigIdx = maxIdx; sigIdx >= 0; --sigIdx) {
-			if (bytes[sigIdx] && *module.begin().add(curIdx + sigIdx).as<u8*>() != *bytes[sigIdx]) {
-				curIdx += shiftTable[*module.begin().add(curIdx + maxIdx).as<u8*>()];
-				break;
-			}
-			else if (sigIdx == NULL) {
-				return module.begin().add(curIdx).as<u64>();
+	try {
+		for (i64 curIdx{}; curIdx != module.size() - static_cast<i64>(bytes.size());) {
+			for (i64 sigIdx = maxIdx; sigIdx >= 0; --sigIdx) { //bruh. iLl dEfIneD fOr LoOp. Suck my motherfucking dick.
+				if (bytes[sigIdx].has_value() && *module.begin().add(curIdx + sigIdx).as<u8*>() != bytes[sigIdx].value()) {
+					curIdx += shiftTable[*module.begin().add(curIdx + maxIdx).as<u8*>()];
+					break;
+				}
+				else if (sigIdx == 0) {
+					return module.begin().add(curIdx).as<u64>();
+				}
 			}
 		}
+	}
+	catch (const std::exception& ex) {
+		//Skip first 5 bytes for MH trampoline, if it's not a hook, it would've failed anyways. Fuck it
+		return findPatternBruteforce(&bytes.data()[5], bytes.size() - 5, module);
 	}
 	return NULL;
 }

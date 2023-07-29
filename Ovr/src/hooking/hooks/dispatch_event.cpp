@@ -106,9 +106,8 @@ bool hooks::dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
 				buffer.ReadBool(&msg.m_is_team);
-				LOG_DEBUG("balls");
 				if (util::isSpamMessage(msg.m_message)) {
-					switch ("chatSpam"_PC->state()) {
+					switch ("chatSpamProtection"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "{} is a chat spammer",  player.m_name);
 					} break;
@@ -128,9 +127,8 @@ bool hooks::dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::
 				CMsgTextMessage2 msg{};
 				buffer.ReadString(msg.m_message, sizeof(msg.m_message));
 				buffer.ReadPeerId(&msg.m_peer_id);
-				LOG_DEBUG("balls");
 				if (util::isSpamMessage(msg.m_message)) {
-					switch ("chatSpam"_PC->state()) {
+					switch ("chatSpamProtection"_PC->state()) {
 					case eProtectionState::Notify: {
 						LOG(Session, "{} is a text message spammer",  player.m_name);
 					} break;

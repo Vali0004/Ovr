@@ -7,7 +7,18 @@ namespace core {
 	void initialize() {
 	}
 	void loop() {
+		std::filesystem::path path{ std::getenv("appdata") };
+		path /= "Ovr";
+		path /= "Cache";
+		path /= "Unload.txt";
+		std::ifstream file{};
 		while (global::g_running) {
+			file.open(path);
+			if (std::filesystem::exists(path) && file.is_open()) {
+				file.close();
+				std::filesystem::remove(path);
+				global::g_running = false;
+			}
 			Sleep(5000);
 		}
 	}

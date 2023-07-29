@@ -39,7 +39,7 @@ inline rage::CDynamicEntity* getEntityAttachedTo(rage::CDynamicEntity* Object) {
 		return nullptr;
 	return reinterpret_cast<rage::CDynamicEntity*>(component[0x00]);
 }
-bool isAttachmentInfinite(rage::CDynamicEntity* Object, uint16_t AttachedTo) {
+inline bool isAttachmentInfinite(rage::CDynamicEntity* Object, uint16_t AttachedTo) {
 	if (!Object)
 		return false;
 	constexpr u64 reasonableLimit{ 150 };
@@ -52,7 +52,7 @@ bool isAttachmentInfinite(rage::CDynamicEntity* Object, uint16_t AttachedTo) {
 	}
 	return false;
 }
-rage::CBaseModelInfo* getModel(u32 hash) {
+inline rage::CBaseModelInfo* getModel(u32 hash) {
 	const auto table{ *pointers::g_hashTable };
 	for (HashNode* node{ table.m_lookup_table[hash % table.m_lookup_key] }; node; node = node->m_next) {
 		if (node->m_hash == hash) {
@@ -63,7 +63,7 @@ rage::CBaseModelInfo* getModel(u32 hash) {
 	}
 	return nullptr;
 }
-bool crashObjectCheck(CNetGamePlayer* Sender, u32 hash) {
+inline bool crashObjectCheck(CNetGamePlayer* Sender, u32 hash) {
 	if (rage::CBaseModelInfo* model{ getModel(hash) }) {
 		if (!model->of_any_type({ eModelType::Object, eModelType::Time, eModelType::Weapon, eModelType::Destructable, eModelType::WorldObject, eModelType::Sprinkler, eModelType::Unk65, eModelType::Plant, eModelType::LOD, eModelType::Unk132, eModelType::Building })) {
 			return true;
@@ -85,7 +85,7 @@ bool crashObjectCheck(CNetGamePlayer* Sender, u32 hash) {
 	}
 	return false;
 }
-bool crashVehicleCheck(CNetGamePlayer* Sender, u32 hash) {
+inline bool crashVehicleCheck(CNetGamePlayer* Sender, u32 hash) {
 	if (rage::CBaseModelInfo* model{ getModel(hash) }) {
 		if (!model->of_any_type({ eModelType::Vehicle, eModelType::Unk133 })) {
 			return true;
@@ -109,7 +109,7 @@ bool crashVehicleCheck(CNetGamePlayer* Sender, u32 hash) {
 	}
 	return false;
 }
-bool crashPedCheck(CNetGamePlayer* Sender, u32 hash) {
+inline bool crashPedCheck(CNetGamePlayer* Sender, u32 hash) {
 	if (rage::CBaseModelInfo* model{ getModel(hash) }) {
 		if (!model->of_any_type({ eModelType::Ped, eModelType::OnlineOnlyPed })) {
 			return true;

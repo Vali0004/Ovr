@@ -2,7 +2,7 @@
 #include "memory/pointers.h"
 
 namespace commands {
-	void hotkey::add_hotkey(int key) {
+	void hotkey::add_hotkey(i32 key) {
 		m_keys.emplace_back(key);
 	}
 	bool hotkey::pressed() {
@@ -28,6 +28,12 @@ namespace commands {
 		for (auto& e : m_commands) {
 			e.second->init();
 		}
+		if (util::files::input("Config.json").is_open()) {
+			fromFile("Config");
+		}
+		else {
+			toFile("Config");
+		}
 	}
 	void manager::tick() {
 		for (auto& e : m_commands) {
@@ -47,6 +53,42 @@ namespace commands {
 			auto& c{ e.second };
 			c->~abstractCommand();
 			delete c;
+		}
+	}
+
+	void manager::fromFile(const std::string& name) {
+		if (name.empty()) {
+			return;
+		}
+		std::ifstream file{ util::files::input(name + ".json")};
+		if (file) {
+			nlohmann::json json{};
+			file >> json;
+			for (const auto& entry : getCommands()) {
+				const auto& command{ entry.second };
+				if (json["features"].contains(command->id())) {
+					command->m_json = json["features"][command->id()];
+					//command->deserialise();
+				}
+			}
+		}
+		else {
+			LOG(Commands, "{} is not a valid config.", name);
+		}
+	}
+	void manager::toFile(const std::string& name) {
+		if (name.empty()) {
+			return;
+		}
+		nlohmann::json json{};
+		for (const auto& entry : getCommands()) {
+			const auto& command{ entry.second };
+			command->serialise();
+			json["features"][command->id()].push_back(command->m_json);
+		}
+		std::ofstream file{ util::files::output(name + ".json")};
+		if (file) {
+			file << json.dump(1, '	') << std::endl;
 		}
 	}
 }

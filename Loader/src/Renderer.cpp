@@ -40,16 +40,21 @@ void CreateImFont(ImFontAtlas* Atlas, ImFont*& Font, uint8_t(&Data)[DataSize], f
 Renderer::Renderer() {
 	m_WndClassEx = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandleA(0), 0, 0, 0, 0, BRAND, 0 };
 	RegisterClassExA(&m_WndClassEx);
-	m_Hwnd = CreateWindowExA(WS_EX_TRANSPARENT | WS_EX_LAYERED, m_WndClassEx.lpszClassName, BRAND, WS_DISABLED, 200, 200, 0, 0, NULL, NULL, m_WndClassEx.hInstance, NULL);
+	ImVec2 WindowSize{ g_DebugBackground ? 1920.f : 0.f, g_DebugBackground ? 1080.f : 0.f };
+	m_Hwnd = CreateWindowExA(g_DebugBackground ? WS_OVERLAPPED : WS_EX_TRANSPARENT | WS_EX_LAYERED, m_WndClassEx.lpszClassName, BRAND, g_DebugBackground ? WS_OVERLAPPEDWINDOW : WS_DISABLED, 200, 200, WindowSize.x, WindowSize.y, NULL, NULL, m_WndClassEx.hInstance, NULL);
 	if (!CreateD3D(m_Hwnd)) {
 		CleanupD3D();
 		UnregisterClassA(m_WndClassEx.lpszClassName, m_WndClassEx.hInstance);
 	}
-	SetLayeredWindowAttributes(m_Hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
-	ShowWindow(m_Hwnd, SW_HIDE);
+	if (!g_DebugBackground) {
+		SetLayeredWindowAttributes(m_Hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
+	}
+	ShowWindow(m_Hwnd, g_DebugBackground ? SW_SHOW : SW_HIDE);
 	UpdateWindow(m_Hwnd);
 	ImGui::CreateContext();
-	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	if (!g_DebugBackground) {
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	}
 	ImGui_ImplWin32_Init(m_Hwnd);
 	ImGui_ImplDX11_Init(m_Device, m_Context);
 	m_Config.FontDataOwnedByAtlas = false;
@@ -67,7 +72,7 @@ Renderer::~Renderer() {
 	DestroyWindow(m_Hwnd);
 	UnregisterClassA(m_WndClassEx.lpszClassName, m_WndClassEx.hInstance);
 }
-constexpr float g_RenderTargetRGBA[4] = { 0.2f, 0.2f, 0.2f, 0.f };
+constexpr float g_RenderTargetRGBA[4] = { 0.2f, 0.2f, 0.2f, 1.f };
 bool Renderer::Present() {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();

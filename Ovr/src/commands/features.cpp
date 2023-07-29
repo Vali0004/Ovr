@@ -1183,7 +1183,7 @@ namespace commands::features {
 		//Protections::Kicks
 		g_manager.add(sectionProtectionCommand("allKickProtections", "All Kick Protections", "Sets all kick protections", protections::kicks::allKickProtections));
 		g_manager.add(protectionCommand("desyncKickProtection", "Desync", "May cause an modder detction"));
-		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"))
+		g_manager.add(protectionCommand("lostConnectionKickProtection", "Lost Connection"));
 		g_manager.add(protectionCommand("bailKickProtection", "Bail"));
 		g_manager.add(protectionCommand("nullFunctionKickProtection", "Null Function"));
 		g_manager.add(protectionCommand("arrayOverrunKickProtection", "ScriptVM Overrun Kick", "This protects against all script event kicks that cause an array overflow"));

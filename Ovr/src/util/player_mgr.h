@@ -10,7 +10,7 @@ namespace util::network {
 		void update(CNetGamePlayer* netGamePlayer);
 	public:
 		bool valid() {
-			return m_netGamePlayer && m_netGamePlayer->IsConnected() && m_netGamePlayer->m_player_id != UINT8_MAX;
+			return m_netGamePlayer && m_netGamePlayer->m_player_id != UINT8_MAX;
 		}
 		operator bool() {
 			return valid();
@@ -186,10 +186,7 @@ namespace util::network {
 			return mgr()->m_player_list;
 		}
 		CNetGamePlayer* getPlayer(u16 index) {
-			if (m_playerCount > index && mgr()) {
-				return players()[index];
-			}
-			return nullptr;
+			return players()[index];
 		}
 		CNetGamePlayer* getLocalPlayer() {
 			return mgr()->m_local_net_player;

@@ -682,7 +682,7 @@ namespace rage {
 		}
 		bool ReadString(char* string, uint32_t length) {
 			bool extended{ Read<bool>(1) };
-			uint32_t len{ Write<uint32_t>(extended ? 15 : 7) };
+			uint32_t len{ Read<uint32_t>(extended ? 15 : 7) };
 			ReadArray(string, len * 8);
 			if (string[len - 1] != '\0')
 				return false;
@@ -1270,7 +1270,7 @@ namespace rage {
 	}; //Size: 0x0030
 	static_assert(sizeof(netSyncTree) == 0x4B8);
 #pragma pack(pop)
-	class netObject {
+	class netObject : public atRTTI<netObject> {
 	public:
 		int16_t m_object_type; //0x0008
 		int16_t m_object_id; //0x000A
@@ -2503,6 +2503,7 @@ public:
 	uint32_t m_transaction_count; //0x066C
 }; //Size: 0x0670
 static_assert(sizeof(CNetShopTransactionBasket) == 0x670);
+#pragma pack(pop)
 class CNetworkShoppingMgr {
 public:
 	virtual ~CNetworkShoppingMgr() = default;
@@ -2531,7 +2532,6 @@ public:
 	}
 }; //Size: 0x02C8
 static_assert(sizeof(CNetworkShoppingMgr) == 0x2C8);
-#pragma pack(pop)
 class UIElement {
 public:
 	int m_index; //0x0000

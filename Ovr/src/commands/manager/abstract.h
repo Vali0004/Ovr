@@ -2,10 +2,11 @@
 #include "pch/pch.h"
 #include "rage/classes.h"
 #include "core/logger.h"
+#include "json/json.h"
 
 namespace commands {
 	union value {
-		const char* string;
+		char* string;
 		bool toggle;
 		float floating_point;
 		i8 i8;
@@ -51,9 +52,9 @@ namespace commands {
 	};
 	class hotkey {
 	public:
-		std::vector<int> m_keys{};
+		std::vector<i32> m_keys{};
 		bool m_enabled{};
-		void add_hotkey(int key);
+		void add_hotkey(i32 key);
 		bool pressed();
 	};
 	enum class eCommandType : u8 {
@@ -85,6 +86,33 @@ namespace commands {
 			m_intialized = true;
 		}
 		virtual void run() {}
+		virtual void serialise() {
+			m_json = {
+				{
+					"name", m_name 
+				},
+				{ 
+					"description", m_description
+				},
+				{
+					"hotkeys", {}
+				}
+			};
+			auto hotkeys{ m_json["hotkeys"] };
+			for (i32& key : m_hotkey.m_keys) {
+				hotkeys.push_back(key); //They don't need a ID, and we pull as a array
+			}
+		}
+		virtual void deserialise() {
+			m_name = m_json["name"];
+			m_description = m_json["description"];
+			auto hotkeys{ m_json["hotkeys"] };
+			if (!hotkeys.is_null() && !hotkeys.empty()) {
+				for (auto& hotkey : hotkeys) {
+					m_hotkey.add_hotkey(hotkey.get<i32>());
+				}
+			}
+		}
 		void deallocate() {
 			m_values.clear();
 			m_hotkey.m_keys.clear();
@@ -106,8 +134,15 @@ namespace commands {
 			typedValue* g{ get_value(index) };
 			if (g)
 				return g->m_value;
-			static value dummy{};
-			return dummy;
+			//If the value does not exist, we need to create one.
+			typedValue dummy{};
+			//To get the right index, we want to push a dummy however many times until we reach the index.
+			for (u32 i{}; i != index - value_count(); ++i) {
+				push_value(dummy);
+			}
+			//Values are accessed like so: get(index).toggle
+			// If the value does not exist, it will deref a null pointer. We create a dummy in order to avoid this.
+			return get(index);
 		}
 		void add_hotkey(int key) {
 			m_hotkey.add_hotkey(key);
@@ -130,6 +165,7 @@ namespace commands {
 		bool m_looped{};
 		std::vector<std::string> m_buffer{};
 		std::string m_context{};
+		nlohmann::json m_json{};
 	private:
 		bool m_intialized{};
 		std::vector<typedValue*> m_values{};

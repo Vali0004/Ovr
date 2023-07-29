@@ -34,66 +34,87 @@ namespace commands {
 	void engine::executeWithCommand(abstractCommand*& command, const std::string& context) {
 		auto arguments{ getMatches(context, R"_(\S+)_") };
 		size_t trueArgCount{ arguments.size() - 1 };
-		if (command->m_type != eCommandType::ActionCommand && command->m_type != eCommandType::ToggleCommand && command->m_type != eCommandType::VariadicCommand) {
-			if (command->m_type != eCommandType::ToggleIntCommand && command->m_type != eCommandType::ToggleFloatCommand) {
-				if (trueArgCount != 1) {
-					LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
-					return;
-				}
+		switch (command->m_type) {
+		case eCommandType::ToggleCommand:
+		case eCommandType::VariadicCommand:
+		case eCommandType::StringCommand:
+		case eCommandType::HashCommand: {
+
+		} break;
+		case eCommandType::ActionCommand: {
+			if (trueArgCount > 0) {
+				LOG(Commands, "You provided {} arguments for a command that requires no arguments.", trueArgCount);
+				return;
 			}
-			else {
-				if (trueArgCount != 2) {
-					LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
-					return;
-				}
+		} break;
+		case eCommandType::ToggleFloatCommand:
+		case eCommandType::ToggleIntCommand: {
+			if (trueArgCount > 2) {
+				LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
+				return;
 			}
+		} break;
+		default: {
+			if (trueArgCount > 1) {
+				LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
+				return;
+			}
+		} break;
 		}
 		//Handle argument parsing
 		switch (command->m_type) {
 		case eCommandType::ToggleCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
+			g_setConfig = true;
 		} break;
 		case eCommandType::IntCommand: {
 			command->get(0).i32 = convertData<int>(arguments[1]);
+			g_setConfig = true;
 		} break;
 		case eCommandType::FloatCommand: {
 			command->get(0).floating_point = convertData<float>(arguments[1]);
+			g_setConfig = true;
 		} break;
 		case eCommandType::ToggleIntCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).i32 = convertData<int>(arguments[1]);
+			command->get(1).i32 = convertData<int>(arguments[2]);
+			g_setConfig = true;
 		} break;
 		case eCommandType::ToggleFloatCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).floating_point = convertData<float>(arguments[1]);
+			command->get(1).floating_point = convertData<float>(arguments[2]);
+			g_setConfig = true;
 		} break;
 		case eCommandType::ActionCommand: {
 			//Handled below, no arguments required.
 		} break;
 		case eCommandType::ProtectionCommand: {
-			command->get(0).string = arguments[1].c_str();
-			static_cast<protectionCommand*>(command)->update(command->get(0).string);
+			auto cmd{ static_cast<protectionCommand*>(command) };
+			cmd->get(0).string = (char*)arguments[1].c_str();
+			cmd->update(cmd->get(0).string);
+			g_setConfig = true;
 		} break;
 		case eCommandType::SectionProtectionCommand: {
-			command->get(0).string = arguments[1].c_str();
-			static_cast<sectionProtectionCommand*>(command)->update(command->get(0).string);
-			static_cast<sectionProtectionCommand*>(command)->run();
+			auto cmd{ static_cast<sectionProtectionCommand*>(command) };
+			cmd->get(0).string = (char*)arguments[1].c_str();
+			cmd->update(cmd->get(0).string);
+			g_setConfig = true;
 		} break;
 		case eCommandType::StringCommand: {
-			command->m_buffer.clear();
-			command->m_context = context;
+			auto cmd{ static_cast<stringCommand*>(command) };
+			cmd->m_buffer.clear();
+			cmd->m_context = context;
 			size_t index{ context.find(arguments[1]) };
-			command->m_buffer.push_back(context.substr(index));
-			static_cast<stringCommand*>(command)->set_string(command->m_buffer[0]);
+			cmd->m_buffer.push_back(context.substr(index));
+			cmd->set_string(cmd->m_buffer[0]);
 		} break;
 		case eCommandType::HashCommand: {
-			command->m_buffer.clear();
-			command->m_context = context;
+			auto cmd{ static_cast<hashCommand*>(command) };
+			cmd->m_buffer.clear();
+			cmd->m_context = context;
 			size_t index{ context.find(arguments[1]) };
-			command->m_buffer.push_back(context.substr(index));
-			static_cast<hashCommand*>(command)->set_string(arguments[1]);
-			printf("arg: %s\n", arguments[1].c_str());
-			command->get(0).string = arguments[1].c_str();
+			cmd->m_buffer.push_back(context.substr(index));
+			cmd->set_key(arguments[1]);
 		} break;
 		case eCommandType::VariadicCommand: {
 			if (command->has_value()) {
@@ -107,7 +128,7 @@ namespace commands {
 						std::string arg{ arguments[i + 1] };
 						switch (value.m_type) {
 						case eValueType::String: {
-							(*value).string = arg.c_str();
+							strncpy((*value).string, arg.c_str(), arg.size());
 						} break;
 						case eValueType::Boolean: {
 							(*value).toggle = convertData<bool>(arg);
@@ -157,13 +178,13 @@ namespace commands {
 					if (command->value_count() == 1) {
 						size_t index{ context.find(arguments[1]) };
 						command->m_buffer.push_back(context.substr(index));
-						command->get(0).string = command->m_buffer[0].c_str();
+						command->get(0).string = (char*)command->m_buffer[0].c_str();
 					}
 					else {
-						command->m_buffer.push_back("Reversed");
+						command->m_buffer.push_back("Reversed"); //Args start at index 1, this is so we don't fuck things up when reading args
 						for (size_t i{ 1 }; i != command->value_count(); ++i) {
 							command->m_buffer.push_back(arguments[i]);
-							command->get(i).string = command->m_buffer[i].c_str();
+							strncpy(command->get(i).string, command->m_buffer[i].c_str(), command->m_buffer[i].size());
 						}
 					}
 				}
@@ -199,6 +220,7 @@ namespace commands {
 			case eCommandType::ToggleFloatCommand:
 			case eCommandType::ToggleCommand: {
 				command->get(0).toggle ^= true;
+				g_setConfig = true;
 				replaceCommand(command);
 				return true;
 			} break;
@@ -218,6 +240,7 @@ namespace commands {
 						command->get(1).i32 = convertData<i32>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
+					g_setConfig = true;
 					replaceCommand(command);
 					return true;
 				} break;
@@ -226,6 +249,7 @@ namespace commands {
 						command->get(1).floating_point = convertData<fp>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
+					g_setConfig = true;
 					replaceCommand(command);
 					return true;
 				} break;
@@ -264,10 +288,9 @@ namespace commands {
 		}
 		else {
 			if (m_useDirectMatchResults) {
-				std::string lower{ search };
-				lower[0] = tolower(lower[0]);
+				std::string lower{ lStr(search) };
 				for (auto& m : matches) {
-					if (m->m_id == search || m->m_id == lower) {
+					if (lStr(m->m_id) == lower) {
 						return m;
 					}
 				}

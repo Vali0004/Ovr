@@ -24,6 +24,14 @@ inline TimecycleKeyframeData* g_timecycleKeyframeData{};
 inline bool g_timecycleKeyframeDataUpdate{ true};
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
+inline void accessTlsStorageFromAnotherThread(std::function<void()> callback) {
+	rage::tlsContext** tlsStorage{ rage::tlsContext::getPointer() };
+	rage::tlsContext tlsDump{ **tlsStorage };
+	rage::tlsContext& oldTlsStorage{ **tlsStorage };
+	memcpy(*tlsStorage, &tlsDump, sizeof(rage::tlsContext));
+	callback();
+	memcpy(*tlsStorage, &oldTlsStorage, sizeof(rage::tlsContext));
+}
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);

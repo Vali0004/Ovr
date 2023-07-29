@@ -7,14 +7,12 @@
 #include "memory/patch.h"
 
 namespace pointers {
-	inline int g_scanState{};
-	extern void scanSegment(ccp seg);
+	extern bool scanAll();
 	extern void doPatches();
 	namespace types {
 		using scrThreadInit = void(*)(rage::scrThread* thread);
 		using scrThreadTick = rage::eThreadState(*)(rage::scrThread* thread, u32 opsToExecute);
 		using scrThreadKill = void(*)(rage::scrThread* thread);
-		using pointerToHandle = Entity(*)(rage::CEntity* ptr);
 		using handleToPointer = rage::CEntity*(*)(Entity handle);
 		using readBitbufArray = bool(*)(rage::datBitBuffer* Buffer, PVOID Read, i32 Bits, i32 Unk);
 		using writeBitbufArray = bool(*)(rage::datBitBuffer* Buffer, PVOID Read, i32 Bits, i32 Unk);
@@ -38,8 +36,9 @@ namespace pointers {
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
 		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
-		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Target);
-		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Item, u32 Action, i32 Value, u32 Target);
+		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Flags);
+		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);
+
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
@@ -56,12 +55,12 @@ namespace pointers {
 		using conMgrTryFree = void(*)(rage::netConnectionManager* pConMgr);
 		using removeMessageFromQueue = void(*)(rage::netMessageQueue* pQueue, rage::netQueuedMessage* pMsg);
 		using removeMessageFromUnacknowledgedReliables = void(*)(rage::netQueuedMessage** pList, u16* pUnk);
+		using sendPresenceEvent = bool(*)(i32 Unk, rage::rlGamerHandle* pHandles, u32 HandleCount, u8* pPayload, i32 Unk5);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
 	inline types::scrThreadKill g_scrThreadKill{};
 	inline types::handleToPointer g_handleToPointer{};
-	inline types::pointerToHandle g_pointerToHandle{};
 	inline types::readBitbufArray g_readBitbufArray{};
 	inline types::writeBitbufArray g_writeBitbufArray{};
 	inline types::readBitsSingle g_readBitsSingle{};
@@ -102,6 +101,7 @@ namespace pointers {
 	inline types::conMgrTryFree g_conMgrTryFree{};
 	inline types::removeMessageFromQueue g_removeMessageFromQueue{};
 	inline types::removeMessageFromUnacknowledgedReliables g_removeMessageFromUnacknowledgedReliables{};
+	inline types::sendPresenceEvent g_sendPresenceEvent{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};

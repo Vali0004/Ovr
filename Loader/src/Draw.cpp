@@ -11,7 +11,8 @@ namespace Draw {
 		style.Alpha = 1.f;
 		style.WindowTitleAlign = ImVec2(0.f, 0.5f);
 		style.WindowPadding = ImVec2(10, 5);
-		style.WindowRounding = 3.f;
+		style.WindowRounding = 15.f;
+		style.FrameRounding = 15.f;
 		style.FramePadding = ImVec2(8, 5);
 		style.FrameRounding = 4.f;
 		style.ItemSpacing = ImVec2(10, 10);

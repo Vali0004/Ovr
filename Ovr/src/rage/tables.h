@@ -183,7 +183,7 @@ namespace tables {
 		"ignus2"_joaat,
 		"s95"_joaat
 	};
-	constexpr u32 g_invalidObjects[46]{
+	constexpr u32 g_invalidObjects[60]{
 		"prop_dummy_01"_joaat,
 		"prop_fragtest_cnst_02"_joaat,
 		"prop_fragtest_cnst_03"_joaat,
@@ -249,6 +249,16 @@ namespace tables {
 		"apa_mp_apa_yacht_jacuzzi_ripple"_joaat,
 		"apa_mp_apa_yacht_jacuzzi_ripple2"_joaat,
 		"apa_mp_apa_yacht_jacuzzi_ripple003"_joaat,
+		"prop_rub_cage01a"_joaat,
+		"prop_fnclink_05crnr1"_joaat,
+		"prop_gold_cont_01"_joaat,
+		"prop_fnclink_02n"_joaat,
+		"prop_fnclink_04g"_joaat,
+		"prop_fnclink_09b"_joaat,
+		"prop_feeder1"_joaat,
+		"stt_prop_stunt_tube_s"_joaat,
+		"prop_feeder1_cr"_joaat,
+		"p_cablecar_s"_joaat,
 	};
 }
 class nodeId {

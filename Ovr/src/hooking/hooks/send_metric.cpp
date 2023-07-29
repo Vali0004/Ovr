@@ -81,5 +81,15 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 			return false;
 		}
 	}
+	if (pMetric->get_name_hash() == "RDEV"_joaat) {
+		std::string s{ json.str() };
+		CPlayerInfo* playerInfo{ util::classes::getPlayerInfo() };
+		rage::rlGamerInfo& gamerInfo{ playerInfo->m_gamer_info };
+		rage::rlGamerHandle& gamerHandle{ gamerInfo.m_unk_gamer_handle };
+		if (s.find(std::to_string(gamerHandle.m_rockstar_id))) {
+			//We are the ones tripping RDEV, not someone else. Fuck everyone else, we only cover our own ass
+			return false;
+		}
+	}
 	RET_CALL(sendMetric, pMetric, Unk);
 }
