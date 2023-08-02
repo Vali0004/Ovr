@@ -24,13 +24,35 @@ inline TimecycleKeyframeData* g_timecycleKeyframeData{};
 inline bool g_timecycleKeyframeDataUpdate{ true};
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
-inline void accessTlsStorageFromAnotherThread(std::function<void()> callback) {
-	rage::tlsContext** tlsStorage{ rage::tlsContext::getPointer() };
-	rage::tlsContext tlsDump{ **tlsStorage };
-	rage::tlsContext& oldTlsStorage{ **tlsStorage };
-	memcpy(*tlsStorage, &tlsDump, sizeof(rage::tlsContext));
-	callback();
-	memcpy(*tlsStorage, &oldTlsStorage, sizeof(rage::tlsContext));
+inline void accessTlsStorageFromAnotherThread(u32 hash, std::function<void(rage::tlsContext*)> callback) {
+	try {
+		rage::tlsContext* threadStorage{ rage::tlsContext::get() };
+		GtaThread* thread{ util::classes::getGtaThread(hash) };
+		rage::scrThread* oThread{ threadStorage->m_script_thread };
+		rage::sysMemAllocator* oSysMemAllocater{ threadStorage->m_allocator };
+		rage::sysMemAllocator* oTlsSysMemAllocater{ threadStorage->m_tls_entry };
+		rage::sysMemAllocator* oUnkTlsSysMemAllocater{ threadStorage->m_unk_allocator };
+		threadStorage->m_script_thread = thread;
+		threadStorage->m_allocator = threadStorage->m_tls_entry;
+		threadStorage->m_tls_entry = threadStorage->m_allocator;
+		threadStorage->m_unk_allocator = threadStorage->m_tls_entry;
+		threadStorage->m_is_script_thread_active = true;
+		std::invoke(std::move(callback), threadStorage);
+		threadStorage->m_script_thread = oThread;
+		threadStorage->m_allocator = oSysMemAllocater;
+		threadStorage->m_tls_entry = oTlsSysMemAllocater;
+		threadStorage->m_unk_allocator = oUnkTlsSysMemAllocater;
+		threadStorage->m_is_script_thread_active = oThread->m_serialised.m_state == rage::eThreadState::running;
+	}
+	catch (std::runtime_error& err) {
+		LOG_DEBUG("Runtime error {} in {}", err.what(), __FUNCTION__);
+	}
+	catch (std::exception& ex) {
+		LOG_DEBUG("Exception {} in {}", ex.what(), __FUNCTION__);
+	}
+	catch (...) {
+		LOG_DEBUG("Unknown exception in {}", __FUNCTION__);
+	}
 }
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
@@ -50,6 +72,7 @@ struct hooks {
 	static i64 updateTimecycleData(u64* _This, TimecycleKeyframeData* pData);
 	static void* allocateReliable(rage::netConnection* pCon, i32 RequiredMemory);
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
+	static u64 writePlayerGameStateDataNode(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
@@ -106,6 +129,7 @@ public:
 	detour m_insertStreamingModule;
 	detour m_updateTimecycleData;
 	detour m_allocateReliable;
+	detour m_writePlayerGameStateDataNode;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

@@ -15,7 +15,7 @@ inline gameNamespaceLookup g_namespace0Lookup[25]{
         { 5, 0x83666F9FB8FEBD4B },
         { 6, 0xC1B1E9A034A63A62 },
         { 7, 0x5AE11BC36633DE4E },
-        { 8, 0x50597EE2 },
+        { 8, 0x0000000050597EE2 },
         { 9, 0xBADBFA3B172435F },
         { 10, 0xD0FFB162F40A139C },
         { 11, 0x71D93B57D07F9804 },

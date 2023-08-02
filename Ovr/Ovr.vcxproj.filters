@@ -106,6 +106,9 @@
     <Filter Include="util">
       <UniqueIdentifier>{43339F7C-2F6A-A00D-D856-8610C46C1C0F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rage\script">
+      <UniqueIdentifier>{20bd9656-561b-48b5-a9bf-eb5a33d2866a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\commands\commands.h">
@@ -414,6 +417,18 @@
     <ClInclude Include="src\util\base64.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="src\rage\script\commands.h">
+      <Filter>rage\script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\script\collections.h">
+      <Filter>rage\script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\script\loader.h">
+      <Filter>rage\script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\script\program.h">
+      <Filter>rage\script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp">
@@ -557,6 +572,12 @@
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp">
       <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\write_player_game_state_data_node.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rage\script\loader.cpp">
+      <Filter>rage\script</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 
 uint64_t getOldNativeFromTable(uint64_t hash) {
     for (auto& p : g_table) {
-        if (p.u == hash) {
+        if (p.u == hash || p.o == hash) {
             return p.o;
         }
     }
@@ -87,7 +87,7 @@ void processNamespace(uint64_t address) {
         }
         addr++;
     }
-    //std::cout << "Namespace " << g_natives.size() << " had " << natives.size() << " natives." << std::endl;
+    //std::cout << "//Namespace " << g_natives.size() << " had " << natives.size() << " natives." << std::endl;
     g_natives.push_back({ g_natives.size(), std::move(natives) });
 }
 void dumpNatives(uint64_t address, uint64_t size) {

@@ -144,6 +144,10 @@
     <ClInclude Include="src\rage\engine.h" />
     <ClInclude Include="src\rage\enums.h" />
     <ClInclude Include="src\rage\joaat.h" />
+    <ClInclude Include="src\rage\script\collections.h" />
+    <ClInclude Include="src\rage\script\loader.h" />
+    <ClInclude Include="src\rage\script\commands.h" />
+    <ClInclude Include="src\rage\script\program.h" />
     <ClInclude Include="src\rage\tables.h" />
     <ClInclude Include="src\renderer\dxtk\dxtexture2d_wrapper.h" />
     <ClInclude Include="src\renderer\dxtk\state_saver.h" />
@@ -252,6 +256,7 @@
     <ClCompile Include="src\rage\commands\dump_commands.cpp" />
     <ClCompile Include="src\rage\commands\invoker\invoker.cpp" />
     <ClCompile Include="src\rage\defines.cpp" />
+    <ClCompile Include="src\rage\script\loader.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\script\notifications\notifications.cpp" />
     <ClCompile Include="src\script\script.cpp" />
@@ -259,6 +264,7 @@
     <ClCompile Include="src\util\message.cpp" />
     <ClCompile Include="src\util\player_mgr.cpp" />
     <ClCompile Include="src\util\statistics.cpp" />
+    <ClCompile Include="src\hooking\hooks\write_player_game_state_data_node.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

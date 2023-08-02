@@ -39,6 +39,9 @@ namespace util {
 		inline rage::atArray<GtaThread*>& getThreads() {
 			return *pointers::g_gtaThreads;
 		}
+		inline rage::scrProgram* getScrProgram(u32 hash) {
+			return pointers::g_scrProgramTable->find_script(hash);
+		}
 		inline GtaThread* getGtaThread(u32 hash) {
 			for (GtaThread* thread : getThreads()) {
 				if (thread->m_script_hash == hash) {

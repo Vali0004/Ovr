@@ -68,7 +68,7 @@ namespace commands {
 		g_manager.add(stringCommand("print", "Print", "Prints a string", print));
 		g_manager.add(actionCommand("forceQuitToSp", "Force Quit To Story Mode", "Forcefully quits to SP", forceQuitToSp));
 		g_manager.add(actionCommand("resetState", "Reset Menu State", "Resets all commands and GUI elements", resetState));
-		g_manager.add(actionCommand("nut", "NUT", nut));
+		g_manager.add(actionCommand("nut", "da nut command (bess command)", nut));
 		features::init();
 		g_manager.init();
 	}

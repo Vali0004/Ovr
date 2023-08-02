@@ -26,9 +26,11 @@
 		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset); \
 	} break; \
 }
-
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	g_statistics.m_lastScriptEventSender.update(Sender);
+	#ifdef DEBUG
+	g_logger->printArray<i64>(std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
+	#endif
 	#define CASE(e, n) case eScriptEvents::##e: { PROT_CHECK(n); } break
 	switch (static_cast<eScriptEvents>(pEvent->m_args[0])) {
 	CASE(ScriptEventGbDisableGoonMembership, "ceoBanProtection");
@@ -47,7 +49,7 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(TickerEventSpectatorStart, "spectateProtection");
 	CASE(ScriptEventInviteNearbyPlayersIntoApartment, "teleportProtection");
 	CASE(ScriptEventWarpToQuickTravelDestination, "teleportToWarehouseProtection");
-	CASE(ScriptEventLeaveVehicle, "gentleVehicleKickProtection");
+	CASE(ScriptEventLeaveVehicle, "vehicleKickProtection");
 	CASE(ScriptEventGroupWarp, "mcTeleportProtection");
 	CASE(ScriptEventGbNonBossChallengeRequest, "startActivityProtection");
 	CASE(ScriptEventTriggerExitAllFromSimpleInterior, "kickFromInteriorProtection");

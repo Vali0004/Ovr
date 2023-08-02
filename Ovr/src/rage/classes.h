@@ -944,19 +944,19 @@ namespace rage {
 			uint8_t m_call_depth; //0x0060
 			uint8_t unk_0061; //0x0061
 			uint16_t unk_0062; //0x0062
-			char m_callstack[16]; //0x0068
+			char m_callstack[16]; //0x0064
 		} m_serialised; //0x0000
-		char unk_0078[48]; //0x0078
-		scrValue* m_stack; //0x00B0
-		uint32_t unk_00B8; //0x00B8
-		uint32_t m_arg_size; //0x00BC
-		uint32_t m_arg_loc; //0x00C0
-		uint32_t unk_00C4; //0x00C4
-		const char* m_exit_message; //0x00C8
-		uint32_t unk_00D0; //0x00D0
-		char m_name[64]; //0x00D4
-		class scriptHandler* m_handler; //0x0110
-		class CGameScriptHandlerNetComponent* m_net_component; //0x0118
+		char unk_0078[48]; //0x00A8
+		scrValue* m_stack; //0x00A8
+		uint32_t unk_00B0; //0x00B0
+		uint32_t m_arg_size; //0x00B4
+		uint32_t m_arg_loc; //0x00B8
+		uint32_t unk_00BC; //0x00BC
+		const char* m_exit_message; //0x00C0
+		uint32_t unk_00C8; //0x00C8
+		char m_name[64]; //0x00CC
+		class scriptHandler* m_handler; //0x010C
+		class CGameScriptHandlerNetComponent* m_net_component; //0x0114
 	}; //Size: 0x0128
 	static_assert(sizeof(scrThread) == 0x128);
 	#pragma pack(pop)
@@ -979,48 +979,50 @@ namespace rage {
 		uint32_t m_name_hash; //0x0058
 		uint32_t m_ref_count; //0x005C
 		const char* m_name; //0x0060
-		const char** m_strings_data; //0x0068
-		uint32_t m_strings_count; //0x0070
+		const char** m_string_heaps; //0x0068
+		uint32_t m_string_heap_size; //0x0070
 		char m_breakpoints[12]; //0x0074 - rage::atMap<uint8_t>
 
 		bool is_valid() const {
 			return m_code_size != 0;
 		}
 		uint32_t get_num_code_pages() const {
-			return (m_code_size + 0x3FFF) >> 14;
+			return (m_code_size + scrPageMask) >> scrStringShift;
 		}
-		uint32_t get_code_page_size(uint32_t page) const {
-			auto num = get_num_code_pages();
-			if (page < num) {
-				if (page == num - 1)
-					return m_code_size & 0x3FFF;
-				return 0x4000;
-			}
-			return 0;
+		uint32_t get_string_heap_count() const {
+			return (m_string_heap_size + scrStringMask) >> scrStringShift;
+		}
+		uint32_t get_string_heap_chunck_size(uint32_t i) const {
+			return i == get_string_heap_count() - 1 ? m_string_heap_size - (i << scrStringShift) : scrStringSize;
+		}
+		uint32_t get_code_page_size(uint32_t i) const {
+			return i == get_num_code_pages() - 1 ? m_code_size & scrPageMask : scrStringSize;
 		}
 		uint32_t get_full_code_size() const {
-			auto numPages = get_num_code_pages();
-			if (!numPages)
-				return 0;
-			if (numPages == 1)
+			uint32_t numPages{ get_num_code_pages() };
+			if (numPages == 1) {
 				--numPages;
-			return (numPages * 0x4000) + (m_code_size & 0x3FFF);
+			}
+			return (numPages * scrStringSize) + (m_code_size & scrPageMask);
 		}
 		uint8_t* get_code_page(std::uint32_t page) const {
 			return m_code_blocks[page];
 		}
 		uint64_t get_string_page(uint64_t index) const {
-			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_strings_data)) + index * 8;
+			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_string_heaps)) + index * 8;
 		}
 		uint8_t* get_code_address(uint32_t index) const {
 			if (index < m_code_size)
-				return &m_code_blocks[index >> 14][index & 0x3FFF];
+				return &m_code_blocks[index >> scrPageShift][index & scrPageMask];
 			return nullptr;
 		}
 		const char* get_string(uint32_t index) const {
-			if (index < m_strings_count)
-				return &m_strings_data[index >> 14][index & 0x3FFF];
+			if (index < m_string_heap_size)
+				return &m_string_heaps[index >> scrStringShift][index & scrStringMask];
 			return nullptr;
+		}
+		uint32_t get_string_page_size(uint32_t i) const {
+			return i == get_num_code_pages() - 1 ? m_string_heap_size & scrPageMask : scrStringSize;
 		}
 		Cmd* get_native(Cmd entrypoint) {
 			for (uint32_t i{}; i != m_native_count; ++i) {

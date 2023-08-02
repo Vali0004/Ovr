@@ -65,7 +65,14 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	SET_PC(ser->m_pointer_count);
 	char buf[16]{};
 	while (true) {
+		#ifdef HAS_ADDED_FUNCTIONALITY //cursed af
+		g_lastScriptVMOpcodes.second.first = g_lastScriptVMOpcodes.second.second;
+		g_lastScriptVMOpcodes.second.second = g_lastScriptVMOpcodes.second.first;
+		g_lastScriptVMOpcodes.first = LoadImm8;
+		switch (g_lastScriptVMOpcodes.first) {
+		#else
 		switch (LoadImm8) {
+		#endif
 			CASE(OP_NOP) CHECK_PC; FETCH_INSN; NEXT_INSN;
 			CASE(OP_IADD) FETCH_INSN; --sp; sp[0].Int += sp[1].Int; NEXT_INSN;
 			CASE(OP_ISUB) FETCH_INSN; --sp; sp[0].Int -= sp[1].Int; NEXT_INSN;
@@ -132,6 +139,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				#ifdef HAS_ADDED_FUNCTIONALITY
+				g_lastExecutedNative = g_invoker.getNativeHash(cmd); //Set native before cmd is set to our native hook
 				g_statistics.m_nativesInvoked++;
 				if (g_nativeHooks.first) {
 					for (auto& e : g_nativeHooks.second) {
@@ -139,7 +147,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 					}
 				}
 				#endif
-				accessTlsStorageFromAnotherThread([&] {
+				accessTlsStorageFromAnotherThread(ser->m_script_hash, [&](rage::tlsContext* threadStorage) {
 					cmd(&curInfo);
 					#ifdef HAS_ADDED_FUNCTIONALITY
 					guard->runCallbacks();
@@ -486,7 +494,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 
 			CASE(OP_STRING) FETCH_INSN;
 				u32 offset{ sp[0].Uns };
-				sp[0].String = (pt->m_strings_data[offset >> 14] + (offset & 0x3FFF));
+				sp[0].String = (pt->m_string_heaps[offset >> 14] + (offset & 0x3FFF));
 			NEXT_INSN;
 
 			CASE(OP_TEXT_LABEL_ASSIGN_STRING) FETCH_INSN;

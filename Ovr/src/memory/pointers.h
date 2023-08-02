@@ -38,6 +38,7 @@ namespace pointers {
 		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Flags);
 		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);
+		using writePlayerGameStateDataNode = u64(*)(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
 
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
@@ -102,6 +103,7 @@ namespace pointers {
 	inline types::removeMessageFromQueue g_removeMessageFromQueue{};
 	inline types::removeMessageFromUnacknowledgedReliables g_removeMessageFromUnacknowledgedReliables{};
 	inline types::sendPresenceEvent g_sendPresenceEvent{};
+	inline types::writePlayerGameStateDataNode g_writePlayerGameStateDataNode{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};

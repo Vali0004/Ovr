@@ -650,7 +650,7 @@ namespace commands::features {
 					g_engine.primitiveExecute("bail");
 				}
 				void seamlessTransition(toggleCommand* command) {
-					if (command->get(0).toggle) {
+					/*if (command->get(0).toggle) {
 						HUD::DISPLAY_RADAR(TRUE);
 						const eTransitionState state{ static_cast<eTransitionState>(global(1574993).at(3).value()->Int) };
 						if (STREAMING::IS_PLAYER_SWITCH_IN_PROGRESS()) {
@@ -661,7 +661,7 @@ namespace commands::features {
 								GRAPHICS::ANIMPOSTFX_STOP_ALL();
 							}
 						}
-					}
+					}*/
 				}
 			}
 		}

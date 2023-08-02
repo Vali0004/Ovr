@@ -6,6 +6,7 @@
 #include "memory/patch.h"
 #include "memory/scanner.h"
 #include "util/transaction.h"
+#include "rage/script/loader.h"
 
 namespace core {
 	namespace thread {
@@ -72,10 +73,8 @@ namespace core {
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
 		}
+		rage::ysc::g_loader = MakeSmartPointer<rage::ysc::loader>();
 		engine::createThread(&g_manager);
-		//util::delayedThread(g_running, 2000ms, [] {
-		//	//commands::g_engine.commandFromStream();
-		//});
 	}
 	void destroy() {
 		g_pool.add(&commands::features::uninit);
@@ -87,6 +86,7 @@ namespace core {
 		std::this_thread::sleep_for(1s);
 		g_renderer.reset();
 		g_hooking.reset();
+		rage::ysc::g_loader.reset();
 		shv::g_asiLoader.clear();
 		shv::g_shvLoader.reset();
 		g_patches.reset();

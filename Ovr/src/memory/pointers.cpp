@@ -59,6 +59,7 @@ namespace pointers {
         g_removeMessageFromQueue = scan("RMFQ", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").call().as<decltype(g_removeMessageFromQueue)>();
         g_removeMessageFromUnacknowledgedReliables = scan("RMFUR", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").add(0x18).call().as<decltype(g_removeMessageFromUnacknowledgedReliables)>();
         g_sendPresenceEvent = scan("SPE", "E8 ? ? ? ? EB 02 B0 01 48 8B 9C 24").call().as<decltype(g_sendPresenceEvent)>();
+        g_writePlayerGameStateDataNode = scan("WPGSDN", "48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 41 54 41 55 41 56 41 57 48 83 EC 30 0F B7 81").as<decltype(g_writePlayerGameStateDataNode)>();
 
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();

@@ -184,6 +184,13 @@ namespace rage {
 	class tlsContext;
 	union scrValue;
 	class scrThread;
+	inline constexpr u32 scrPageShift = 14;
+	inline constexpr u32 scrPageSize = (1 << scrPageShift);
+	inline constexpr u32 scrPageMask = (scrPageSize - 1);
+
+	inline constexpr u32 scrStringShift = 14;
+	inline constexpr u32 scrStringSize = (1 << scrStringShift);
+	inline constexpr u32 scrStringMask = (scrStringSize - 1);
 	class scrProgram;
 	class scrProgramTableEntry;
 	class scrProgramTable;

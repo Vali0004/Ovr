@@ -28,10 +28,21 @@ public:
 		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
 			return p->second;
 		}
-		if (auto lookup{ util::game::commands::getLookupFromHash(hash) }; lookup.newHash) {
-			return pointers::g_nativeRegistrationTable->get_handler(lookup.newHash);
+		return pointers::g_nativeRegistrationTable->get_handler(correctNativeHash(hash));
+	}
+	u64 getNativeHash(rage::Cmd cmd) {
+		for (auto& pair : m_cache) {
+			if (pair.second == cmd) {
+				return pair.first;
+			}
 		}
-		return nullptr;
+		return 0;
+	}
+	u64 correctNativeHash(u64 hash) {
+		if (auto lookup{ util::game::commands::getLookupFromHash(hash) }; lookup.newHash) {
+			return lookup.newHash;
+		}
+		return 0;
 	}
 private:
 	std::map<rage::scrNativeHash, rage::Cmd> m_cache{};

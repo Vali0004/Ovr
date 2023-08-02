@@ -93,13 +93,26 @@ public:
 			send(eLogColor::White, "Session", fmt, args...);
 		} break;
 		#ifdef DEBUG
-			case eLogType::Debug: {
-				send(eLogColor::White, "Debug", fmt, args...);
-			} break;
+		case eLogType::Debug: {
+			send(eLogColor::White, "Debug", fmt, args...);
+		} break;
 		#endif
 		default: {
 		} break;
 		}
+	}
+	template <typename t>
+	void printArray(std::string start, t* arr, u64 size) {
+		#ifdef DEBUG
+		std::stringstream stream{};
+		stream << "Debug | " << start << " { ";
+		for (u64 i{}; i != size - 1; ++i) {
+			stream << (int)arr[i] << ", ";
+		}
+		stream << (int)arr[size] << " };";
+		m_con << stream.str() << std::endl;
+		m_file << stream.str() << std::endl;
+		#endif
 	}
 private:
 	fs::path m_path{ std::getenv("appdata") };
