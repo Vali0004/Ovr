@@ -1,6 +1,6 @@
 #include "hooking/hooking.h"
 
-bool hooks::hasRosPrivilege(u64* _This, i32 Privilege) {
+bool hooks::hasRosPrivilege(u64* _This, i32 Privilege) { //Le ban bypass (Fun fact: This with some natives can get you fully to character creation)
 	switch (Privilege) {
 	case 0:
 	case 1:

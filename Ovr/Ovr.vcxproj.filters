@@ -485,9 +485,6 @@
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp">
       <Filter>hooking\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\has_interval_elapsed.cpp">
-      <Filter>hooking\hooks</Filter>
-    </ClCompile>
     <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp">
       <Filter>hooking\hooks</Filter>
     </ClCompile>

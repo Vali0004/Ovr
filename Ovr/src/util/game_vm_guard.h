@@ -10,7 +10,7 @@ public:
 		for (u32 i{}; i != m_pageCount; ++i) {
 			u32 codePageSize{ program->get_code_page_size(i) };
 			pages[i] = new u8[codePageSize];
-			memcpy(pages[i], program->get_code_page(i), codePageSize);
+			memcpy(pages[i], program->m_code_blocks[i], codePageSize);
 		}
 	}
 	~GameVMData() {

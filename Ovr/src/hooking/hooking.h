@@ -37,7 +37,7 @@ inline void accessTlsStorageFromAnotherThread(u32 hash, std::function<void(rage:
 		threadStorage->m_tls_entry = threadStorage->m_allocator;
 		threadStorage->m_unk_allocator = threadStorage->m_tls_entry;
 		threadStorage->m_is_script_thread_active = true;
-		std::invoke(std::move(callback), threadStorage);
+		callback(threadStorage);
 		threadStorage->m_script_thread = oThread;
 		threadStorage->m_allocator = oSysMemAllocater;
 		threadStorage->m_tls_entry = oTlsSysMemAllocater;
@@ -58,7 +58,6 @@ struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);
 	static void runAsyncModuleRequest(u64* Module);
-	static bool hasIntervalElapsed(u32 Timestamp, u32 Interval);
 	static bool dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::netConnection::InFrame* pEvent);
 	static rage::eThreadState scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser);
 	static void proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, u16 Id, i32 Index, i32 HandledBitset, i32 BufferSize, rage::datBitBuffer* Buffer);
@@ -115,7 +114,6 @@ public:
 	detour m_cTaskJumpConstructor;
 	detour m_cTaskFallConstructor;
 	detour m_runAsyncModuleRequest;
-	detour m_hasIntervalElapsed;
 	detour m_dispatchEvent;
 	detour m_scriptVm;
 	detour m_proccessPackedEvents;

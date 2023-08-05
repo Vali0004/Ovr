@@ -43,8 +43,9 @@ namespace core {
 			LOG_DEBUG("ScyllaHide loaded.");
 		}
 		shv::g_shvLoader = MakeSmartPointer<shv::shvLoader>();
-		if (shv::g_shvLoader->getModule())
+		if (shv::g_shvLoader->getModule()) {
 			LOG_DEBUG("SHV module loaded.");
+		}
 		exceptions::initExceptionHandler();
 		pointers::scanAll();
 		LOG(Info, "{}/{} pointers found. ({} failed)", g_foundSigCount, g_totalSigCount, g_failedSigCount);
@@ -65,7 +66,7 @@ namespace core {
 					commands::g_manager.toFile("Config");
 					commands::g_setConfig = false;
 				}
-				commands::g_engine.commandFromStream();
+				commands::g_engine.commandFromStream(); //This is typically used for serialising commandss from other processes
 				fiber::current()->sleep(2s);
 			}
 		});

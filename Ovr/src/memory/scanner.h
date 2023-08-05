@@ -130,7 +130,7 @@ inline std::vector<mem> getAllResults(std::string ptr, hmodule module = {}) {
 	std::vector<std::optional<u8>> bytes{ createBytesFromString(ptr) };
 	std::vector<mem> results{};
 	for (u64 i{}; i != module.size() - bytes.size(); ++i) {
-		if (doesMemoryMatch(module.begin().add(i).as<u8*>(), bytes.data(), bytes.size())){
+		if (doesMemoryMatch(module.begin().add(i).as<u8*>(), bytes.data(), bytes.size())) {
 			results.push_back(module.begin().add(i));
 		}
 	}

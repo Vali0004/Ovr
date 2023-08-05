@@ -62,7 +62,7 @@ namespace util::game::commands {
     }
     gameNamespaceLookup getLookupFromHash(u64 hash) {
         for (auto& pair : g_map) {
-            if (pair.oldHash == hash) {
+            if (pair.oldHash == hash || pair.newHash == hash) {
                 return pair;
             }
         }

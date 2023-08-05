@@ -82,18 +82,17 @@ namespace rage::ysc {
 			}
 			return codePages.back();
 		}
-		u32& getCodePageSize() {
+		u32 getCodePageSize() {
 			return codePageSize;
 		}
 		u32 getCodePageCount() {
 			return (codePageSize + scrPageMask) >> scrPageShift;
 		}
 		u32 getCodePageSize(u32 i) {
-			return i == getCodePageSize() - 1 ? codePageSize - (i << scrPageShift) : scrPageSize;
+			return i == codePageSize - 1 ? codePageSize - (i << scrPageShift) : scrPageSize;
 		}
 	public:
 		std::vector<u8*> codePages{};
-	private:
 		u32 codePageSize{};
 	};
 }

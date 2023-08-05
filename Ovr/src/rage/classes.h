@@ -1005,11 +1005,11 @@ namespace rage {
 			}
 			return (numPages * scrStringSize) + (m_code_size & scrPageMask);
 		}
-		uint8_t* get_code_page(std::uint32_t page) const {
-			return m_code_blocks[page];
+		uint64_t get_code_page(uint64_t index) const {
+			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_code_blocks)) + (index * 8);
 		}
 		uint64_t get_string_page(uint64_t index) const {
-			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_string_heaps)) + index * 8;
+			return *reinterpret_cast<uint64_t*>(uintptr_t(this) + offsetof(scrProgram, m_string_heaps)) + (index * 8);
 		}
 		uint8_t* get_code_address(uint32_t index) const {
 			if (index < m_code_size)
@@ -1031,9 +1031,6 @@ namespace rage {
 				}
 			}
 			return nullptr;
-		}
-		uint64_t* get_native_table() {
-			return *reinterpret_cast<uint64_t**>(uintptr_t(this) + offsetof(scrProgram, m_natives));
 		}
 	}; //Size: 0x0080
 	static_assert(sizeof(scrProgram) == 0x80);

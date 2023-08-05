@@ -65,14 +65,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	SET_PC(ser->m_pointer_count);
 	char buf[16]{};
 	while (true) {
-		#ifdef HAS_ADDED_FUNCTIONALITY //cursed af
-		g_lastScriptVMOpcodes.second.first = g_lastScriptVMOpcodes.second.second;
-		g_lastScriptVMOpcodes.second.second = g_lastScriptVMOpcodes.second.first;
-		g_lastScriptVMOpcodes.first = LoadImm8;
-		switch (g_lastScriptVMOpcodes.first) {
-		#else
 		switch (LoadImm8) {
-		#endif
 			CASE(OP_NOP) CHECK_PC; FETCH_INSN; NEXT_INSN;
 			CASE(OP_IADD) FETCH_INSN; --sp; sp[0].Int += sp[1].Int; NEXT_INSN;
 			CASE(OP_ISUB) FETCH_INSN; --sp; sp[0].Int -= sp[1].Int; NEXT_INSN;

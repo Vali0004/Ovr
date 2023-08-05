@@ -463,6 +463,50 @@ namespace commands {
 		typedValue m_stringValue{};
 		fnptr<void(hashCommand*)> m_callback{};
 	};
+	class colorCommand : public abstractCommand {
+	public:
+		colorCommand(const std::string& id, const std::string& name, const std::string& description) :
+			abstractCommand(id, name, description, {}, eCommandType::ColorCommand, false) {
+		}
+		colorCommand(const std::string& id, const std::string& name) :
+			colorCommand(id, name, {}) {
+		}
+		~colorCommand() {
+			abstractCommand::~abstractCommand();
+		}
+		void init() override {
+			push_value(m_rValue);
+			push_value(m_gValue);
+			push_value(m_bValue);
+			push_value(m_aValue);
+			abstractCommand::init();
+		}
+		void run() override {
+			abstractCommand::run();
+		}
+		void serialise() override {
+			abstractCommand::serialise();
+			m_json[m_id]["color"]["r"] = (*m_rValue).u8;
+			m_json[m_id]["color"]["g"] = (*m_gValue).u8;
+			m_json[m_id]["color"]["b"] = (*m_bValue).u8;
+			m_json[m_id]["color"]["a"] = (*m_aValue).u8;
+		}
+		void deserialise() override {
+			abstractCommand::deserialise();
+			(*m_rValue).u8 = m_json[m_id]["color"]["r"].get<u8>();
+			(*m_gValue).u8 = m_json[m_id]["color"]["g"].get<u8>();
+			(*m_bValue).u8 = m_json[m_id]["color"]["b"].get<u8>();
+			(*m_aValue).u8 = m_json[m_id]["color"]["a"].get<u8>();
+		}
+		color get() {
+			return { (*m_rValue).u8, (*m_gValue).u8, (*m_bValue).u8, (*m_aValue).u8 };
+		}
+	private:
+		typedValue m_rValue{};
+		typedValue m_gValue{};
+		typedValue m_bValue{};
+		typedValue m_aValue{};
+	};
 	class variadicCommand : public abstractCommand {
 	public:
 		variadicCommand(const std::string& id, const std::string& name, const std::string& description, std::vector<typedValue> values, fnptr<void(variadicCommand*)> callback, bool looped) :

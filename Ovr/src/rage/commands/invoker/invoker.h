@@ -28,7 +28,7 @@ public:
 		if (auto p{ m_cache.find(hash) }; p != m_cache.end()) {
 			return p->second;
 		}
-		return pointers::g_nativeRegistrationTable->get_handler(correctNativeHash(hash));
+		return pointers::g_nativeRegistrationTable->get_handler(correctNative(hash));
 	}
 	u64 getNativeHash(rage::Cmd cmd) {
 		for (auto& pair : m_cache) {
@@ -38,7 +38,7 @@ public:
 		}
 		return 0;
 	}
-	u64 correctNativeHash(u64 hash) {
+	u64 correctNative(u64 hash) {
 		if (auto lookup{ util::game::commands::getLookupFromHash(hash) }; lookup.newHash) {
 			return lookup.newHash;
 		}

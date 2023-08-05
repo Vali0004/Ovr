@@ -3,8 +3,34 @@
 #include "rage/classes.h"
 #include "core/logger.h"
 #include "json/json.h"
+#define GET_U8(bitset, shift) (bitset >> shift) & 0xFF
 
 namespace commands {
+	class color {
+	public:
+		color(u8 r, u8 g, u8 b, u8 a) : r(r), g(g), b(b), a(a) {}
+		color(u8 r, u8 g, u8 b) : color(r, g, b, 255) {}
+		color(u32 packed) : color(GET_U8(packed, 0), GET_U8(packed, 8), GET_U8(packed, 16), GET_U8(packed, 24))  {}
+
+		u8 r{};
+		u8 g{};
+		u8 b{};
+		u8 a{};
+		u32 pack() {
+			return a << 24 | b << 16 | g << 8 | r << 0;
+		}
+		fp* float4() {
+			fp v[4]{ toFloat(a), toFloat(g), toFloat(b), toFloat(a) };
+			return v;
+		}
+	private:
+		static fp toFloat(u8 v) {
+			return (v & 0xFF) / 255.f;
+		}
+		static u8 fromFloat(fp v) {
+			return static_cast<u8>(v * 255.f);
+		}
+	};
 	union value {
 		char* string;
 		bool toggle;
@@ -69,6 +95,7 @@ namespace commands {
 		SectionProtectionCommand,
 		StringCommand,
 		HashCommand,
+		ColorCommand,
 		VariadicCommand
 	};
 	class abstractCommand {

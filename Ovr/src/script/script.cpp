@@ -48,17 +48,17 @@ namespace script {
 		spawn_now,
 		spawn_veh_handle, // as a temp variable
 	};
-	inline void drawText(std::string text, Vector4 color, int font, Vector2 pos, Vector2 size, bool center) {
-		//HUD::SET_TEXT_CENTRE(center);
-		rage::ysc::HUD::SET_TEXT_COLOUR(color.x, color.y, color.z, color.w);
-		rage::ysc::HUD::SET_TEXT_FONT(font);
-		rage::ysc::HUD::SET_TEXT_SCALE(size.x, size.y);
-		//HUD::SET_TEXT_DROPSHADOW(1, 0, 0, 0, 0);
-		//HUD::SET_TEXT_EDGE(1, 0, 0, 0, 0);
-		rage::ysc::HUD::SET_TEXT_OUTLINE();
-		rage::ysc::HUD::BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING");
-		rage::ysc::HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(text.c_str());
-		rage::ysc::HUD::END_TEXT_COMMAND_DISPLAY_TEXT(pos, NULL);
+	inline void drawText(rage::ysc::program& p, std::string text, Vector4 color, int font, Vector2 pos, Vector2 size, bool center) {
+		//rage::ysc::HUD::SET_TEXT_CENTRE(p, center);
+		rage::ysc::HUD::SET_TEXT_COLOUR(p, color.x, color.y, color.z, color.w);
+		rage::ysc::HUD::SET_TEXT_FONT(p, font);
+		rage::ysc::HUD::SET_TEXT_SCALE(p, size.x, size.y);
+		//rage::ysc::HUD::SET_TEXT_DROPSHADOW(p, 1, 0, 0, 0, 0);
+		//rage::ysc::HUD::SET_TEXT_EDGE(p, 1, 0, 0, 0, 0);
+		rage::ysc::HUD::SET_TEXT_OUTLINE(p);
+		rage::ysc::HUD::BEGIN_TEXT_COMMAND_DISPLAY_TEXT(p, "STRING");
+		rage::ysc::HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(p, text.c_str());
+		rage::ysc::HUD::END_TEXT_COMMAND_DISPLAY_TEXT(p, pos, NULL);
 	}
 	void onPresent() {
 		if (script::g_guiOpen) {
@@ -87,9 +87,11 @@ namespace script {
 						p.enter("main", 0, 100);
 
 						p.label("EntryPoint");
-						rage::ysc::GRAPHICS::DRAW_RECT({ 0.5f, 0.5f }, 0.1f, 0.1f, 255, 192, 255, 255, FALSE);
-						drawText("Balls", { 255, 255, 255, 255 }, 7, { 0.5f, 0.5f }, { 1.f, 1.f }, true);
-						SYSTEM::WAIT(0);
+
+						rage::ysc::GRAPHICS::DRAW_RECT(p, { 0.5f, 0.5f }, 0.1f, 0.1f, 255, 192, 255, 255, FALSE);
+						drawText(p, "Balls", { 255, 255, 255, 255 }, 7, { 0.5f, 0.5f }, { 1.f, 1.f }, true);
+
+						rage::ysc::SYSTEM::WAIT(p, 0);
 						p.jmp("EntryPoint");
 
 						p.leave(0, 0);

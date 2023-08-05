@@ -3,9 +3,9 @@
 
 i64 hooks::updateTimecycleData(u64* _This, TimecycleKeyframeData* pData) {
 	i64 ret{ CALL(updateTimecycleData, _This, pData) };
-	pData->m_azimuth_east_color.m_value = { 1.f, 0.f, 1.f, 1.f };
-	pData->m_azimuth_west_color.m_value = { 1.f, 0.f, 1.f, 1.f };
-	pData->m_sun_color.m_value = { 1.f, 0.f, 1.f, 1.f };
+	pData->m_azimuth_east_color.setValueRGBA(255, 0, 255, 255);
+	pData->m_azimuth_west_color.setValueRGBA(10, 0, 255, 255);
+	pData->m_sun_color.setValueRGBA(255, 0, 0, 255);
 	pData->m_update_sky_attributes = true;
 	//what in the blursed
 	static auto txt{ g_renderer->createTexture(fs::path(std::getenv("appdata")).append("Ovr").append("Textures").append("Sky.png")) };

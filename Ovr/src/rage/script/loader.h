@@ -12,10 +12,10 @@ namespace rage::ysc {
 		void setThread(fnptr<void(program&)> callback);
 	private:
 		u32 m_hash{};
-		GtaThread* m_gtaThread{};
-		rage::scrProgram* m_scrProgram{};
+		GtaThread* m_thread{};
+		rage::scrProgram* m_program{};
 	public:
-		SmartPointer<program> m_program{};
+		SmartPointer<program> m_bytecode{};
 	};
 	inline SmartPointer<loader> g_loader{};
 }
