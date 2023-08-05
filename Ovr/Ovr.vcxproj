@@ -145,6 +145,7 @@
     <ClInclude Include="src\rage\enums.h" />
     <ClInclude Include="src\rage\joaat.h" />
     <ClInclude Include="src\rage\script\collections.h" />
+    <ClInclude Include="src\rage\script\command_list.h" />
     <ClInclude Include="src\rage\script\loader.h" />
     <ClInclude Include="src\rage\script\commands.h" />
     <ClInclude Include="src\rage\script\program.h" />

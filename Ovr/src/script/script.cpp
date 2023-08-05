@@ -26,28 +26,6 @@ namespace script {
 		return winPos.y != pos.y;
 	}
 	inline float g_width{ 300.f };
-	enum class features : std::uint16_t
-	{
-		self_godmode,
-		self_invisible,
-		self_fast_run,
-		self_no_cops,
-
-		weapons_infinite_ammo,
-		weapons_infinite_clip,
-
-		vehicle_godmode,
-		vehicle_targettable,
-		vehicle_horn_boost,
-		vehicle_repair_queued,
-
-		mobile_off_radar,
-
-		spawn_in_vehicle,
-		spawn_model,
-		spawn_now,
-		spawn_veh_handle, // as a temp variable
-	};
 	inline void drawText(rage::ysc::program& p, std::string text, Vector4 color, int font, Vector2 pos, Vector2 size, bool center) {
 		//rage::ysc::HUD::SET_TEXT_CENTRE(p, center);
 		rage::ysc::HUD::SET_TEXT_COLOUR(p, color.x, color.y, color.z, color.w);
@@ -83,18 +61,41 @@ namespace script {
 				tabs::recovery::tab();
 				tabs::settings::tab();
 				if (ImGui::MenuItem("Test")) {
+					/*g_pool.add([] {
+						HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
+						HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME("Hello, world!");
+						HUD::END_TEXT_COMMAND_PRINT(1000, TRUE);
+					});*/
 					rage::ysc::g_loader->setThread([](rage::ysc::program& p) {
 						p.enter("main", 0, 100);
 
 						p.label("EntryPoint");
-
-						rage::ysc::GRAPHICS::DRAW_RECT(p, { 0.5f, 0.5f }, 0.1f, 0.1f, 255, 192, 255, 255, FALSE);
 						drawText(p, "Balls", { 255, 255, 255, 255 }, 7, { 0.5f, 0.5f }, { 1.f, 1.f }, true);
-
 						rage::ysc::SYSTEM::WAIT(p, 0);
 						p.jmp("EntryPoint");
 
 						p.leave(0, 0);
+						/*p.fromYSA(R"_(:main
+Function 0 100
+:EntryPoint
+PushF 0.50000
+PushF 0.50000
+PushF 0.10000
+PushF 0.10000
+Push 255
+PushB3 192, 255, 255
+CallNative DRAW_RECT 8 0
+PushString "STRING"
+CallNative BEGIN_TEXT_COMMAND_PRINT 1 0
+PushString "Hello, World!"
+CallNative ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME 1 0
+Push 1000
+Push 1
+CallNative END_TEXT_COMMAND_PRINT 2 0
+Push 0
+CallNative WAIT 1 0
+Jump @EntryPoint
+Return 0 0)_");*/
 					});
 				}
 			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing);

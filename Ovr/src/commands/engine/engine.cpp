@@ -65,25 +65,25 @@ namespace commands {
 		switch (command->m_type) {
 		case eCommandType::ToggleCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::IntCommand: {
 			command->get(0).i32 = convertData<int>(arguments[1]);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::FloatCommand: {
 			command->get(0).floating_point = convertData<float>(arguments[1]);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::ToggleIntCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
 			command->get(1).i32 = convertData<int>(arguments[2]);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::ToggleFloatCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
 			command->get(1).floating_point = convertData<float>(arguments[2]);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::ActionCommand: {
 			//Handled below, no arguments required.
@@ -92,13 +92,13 @@ namespace commands {
 			auto cmd{ static_cast<protectionCommand*>(command) };
 			cmd->get(0).string = (char*)arguments[1].c_str();
 			cmd->update(cmd->get(0).string);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::SectionProtectionCommand: {
 			auto cmd{ static_cast<sectionProtectionCommand*>(command) };
 			cmd->get(0).string = (char*)arguments[1].c_str();
 			cmd->update(cmd->get(0).string);
-			g_setConfig = true;
+			//g_setConfig = true;
 		} break;
 		case eCommandType::StringCommand: {
 			auto cmd{ static_cast<stringCommand*>(command) };
@@ -220,7 +220,7 @@ namespace commands {
 			case eCommandType::ToggleFloatCommand:
 			case eCommandType::ToggleCommand: {
 				command->get(0).toggle ^= true;
-				g_setConfig = true;
+				//g_setConfig = true;
 				replaceCommand(command);
 				return true;
 			} break;
@@ -240,7 +240,7 @@ namespace commands {
 						command->get(1).i32 = convertData<i32>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
-					g_setConfig = true;
+					//g_setConfig = true;
 					replaceCommand(command);
 					return true;
 				} break;
@@ -249,7 +249,7 @@ namespace commands {
 						command->get(1).floating_point = convertData<fp>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
-					g_setConfig = true;
+					//g_setConfig = true;
 					replaceCommand(command);
 					return true;
 				} break;

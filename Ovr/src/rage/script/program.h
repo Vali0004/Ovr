@@ -3,6 +3,9 @@
 #include "rage/classes.h"
 #include "rage/joaat.h"
 #include "collections.h"
+#include "command_list.h"
+#include "core/logger.h"
+
 #pragma pack(push, 1)
 struct u24 {
 	i32 i : 24;
@@ -29,7 +32,12 @@ namespace rage::ysc {
 
 			m_codePageCollection.codePageSize = (m_opcodesTbl - opcodes) + 1;
 		}
-
+		
+		void nop() {
+			OSTART(1)
+				PUSH8(OP_NOP)
+			OEND
+		}
 		template <typename t>
 		void push(t val) {
 			OSTART(5)
@@ -42,20 +50,35 @@ namespace rage::ysc {
 				}
 			OEND
 		}
+		void push_b2(u8 b1, u8 b2) {
+			OSTART(5)
+				PUSH8(OP_PUSH_CONST_U8_U8)
+				PUSH8(b1)
+				PUSH8(b2)
+			OEND
+		}
+		void push_b3(u8 b1, u8 b2, u8 b3) {
+			OSTART(5)
+				PUSH8(OP_PUSH_CONST_U8_U8_U8)
+				PUSH8(b1)
+				PUSH8(b2)
+				PUSH8(b3)
+			OEND
+		}
+		void pushf(fp val) {
+			push<fp>(val);
+		}
 		template <typename t>
 		void tPush(t value) {
 			if constexpr (std::is_same_v<t, ccp>) {
 				push_string(std::forward<t>(value));
 			}
-			else {
-				push(std::forward<t>(value));
+			if constexpr (std::is_same_v<t, fp>) {
+				pushf(std::forward<t>(value));
 			}
-		}
-		void pushf(float val) {
-			OSTART(5)
-				PUSH8(OP_PUSH_CONST_U32)
-				PUSH32(*(u32*)&val)
-			OEND
+			else {
+				push<t>(std::forward<t>(value));
+			}
 		}
 		void iadd() {
 			OSTART(1)
@@ -77,6 +100,11 @@ namespace rage::ysc {
 				PUSH8(OP_IDIV)
 			OEND
 		}
+		void imod() {
+			OSTART(1)
+				PUSH8(OP_IMOD)
+			OEND
+		}
 		void fadd() {
 			OSTART(1)
 				PUSH8(OP_FADD)
@@ -95,6 +123,11 @@ namespace rage::ysc {
 		void fdiv() {
 			OSTART(1)
 				PUSH8(OP_FDIV)
+			OEND
+		}
+		void fmod() {
+			OSTART(1)
+				PUSH8(OP_FMOD)
 			OEND
 		}
 		void vadd() {
@@ -127,6 +160,11 @@ namespace rage::ysc {
 				PUSH8(OP_INOT)
 			OEND
 		}
+		void ineg() {
+			OSTART(1)
+				PUSH8(OP_INEG)
+			OEND
+		}
 		void ior() {
 			OSTART(1)
 				PUSH8(OP_IOR)
@@ -137,12 +175,16 @@ namespace rage::ysc {
 				PUSH8(OP_IAND)
 			OEND
 		}
-		void label(ccp label) {
-			if (m_labelMode)
-				m_labels[label] = m_ip;
+		void label(const std::string& label) {
+			if (m_labelMode) {
+				addLabel(label);
+				return;
+			}
 		}
 		void enter(ccp name, u8 params, u16 locals) {
-			label(name);
+			if (name) {
+				label(name);
+			}
 			OSTART(5)
 				PUSH8(OP_ENTER)
 				PUSH8(params)
@@ -150,6 +192,9 @@ namespace rage::ysc {
 				PUSH8(0) //funcNameLen
 				m_currentParams = params;
 			OEND
+		}
+		void function(u8 params, u16 locals) {
+			enter(nullptr, params, locals);
 		}
 		void leave(u8 params, u8 returns) {
 			OSTART(3)
@@ -209,6 +254,12 @@ namespace rage::ysc {
 		void jne(ccp label) {
 			OSTART(3)
 				PUSH8(OP_IEQ_JZ)
+				PUSH16(static_cast<u16>(getLabelInstructionPointer(label)) - static_cast<u16>(m_ip) - 3)
+			OEND
+		}
+		void jgt(ccp label) {
+			OSTART(3)
+				PUSH8(OP_IGT_JZ)
 				PUSH16(static_cast<u16>(getLabelInstructionPointer(label)) - static_cast<u16>(m_ip) - 3)
 			OEND
 		}
@@ -319,13 +370,179 @@ namespace rage::ysc {
 				PUSH16(2 + m_currentParams + idx)
 			OEND
 		}
+		void parseSingleLine(std::string& str) {
+			if (!str.empty()) {
+				if (str == "//> Header Information" || str == "//<" || str == "//>" ||
+					str == "//" || str == "SetSignature") {
+					return;
+				}
+				if (str.find(':') != std::string::npos) {
+					auto pos = str.find("//>");
+					str = str.substr(1);
+					if (pos != std::string::npos) {
+						if (str.size() - 3 == pos) {
+							label(str.substr(0, str.size() - 4).c_str());
+						}
+						else if (pos == 0) {
+							return; //Completely ignore that shit
+						}
+					}
+					else {
+						label(str.c_str());
+					}
+					return;
+				}
+				if (str.find("Function") != std::string::npos) {
+					str = str.substr(sizeof("Function"));
+					std::vector<std::string> args{ splitString(str, ' ') };
+					u8 paramCount{ static_cast<u8>(std::stoi(args[0])) };
+					u16 localCount{ static_cast<u16>(std::stoi(args[1])) };
+					function(paramCount, localCount);
+					return;
+				}
+				if (str.find("Return") != std::string::npos) {
+					str = str.substr(sizeof("Return"));
+					std::vector<std::string> args{ splitString(str, ' ') };
+					u8 paramCount{ static_cast<u8>(std::stoi(args[0])) };
+					u8 returnCount{ static_cast<u8>(std::stoi(args[1])) };
+					leave(paramCount, returnCount);
+					return;
+				}
+				if (str.find("CallNative") != std::string::npos) {
+					str = str.substr(sizeof("CallNative"));
+					std::vector<std::string> args{ splitString(str, ' ') };
+					std::string nativeName{ args[0] };
+					u64 hash{ nativeFromName(nativeName.c_str()) };
+					u8 paramCount{ static_cast<u8>(std::stoi(args[1])) };
+					u8 returnCount{ static_cast<u8>(std::stoi(args[2])) };
+					native(hash, paramCount, returnCount);
+					return;
+				}
+				if (str.find("PushString \"") != std::string::npos) {
+					str = str.substr(sizeof("PushString \"") - 1);
+					push_string(str.substr(0, str.size() - 1).c_str());
+					return;
+				}
+				if (str.find("PushF") != std::string::npos) {
+					str = str.substr(sizeof("PushF"));
+					pushf(std::stof(str));
+					return;
+				}
+				if (str.find("PushB2") != std::string::npos) {
+					str = str.substr(sizeof("PushB2"));
+					std::vector<std::string> args{ getMatches(str, R"_(\b\d{1,3}\b)_") };
+					u8 b1{ (u8)stoi(args[0]) };
+					u8 b2{ (u8)stoi(args[1]) };
+					push_b2(b1, b2);
+					return;
+				}
+				if (str.find("PushB3") != std::string::npos) {
+					str = str.substr(sizeof("PushB3"));
+					std::vector<std::string> args{ getMatches(str, R"_(\b\d{1,3}\b)_") };
+					u8 b1{ (u8)stoi(args[0]) };
+					u8 b2{ (u8)stoi(args[1]) };
+					u8 b3{ (u8)stoi(args[2]) };
+					push_b3(b1, b2, b3);
+					return;
+				}
+				if (str.find("Push") != std::string::npos) {
+					str = str.substr(sizeof("Push"));
+					std::vector<std::string> args{ splitString(str, ' ') };
+					u32 value{ (u32)stoi(args[0]) };
+					push<u32>(value);
+					return;
+				}
+				if (str.find("Jump") != std::string::npos) {
+					str = str.substr(sizeof("Jump "));
+					jmp(str.c_str());
+					return;
+				}
+				if (str.find("JumpFalse") != std::string::npos) {
+					str = str.substr(sizeof("JumpFalse "));
+					jz(str.c_str());
+					return;
+				}
+				if (str.find("JumpGT") != std::string::npos) {
+					str = str.substr(sizeof("JumpGT "));
+					jgt(str.c_str());
+					return;
+				}
+				if (str.find("Nop") != std::string::npos) {
+					str = str.substr(sizeof("Nop"));
+					nop();
+					return;
+				}
+				if (str.find("Add") != std::string::npos) {
+					str = str.substr(sizeof("Add"));
+					iadd();
+					return;
+				}
+				if (str.find("Sub") != std::string::npos) {
+					str = str.substr(sizeof("Sub"));
+					isub();
+					return;
+				}
+				if (str.find("Mult") != std::string::npos) {
+					str = str.substr(sizeof("Mult"));
+					imul();
+					return;
+				}
+				if (str.find("Div") != std::string::npos) {
+					str = str.substr(sizeof("Div"));
+					idiv();
+					return;
+				}
+				if (str.find("Mod") != std::string::npos) {
+					str = str.substr(sizeof("Mod"));
+					imod();
+					return;
+				}
+				if (str.find("Not") != std::string::npos) {
+					str = str.substr(sizeof("Not"));
+					inot();
+					return;
+				}
+				if (str.find("fAdd") != std::string::npos) {
+					str = str.substr(sizeof("fAdd"));
+					fadd();
+					return;
+				}
+				if (str.find("fSub") != std::string::npos) {
+					str = str.substr(sizeof("fSub"));
+					fsub();
+					return;
+				}
+				if (str.find("fMult") != std::string::npos) {
+					str = str.substr(sizeof("fMult"));
+					fmul();
+					return;
+				}
+				if (str.find("fDiv") != std::string::npos) {
+					str = str.substr(sizeof("fDiv"));
+					fdiv();
+					return;
+				}
+				if (str.find("fMod") != std::string::npos) {
+					str = str.substr(sizeof("fMod"));
+					fmod();
+					return;
+				}
+			}
+		}
+		void fromYSA(std::string s) {
+			std::istringstream stream{ s };
+			std::string line{};
+			while (std::getline(stream, line)) {
+				parseSingleLine(line);
+			}
+		}
 	public:
 		std::vector<u64> m_natives{};
 		stringPageCollection m_stringPageCollection{};
 		codePageCollection m_codePageCollection{};
 	private:
 		u32 m_currentParams{};
-		std::map<ccp, u32> m_labels{};
+		std::map<std::string, u32> m_labels{};
 		u32 m_ip{};
 		u8* m_opcodesTbl{};
 		bool m_labelMode{};
@@ -341,11 +558,16 @@ namespace rage::ysc {
 		u32 getOrMakeStringIndex(ccp string) {
 			return m_stringPageCollection.addString(string);
 		}
-		u32 getLabelInstructionPointer(ccp label) {
-			if (!m_labels.count(label)) {
-				throw "Cannot find label";
+		u32 getLabelInstructionPointer(const std::string& label) {
+			for (auto& l : m_labels) {
+				if (!l.first.compare(label)) {
+					return l.second;
+				}
 			}
-			return m_labels[label];
+			throw "Label doesn't exist!";
+		}
+		void addLabel(const std::string& label) {
+			m_labels.insert({ std::string(label), m_ip });
 		}
 	};
 }

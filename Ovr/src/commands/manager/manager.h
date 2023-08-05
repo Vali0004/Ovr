@@ -3,7 +3,7 @@
 #include "util/util.h"
 
 namespace commands {
-	inline bool g_setConfig{};
+	//inline bool g_setConfig{};
 	class manager {
 	public:
 		template <typename t>
@@ -16,8 +16,8 @@ namespace commands {
 		void tick();
 		void clear();
 
-		void fromFile(const std::string& name);
-		void toFile(const std::string& name);
+		//void fromFile(const std::string& name);
+		//void toFile(const std::string& name);
 
 		template <typename t>
 		t* getCommand(cc* id) {
@@ -41,34 +41,34 @@ inline commands::abstractCommand* operator ""_ABC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::abstractCommand>(str);
 }
 inline commands::toggleCommand* operator ""_TC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::toggleCommand>(str);
 }
 inline commands::intCommand* operator ""_IC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::intCommand>(str);
 }
 inline commands::toggleIntCommand* operator ""_TIC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::toggleIntCommand>(str);
 }
 inline commands::floatCommand* operator ""_FC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::floatCommand>(str);
 }
 inline commands::toggleFloatCommand* operator ""_TFC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::toggleFloatCommand>(str);
 }
 inline commands::actionCommand* operator ""_AC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::actionCommand>(str);
 }
 inline commands::protectionCommand* operator ""_PC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::protectionCommand>(str);
 }
 inline commands::sectionProtectionCommand* operator ""_SPC(const char* str, size_t) {
-	commands::g_setConfig = true;
+	//commands::g_setConfig = true;
 	return commands::g_manager.getCommand<commands::sectionProtectionCommand>(str);
 }
 inline commands::stringCommand* operator ""_SC(const char* str, size_t) {
@@ -76,6 +76,9 @@ inline commands::stringCommand* operator ""_SC(const char* str, size_t) {
 }
 inline commands::hashCommand* operator ""_HC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::hashCommand>(str);
+}
+inline commands::colorCommand* operator ""_CC(const char* str, size_t) {
+	return commands::g_manager.getCommand<commands::colorCommand>(str);
 }
 inline commands::variadicCommand* operator ""_VC(const char* str, size_t) {
 	return commands::g_manager.getCommand<commands::variadicCommand>(str);

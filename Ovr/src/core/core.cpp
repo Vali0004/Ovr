@@ -62,10 +62,10 @@ namespace core {
 		g_manager.add("playerManager", &util::network::manager::onTick);
 		g_manager.add("commandStream", [] {
 			while (true) {
-				if (commands::g_setConfig) {
+				/*if (commands::g_setConfig) {
 					commands::g_manager.toFile("Config");
 					commands::g_setConfig = false;
-				}
+				}*/
 				commands::g_engine.commandFromStream(); //This is typically used for serialising commandss from other processes
 				fiber::current()->sleep(2s);
 			}

@@ -71,13 +71,13 @@ namespace rage::ysc {
 		void createNewPage() {
 			codePages.push_back(new u8[scrPageSize]);
 		}
-		u8* getPage(u32 number_of_opcodes) {
+		u8* getPage(u32 numOpcodes) {
 			//Check if current offset is not at the beginning of a new page
-			if (u32 remainingSpaceInPage{ scrPageSize - (codePageSize & scrPageMask) }; codePageSize & scrPageMask && number_of_opcodes > remainingSpaceInPage) {
+			if (u32 remainingSpaceInPage{ scrPageSize - (codePageSize & scrPageMask) }; codePageSize & scrPageMask && numOpcodes > remainingSpaceInPage) {
 				createNewPage();
 			}
 			//Check if the current page is full
-			else if (static_cast<u64>(codePageSize) + number_of_opcodes > (codePages.size() << scrPageShift)) {
+			else if (static_cast<u64>(codePageSize) + numOpcodes > (codePages.size() << scrPageShift)) {
 				createNewPage();
 			}
 			return codePages.back();
