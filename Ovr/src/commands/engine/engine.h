@@ -18,18 +18,8 @@ namespace commands {
 		abstractCommand* getCommand(const std::string& search);
 		template <typename t>
 		t convertData(const std::string& str);
-		void commandFromStream() {
-			auto file{ util::files::input("Command.txt") };
-			std::string stream{ util::files::read(file) };
-			file.close();
-			if (!stream.empty()) {
-				{
-					auto file{ util::files::output("Command.txt") };
-					util::files::destory(file);
-				}
-				execute(stream);
-			}
-		}
+		void commandFromStream();
+		static void commandStreamTick();
 		bool m_useDirectMatchResults{};
 		bool m_autoComplete{};
 		bool m_useFirstResultOnTooManyResults{};

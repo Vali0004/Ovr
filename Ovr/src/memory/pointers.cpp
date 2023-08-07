@@ -60,6 +60,8 @@ namespace pointers {
         g_removeMessageFromUnacknowledgedReliables = scan("RMFUR", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").add(0x18).call().as<decltype(g_removeMessageFromUnacknowledgedReliables)>();
         g_sendPresenceEvent = scan("SPE", "E8 ? ? ? ? EB 02 B0 01 48 8B 9C 24").call().as<decltype(g_sendPresenceEvent)>();
         g_writePlayerGameStateDataNode = scan("WPGSDN", "48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 41 54 41 55 41 56 41 57 48 83 EC 30 0F B7 81").as<decltype(g_writePlayerGameStateDataNode)>();
+        g_queuePacketViaMsgId = scan("QPVMI", "E8 ? ? ? ? 84 C0 74 4D B3 01").call().as<decltype(g_queuePacketViaMsgId)>();
+        g_prepareTrainData = scan("PTD", "E8 ? ? ? ? 48 8D 0D ? ? ? 01 48 8B C3 48 ?").call().as<decltype(g_prepareTrainData)>();
 
         g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
         g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();
@@ -85,6 +87,7 @@ namespace pointers {
         g_reportModule = scan("RM", "48 8D 0D ? ? ? ? 88 05 ? ? ? ? 48 8D 05").mov().as<decltype(g_reportModule)>();
         g_nativeRegistration = scan("NR", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 B9 20 03 00 00").add(0x1E).call().as<decltype(g_nativeRegistration)>();
         g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_nativeRegistration)>();
+        g_forceHost = scan("FH", "C6 05 ? ? ? ? ? 48 8B CB E8 ? ? ? ? 84 C0 75 08").mov().as<decltype(g_forceHost)>();
         g_hwnd = FindWindowA("grcWindow", nullptr);
         return true;
     }

@@ -132,8 +132,6 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				#ifdef HAS_ADDED_FUNCTIONALITY
-				g_lastExecutedNative = g_invoker.getNativeHash(cmd); //Set native before cmd is set to our native hook
-				g_statistics.m_nativesInvoked++;
 				if (g_nativeHooks.first) {
 					for (auto& e : g_nativeHooks.second) {
 						e->set(pt, imm, cmd);
@@ -143,6 +141,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				accessTlsStorageFromAnotherThread(ser->m_script_hash, [&](rage::tlsContext* threadStorage) {
 					cmd(&curInfo);
 					#ifdef HAS_ADDED_FUNCTIONALITY
+					g_statistics.m_nativesInvoked++;
 					guard->runCallbacks();
 					#endif
 				});

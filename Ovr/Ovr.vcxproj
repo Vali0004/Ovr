@@ -209,6 +209,7 @@
     <ClInclude Include="src\util\game_vm_guard.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\message.h" />
+    <ClInclude Include="src\util\packet.h" />
     <ClInclude Include="src\util\player_mgr.h" />
     <ClInclude Include="src\util\statistics.h" />
     <ClInclude Include="src\util\transaction.h" />

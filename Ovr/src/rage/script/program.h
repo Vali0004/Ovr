@@ -25,12 +25,14 @@ namespace rage::ysc {
 			uint8_t* opcodes{ m_codePageCollection.getPage(2048) };
 			m_labelMode = true;
 			callback(*this);
-			m_labelMode = false;
-			m_ip = 0;
-			m_opcodesTbl = opcodes;
-			callback(*this);
-
-			m_codePageCollection.codePageSize = (m_opcodesTbl - opcodes) + 1;
+			//There is zero reason to continue execution if it is not valid, just start deallocation
+			if (m_isGood) {
+				m_labelMode = false;
+				m_ip = 0;
+				m_opcodesTbl = opcodes;
+				callback(*this);
+				m_codePageCollection.codePageSize = (m_opcodesTbl - opcodes) + 1;
+			}
 		}
 		
 		void nop() {
@@ -73,7 +75,7 @@ namespace rage::ysc {
 			if constexpr (std::is_same_v<t, ccp>) {
 				push_string(std::forward<t>(value));
 			}
-			if constexpr (std::is_same_v<t, fp>) {
+			else if constexpr (std::is_same_v<t, fp>) {
 				pushf(std::forward<t>(value));
 			}
 			else {
@@ -178,11 +180,10 @@ namespace rage::ysc {
 		void label(const std::string& label) {
 			if (m_labelMode) {
 				addLabel(label);
-				return;
 			}
 		}
 		void enter(ccp name, u8 params, u16 locals) {
-			if (name) {
+			if (name != nullptr) {
 				label(name);
 			}
 			OSTART(5)
@@ -291,7 +292,7 @@ namespace rage::ysc {
 				PUSH24(idx)
 			OEND
 		}
-		void push_string(ccp string) {
+		void push_string(const std::string& string) {
 			OSTART(6)
 				PUSH8(OP_PUSH_CONST_U32)
 				PUSH32(getOrMakeStringIndex(string))
@@ -370,10 +371,19 @@ namespace rage::ysc {
 				PUSH16(2 + m_currentParams + idx)
 			OEND
 		}
-		void parseSingleLine(std::string& str) {
+		void parseSingleLine(std::string& str, size_t lineCount) {
 			if (!str.empty()) {
 				if (str == "//> Header Information" || str == "//<" || str == "//>" ||
 					str == "//" || str == "SetSignature") {
+					return;
+				}
+				size_t pos{ str.find("//") };
+				if (pos == 0) {
+					return;
+				}
+				else if (pos != -1 && pos != str.size() - 2) {
+					LOG(Fatal, "L{}: Invalid comment (position {}).", lineCount, pos);
+					m_isGood = false;
 					return;
 				}
 				if (str.find(':') != std::string::npos) {
@@ -413,14 +423,31 @@ namespace rage::ysc {
 					std::vector<std::string> args{ splitString(str, ' ') };
 					std::string nativeName{ args[0] };
 					u64 hash{ nativeFromName(nativeName.c_str()) };
+					if (!hash) {
+						LOG(Fatal, "L{}: Invalid native '{}'.", lineCount, nativeName);
+						m_isGood = false;
+						return;
+					}
 					u8 paramCount{ static_cast<u8>(std::stoi(args[1])) };
 					u8 returnCount{ static_cast<u8>(std::stoi(args[2])) };
 					native(hash, paramCount, returnCount);
 					return;
 				}
-				if (str.find("PushString \"") != std::string::npos) {
-					str = str.substr(sizeof("PushString \"") - 1);
-					push_string(str.substr(0, str.size() - 1).c_str());
+				if (str.find("PushString") != std::string::npos) {
+					str = str.substr(sizeof("PushString"));
+					if (str[0] != '\"') {
+						LOG(Fatal, "L{}: Missing begining quote.", lineCount);
+						m_isGood = false;
+						return;
+					}
+					else if (str[str.size() - 1] != '\"') {
+						LOG(Fatal, "L{}: Missing end quote.", lineCount);
+						m_isGood = false;
+						return;
+					}
+					LOG_DEBUG("String: {}", str);
+					LOG_DEBUG("push_string: {}", str.substr(1, str.size() - 2));
+					push_string(str.substr(1, str.size() - 2));
 					return;
 				}
 				if (str.find("PushF") != std::string::npos) {
@@ -431,6 +458,11 @@ namespace rage::ysc {
 				if (str.find("PushB2") != std::string::npos) {
 					str = str.substr(sizeof("PushB2"));
 					std::vector<std::string> args{ getMatches(str, R"_(\b\d{1,3}\b)_") };
+					if (args.size() != 2) {
+						LOG(Fatal, "L{}: Missing arugment (PushB2 expects 2 arguments, it received {})", lineCount, args.size());
+						m_isGood = false;
+						return;
+					}
 					u8 b1{ (u8)stoi(args[0]) };
 					u8 b2{ (u8)stoi(args[1]) };
 					push_b2(b1, b2);
@@ -439,6 +471,11 @@ namespace rage::ysc {
 				if (str.find("PushB3") != std::string::npos) {
 					str = str.substr(sizeof("PushB3"));
 					std::vector<std::string> args{ getMatches(str, R"_(\b\d{1,3}\b)_") };
+					if (args.size() != 3) {
+						LOG(Fatal, "L{}: Missing arugment (PushB3 expects 3 arguments, it received {})", lineCount, args.size());
+						m_isGood = false;
+						return;
+					}
 					u8 b1{ (u8)stoi(args[0]) };
 					u8 b2{ (u8)stoi(args[1]) };
 					u8 b3{ (u8)stoi(args[2]) };
@@ -448,22 +485,71 @@ namespace rage::ysc {
 				if (str.find("Push") != std::string::npos) {
 					str = str.substr(sizeof("Push"));
 					std::vector<std::string> args{ splitString(str, ' ') };
-					u32 value{ (u32)stoi(args[0]) };
-					push<u32>(value);
+					if (args.size() != 1) {
+						LOG(Fatal, "L{}: Missing arugment (Push expects 1 argument, it received {})", lineCount, args.size());
+						m_isGood = false;
+						return;
+					}
+					if (isNumber(args[0])) {
+						u32 value{ (u32)stoi(args[0]) };
+						push<u32>(value);
+					}
+					else {
+						if (args[0] == "TRUE") {
+							push<u32>(TRUE);
+						}
+						else if (args[0] == "FALSE") {
+							push<u32>(FALSE);
+						}
+						else {
+							LOG(Fatal, "L{}: Invalid push argument ({})", lineCount, args[0]);
+							m_isGood = false;
+						}
+					}
 					return;
 				}
 				if (str.find("Jump") != std::string::npos) {
 					str = str.substr(sizeof("Jump "));
+					if (str.empty()) {
+						LOG(Fatal, "L{}: Missing arugment (Jump expects 1 arugment)", lineCount);
+						m_isGood = false;
+						return;
+					}
+					else if (!m_labels.count(str)) {
+						LOG(Fatal, "L{}: Invalid Jump label", lineCount);
+						m_isGood = false;
+						return;
+					}
 					jmp(str.c_str());
 					return;
 				}
 				if (str.find("JumpFalse") != std::string::npos) {
 					str = str.substr(sizeof("JumpFalse "));
+					if (str.empty()) {
+						LOG(Fatal, "L{}: Missing arugment (JumpFalse expects 1 arugment)", lineCount);
+						m_isGood = false;
+						return;
+					}
+					else if (!m_labels.count(str)) {
+						LOG(Fatal, "L{}: Invalid JumpFalse label", lineCount);
+						m_isGood = false;
+						return;
+					}
 					jz(str.c_str());
 					return;
 				}
 				if (str.find("JumpGT") != std::string::npos) {
 					str = str.substr(sizeof("JumpGT "));
+					if (str.empty()) {
+						LOG(Fatal, "L{}: Missing arugment (JumpGT expects 1 arugment)", lineCount);
+						m_isGood = false;
+						return;
+					}
+					else if (!m_labels.count(str)) {
+						LOG(Fatal, "L{}: Invalid JumpGT label", lineCount);
+						m_isGood = false;
+						return;
+					}
 					jgt(str.c_str());
 					return;
 				}
@@ -527,19 +613,24 @@ namespace rage::ysc {
 					fmod();
 					return;
 				}
+				LOG(Fatal, "L{}: Unsupported opcode '{}' (IP: {})", lineCount, str, m_ip);
+				m_isGood = false;
 			}
 		}
 		void fromYSA(std::string s) {
 			std::istringstream stream{ s };
 			std::string line{};
+			size_t lineCount{};
 			while (std::getline(stream, line)) {
-				parseSingleLine(line);
+				parseSingleLine(line, lineCount);
+				lineCount++;
 			}
 		}
 	public:
 		std::vector<u64> m_natives{};
 		stringPageCollection m_stringPageCollection{};
 		codePageCollection m_codePageCollection{};
+		bool m_isGood{ true };
 	private:
 		u32 m_currentParams{};
 		std::map<std::string, u32> m_labels{};
@@ -555,8 +646,8 @@ namespace rage::ysc {
 			}
 			return NULL;
 		}
-		u32 getOrMakeStringIndex(ccp string) {
-			return m_stringPageCollection.addString(string);
+		u32 getOrMakeStringIndex(const std::string& string) {
+			return m_stringPageCollection.addString(string.data());
 		}
 		u32 getLabelInstructionPointer(const std::string& label) {
 			for (auto& l : m_labels) {

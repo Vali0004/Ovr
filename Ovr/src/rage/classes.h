@@ -5000,3 +5000,67 @@ public:
 	char pad_00E8[80]; //0x00E8
 	uint32_t unk_0138; //0x0138
 };
+#pragma pack(push, 1)
+class CPackedMessageData {
+public:
+	CPackedMessageData(void* buffer, bool nullifyData = true) {
+		if (nullifyData) {
+			m_count = NULL;
+			m_type = NULL;
+			memset(m_data_buffer, NULL, sizeof(m_data_buffer));
+		}
+		if (m_data_buffer != buffer)
+			memcpy(m_data_buffer, buffer, sizeof(m_data_buffer));
+		m_buffer = rage::datBitBuffer(m_data_buffer, sizeof(m_data_buffer));
+		m_buffer.Seek(0);
+	}
+	CPackedMessageData(bool nullifyData = true) : CPackedMessageData(m_data_buffer, nullifyData) {}
+	uint32_t m_count; //0x0000
+	uint32_t m_type; //0x0004
+	rage::datBitBuffer m_buffer; //0x0008
+	uint8_t m_data_buffer[912]; //0x0028
+
+	bool Deserialise(rage::datBitBuffer* buffer) {
+		m_count = buffer->Read<u32>(5);
+		if (m_count > 0) {
+			auto bufferSize{ buffer->Read<u32>(13) };
+			char data[4096]{};
+			if (!buffer->ReadArray(data, bufferSize)) {
+				return false;
+			}
+			m_buffer = rage::datBitBuffer(data, bufferSize);
+			m_buffer.m_maxBit = bufferSize;
+		}
+		return true;
+	}
+	bool Serialise(rage::datBitBuffer* buffer, rage::datBitBuffer& eventBuffer) {
+		buffer->Write<u32>(5, m_count);
+		if (m_count > 0) {
+			u32 bufferSize{ eventBuffer.m_maxBit / 8 };
+			buffer->Write<u32>(13, bufferSize);
+			if (!buffer->WriteArray(eventBuffer.m_data, bufferSize)) {
+				return false;
+			}
+			m_buffer = eventBuffer;
+			m_buffer.m_maxBit = bufferSize;
+		}
+		return true;
+	}
+}; //Size: 0x03B8
+static_assert(sizeof(CPackedMessageData) == 0x3B8);
+#pragma pack(pop)
+#pragma pack(push, 1)
+class CMsgPackedEvents {
+public:
+	CMsgPackedEvents(bool nullifyBuffer = true) : m_data(CPackedMessageData()) {}
+	void* m_unk; //0x0000
+	CPackedMessageData m_data;
+	bool Deserialise(rage::datBitBuffer* buffer) {
+		return m_data.Deserialise(buffer);
+	}
+	bool Serialise(rage::datBitBuffer* buffer, rage::datBitBuffer& eventBuffer) {
+		return m_data.Serialise(buffer, eventBuffer);
+	}
+}; //Size: 0x03C0
+static_assert(sizeof(CMsgPackedEvents) == 0x3C0);
+#pragma pack(pop)

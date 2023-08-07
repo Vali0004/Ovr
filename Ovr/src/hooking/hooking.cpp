@@ -11,7 +11,7 @@ hooking::hooking() :
 	m_cTaskFallConstructor("CTFC", pointers::g_cTaskFallConstructor, &hooks::cTaskFallConstructor),
 	m_runAsyncModuleRequest("RAMS", pointers::g_runAsyncModuleRequest, &hooks::runAsyncModuleRequest),
 	m_dispatchEvent("DE", pointers::g_dispatchEvent, &hooks::dispatchEvent),
-	m_scriptVm("SV", pointers::g_scriptVm, &hooks::scriptVm, false),
+	m_scriptVm("SV", pointers::g_scriptVm, &hooks::scriptVm),
 	m_proccessPackedEvents("PPE", pointers::g_proccessPackedEvents, &hooks::proccessPackedEvents),
 	m_receiveCloneSync("RCS", pointers::g_receiveCloneSync, &hooks::receiveCloneSync),
 	m_receiveCloneCreate("RCC", pointers::g_receiveCloneCreate, &hooks::receiveCloneCreate),

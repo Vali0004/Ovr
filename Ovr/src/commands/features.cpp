@@ -875,9 +875,11 @@ namespace commands::features {
 		void forceHostOfScript(hashCommand* command) {
 			if (GtaThread* thread{ util::classes::getGtaThread(command->get_hash()) }) {
 				if (CGameScriptHandlerNetComponent* netComponet{ util::classes::getScriptHandlerNetComponet(thread) }) {
+					*pointers::g_forceHost = true;
 					if (!netComponet->force_host()) {
 						LOG(Info, "Failed to force host of script {}", thread->m_name);
 					}
+					*pointers::g_forceHost = false;
 				}
 				else {
 					LOG(Info, "Script '{}' does not have a valid net componet", thread->m_name);

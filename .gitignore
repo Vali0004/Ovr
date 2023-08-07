@@ -25,3 +25,4 @@
 *.exe
 *.ini
 *.ini
+/Bin/Release/SEAutoUpdater/ScriptEvents.hpp

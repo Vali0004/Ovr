@@ -35,4 +35,3 @@ private:
 inline statistics g_statistics{};
 
 inline std::pair<u8, std::pair<u8, u8>> g_lastScriptVMOpcodes{};
-inline u64 g_lastExecutedNative{};

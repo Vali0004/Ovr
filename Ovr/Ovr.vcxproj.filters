@@ -430,6 +430,7 @@
       <Filter>rage\script</Filter>
     </ClInclude>
     <ClInclude Include="src\rage\script\command_list.h" />
+    <ClInclude Include="src\util\packet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp">

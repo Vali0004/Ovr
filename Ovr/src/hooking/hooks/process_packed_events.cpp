@@ -404,8 +404,8 @@ void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* S
 	} break;
 	case ePackedEvents::CRemoveWeaponEvent: {
 		i32 networkId{ Buffer->Read<i32>(13) };
-		u32 Hash{ Buffer->Read<u32>(32) };
-		if (Hash == "weapon_unarmed"_joaat) {
+		u32 hash{ Buffer->Read<u32>(32) };
+		if (hash == "weapon_unarmed"_joaat) {
 			switch ("invalidRemoveWeaponCrashProtection"_PC->state()) {
 			case eProtectionState::Notify: {
 				LOG(Session, "R{} crash from {}", 1, Sender->GetName());

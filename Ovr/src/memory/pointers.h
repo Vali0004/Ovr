@@ -39,6 +39,8 @@ namespace pointers {
 		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Flags);
 		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);
 		using writePlayerGameStateDataNode = u64(*)(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
+		using queuePacketViaMsgId = bool(*)(rage::netConnectionManager* pMgr, i32 MsgId, u8* pData, i32 Size, i32 Flags, void* pUnk);
+		using prepareTrainData = i64(*)(i32 a1, u8 a2);
 
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
@@ -104,6 +106,8 @@ namespace pointers {
 	inline types::removeMessageFromUnacknowledgedReliables g_removeMessageFromUnacknowledgedReliables{};
 	inline types::sendPresenceEvent g_sendPresenceEvent{};
 	inline types::writePlayerGameStateDataNode g_writePlayerGameStateDataNode{};
+	inline types::queuePacketViaMsgId g_queuePacketViaMsgId{};
+	inline types::prepareTrainData g_prepareTrainData{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
@@ -130,6 +134,7 @@ namespace pointers {
 	inline u64* g_reportModule{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
+	inline bool* g_forceHost{};
 	inline mem g_windowHook{};
 	inline HWND g_hwnd{};
 }

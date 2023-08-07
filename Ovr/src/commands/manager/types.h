@@ -57,14 +57,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["toggle"] = (*m_value).toggle;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_value).toggle = m_json[m_id]["toggle"].get<bool>();
-		}*/
 	public:
 		typedValue m_value{};
 	private:
@@ -96,14 +88,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["value"] = (*m_value).i32;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_value).i32 = m_json[m_id]["value"].get<i32>();
-		}*/
 	public:
 		typedValue m_value{};
 	private:
@@ -139,16 +123,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["toggle"] = (*m_toggleValue).toggle;
-			m_json[m_id]["value"] = (*m_numberValue).i32;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_toggleValue).toggle = m_json[m_id]["toggle"].get<bool>();
-			(*m_numberValue).i32 = m_json[m_id]["value"].get<i32>();
-		}*/
 	public:
 		typedValue m_toggleValue{};
 		typedValue m_numberValue{};
@@ -181,14 +155,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["value"] = (*m_value).floating_point;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_value).floating_point = m_json[m_id]["value"].get<fp>();
-		}*/
 	public:
 		typedValue m_value{};
 	private:
@@ -224,16 +190,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["toggle"] = (*m_toggleValue).toggle;
-			m_json[m_id]["value"] = (*m_numberValue).floating_point;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_toggleValue).toggle = m_json[m_id]["toggle"].get<bool>();
-			(*m_numberValue).floating_point = m_json[m_id]["value"].get<fp>();
-		}*/
 	public:
 		typedValue m_toggleValue{};
 		typedValue m_numberValue{};
@@ -286,29 +242,6 @@ namespace commands {
 		void run() override {
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			std::string state{};
-			switch (m_state) {
-			case eProtectionState::Disabled: {
-				state = "Disabled";
-			} break;
-			case eProtectionState::Notify: {
-				state = "Notify";
-			} break;
-			case eProtectionState::Block: {
-				state = "Block";
-			} break;
-			case eProtectionState::BlockAndNotify: {
-				state = "Block And Notify";
-			} break;
-			}
-			m_json[m_id]["state"] = state;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			update(m_json[m_id]["state"].get<std::string>().c_str());
-		}*/
 		void update(ccp n) {
 			m_value.m_value.string = (char*)n;
 			setState();
@@ -347,29 +280,6 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			std::string state{};
-			switch (m_state) {
-			case eProtectionState::Disabled: {
-				state = "Disabled";
-			} break;
-			case eProtectionState::Notify: {
-				state = "Notify";
-			} break;
-			case eProtectionState::Block: {
-				state = "Block";
-			} break;
-			case eProtectionState::BlockAndNotify: {
-				state = "Block And Notify";
-			} break;
-			}
-			m_json[m_id]["state"] = state;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			update(m_json[m_id]["state"].get<std::string>().c_str());
-		}*/
 		void update(ccp n) {
 			m_value.m_value.string = (char*)n;
 			setState();
@@ -484,21 +394,7 @@ namespace commands {
 		void run() override {
 			abstractCommand::run();
 		}
-		/*void serialise() override {
-			abstractCommand::serialise();
-			m_json[m_id]["color"]["r"] = (*m_rValue).u8;
-			m_json[m_id]["color"]["g"] = (*m_gValue).u8;
-			m_json[m_id]["color"]["b"] = (*m_bValue).u8;
-			m_json[m_id]["color"]["a"] = (*m_aValue).u8;
-		}
-		void deserialise() override {
-			abstractCommand::deserialise();
-			(*m_rValue).u8 = m_json[m_id]["color"]["r"].get<u8>();
-			(*m_gValue).u8 = m_json[m_id]["color"]["g"].get<u8>();
-			(*m_bValue).u8 = m_json[m_id]["color"]["b"].get<u8>();
-			(*m_aValue).u8 = m_json[m_id]["color"]["a"].get<u8>();
-		}*/
-		color get() {
+		color get_color() {
 			return { (*m_rValue).u8, (*m_gValue).u8, (*m_bValue).u8, (*m_aValue).u8 };
 		}
 	private:

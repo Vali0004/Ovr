@@ -113,33 +113,6 @@ namespace commands {
 			m_intialized = true;
 		}
 		virtual void run() {}
-		//virtual void serialise() {
-		//	m_json = {
-		//		{
-		//			"name", m_name 
-		//		},
-		//		{ 
-		//			"description", m_description
-		//		},
-		//		{
-		//			"hotkeys", {}
-		//		}
-		//	};
-		//	auto hotkeys{ m_json["hotkeys"] };
-		//	for (i32& key : m_hotkey.m_keys) {
-		//		hotkeys.push_back(key); //They don't need a ID, and we pull as a array
-		//	}
-		//}
-		//virtual void deserialise() {
-		//	m_name = m_json["name"];
-		//	m_description = m_json["description"];
-		//	auto hotkeys{ m_json["hotkeys"] };
-		//	if (!hotkeys.is_null() && !hotkeys.empty()) {
-		//		for (auto& hotkey : hotkeys) {
-		//			m_hotkey.add_hotkey(hotkey.get<i32>());
-		//		}
-		//	}
-		//}
 		void deallocate() {
 			m_values.clear();
 			m_hotkey.m_keys.clear();
@@ -192,7 +165,6 @@ namespace commands {
 		bool m_looped{};
 		std::vector<std::string> m_buffer{};
 		std::string m_context{};
-		nlohmann::json m_json{};
 	private:
 		bool m_intialized{};
 		std::vector<typedValue*> m_values{};

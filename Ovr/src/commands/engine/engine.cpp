@@ -54,6 +54,12 @@ namespace commands {
 				return;
 			}
 		} break;
+		case eCommandType::ColorCommand: {
+			if (trueArgCount >= 3) {
+				LOG(Commands, "You provided {} arguments for a command that requiresat least 3 arguments.", arguments.size());
+				return;
+			}
+		} break;
 		default: {
 			if (trueArgCount > 1) {
 				LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
@@ -65,25 +71,20 @@ namespace commands {
 		switch (command->m_type) {
 		case eCommandType::ToggleCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			//g_setConfig = true;
 		} break;
 		case eCommandType::IntCommand: {
-			command->get(0).i32 = convertData<int>(arguments[1]);
-			//g_setConfig = true;
+			command->get(0).i32 = convertData<i32>(arguments[1]);
 		} break;
 		case eCommandType::FloatCommand: {
-			command->get(0).floating_point = convertData<float>(arguments[1]);
-			//g_setConfig = true;
+			command->get(0).floating_point = convertData<fp>(arguments[1]);
 		} break;
 		case eCommandType::ToggleIntCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).i32 = convertData<int>(arguments[2]);
-			//g_setConfig = true;
+			command->get(1).i32 = convertData<i32>(arguments[2]);
 		} break;
 		case eCommandType::ToggleFloatCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).floating_point = convertData<float>(arguments[2]);
-			//g_setConfig = true;
+			command->get(1).floating_point = convertData<fp>(arguments[2]);
 		} break;
 		case eCommandType::ActionCommand: {
 			//Handled below, no arguments required.
@@ -92,13 +93,11 @@ namespace commands {
 			auto cmd{ static_cast<protectionCommand*>(command) };
 			cmd->get(0).string = (char*)arguments[1].c_str();
 			cmd->update(cmd->get(0).string);
-			//g_setConfig = true;
 		} break;
 		case eCommandType::SectionProtectionCommand: {
 			auto cmd{ static_cast<sectionProtectionCommand*>(command) };
 			cmd->get(0).string = (char*)arguments[1].c_str();
 			cmd->update(cmd->get(0).string);
-			//g_setConfig = true;
 		} break;
 		case eCommandType::StringCommand: {
 			auto cmd{ static_cast<stringCommand*>(command) };
@@ -115,6 +114,15 @@ namespace commands {
 			size_t index{ context.find(arguments[1]) };
 			cmd->m_buffer.push_back(context.substr(index));
 			cmd->set_key(arguments[1]);
+		} break;
+		case eCommandType::ColorCommand: {
+			auto cmd{ static_cast<colorCommand*>(command) };
+			cmd->get(0).u8 = convertData<u8>(arguments[1]);
+			cmd->get(1).u8 = convertData<u8>(arguments[2]);
+			cmd->get(2).u8 = convertData<u8>(arguments[3]);
+			if (arguments.size() == 4) {
+				cmd->get(3).u8 = convertData<u8>(arguments[4]);
+			}
 		} break;
 		case eCommandType::VariadicCommand: {
 			if (command->has_value()) {
@@ -342,5 +350,23 @@ namespace commands {
 			}
 		}
 		return (t)NULL;
+	}
+	void engine::commandFromStream() {
+		auto file{ util::files::input("Command.txt") };
+		std::string stream{ util::files::read(file) };
+		file.close();
+		if (!stream.empty()) {
+			{
+				auto file{ util::files::output("Command.txt") };
+				util::files::destory(file);
+			}
+			execute(stream);
+		}
+	}
+	void engine::commandStreamTick() {
+		while (true) {
+			g_engine.commandFromStream(); //This is typically used for serialising commandss from other processes
+			fiber::current()->sleep(2s);
+		}
 	}
 }

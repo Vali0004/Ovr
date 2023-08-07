@@ -60,14 +60,11 @@ namespace core {
 		g_manager.add("script", &script::onTick);
 		g_manager.add("commands", &commands::onTick);
 		g_manager.add("playerManager", &util::network::manager::onTick);
-		g_manager.add("commandStream", [] {
+		g_manager.add("commandStream", &commands::engine::commandStreamTick);
+		g_manager.add("statistics", [] {
 			while (true) {
-				/*if (commands::g_setConfig) {
-					commands::g_manager.toFile("Config");
-					commands::g_setConfig = false;
-				}*/
-				commands::g_engine.commandFromStream(); //This is typically used for serialising commandss from other processes
-				fiber::current()->sleep(2s);
+				g_statistics.reset();
+				fiber::current()->sleep(std::chrono::milliseconds(static_cast<i32>(1000 * static_cast<db>(g_statistics.m_frameTime))));
 			}
 		});
 		util::playSound("InjectionSound");
