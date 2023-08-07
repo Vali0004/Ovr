@@ -138,13 +138,11 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 					}
 				}
 				#endif
-				accessTlsStorageFromAnotherThread(ser->m_script_hash, [&](rage::tlsContext* threadStorage) {
-					cmd(&curInfo);
-					#ifdef HAS_ADDED_FUNCTIONALITY
-					g_statistics.m_nativesInvoked++;
-					guard->runCallbacks();
-					#endif
-				});
+				cmd(&curInfo);
+				#ifdef HAS_ADDED_FUNCTIONALITY
+				g_statistics.m_nativesInvoked++;
+				guard->runCallbacks();
+				#endif
 				if (ser->m_state != rage::eThreadState::running)
 					return ser->m_state;
 				curInfo.CopyReferencedParametersOut();

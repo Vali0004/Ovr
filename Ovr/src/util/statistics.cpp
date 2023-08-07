@@ -3,6 +3,10 @@
 #include "statistics.h"
 #include "script/elements.h"
 
+float roundUp(float value, int decimalPlace = 0) {
+	const float multiplier{ powf(10.f, decimalPlace) };
+	return std::roundf(value * multiplier) / multiplier;
+}
 void statistics::draw() {
 	m_drawBase = m_pos.y;
 	draw("{} Natives Invoked", m_nativesInvoked);
@@ -22,7 +26,7 @@ void statistics::draw() {
 	draw("{} Player{}", util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1, (util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1) == 1 ? "" : "s");
 	draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
 	draw("{} - Frame Count", m_frameCount);
-	draw("{} - Frame Time", m_frameTime);
+	draw("{} - Frame Time", roundUp(m_frameTime, 2));
 	draw("{} - FPS", roundf(ImGui::GetIO().Framerate / 1.5f));
 	draw("{} - Session", m_gameType);
 	draw("{} - Host", util::network::g_manager.online() ? m_host.m_name : "N/A");
@@ -48,7 +52,7 @@ void statistics::reset() {
 }
 
 i32 statistics::getLastFrameTime() {
-	return static_cast<i32>(1000 * static_cast<db>(g_statistics.m_frameTime));
+	return static_cast<i32>(1100 * static_cast<db>(g_statistics.m_frameTime));
 }
 
 void statistics::setGameType() {

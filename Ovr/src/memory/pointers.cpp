@@ -42,7 +42,7 @@ namespace pointers {
         g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
         g_beginService = scan("BS", "54 E9 9B 9B 94").as<decltype(g_beginService)>();
         g_constructBasket = scan("CB", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 30 48 8B F1").as<decltype(g_constructBasket)>();
-        g_request = scan("R", "75 6F 48 8B CE").sub(0xD).as<decltype(g_request)>();
+        g_request = scan("R", "40 55 57 41 54 41 55").as<decltype(g_request)>();
         g_sendMetric = scan("SM", "E8 ? ? ? ? EB 69 41 8B D6").call().as<decltype(g_sendMetric)>();
         g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
         g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
