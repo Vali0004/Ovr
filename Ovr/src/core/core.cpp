@@ -64,7 +64,7 @@ namespace core {
 		g_manager.add("statistics", [] {
 			while (true) {
 				g_statistics.reset();
-				fiber::current()->sleep(std::chrono::milliseconds(static_cast<i32>(1000 * static_cast<db>(g_statistics.m_frameTime))));
+				fiber::current()->sleep(std::chrono::milliseconds(g_statistics.getLastFrameTime()));
 			}
 		});
 		util::playSound("InjectionSound");

@@ -47,6 +47,10 @@ void statistics::reset() {
 	m_incomingNetworkEvents = 0;
 }
 
+i32 statistics::getLastFrameTime() {
+	return static_cast<i32>(1000 * static_cast<db>(g_statistics.m_frameTime));
+}
+
 void statistics::setGameType() {
 	if (util::network::g_manager.online()) {
 		std::string gstype{ gsTypeToString(g_sessionType) };

@@ -8,18 +8,19 @@ public:
 	void draw();
 public:
 	void reset();
+	i32 getLastFrameTime();
 public:
 	void setGameType();
 private:
 	template <typename ...a>
 	void draw(std::string f, a... args);
 public:
-	int m_nativesInvoked{};
-	int m_nativesInvokedByUs{};
-	int m_playerCount{};
-	int m_incomingNetworkEvents{};
-	int m_frameCount{};
-	float m_frameTime{};
+	i32 m_nativesInvoked{};
+	i32 m_nativesInvokedByUs{};
+	i32 m_playerCount{};
+	i32 m_incomingNetworkEvents{};
+	i32 m_frameCount{};
+	fp m_frameTime{};
 	std::string m_gameType{};
 	util::network::player m_lastScriptEventSender{};
 	util::network::player m_host{};
@@ -29,8 +30,8 @@ public:
 private:
 	ImVec2 m_pos{ 0.995f, 0.f };
 	elements::color m_color{ 255, 255, 255, 255 };
-	float m_drawBase{};
-	float m_padding{ 0.005f };
+	fp m_drawBase{};
+	fp m_padding{ 0.005f };
 };
 inline statistics g_statistics{};
 
