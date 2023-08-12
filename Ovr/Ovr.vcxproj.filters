@@ -579,5 +579,7 @@
       <Filter>rage\script</Filter>
     </ClCompile>
     <ClCompile Include="src\hooking\hooks\get_news_story.cpp" />
+    <ClCompile Include="src\hooking\hooks\get_available_memory_for_streamer.cpp" />
+    <ClCompile Include="src\hooking\hooks\settings_vram_tex.cpp" />
   </ItemGroup>
 </Project>

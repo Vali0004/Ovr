@@ -114,12 +114,6 @@ namespace defines {
 	inline u32 g_selectedFriend{};
 	inline std::string g_selectedAsi{};
 	inline eSessionTypes g_sessionType{ eSessionTypes::Offline };
-	inline bool debug() {
-		#ifdef DEBUG
-			return true;
-		#endif
-		return false;
-	}
     inline bool isNumber(std::string str) {
         for (char const& c : str)
             if (std::isdigit(c) == 0)

@@ -3,7 +3,7 @@
 #include "jitasm/jitasm.h"
 
 template <typename t>
-inline void mcpy(t* address, t* data, u64 size) {
+inline void mcpy(t address, t data, u64 size) {
 	if (!address) {
 		return;
 	}
@@ -11,6 +11,29 @@ inline void mcpy(t* address, t* data, u64 size) {
 	VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, (DWORD*)&oldProt);
 	memcpy((void*)address, (void*)data, size);
 	VirtualProtect((void*)address, size, oldProt, (DWORD*)&oldProt);
+}
+template <typename t>
+inline void mset(t address, i32 value, u64 size) {
+	if (!address) {
+		return;
+	}
+	u32 oldProt{};
+	VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, (DWORD*)&oldProt);
+	memcpy((void*)address, (void*)data, size);
+	VirtualProtect((void*)address, size, oldProt, (DWORD*)&oldProt);
+}
+template <typename a, typename v>
+inline void put(a addr, v value) {
+	memcpy((void*)addr, &value, sizeof(value));
+}
+template<typename a>
+inline void nop(a addr, u64 size) {
+	mset<a>(addr, 0x90, size);
+}
+template <typename a, typename t>
+inline void call(a addr, t func) {
+	put<u8>(addr, 0xE8);
+	put<i32>((u64)addr + 1, (i64)func - (i64)addr - 5);
 }
 class patch {
 public:
@@ -106,7 +129,3 @@ private:
 	std::vector<patch*> m_codeHealerPatches{};
 };
 inline arxPatches g_arxPatches{};
-template <typename v, typename a>
-inline void put(a address, v value) {
-	memcpy((void*)address, &value, sizeof(value));
-}

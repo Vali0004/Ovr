@@ -42,6 +42,9 @@ namespace pointers {
 		using queuePacketViaMsgId = bool(*)(rage::netConnectionManager* pMgr, i32 MsgId, u8* pData, i32 Size, i32 Flags, void* pUnk);
 		using getServerData = u64(*)(i32 Unk);
 		using getNewsStory = bool(*)(CNetworkSCNewsStory* pStory);
+		using updateVideoMemoryBar = void(*)(bool Unk);
+		using getAvailableMemoryForStreamer = u64(*)(u64* _This);
+		using settingsVramTex = u64(*)(u64* _This, i32 Quality, u64* pSettings);
 
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
@@ -110,6 +113,9 @@ namespace pointers {
 	inline types::queuePacketViaMsgId g_queuePacketViaMsgId{};
 	inline types::getServerData g_getServerData{};
 	inline types::getNewsStory g_getNewsStory{};
+	inline types::updateVideoMemoryBar g_updateVideoMemoryBar{};
+	inline types::getAvailableMemoryForStreamer g_getAvailableMemoryForStreamer{};
+	inline types::settingsVramTex g_settingsVramTex{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
@@ -137,7 +143,10 @@ namespace pointers {
 	inline uint32_t* g_threadCount{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
+	inline u64 g_pedModelInfoVtbl{};
 	inline bool* g_forceHost{};
+	inline u64* g_vramLocation{};
+	inline u32* g_allocatorAmount{};
 	inline mem g_windowHook{};
 	inline HWND g_hwnd{};
 }

@@ -20,10 +20,85 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
-inline TimecycleKeyframeData* g_timecycleKeyframeData{};
-inline bool g_timecycleKeyframeDataUpdate{ true};
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
+constexpr uint64_t g_GB{ 1000 * 1024 * 1024 }; //Use 1000 for one so we catch 'hardware reserved' memory as well
+inline int g_extRamMode{};
+inline int* g_budgetScale{};
+inline int* g_isStereo{};
+inline void* allocateStub(u64 size) {
+	HMODULE coreRT{ GetModuleHandleA("CoreRT.dll") };
+	auto fn{ reinterpret_cast<decltype(&allocateStub)>(GetProcAddress(coreRT, "AllocateStubMemoryImpl")) };
+	return fn(size);
+}
+struct budgeting {
+	static void init() {
+		g_isStereo = (i32*)allocateStub(4);
+		*g_budgetScale = NULL;
+		*g_isStereo = TRUE;
+		mem loc{ scan("", "84 C0 0F 84 4B 01 00 00 0F B6").sub(0x46) };
+		nop(loc.add(0x48).as<void*>(), 6);
+		put(loc.add(0xA6).as<i32*>(), (u64)g_budgetScale - loc.add(0xA6).add(4).as<u64>());
+		put(loc.add(0xBA).as<i32*>(), (u64)g_isStereo - loc.add(0xBA).add(4).as<u64>());
+		call(loc.add(0x101).as<void*>(), bigUpdate);
+	}
+	static void postInit() {
+		MEMORYSTATUSEX msex{};
+		msex.dwLength = sizeof(msex);
+		GlobalMemoryStatusEx(&msex);
+		uint32_t allocatorReservation{};
+		if (msex.ullTotalPhys >= 16 * g_GB) {
+			allocatorReservation = 0x7FFFFFFF;
+			g_extRamMode = 2;
+		}
+		else if (msex.ullTotalPhys >= 12 * g_GB) {
+			allocatorReservation = 0x60000000;
+			g_extRamMode = 1;
+		}
+		//The full code will 100% break 4/4GB systems
+		if (g_extRamMode == 0) {
+			setGamePhysicalBudget(3 * g_GB);
+			return;
+		}
+		mem grcResourceCachePool{ scan("GRCP", "BA 00 00 05 00 48 8B C8 44 88").add(1) };
+		put(grcResourceCachePool.as<u32*>(), 0xA0000);
+		put(grcResourceCachePool.add(22).as<u32*>(), 0xA001B);
+		//Increase allocator amount
+		if (allocatorReservation) {
+			put(pointers::g_allocatorAmount, allocatorReservation);
+		}
+		setGamePhysicalBudget(3 * g_GB);
+	}
+	static void bigUpdate(int who, int what) {
+		*g_budgetScale = what;
+		setGamePhysicalBudget(0);
+		pointers::g_updateVideoMemoryBar(0);
+	}
+	static void setGamePhysicalBudget(u64 budget) {
+		static u64 baseBudget{};
+		if (budget == 0) {
+			budget = baseBudget;
+		}
+		else {
+			baseBudget = budget;
+		}
+		float multiplier{ getBudgetMultiplier() };
+		//This is designed to fix the logic error with low/high/veryhigh
+		//The logic error/issue is R* seems to thought in a few cases that the texture setting flag is mapped to to
+		// normal, high, very high, and not unused, normal, high/very high.
+		// This creates the issue where very high is just high with the hi texture flag enabled.
+		//This will fix low and normal actually being low and normal
+		for (i32 i{}; i != 80; i += 4) {
+			pointers::g_vramLocation[i + 3] = budget * multiplier;
+			pointers::g_vramLocation[i + 2] = budget * multiplier;
+			pointers::g_vramLocation[i + 1] = (budget * multiplier) / 1.5;
+			pointers::g_vramLocation[i] = (budget * multiplier) / 2;
+		}
+	}
+	static float getBudgetMultiplier() {
+		return (*g_budgetScale / 12.f) + 1.f;
+	}
+};
 inline void accessTlsStorageFromAnotherThread(u32 hash, std::function<void(rage::tlsContext*)> callback) {
 	try {
 		rage::tlsContext* threadStorage{ rage::tlsContext::get() };
@@ -94,6 +169,8 @@ struct hooks {
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static u64 writePlayerGameStateDataNode(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
 	static bool getNewsStory(CNetworkSCNewsStory* pStory);
+	static u64 getAvailableMemoryForStreamer(u64* _This);
+	static u64 settingsVramTex(u64* _This, i32 Quality, u64* pSettings);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
@@ -151,6 +228,8 @@ public:
 	detour m_allocateReliable;
 	detour m_writePlayerGameStateDataNode;
 	detour m_getNewsStory;
+	detour m_getAvailableMemoryForStreamer;
+	detour m_settingsVramTex;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

@@ -55,6 +55,13 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	if (ser->m_script_hash == "valentinerpreward2"_joaat) {
 		return ser->m_state = rage::eThreadState::aborted;
 	}
+	if (ser->m_script_hash == "freemode"_joaat && ((NETWORK::NETWORK_IS_SESSION_ACTIVE() || util::network::g_manager.online()) && g_sessionType != eSessionTypes::Offline)) {
+		if (ser->m_state == rage::eThreadState::aborted || ser->m_state == rage::eThreadState::halted || ser->m_state == rage::eThreadState::blocked) {
+			//Oh no you fucking don't
+			ser->m_state = rage::eThreadState::running;
+			LOG(Fatal, "Someone attempted to end the session prematurely!");
+		}
+	}
 	u8** opcodesTbl{ pt->m_code_blocks };
 	#ifdef HAS_ADDED_FUNCTIONALITY
 	GameVMGuard* guard{ g_GlobalGameVMGuard.CreateGuardForThread(pt, ser, opcodesTbl) };

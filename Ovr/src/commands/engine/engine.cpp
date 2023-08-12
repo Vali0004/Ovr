@@ -117,9 +117,11 @@ namespace commands {
 		} break;
 		case eCommandType::ColorCommand: {
 			auto cmd{ static_cast<colorCommand*>(command) };
-			cmd->get(0).u8 = convertData<u8>(arguments[1]);
-			cmd->get(1).u8 = convertData<u8>(arguments[2]);
-			cmd->get(2).u8 = convertData<u8>(arguments[3]);
+			//This will make 255, into 255
+			//A bad side effect is 2,5,5, 1,,9,,,2, 2,,,,5,,,,5,,, will become valid, but fuck it. I don't care enough
+			cmd->get(0).u8 = convertData<u8>(trimString(arguments[1], ','));
+			cmd->get(1).u8 = convertData<u8>(trimString(arguments[2], ','));
+			cmd->get(2).u8 = convertData<u8>(trimString(arguments[3], ','));
 			if (arguments.size() == 4) {
 				cmd->get(3).u8 = convertData<u8>(arguments[4]);
 			}

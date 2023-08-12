@@ -235,6 +235,7 @@
     <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\dispatch_event.cpp" />
     <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
+    <ClCompile Include="src\hooking\hooks\get_available_memory_for_streamer.cpp" />
     <ClCompile Include="src\hooking\hooks\get_news_story.cpp" />
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp" />
     <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
@@ -250,6 +251,7 @@
     <ClCompile Include="src\hooking\hooks\script_vm.cpp" />
     <ClCompile Include="src\hooking\hooks\send_metric.cpp" />
     <ClCompile Include="src\hooking\hooks\send_network_event.cpp" />
+    <ClCompile Include="src\hooking\hooks\settings_vram_tex.cpp" />
     <ClCompile Include="src\hooking\hooks\update_presence_attribute_int.cpp" />
     <ClCompile Include="src\hooking\hooks\update_timecycle_data.cpp" />
     <ClCompile Include="src\main.cpp" />

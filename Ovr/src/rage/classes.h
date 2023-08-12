@@ -4187,12 +4187,10 @@ public:
 	class CPed* m_local_ped; //0x0008
 }; //Size: 0x0010
 static_assert(sizeof(CPedFactory) == 0x10);
-class CPedModelInfo {
+class CPedModelInfo : public rage::CBaseModelInfo {
 public:
-	char pad_0000[24]; //0x0000
-	uint32_t m_model_hash; //0x0018
-}; //Size: 0x001C
-static_assert(sizeof(CPedModelInfo) == 0x1C);
+}; //Size: 0x00B0
+static_assert(sizeof(CPedModelInfo) == 0xB0);
 class CPedBoneInfo {
 public:
 	rage::vector3 m_model_coords; //0x0000

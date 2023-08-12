@@ -1,4 +1,5 @@
 #include "memory/pointers.h"
+#include "hooking/hooking.h"
 
 namespace pointers {
 	bool scanAll() {
@@ -6,12 +7,12 @@ namespace pointers {
 		switch (*pointers::g_loadingScreenState) {
 		case eLoadingScreenState::PreLegal: {
 			std::this_thread::sleep_for(24s);
-			//*pointers::g_loadingScreenState = eLoadingScreenState::Legals;
+			*pointers::g_loadingScreenState = eLoadingScreenState::Legals;
 			std::this_thread::sleep_for(500ms);
 		} break;
 		case eLoadingScreenState::Legals: {
 			std::this_thread::sleep_for(1s);
-			//*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
+			*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
 		} break;
 		}
 		g_scrThreadInit = scan("STI", "83 89 ? ? ? ? ? 83 A1 ? ? ? ? ? 80 A1 ? ? ? ? ?").as<decltype(g_scrThreadInit)>();
@@ -63,6 +64,9 @@ namespace pointers {
 		g_queuePacketViaMsgId = scan("QPVMI", "E8 ? ? ? ? 84 C0 74 4D B3 01").call().as<decltype(g_queuePacketViaMsgId)>();
 		g_getServerData = scan("GSD", "BA ? ? ? ? 48 8B D9 E8 ? ? ? ? 48 8B D0").sub(0x16).as<decltype(g_getServerData)>();
 		g_getNewsStory = scan("GNS", "48 89 5C 24 18 48 89 74 24 20 55 57 41 56 48 8B EC 48 81 EC 80 00 00 00 48 8D").as<decltype(g_getNewsStory)>();
+		g_updateVideoMemoryBar = scan("UVMB", "BE 06 00 00 00 8B CE E8").sub(0x6D).as<decltype(g_updateVideoMemoryBar)>();
+		g_getAvailableMemoryForStreamer = scan("GAMFS", "E8 ? ? ? ? 48 8D 0C 3B 48 3B C1").call().as<decltype(g_getAvailableMemoryForStreamer)>();
+		g_settingsVramTex = scan("SVT", "B9 84 04 00 00 41 B9 6B").sub(0x6D).as<decltype(g_settingsVramTex)>();
 
 		g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
 		g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();
@@ -88,8 +92,11 @@ namespace pointers {
 		g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
 		g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
 		g_nativeRegistration = scan("NR", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 B9 20 03 00 00").add(0x1E).call().as<decltype(g_nativeRegistration)>();
-		g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_nativeRegistration)>();
+		g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_vehicleModelInfoVtbl)>();
+		g_pedModelInfoVtbl = scan("PMIV", "E3 FF FF 48 8D 05 ? ? ? ? 48 89 03 33 C0 48 89 83").add(3).mov().as<decltype(g_pedModelInfoVtbl)>();
 		g_forceHost = scan("FH", "C6 05 ? ? ? ? ? 48 8B CB E8 ? ? ? ? 84 C0 75 08").mov().as<decltype(g_forceHost)>();
+		g_vramLocation = scan("VL", "4C 63 C0 48 8D 05 ? ? ? ? 48 8D 14").add(3).mov().as<decltype(g_vramLocation)>();
+		g_allocatorAmount = scan("AA", "41 B8 00 00 00 40 48 8B D5 89").add(2).as<decltype(g_allocatorAmount)>();
 		g_hwnd = FindWindowA("grcWindow", nullptr);
 		return true;
 	}
@@ -109,18 +116,22 @@ namespace pointers {
 		catch (...) {
 			LOG_DEBUG("ARX function patches failed to patch, checking if they were already applied.");
 		}
+		//Fix EXE path for Code EXE size
 		std::vector<u8> moduleName(MAX_PATH + 1);
 		GetModuleFileNameA(GetModuleHandleA(0), (char*)moduleName.data(), moduleName.size());
-		if (mem target{ scan("CCRCEP", "41 BD 01 00 00 00 48 89 05").add(9).rip() }; *target.as<u8**>() != moduleName.data()) { //Fix EXE path for Code CRC
+		if (mem target{ scan("CCRCEP", "41 BD 01 00 00 00 48 89 05").add(9).rip() }; *target.as<u8**>() != moduleName.data()) {
 			g_patches.add("CCRCEP", *target.as<u8**>(), moduleName, true);
 		}
 		//Is matchmaking session valid
 		g_patches.add("ISMSV", scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
 		//I forgot to properly lable these, and I don't even remember what these do.
 		g_patches.add("FEE", scan("FEE", "48 8B 5C 24 40 48 8B 6C 24 48 48 8B 74 24 50 48 8B 7C 24 58 48 83 C4 30 41 5E C3 48 8B 0D").add(0x31).as<u8*>(), { 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8 });
-		g_patches.add("MTC", scan("MTC", "48 3B F8 74 ? 8B 1D").add(4).as<u8*>(), { 0x00ui8 }); //Crash trigger
+		//Crash trigger
+		g_patches.add("MTC", scan("MTC", "48 3B F8 74 ? 8B 1D").add(4).as<u8*>(), { 0x00ui8 });
 		//Windows hook to block use of WIN, we are storing the pointer and patching the handler to fix this.
 		g_windowHook = scan("WH", "48 83 EC 28 33 C9 FF 15 ? ? ? ? 45 33 C9");
 		g_patches.add("WH", g_windowHook.as<u8*>(), { 0xC3ui8, 0x90ui8, 0x90ui8, 0x90ui8 });
+		//Fix extended budgeting
+		budgeting::init();
 	}
 }
