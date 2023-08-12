@@ -76,7 +76,7 @@ namespace commands {
 			command->get(0).i32 = convertData<i32>(arguments[1]);
 		} break;
 		case eCommandType::FloatCommand: {
-			command->get(0).floating_point = convertData<fp>(arguments[1]);
+			command->get(0).floating_point = convertData<float>(arguments[1]);
 		} break;
 		case eCommandType::ToggleIntCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
@@ -84,7 +84,7 @@ namespace commands {
 		} break;
 		case eCommandType::ToggleFloatCommand: {
 			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).floating_point = convertData<fp>(arguments[2]);
+			command->get(1).floating_point = convertData<float>(arguments[2]);
 		} break;
 		case eCommandType::ActionCommand: {
 			//Handled below, no arguments required.
@@ -142,7 +142,7 @@ namespace commands {
 							(*value).toggle = convertData<bool>(arg);
 						} break;
 						case eValueType::FloatingPoint: {
-							(*value).floating_point = convertData<fp>(arg);
+							(*value).floating_point = convertData<float>(arg);
 						} break;
 						case eValueType::Int8: {
 							(*value).i8 = convertData<i8>(arg);
@@ -254,7 +254,7 @@ namespace commands {
 				} break;
 				case eCommandType::ToggleFloatCommand: {
 					if (containsAnNumber(words[1]) || isNumber(words[1]))
-						command->get(1).floating_point = convertData<fp>(words[1]);
+						command->get(1).floating_point = convertData<float>(words[1]);
 					else
 						command->get(0).toggle = convertData<bool>(words[1]);
 					//g_setConfig = true;

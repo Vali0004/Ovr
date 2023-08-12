@@ -3,7 +3,6 @@
 
 bool hooks::processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk) {
 	bool ret{ CALL(processMatchmakingFind, _This, Unused, pNode, Unk) };
-	//Dead patch. All results from matchmaking will be invalid until fixed.
 	/*if (commands::features::network::session::browser::backend::g_browser.active()) {
 		i32 i{};
 		for (rage::JSONNode* node{ pNode->GetChild("Results")->m_child }; node; node = node->m_sibling, i++) {

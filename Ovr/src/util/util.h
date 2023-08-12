@@ -445,14 +445,14 @@ namespace util {
 		}
 		return false;
 	}
-	inline constexpr char const* g_badEndpoints[3] = {
-		"Bonus",
+	//Not compile time but I'm fucking sick of issues so I'm using what works
+	inline std::vector<const char*> g_badEndpoints{
 		"SubmitCompressed",
 		"SubmitRealTime"
 	};
-	inline bool badEndpoint(const std::string& endpoint) {
-		for (i8 i{}; i != COUNT(g_badEndpoints); ++i) {
-			if (endpoint.size() && endpoint.find(g_badEndpoints[i]) != std::string::npos) {
+	inline bool badEndpoint(std::string endpoint) {
+		for (auto& e : g_badEndpoints) {
+			if (endpoint.find(e) != std::string::npos) {
 				return true;
 			}
 		}
@@ -516,7 +516,7 @@ namespace util {
 			alpha() = value;
 			HUD::SET_BLIP_ALPHA(handle(), alpha());
 		}
-		void setScale(fp value) {
+		void setScale(float value) {
 			scale() = value;
 			HUD::SET_BLIP_SCALE(handle(), scale());
 		}
@@ -544,7 +544,7 @@ namespace util {
 		i32& alpha() {
 			return m_alpha;
 		}
-		fp& scale() {
+		float& scale() {
 			return m_scale;
 		}
 		i32& rotation() {
@@ -562,7 +562,7 @@ namespace util {
 		i32 m_type{};
 		Vector3 m_coords{};
 		i32 m_alpha{};
-		fp m_scale{};
+		float m_scale{};
 		i32 m_rotation{};
 		i32 m_color{};
 		i32 m_hudColor{};

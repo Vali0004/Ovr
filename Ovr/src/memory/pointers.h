@@ -40,14 +40,15 @@ namespace pointers {
 		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);
 		using writePlayerGameStateDataNode = u64(*)(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
 		using queuePacketViaMsgId = bool(*)(rage::netConnectionManager* pMgr, i32 MsgId, u8* pData, i32 Size, i32 Flags, void* pUnk);
-		using prepareTrainData = i64(*)(i32 a1, u8 a2);
+		using getServerData = u64(*)(i32 Unk);
+		using getNewsStory = bool(*)(CNetworkSCNewsStory* pStory);
 
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 		using triggerPlayermenuAction = bool(*)(CPlayerListMenu* pMenu, u32* pHash);
-		using getFriendsMenu = u64(*)(u32 Index);
+		using getFriendsMenu = CFriendMenu*(*)(u32 Index);
 		using getArchetype = rage::fwArchetype*(*)(u32 Hash, u64* pUnk);
 		using calculateMipLevel = i32(*)(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
 		using getStreamingModuleFromExtension = rage::strStreamingModule* (*)(rage::strStreamingModuleMgr* pMgr, cc* Extension);
@@ -107,7 +108,8 @@ namespace pointers {
 	inline types::sendPresenceEvent g_sendPresenceEvent{};
 	inline types::writePlayerGameStateDataNode g_writePlayerGameStateDataNode{};
 	inline types::queuePacketViaMsgId g_queuePacketViaMsgId{};
-	inline types::prepareTrainData g_prepareTrainData{};
+	inline types::getServerData g_getServerData{};
+	inline types::getNewsStory g_getNewsStory{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
@@ -115,11 +117,13 @@ namespace pointers {
 	inline FriendRegistry* g_friendRegistry{};
 	inline ScInfo* g_scInfo{};
 	inline CNetworkShoppingMgr** g_networkShoppingMgr{};
+	inline CNetworkShoppingMgr** g_networkTransactionMgr{};
 	inline CNetworkPlayerMgr** g_networkPlayerMgr{};
 	inline CNetworkObjectMgr** g_networkObjectMgr{};
 	inline CNetwork** g_network{};
 	inline CPedFactory** g_pedFactory{};
 	inline CReplayInterface** g_replayInterface{};
+	inline netCatalog* g_netCatalog{};
 	inline CGameScriptHandlerMgr* g_scriptHandlerMgr{};
 	inline rage::scrProgramTable* g_scrProgramTable{};
 	inline rage::scrNativeRegistrationTable* g_nativeRegistrationTable{};
@@ -131,7 +135,6 @@ namespace pointers {
 	inline eLoadingScreenState* g_loadingScreenState{};
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
-	inline u64* g_reportModule{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
 	inline bool* g_forceHost{};

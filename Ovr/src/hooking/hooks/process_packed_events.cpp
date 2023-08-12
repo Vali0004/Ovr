@@ -28,6 +28,7 @@
 }
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	g_statistics.m_lastScriptEventSender.update(Sender);
+	PRINT_ARR(i64, std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
 	#ifdef DEBUG
 	g_logger->printArray<i64>(std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
 	#endif

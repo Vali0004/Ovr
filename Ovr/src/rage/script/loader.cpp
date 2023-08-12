@@ -47,6 +47,12 @@ namespace rage::ysc {
 		}
 		m_program->m_native_count = m_bytecode->m_natives.size();
 		m_program->m_global_count = 0x1337;
+		if (m_bytecode->m_staticCount) {
+			m_program->m_local_count = m_bytecode->m_staticCount;
+		}
+		if (m_bytecode->m_stackSize) {
+			m_thread->m_serialised.m_stack_size = m_bytecode->m_stackSize;
+		}
 		m_thread->m_serialised.m_state = rage::eThreadState::running;
 	}
 }

@@ -36,7 +36,6 @@ class GameVMPatch {
 public:
 	GameVMPatch(const std::string& pattern, i32 offset, const std::vector<u8>& patch) :
 		m_patternBytes(createBytesFromString(pattern)), m_offset(offset), m_patch(patch) {
-
 	}
 public:
 	void getCodeLocation(GameVMData* data) {

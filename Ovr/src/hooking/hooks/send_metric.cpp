@@ -12,7 +12,7 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 	else if (pMetric->using_c()) {
 		key = "C";
 	}
-	rage::JSONSerialiser json{ 256 };
+	rage::rlJSON json{ 256 };
 	pMetric->to_json(&json);
 	std::string name{ pMetric->get_name() };
 	if (!name.compare("SPAWN")) {

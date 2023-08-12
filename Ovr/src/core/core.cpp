@@ -37,7 +37,7 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b2411)");
+		g_logger = MakeSmartPointer<logger>("Ovr | Developer (0.00.1, b3213)"); //I really need to keep track of this...
 		g_scyllaHide = MakeSmartPointer<scyllaHide>();
 		if (g_scyllaHide->getModule()) {
 			LOG_DEBUG("ScyllaHide loaded.");
@@ -75,8 +75,6 @@ namespace core {
 		engine::createThread(&g_manager);
 	}
 	void destroy() {
-		g_pool.add(&commands::features::uninit);
-		//We'd like ped flags and other things to be reset because of cases like no-clip
 		std::this_thread::sleep_for(500ms);
 		engine::cleanupThreads();
 		g_manager.destroy();

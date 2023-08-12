@@ -7,6 +7,11 @@
 #elif
 	#define LOG_DEBUG(s, ...) ;
 #endif
+#ifdef DEBUG
+	#define PRINT_ARR(t, s, a, as) g_logger->printArray<t>(s, a, as);
+#elif
+	#define PRINT_ARR(t, s, a, as, ...) ;
+#endif
 
 enum class eLogColor : u16 {
 	Red = FOREGROUND_RED,

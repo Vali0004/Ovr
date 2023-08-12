@@ -28,10 +28,10 @@ private:
 	static inline nodeFinder m_finder{};
 };
 inline rage::CDynamicEntity* getEntityAttachedTo(rage::CDynamicEntity* Object) {
-	if (!Object || !Object->gap50) {
+	if (!Object || !Object->unk_0050) {
 		return nullptr;
 	}
-	u64* component{ reinterpret_cast<u64*>(reinterpret_cast<u64>(Object->gap50) + 0x48) };
+	u64* component{ reinterpret_cast<u64*>(reinterpret_cast<u64>(Object->unk_0050) + 0x48) };
 	if (!component)
 		return nullptr;
 	i32 attachmentCount{ (i32)(component[0x5C]) & 0xF };

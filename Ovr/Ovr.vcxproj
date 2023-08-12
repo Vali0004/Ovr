@@ -235,6 +235,7 @@
     <ClCompile Include="src\hooking\hooks\ctaskjump_constructor.cpp" />
     <ClCompile Include="src\hooking\hooks\dispatch_event.cpp" />
     <ClCompile Include="src\hooking\hooks\find_game_match.cpp" />
+    <ClCompile Include="src\hooking\hooks\get_news_story.cpp" />
     <ClCompile Include="src\hooking\hooks\get_proc_address.cpp" />
     <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
     <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />

@@ -19,15 +19,15 @@ namespace commands {
 		u32 pack() {
 			return a << 24 | b << 16 | g << 8 | r << 0;
 		}
-		fp* float4() {
-			fp v[4]{ toFloat(a), toFloat(g), toFloat(b), toFloat(a) };
+		float* float4() {
+			float v[4]{ toFloat(a), toFloat(g), toFloat(b), toFloat(a) };
 			return v;
 		}
 	private:
-		static fp toFloat(u8 v) {
+		static float toFloat(u8 v) {
 			return (v & 0xFF) / 255.f;
 		}
-		static u8 fromFloat(fp v) {
+		static u8 fromFloat(float v) {
 			return static_cast<u8>(v * 255.f);
 		}
 	};

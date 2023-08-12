@@ -47,8 +47,9 @@ namespace util::network {
 		}
 	}
 	void manager::loop() {
-		if (!online())
+		if (!online() || !NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
 			return;
+		}
 		if (mgr()) {
 			m_playerCount = mgr()->m_player_count;
 			m_playerLimit = mgr()->m_player_limit;

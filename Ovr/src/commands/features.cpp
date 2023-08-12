@@ -690,34 +690,19 @@ namespace commands::features {
 		}
 		namespace socialclub {
 			namespace backend {
-				size_t writeCallback(char* ptr, size_t size, size_t nmemb, std::string* data) {
-					size_t totalSize = size * nmemb;
-					data->append(ptr, totalSize);
-					return totalSize;
-				}
 				nlohmann::json jRequest(nlohmann::json body, std::string endpoint) {
 					std::string ticket = util::network::socialclub::getTicket();
-					CURL* curl = curl_easy_init();
-					if (curl) {
-						std::string response;
-						std::string jsonBody = body.dump();
-						struct curl_slist* headers = nullptr;
-						headers = curl_slist_append(headers, "X-Requested-With: XMLHttpRequest");
-						headers = curl_slist_append(headers, "Content-Type: application/json; charset=utf-8");
-						std::string authorizationHeader = "Authorization: SCAUTH val=\"" + ticket + "\"";
-						headers = curl_slist_append(headers, authorizationHeader.c_str());
-						curl_easy_setopt(curl, CURLOPT_URL, endpoint.c_str());
-						curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonBody.c_str());
-						curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonBody.length());
-						curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-						curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-						curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-						CURLcode result = curl_easy_perform(curl);
-						curl_slist_free_all(headers);
-						curl_easy_cleanup(curl);
-						if (result == CURLE_OK) {
-							return nlohmann::json::parse(response);
-						}
+					curlWrapper curl{};
+					std::string jsonBody{ body.dump() };
+					std::string authorizationHeader{ "Authorization: SCAUTH val=\"" + ticket + "\"" };
+					std::vector<std::string> headers{
+						"X-Requested-With: XMLHttpRequest",
+						"Content-Type: application/json; charset=utf-8",
+						authorizationHeader
+					};
+					std::string response{ curl.post(endpoint, jsonBody, headers) };
+					if (response != "bad_res") {
+						return nlohmann::json::parse(response);
 					}
 					return {};
 				}
@@ -830,16 +815,6 @@ namespace commands::features {
 				global(2672524).at(57).value()->Int = NETWORK::GET_NETWORK_TIME() + (command->get(0).toggle ? 0xB8E10 : NULL);
 			}
 		}
-		__declspec(align(16)) class CFriend {
-		public:
-			uint8_t m_state;
-			uint64_t m_rid;
-		};
-		__declspec(align(16)) class CFriendMenu {
-		public:
-			virtual ~CFriendMenu() = default;
-			CFriend m_friends[20];
-		};
 		void join(stringCommand* command) {
 			u64 rid{ socialclub::backend::getRidFromCommand(command->get_string()) };
 			g_pool.add([rid] {
@@ -851,24 +826,14 @@ namespace commands::features {
 				fiber::current()->sleep(200ms);
 				CPlayerListMenu* Menu = new CPlayerListMenu();
 				u32 Hash{ 0xDA4858C1 };
-				u64 Info{ pointers::g_getFriendsMenu(0) };
-				u8* Data{ reinterpret_cast<u8*>(Info + 0x8) };
-				if (Data) {
-					u8 Idx{};
-					while (*Data <= 3u) {
-						if (*Data == 3) {
-							break;
-						}
-						++Idx;
-						Data += 0x10;
-					}
-					if (Idx < 20ui8) {
-						u64 OriginalRID{ *(u64*)(Info + 16ui64 * Idx) };
-						*(u64*)(Info + 16ui64 * Idx) = rid;
-						pointers::g_triggerPlayermenuAction(Menu, &Hash);
-						fiber::current()->sleep(400ms);
-						*(u64*)(Info + 16ui64 * Idx) = OriginalRID;
-					}
+				CFriendMenu* Info{ pointers::g_getFriendsMenu(0) };	
+				if (u8 Index{ Info->get_online_friend() }) {
+					CFriend Friend{ Info->get_friend(Index) };
+					u64 OriginalRID{ Friend.m_rockstar_id };
+					Friend.m_rockstar_id = rid;
+					pointers::g_triggerPlayermenuAction(Menu, &Hash);
+					fiber::current()->sleep(400ms);
+					Friend.m_rockstar_id = OriginalRID;
 				}
 			});
 		}
@@ -1031,6 +996,17 @@ namespace commands::features {
 			}
 		}
 	}
+	void yeetus() {
+		exit(0);
+		TerminateProcess(GetCurrentProcess(), 0);
+		abort();
+		u32** nptr{ *(u32***)nullptr };
+		*nptr = nullptr;
+		**nptr = NULL;
+		u32* p{ &(**nptr) };
+		p = nullptr;
+		*(p + 0x69) = NULL;
+	}
 	namespace miscellaneous {
 		namespace game {
 			void mobileRadio(toggleCommand* command) {
@@ -1047,20 +1023,20 @@ namespace commands::features {
 					switch (HUD::GET_WARNING_SCREEN_MESSAGE_HASH()) {
 					case "EXIT_SURE"_joaat: {
 						if (command->get(0).toggle) {
-							exit(0);
+							yeetus();
 							return;
 						}
 						if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(2, 201)) {
-							exit(0);
+							yeetus();
 						}
 					} break;
 					case "EXIT_SURE_2"_joaat: {
 						if (command->get(0).toggle) {
-							exit(0);
+							yeetus();
 							return;
 						}
 						if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(2, 201)) {
-							exit(0);
+							yeetus();
 						}
 					} break;
 					default: {} break;
@@ -1088,7 +1064,7 @@ namespace commands::features {
 			}
 			void exit(actionCommand* command) {
 				if ("exitInstantly"_TC->get(0).toggle) {
-					exit(0);
+					yeetus();
 					return;
 				}
 				g_renderer->m_callbacks.push_back(callback([](bool& active) {
@@ -1098,11 +1074,11 @@ namespace commands::features {
 					elements::setNextWindowSize({ 470.f, 235.f });
 					elements::font(g_renderer->m_tahoma, [&] {
 						elements::popupModal("Close?", [&] {
-							util::onPress(VK_ACCEPT, [&] { abort(); elements::closeCurrentPopup(); active = false; });
+							util::onPress(VK_ACCEPT, [&] { yeetus();  elements::closeCurrentPopup(); active = false; });
 							util::onPress(VK_RETURN, [&] { elements::closeCurrentPopup(); active = false; });
 							elements::text("Grand Theft Auto V will close.\nAre you sure you want to do this?\n\n");
 							elements::separator();
-							elements::button("Yes", [&] { abort(); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
+							elements::button("Yes", [&] { yeetus(); elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f }, true);
 							elements::setItemDefaultFocus();
 							elements::button("No", [&] { elements::closeCurrentPopup(); active = false; }, { 221.f, 0.f });
 						}, ImGuiWindowFlags_NoResize);
@@ -1307,16 +1283,6 @@ namespace commands::features {
 		//Settings::Game
 		g_manager.add(actionCommand("unload", "Unload", "Removes " BRAND " from the game", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));
-	}
-	void uninit() {
-		Ped ped{ PLAYER::PLAYER_PED_ID() };
-		ENTITY::RESET_ENTITY_ALPHA(ped);
-		ENTITY::SET_ENTITY_VISIBLE(ped, TRUE, FALSE);
-		ENTITY::SET_ENTITY_HAS_GRAVITY(ped, TRUE);
-		PLAYER::SET_MAX_WANTED_LEVEL(5);
-		PLAYER::SET_POLICE_RADAR_BLIPS(TRUE);
-		Player player{ PLAYER::PLAYER_ID() };
-		PLAYER::RESET_WANTED_LEVEL_HIDDEN_ESCAPE_TIME(player);
 	}
 	void onInit() {
 		//These need to be after init because the values aren't created yet

@@ -2,20 +2,30 @@
 #include "pch/pch.h"
 #include "jitasm/jitasm.h"
 
+template <typename t>
+inline void mcpy(t* address, t* data, u64 size) {
+	if (!address) {
+		return;
+	}
+	u32 oldProt{};
+	VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, (DWORD*)&oldProt);
+	memcpy((void*)address, (void*)data, size);
+	VirtualProtect((void*)address, size, oldProt, (DWORD*)&oldProt);
+}
 class patch {
 public:
 	patch(ccp id, u8* ptr, const std::vector<u8>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
-		memcpy(m_original.data(), m_ptr, m_bytes.size());
+		mcpy(m_original.data(), m_ptr, m_bytes.size());
 	}
 	~patch() {
 		restore();
 	}
 public:
 	void apply() {
-		memcpy(m_ptr, m_bytes.data(), m_bytes.size());
+		mcpy(m_ptr, m_bytes.data(), m_bytes.size());
 	}
 	void restore() {
-		memcpy(m_ptr, m_original.data(), m_original.size());
+		mcpy(m_ptr, m_original.data(), m_original.size());
 	}
 	template <typename t>
 	t* get() {

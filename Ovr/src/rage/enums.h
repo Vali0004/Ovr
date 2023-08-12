@@ -149,14 +149,19 @@ enum class ePedType : uint32_t {
 	Ragdogable = (1 << 5)
 };
 enum class eTaskFlags : uint32_t {
-	Unk10 = (1 << 10),
-	Unk11 = (1 << 11),
+	ParachuteWhenCoordThresholdIsReached = (1 << 3),
+	CamShakeOnFall = (1 << 4),
+	PlayRagdollAnim = (1 << 5),
+	PlayDiveAnim = (1 << 7),
+	NoFallAnimation = (1 << 10),
+	NoSlowFall = (1 << 11),
 	Unk12 = (1 << 12),
 	SuperJump = (1 << 15),
 	LandOnJump = (1 << 16),
 	BeastJump = (1 << 17),
 	BeastJumpWithSuper = SuperJump | BeastJump,
-	GracefulLanding = Unk10 | Unk11 | Unk12 | LandOnJump
+	GracefulLanding = NoFallAnimation | NoSlowFall | Unk12 | LandOnJump,
+	RagdollOnFall = BeastJump | PlayRagdollAnim
 };
 enum eFrameFlags : uint32_t {
 	eFrameFlagExplosiveAmmo = 1 << 11,

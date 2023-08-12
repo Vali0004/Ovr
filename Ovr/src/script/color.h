@@ -10,9 +10,11 @@ namespace elements {
 		color(u32 packed) {
 			unpack(packed);
 		}
-	public:
+
 		u8 r{}, g{}, b{}, a{};
-		u32 pack() { return a << 24 | b << 16 | g << 8 | r << 0; }
+		u32 pack() {
+			return a << 24 | b << 16 | g << 8 | r << 0; 
+		}
 		void unpack(u32 value) {
 			r = (value >> 0) & 0xFF;
 			g = (value >> 8) & 0xFF;

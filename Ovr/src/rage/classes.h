@@ -1,6 +1,7 @@
 #pragma once
 #include "classdefs.h"
 #include "commands/types.h"
+#include "json/json.h"
 
 class CMoveObjectPooledObject;
 class Vector2;
@@ -479,17 +480,17 @@ namespace rage {
 
 		class CBaseModelInfo* m_model_info; //0x0020
 		uint8_t m_entity_type; //0x0028
-		char gap29; //0x0029
-		uint16_t gap2A; //0x002A
+		char unk_0029; //0x0029
+		uint16_t unk_002A; //0x002A
 		uint32_t m_entity_flags; //0x002D
 		class CNavigation* m_navigation; //0x0030
-		uint16_t gap38; //0x0038
-		uint16_t gap3A; //0x003A
-		uint32_t gap3C; //0x003C
+		uint16_t unk_0038; //0x0038
+		uint16_t unk_003A; //0x003A
+		uint32_t unk_003C; //0x003C
 		class rage::fwDynamicEntityComponent* m_dynamic_entity_component; //0x0040 (stores attachments and stuff)
 		class rage::fwDrawData* m_draw_data; //0x0048
-		class rage::fwDynamicEntityComponent* gap50; //0x0050
-		uint64_t gap58; //0x0058
+		class rage::fwDynamicEntityComponent* unk_0050; //0x0050
+		uint64_t unk_0058; //0x0058
 		matrix44 m_transformation_matrix; //0x0060
 		rage::fwEntity* m_render_focus_entity; //0x00A0
 		uint32_t m_render_focus_distance; //0x00A8
@@ -1588,10 +1589,10 @@ namespace rage {
 	static_assert(sizeof(scrNativeRegistrationTable) == 0x7FD);
 	#pragma pack(pop)
 	#pragma pack(push, 1)
-	class JSONSerialiser {
+	class rlJSON {
 	public:
-		JSONSerialiser(uint32_t length) : m_buffer(new char[length]), m_max_length(length), m_read(TRUE) {}
-		~JSONSerialiser() { delete[] m_buffer; }
+		rlJSON(uint32_t length) : m_buffer(new char[length]), m_max_length(length), m_read(TRUE) {}
+		~rlJSON() { delete[] m_buffer; }
 	public:
 		uint32_t unk_0000{}; //0x0000
 		uint32_t unk_0004{}; //0x0004
@@ -1604,11 +1605,25 @@ namespace rage {
 		std::string str() {
 			return m_buffer;
 		}
+		void from_json(nlohmann::json& json) {
+			set(json.dump());
+		}
+		nlohmann::json to_json() {
+			if (!m_buffer) {
+				return {};
+			}
+			return nlohmann::json::parse(str());
+		}
+		void set(const std::string& str) {
+			strcpy(m_buffer, str.c_str());
+			m_current_length = static_cast<uint32_t>(str.length());
+			m_max_length = UINT_MAX;
+		}
 		void clear() {
 			memset(m_buffer, NULL, m_max_length);
 		}
 	}; //Size: 0x0020
-	static_assert(sizeof(JSONSerialiser) == 0x1D);
+	static_assert(sizeof(rlJSON) == 0x1D);
 	#pragma pack(pop)
 	class JSONNode {
 	public:
@@ -1635,7 +1650,7 @@ namespace rage {
 		virtual int metric_a() { return 0; }; //Returns a constant integer like 0
 		virtual int unk_0018() { return 0; };
 		virtual char const* get_name() { return ""; }; //Short name of the metric
-		virtual bool to_json(JSONSerialiser* jsonStream) { return false; }; //Prints the metric out to a JSON stream
+		virtual bool to_json(rlJSON* jsonStream) { return false; }; //Prints the metric out to a JSON stream
 		virtual int get_size() { return 0; }; //Size in bytes of derived object (for copying)
 		virtual uint32_t get_name_hash() { return 0; }; //Joaat of short name
 	public: 
@@ -2665,23 +2680,110 @@ public:
 	}
 }; //Size: 0x05E8
 static_assert(sizeof(TimecycleKeyframeData) == 0x5E8);
-class CHeaders {
+
+class CRequestData {
 public:
-	char m_header_data[465]; //0x0000
+	char m_data[465]; //0x0000
 }; //Size: 0x01D1
-static_assert(sizeof(CHeaders) == 0x1D1);
+static_assert(sizeof(CRequestData) == 0x1D1);
 class CHttpRequest {
 public:
-	char pad_0000[112]; //0x0000
+	char pad_0000[16]; //0x0000
+	CRequestData* m_request; //0x0010
+	char pad_0018[64]; //0x0018
+	CRequestData* m_response_headers; //0x0058
+	char pad_0060[16]; //0x0060
 	rage::sysMemAllocator* m_allocator; //0x0070
 	char pad_0078[16]; //0x0078
-	CHeaders* m_http_headers; //0x0088
-	char pad_0090[1144]; //0x0090
+	CRequestData* m_http_headers; //0x0088
+	char pad_0090[1112]; //0x0090
+	CRequestData* m_response; //0x04E8
+	char pad_04F0[4]; //0x04F0
+	uint16_t m_content_length; //0x04F4
+	char pad_04F6[18]; //0x04F6
 	char* m_protocol; //0x0508
 	char* m_base_url; //0x0510
 	char* m_endpoint_data; //0x0518
-}; //Size: 0x0520
-static_assert(sizeof(CHttpRequest) == 0x520);
+	char pad_0520[72]; //0x0520
+	char* m_user_agent; //0x0568
+}; //Size: 0x0570
+static_assert(sizeof(CHttpRequest) == 0x570);
+class CNetworkSCNewsStory { //Not the real name
+public:
+	uint32_t m_index; //0x0000
+	uint32_t unk_0000; //0x0004
+	uint32_t unk_0004; //0x0008
+	char* m_buffer; //0x0010
+	uint32_t m_max_length; //0x0018
+	uint32_t m_current_length; //0x001C
+	uint32_t m_read; //0x0020
+	uint8_t m_flags; //0x0024
+
+	std::string str() {
+		return m_buffer;
+	}
+	void from_json(nlohmann::json& json) {
+		set(json.dump());
+	}
+	nlohmann::json to_json() {
+		if (!m_buffer) {
+			return {};
+		}
+		return nlohmann::json::parse(str());
+	}
+	void set(const std::string& str) {
+		strcpy(m_buffer, str.c_str());
+		m_current_length = static_cast<uint32_t>(str.length());
+		m_max_length = UINT_MAX;
+	}
+	void clear() {
+		memset(m_buffer, NULL, m_max_length);
+	}
+};
+#pragma pack(push, 4)
+class CNetworkSCNewsStoryRequest {
+public:
+	virtual ~CNetworkSCNewsStoryRequest() = default;
+	virtual void GetNewsStory(CNetworkSCNewsStory* pNewsStory) = NULL;
+	uint32_t m_response_code; //0x0008
+	uint32_t m_response_length; //0x000C
+	char m_response[136]; //0x0010
+	uint32_t unk_0098; //0x0098
+	uint32_t unk_009C; //0x009C
+	char m_news_page[32]; //0x00A0
+	char unk_00C0; //0x00C0
+	char pad_00C1[39]; //0x00C1
+	int unk_00E8; //0x00E8
+	char pad_00EC[4]; //0x00EC
+	uint64_t unk_00F0; //0x00F0
+	uint32_t unk_00F8; //0x00F8
+	char pad_00FC[4]; //0x00FC
+	uint64_t unk_0100; //0x0100
+	uint32_t unk_0108; //0x0108
+	char pad_010C[4]; //0x010C
+	uint64_t unk_0110; //0x0110
+	uint32_t unk_0118; //0x0118
+	char pad_011C[4]; //0x0011C
+	uint64_t unk_0120; //0x0120
+	uint32_t unk_0128; //0x0128
+	char pad_012C[4]; //0x012C
+	uint64_t unk_0130; //0x0130
+	uint32_t unk_0138; //0x0138
+	char pad_013C[4]; //0x013C
+	uint64_t unk_0140; //0x0140
+	uint32_t unk_0148; //0x0148
+	char pad_014C[4]; //0x014C
+	uint32_t unk_0150; //0x0150
+	uint32_t unk_0154; //0x0154
+	char unk_0158; //0x0158
+	char pad_0159[327]; //0x0159
+	uint16_t word2A0; //0x02A0
+	uint64_t m_current_news_page; //0x02A4
+	uint32_t unk_02AC; //0x02AC
+	uint32_t unk_02B0; //0x02B0
+}; //Size: 0x02B4
+static_assert(sizeof(CNetworkSCNewsStoryRequest) == 0x2B4);
+#pragma pack(pop)
 class CGameScriptId : public rage::scriptId {
 public:
 	char pad_002C[4]; //0x002C
@@ -2737,7 +2839,7 @@ public:
 	virtual bool _0x58() { return false; }                                      //0x58
 	virtual bool IsGlobalFlags() { return false; }                              //0x60
 	virtual void DoPreCache(rage::netSyncData* data) {}                         //0x68
-	virtual std::uint8_t GetSyncFrequency(int index) { return 0; }              //0x70
+	virtual uint8_t GetSyncFrequency(int index) { return 0; }                   //0x70
 	virtual int GetSyncInterval(int index) { return 0; }                        //0x78
 	virtual int GetBandwidthForPlayer(int player) { return 200; }               //0x80 (should always return 200)
 	virtual void _0x88(void*) {}                                                //0x88
@@ -4134,7 +4236,7 @@ static_assert(sizeof(CPedInventory) == 0x88);
 #pragma pack(push, 1)
 class CPed : public rage::CPhysical {
 public:
-	char gap2EC[20]; //0x0000
+	char pad_02EC[20]; //0x0000
 	rage::vector3 m_velocity; //0x0300
 	char pad_030C[260]; //0x030C
 	class CPedBoneInfo m_bone_info[9]; //0x0410
@@ -5000,6 +5102,28 @@ public:
 	char pad_00E8[80]; //0x00E8
 	uint32_t unk_0138; //0x0138
 };
+class CFriend {
+public:
+	uint64_t m_rockstar_id; //0x0000
+};
+#pragma pack(push, 16)
+class CFriendMenu {
+public:
+	virtual ~CFriendMenu() = default;
+	CFriend get_friend(u8 index) {
+		return *(CFriend*)((u64)this + 16ui64 * index);
+	}
+	u8 get_online_friend() {
+		u8* data{ reinterpret_cast<u8*>((u64)this + 0x8) };
+		for (u8 i{}; i != 20; ++i, data += 16) {
+			if (data[i] == 3) {
+				return i;
+			}
+		}
+		return NULL;
+	}
+};
+#pragma pack(pop)
 #pragma pack(push, 1)
 class CPackedMessageData {
 public:
@@ -5064,3 +5188,31 @@ public:
 }; //Size: 0x03C0
 static_assert(sizeof(CMsgPackedEvents) == 0x3C0);
 #pragma pack(pop)
+class netInventoryBaseItem {
+public:
+	virtual ~netInventoryBaseItem() = default;
+	uint32_t m_hash; //0x0008
+	uint32_t m_category_hash; //0x000C
+	uint32_t m_price; //0x0010
+};
+class netCatalog {
+public:
+	HashTable<netInventoryBaseItem*> m_items; //0x0000
+	char pad_006A[18]; //0x006A
+	uint32_t m_version; //0x007C
+
+	netInventoryBaseItem* getCatalogEntry(u32 hash) {
+		for (HashNode* node{ m_items.m_lookup_table[hash % m_items.m_lookup_key] }; node; node = node->m_next) {
+			if (node->m_hash == hash) {
+				if (netInventoryBaseItem* transaction{ m_items.m_data[node->m_idx] }) {
+					return transaction;
+				}
+			}
+		}
+		return nullptr;
+	}
+	int getServiceThreshold(const DWORD service) {
+		const netInventoryBaseItem* item{ getCatalogEntry(service) };
+		return item ? item->m_price : -1;
+	}
+}; //Size: 0x0080

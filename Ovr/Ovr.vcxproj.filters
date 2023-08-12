@@ -578,5 +578,6 @@
     <ClCompile Include="src\rage\script\loader.cpp">
       <Filter>rage\script</Filter>
     </ClCompile>
+    <ClCompile Include="src\hooking\hooks\get_news_story.cpp" />
   </ItemGroup>
 </Project>

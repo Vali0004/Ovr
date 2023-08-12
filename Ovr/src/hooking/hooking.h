@@ -54,6 +54,27 @@ inline void accessTlsStorageFromAnotherThread(u32 hash, std::function<void(rage:
 		LOG_DEBUG("Unknown exception in {}", __FUNCTION__);
 	}
 }
+struct requestData {
+	std::string protocol{};
+	std::string baseUrl{};
+	std::string endpoint{};
+	std::string url{};
+	std::string response{};
+	std::string contentLength{};
+	std::vector<std::string> headers{};
+	void addHeadersFromString(std::string data) {
+		std::string line{};
+		std::istringstream stream{ data };
+		while (std::getline(stream, line)) {
+			if (line.empty()) {
+				break;
+			}
+			headers.push_back(line);
+		}
+	}
+};
+inline std::vector<requestData> g_requests{};
+inline u64 g_selectedRequest{ (u64)-1 };
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);
@@ -72,6 +93,7 @@ struct hooks {
 	static void* allocateReliable(rage::netConnection* pCon, i32 RequiredMemory);
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static u64 writePlayerGameStateDataNode(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
+	static bool getNewsStory(CNetworkSCNewsStory* pStory);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
@@ -128,6 +150,7 @@ public:
 	detour m_updateTimecycleData;
 	detour m_allocateReliable;
 	detour m_writePlayerGameStateDataNode;
+	detour m_getNewsStory;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

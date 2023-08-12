@@ -20,7 +20,7 @@ public:
 	i32 m_playerCount{};
 	i32 m_incomingNetworkEvents{};
 	i32 m_frameCount{};
-	fp m_frameTime{};
+	float m_frameTime{};
 	std::string m_gameType{};
 	util::network::player m_lastScriptEventSender{};
 	util::network::player m_host{};
@@ -30,9 +30,7 @@ public:
 private:
 	ImVec2 m_pos{ 0.995f, 0.f };
 	elements::color m_color{ 255, 255, 255, 255 };
-	fp m_drawBase{};
-	fp m_padding{ 0.005f };
+	float m_drawBase{};
+	float m_padding{ 0.005f };
 };
 inline statistics g_statistics{};
-
-inline std::pair<u8, std::pair<u8, u8>> g_lastScriptVMOpcodes{};

@@ -52,8 +52,9 @@ void scr_append_string(char* dst, unsigned size, const char* src) {
 //	class scrThread
 //	static u32 Run(scrValue * __restrict stack,scrValue * __restrict globals,const scrProgram &pt,Serialized * __restrict ser);
 rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser) {
-	if (ser->m_script_hash == "valentinerpreward2"_joaat)
+	if (ser->m_script_hash == "valentinerpreward2"_joaat) {
 		return ser->m_state = rage::eThreadState::aborted;
+	}
 	u8** opcodesTbl{ pt->m_code_blocks };
 	#ifdef HAS_ADDED_FUNCTIONALITY
 	GameVMGuard* guard{ g_GlobalGameVMGuard.CreateGuardForThread(pt, ser, opcodesTbl) };
@@ -65,7 +66,8 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	SET_PC(ser->m_pointer_count);
 	char buf[16]{};
 	while (true) {
-		switch (LoadImm8) {
+		u32 opcode{ LoadImm8 };
+		switch (opcode) {
 			CASE(OP_NOP) CHECK_PC; FETCH_INSN; NEXT_INSN;
 			CASE(OP_IADD) FETCH_INSN; --sp; sp[0].Int += sp[1].Int; NEXT_INSN;
 			CASE(OP_ISUB) FETCH_INSN; --sp; sp[0].Int -= sp[1].Int; NEXT_INSN;
@@ -429,28 +431,37 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_GLOBAL_U24) FETCH_INSN;
 				u32 imm{ LoadImm24 }, block{ imm >> 18 }, ofs{ imm & 0x3FFFF };
 				++sp;
-				if (!globals[block])
+				if (!globals[block]) {
 					FAULT("Global block {}/{} not resident", block, ofs);
-				else
+					return ser->m_state = rage::eThreadState::halted;
+				}
+				else {
 					sp[0].Reference = (&globals[block][ofs]);
+				}
 			NEXT_INSN;
 
 			CASE(OP_GLOBAL_U24_LOAD) FETCH_INSN;
 				u32 imm{ LoadImm24 }, block{ imm >> 18 }, ofs{ imm & 0x3FFFF };
 				++sp;
-				if (!globals[block])
+				if (!globals[block]) {
 					FAULT("Global block {}/{} not resident", block, ofs);
-				else
+					return ser->m_state = rage::eThreadState::halted;
+				}
+				else {
 					sp[0].Any = globals[block][ofs].Any;
+				}
 			NEXT_INSN;
 
 			CASE(OP_GLOBAL_U24_STORE) FETCH_INSN;
 				u32 imm{ LoadImm24 }, block{ imm >> 18 }, ofs{ imm & 0x3FFFF };
 				--sp;
-				if (!globals[block])
+				if (!globals[block]) {
 					FAULT("Global block {}/{} not resident", block, ofs);
-				else
+					return ser->m_state = rage::eThreadState::halted;
+				}
+				else {
 					globals[block][ofs].Any = sp[1].Any;
+				}
 			NEXT_INSN;
 
 			CASE(OP_PUSH_CONST_U24) FETCH_INSN; ++sp; sp[0].Int = LoadImm24; NEXT_INSN;
@@ -573,16 +584,16 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_PUSH_CONST_5) FETCH_INSN; ++sp; sp[0].Int = 5; NEXT_INSN;
 			CASE(OP_PUSH_CONST_6) FETCH_INSN; ++sp; sp[0].Int = 6; NEXT_INSN;
 			CASE(OP_PUSH_CONST_7) FETCH_INSN; ++sp; sp[0].Int = 7; NEXT_INSN;
-
-			CASE(OP_PUSH_CONST_FM1) FETCH_INSN; ++sp; sp[0].Uns = 0xbf800000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F0) FETCH_INSN; ++sp; sp[0].Uns = 0x00000000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F1) FETCH_INSN; ++sp; sp[0].Uns = 0x3f800000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F2) FETCH_INSN; ++sp; sp[0].Uns = 0x40000000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F3) FETCH_INSN; ++sp; sp[0].Uns = 0x40400000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F4) FETCH_INSN; ++sp; sp[0].Uns = 0x40800000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F5) FETCH_INSN; ++sp; sp[0].Uns = 0x40a00000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F6) FETCH_INSN; ++sp; sp[0].Uns = 0x40c00000; NEXT_INSN;
-			CASE(OP_PUSH_CONST_F7) FETCH_INSN; ++sp; sp[0].Uns = 0x40e00000; NEXT_INSN;
+			
+			CASE(OP_PUSH_CONST_FM1) FETCH_INSN; ++sp; sp[0].Float = -1.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F0) FETCH_INSN; ++sp; sp[0].Float = 0.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F1) FETCH_INSN; ++sp; sp[0].Float = 1.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F2) FETCH_INSN; ++sp; sp[0].Float = 2.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F3) FETCH_INSN; ++sp; sp[0].Float = 3.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F4) FETCH_INSN; ++sp; sp[0].Float = 4.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F5) FETCH_INSN; ++sp; sp[0].Float = 5.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F6) FETCH_INSN; ++sp; sp[0].Float = 6.f; NEXT_INSN;
+			CASE(OP_PUSH_CONST_F7) FETCH_INSN; ++sp; sp[0].Float = 7.f; NEXT_INSN;
 
 			CASE(OP_STRINGHASH) FETCH_INSN; sp[0].Uns = rage::joaat(sp[0].String); NEXT_INSN;
 
@@ -590,7 +601,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				--sp;
 				sp[0].Int = ((sp[0].Int & (1 << sp[1].Int)) != 0);
 			NEXT_INSN;
-			DEFAULT FAULT("Invalid opcode!");
+			DEFAULT FAULT("Invalid opcode! ({} on thread {}, 0x{:X})", opcode, pt->m_name, pt->m_name_hash);
 		}
 	}
 }

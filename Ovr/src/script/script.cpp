@@ -26,18 +26,133 @@ namespace script {
 		return winPos.y != pos.y;
 	}
 	inline float g_width{ 300.f };
-	inline void drawText(rage::ysc::program& p, std::string text, Vector4 color, int font, Vector2 pos, Vector2 size, bool center) {
-		rage::ysc::HUD::SET_TEXT_CENTRE(p, center);
-		rage::ysc::HUD::SET_TEXT_COLOUR(p, color.x, color.y, color.z, color.w);
-		rage::ysc::HUD::SET_TEXT_FONT(p, font);
-		rage::ysc::HUD::SET_TEXT_SCALE(p, size.x, size.y);
-		//rage::ysc::HUD::SET_TEXT_DROPSHADOW(p, 1, 0, 0, 0, 0);
-		//rage::ysc::HUD::SET_TEXT_EDGE(p, 1, 0, 0, 0, 0);
-		rage::ysc::HUD::SET_TEXT_OUTLINE(p);
-		rage::ysc::HUD::BEGIN_TEXT_COMMAND_DISPLAY_TEXT(p, "STRING");
-		rage::ysc::HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(p, text.c_str());
-		rage::ysc::HUD::END_TEXT_COMMAND_DISPLAY_TEXT(p, pos, NULL);
-	}
+	class transactionItem {
+	public:
+		transactionItem(i32 itemId, i32 value, i32 price) : m_itemId(itemId), m_value(value), m_price(price) {}
+		i32 m_itemId{};
+		i32 m_value{};
+		i32 m_price{};
+		nlohmann::json to_json() {
+			return {
+				{ "itemId", m_itemId },
+				{ "value", m_value },
+				{ "price", m_price }
+			};
+		}
+	};
+	class transactionSystem { //TODO
+	public:
+		transactionSystem() {
+			m_transactionMgr = *pointers::g_networkTransactionMgr;
+		}
+		bool isConnectedToServer() {
+			if (!getServerData()) {
+				return false;
+			}
+			return m_serverUrl && m_rsToken && m_transactionMgr && m_transactionMgr->m_gs_token;
+		}
+		bool createRequest(ccp endpoint, std::vector<transactionItem> items, std::function<void(std::string)> callback = nullptr) {
+			if (!isConnectedToServer()) {
+				return false;
+			}
+			curlWrapper curl{};
+			u64 price{};
+			for (const transactionItem& item : items) {
+				price += item.m_price;
+			}
+			//getCatalogVersion(items);
+			nlohmann::json body{
+				{ "catalogVersion", 928 },
+				{ "TransactionNonce", transactionNonce() },
+				{ "slot", getSlot() },
+				{ "bank", price },
+				{ "wallet", 0 },
+				{ "GameVersion", gameVersion() }
+			};
+			for (transactionItem& item : items) {
+				body["items"].push_back({
+					{ "itemId", item.m_itemId },
+					{ "value", item.m_value },
+					{ "price", item.m_price }
+				});
+			}
+			std::string jsonBody{ body.dump() };
+			std::vector<std::string> headers{
+				"Content-Type: application/text",
+				authorizationHeader()
+			};
+			std::string response{ curl.post(std::format("https://{}/gta5/11/GamePlayServices/GameTransactions.asmx/{}", m_serverUrl, endpoint), jsonBody, headers) };
+			if (response.empty()) {
+				return false;
+			}
+			if (callback) {
+				callback(response);
+			}
+			LOG_DEBUG("Response: {}", response);
+			LOG_DEBUG("URL: {}", m_serverUrl);
+			LOG_DEBUG("Body: {}", jsonBody);
+			LOG_DEBUG("Auth header: {}", authorizationHeader());
+			const nlohmann::json json{ nlohmann::json::parse(response) };
+			bool success{ json["Status"].get<int>() == 1 };
+			if (success) {
+
+			}
+			return success;
+		}
+	private:
+		void getCatalogVersion(std::vector<transactionItem>& items) {
+			nlohmann::json body{
+				{ "catalogVersion", catalogVersion() },
+				{ "TransactionNonce", transactionNonce() },
+				{ "slot", getSlot() },
+				{ "bank", 0 },
+				{ "wallet", 0 },
+				{ "GameVersion", gameVersion() }
+			};
+			for (transactionItem& item : items) {
+				body["items"].push_back({
+					{ "itemId", item.m_itemId },
+					{ "value", item.m_value },
+					{ "price", item.m_price }
+				});
+			}
+			createRequest("BuyCasinoChips", {}, [this](std::string response) {
+				std::vector<std::string> matches{ getMatches(response, R"_("CurrentCatalogVersion":(\d+))_") };
+				std::string catalogVersion{ matches[0] };
+				m_catalogVersion = atoi(catalogVersion.c_str());
+			});
+		}
+		double gameVersion() {
+			return static_cast<double>(atof(NETWORK::GET_ONLINE_VERSION()));
+		}
+		u32 catalogVersion() {
+			return m_catalogVersion;
+		}
+		u32 transactionNonce() {
+			return m_transactionMgr->get_transaction_nonce();
+		}
+		u32 getSlot() {
+			i32 tmp{};
+			STATS::STAT_GET_INT("mpply_last_mp_char"_joaat, &tmp, TRUE);
+			return tmp;
+		}
+		bool getServerData() {
+			u64 serverData{ pointers::g_getServerData(NULL) };
+			if (serverData && static_cast<char>(serverData + 0x88) != 0) {
+				m_serverUrl = reinterpret_cast<char*>(serverData);
+				m_rsToken = reinterpret_cast<char*>(serverData + 0x88);
+				return true;
+			}
+			return false;
+		}
+		std::string authorizationHeader() {
+			return "Authorization: GSTOKEN token=" + std::string(m_transactionMgr->m_gs_token);
+		}
+		CNetworkShoppingMgr* m_transactionMgr{};
+		ccp m_serverUrl{};
+		ccp m_rsToken{};
+		u32 m_catalogVersion{};
+	};
 	void onPresent() {
 		if (script::g_guiOpen) {
 			elements::window(BRAND"Header", g_guiOpen, [] {
@@ -60,16 +175,14 @@ namespace script {
 				tabs::miscellaneous::tab();
 				tabs::recovery::tab();
 				tabs::settings::tab();
-				if (ImGui::MenuItem("Test")) {
-					rage::ysc::g_loader->setThread([](rage::ysc::program& p) {
-						p.enter("main", 0, 100);
-						p.label("EntryPoint");
-						rage::ysc::GRAPHICS::DRAW_RECT(p, { 0.5f, 0.5f }, 0.1f, 0.1f, 255, 192, 255, 255, FALSE);
-						drawText(p, "Hello!", { 255, 255, 255, 255 }, 7, { 0.5f, 0.5f }, { 1.f, 1.f }, true);
-						rage::ysc::SYSTEM::WAIT(p, 0);
-						p.jmp("EntryPoint");
-						p.leave(0, 0);
-					});
+				if (ImGui::MenuItem("Transaciton Test")) {
+					transactionSystem transaction{};
+					if (transaction.createRequest("BuyCasinoChips", {
+						{ 0x272cb70b, 1000, 0 },
+						{ 0x474E1CBD, 1, 0 }
+					})) {
+						LOG_DEBUG("Success");
+					}
 				}
 			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing);
 		}

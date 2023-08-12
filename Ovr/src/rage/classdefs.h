@@ -215,7 +215,7 @@ namespace rage {
 	using scrNativeHash = uint64_t;
 	class scrNativeRegistration;
 	class scrNativeRegistrationTable;
-	class JSONSerialiser;
+	class rlJSON;
 	class JSONNode;
 	class rlMetric;
 	template <typename t>

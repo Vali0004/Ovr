@@ -167,9 +167,22 @@ namespace defines {
         }
         return matches;
     }
+    inline std::vector<u64> findAllOccurances(std::string str, std::string substr) {
+        std::vector<u64> indexes{};
+        int index = 0;
+        while ((index = str.find(substr, index)) != std::string::npos) {
+            indexes.push_back(index);
+            index += substr.length();
+        }
+        return indexes;
+    }
     inline std::string getFileContents(std::filesystem::path path) {
         std::ifstream file{ path };
         return { (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>() };
+    }
+    inline std::string trimString(std::string string, char character) {
+        string.erase(remove(string.begin(), string.end(), character), string.end());
+        return string;
     }
     inline std::vector<std::string> splitString(const std::string& string, char split) {
         std::vector<std::string> output{};

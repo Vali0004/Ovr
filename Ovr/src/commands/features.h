@@ -251,7 +251,6 @@ namespace commands::features {
 		}
 	}
 	extern void init();
-	extern void uninit();
 	extern void onInit();
 	extern void onTick();
 }

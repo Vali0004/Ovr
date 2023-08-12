@@ -20,7 +20,7 @@ namespace util::network {
 		bool m_host{};
 		std::string m_name{};
 		rage::vector3 m_pos{};
-		fp m_heading{};
+		float m_heading{};
 		CPed* m_ped{};
 		CVehicle* m_vehicle{};
 		CVehicleModelInfo* m_vehicleModelInfo{};
