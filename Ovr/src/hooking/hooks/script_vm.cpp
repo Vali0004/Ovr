@@ -62,6 +62,9 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			LOG(Fatal, "Someone attempted to end the session prematurely!");
 		}
 	}
+	if (ser->m_state == rage::eThreadState::running) {
+		g_threadStorageAccessor.tick();
+	}
 	u8** opcodesTbl{ pt->m_code_blocks };
 	#ifdef HAS_ADDED_FUNCTIONALITY
 	GameVMGuard* guard{ g_GlobalGameVMGuard.CreateGuardForThread(pt, ser, opcodesTbl) };

@@ -153,7 +153,13 @@ namespace script {
 		cc* m_rsToken{};
 		u32 m_catalogVersion{};
 	};
+	int altNum{ 255 };
 	void onPresent() {
+		ENTITY::SET_ENTITY_ALPHA(PLAYER::PLAYER_PED_ID(), altNum, FALSE);
+		altNum--;
+		if (altNum == 0) {
+			altNum = 255;
+		}
 		if (script::g_guiOpen) {
 			elements::window(BRAND"Header", g_guiOpen, [] {
 				elements::setWindowPos({ 13.f, 100.f }, ImGuiCond_Once);

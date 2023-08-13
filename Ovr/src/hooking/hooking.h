@@ -10,6 +10,7 @@
 #include "rage/joaat.h"
 #include "util/player_mgr.h"
 #include "util/statistics.h"
+#include "util/budgeting_fix.h"
 #define CALL(hk, ...) g_hooking->m_##hk##.getOg<pointers::types::##hk##>()(__VA_ARGS__)
 #define CALL_DECL(hk, ...) g_hooking->m_##hk##.getOg<decltype(&##hk)>()(__VA_ARGS__)
 #define RET_CALL(hk, ...) return CALL(hk, __VA_ARGS__);
@@ -22,135 +23,37 @@ inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
-constexpr uint64_t g_GB{ 1000 * 1024 * 1024 }; //Use 1000 for one so we catch 'hardware reserved' memory as well
-inline int g_extRamMode{};
-inline int* g_budgetScale{};
-inline int* g_isStereo{};
-inline void* allocateStub(u64 size) {
-	HMODULE coreRT{ GetModuleHandleA("CoreRT.dll") };
-	auto fn{ reinterpret_cast<decltype(&allocateStub)>(GetProcAddress(coreRT, "AllocateStubMemoryImpl")) };
-	return fn(size);
-}
-struct budgeting {
-	static void init() {
-		g_isStereo = (i32*)allocateStub(4);
-		*g_budgetScale = NULL;
-		*g_isStereo = TRUE;
-		mem loc{ scan("", "84 C0 0F 84 4B 01 00 00 0F B6").sub(0x46) };
-		nop(loc.add(0x48).as<void*>(), 6);
-		put(loc.add(0xA6).as<i32*>(), (u64)g_budgetScale - loc.add(0xA6).add(4).as<u64>());
-		put(loc.add(0xBA).as<i32*>(), (u64)g_isStereo - loc.add(0xBA).add(4).as<u64>());
-		call(loc.add(0x101).as<void*>(), bigUpdate);
-	}
-	static void postInit() {
-		MEMORYSTATUSEX msex{};
-		msex.dwLength = sizeof(msex);
-		GlobalMemoryStatusEx(&msex);
-		uint32_t allocatorReservation{};
-		if (msex.ullTotalPhys >= 16 * g_GB) {
-			allocatorReservation = 0x7FFFFFFF;
-			g_extRamMode = 2;
+
+class threadStorageAccessor {
+public:
+	void tick() { //Handle cacher
+		m_threadLocalStorage = rage::tlsContext::get();
+		m_thread = m_threadLocalStorage->m_script_thread;
+		m_allocator = m_threadLocalStorage->m_allocator;
+		if (!m_allocator) {
+			m_allocator = m_threadLocalStorage->m_tls_entry;
 		}
-		else if (msex.ullTotalPhys >= 12 * g_GB) {
-			allocatorReservation = 0x60000000;
-			g_extRamMode = 1;
-		}
-		//The full code will 100% break 4/4GB systems
-		if (g_extRamMode == 0) {
-			setGamePhysicalBudget(3 * g_GB);
-			return;
-		}
-		mem grcResourceCachePool{ scan("GRCP", "BA 00 00 05 00 48 8B C8 44 88").add(1) };
-		put(grcResourceCachePool.as<u32*>(), 0xA0000);
-		put(grcResourceCachePool.add(22).as<u32*>(), 0xA001B);
-		//Increase allocator amount
-		if (allocatorReservation) {
-			put(pointers::g_allocatorAmount, allocatorReservation);
-		}
-		setGamePhysicalBudget(3 * g_GB);
-	}
-	static void bigUpdate(int who, int what) {
-		*g_budgetScale = what;
-		setGamePhysicalBudget(0);
-		pointers::g_updateVideoMemoryBar(0);
-	}
-	static void setGamePhysicalBudget(u64 budget) {
-		static u64 baseBudget{};
-		if (budget == 0) {
-			budget = baseBudget;
-		}
-		else {
-			baseBudget = budget;
-		}
-		float multiplier{ getBudgetMultiplier() };
-		//This is designed to fix the logic error with low/high/veryhigh
-		//The logic error/issue is R* seems to thought in a few cases that the texture setting flag is mapped to
-		// normal, high, very high, and not unused, normal, high/very high.
-		// This creates the issue where very high is just high with the hi texture flag enabled.
-		//This will fix low and normal actually being low and normal
-		for (i32 i{}; i != 80; i += 4) {
-			u64 value{ static_cast<u64>(budget * multiplier) };
-			pointers::g_vramLocation[i + 3] = value;
-			pointers::g_vramLocation[i + 2] = value;
-			pointers::g_vramLocation[i + 1] = static_cast<u64>(value / 1.5f);
-			pointers::g_vramLocation[i] = static_cast<u64>(value / 2.f);
+		if (!m_allocator) {
+			m_allocator = m_threadLocalStorage->m_unk_allocator;
 		}
 	}
-	static float getBudgetMultiplier() {
-		return (*g_budgetScale / 12.f) + 1.f;
+	void access(std::function<void()> callback) {
+		rage::sysMemAllocator* allocatorStorage{ m_threadLocalStorage->m_allocator };
+		rage::scrThread* threadStorage{ m_threadLocalStorage->m_script_thread };
+		m_threadLocalStorage->m_allocator = m_allocator;
+		m_threadLocalStorage->m_script_thread = m_thread;
+		m_threadLocalStorage->m_is_script_thread_active = true;
+		std::invoke(callback);
+		m_threadLocalStorage->m_allocator = allocatorStorage;
+		m_threadLocalStorage->m_script_thread = threadStorage;
+		m_threadLocalStorage->m_is_script_thread_active = threadStorage->m_serialised.m_state == rage::eThreadState::running;
 	}
+private:
+	rage::tlsContext* m_threadLocalStorage{};
+	rage::scrThread* m_thread{};
+	rage::sysMemAllocator* m_allocator{};
 };
-inline void accessTlsStorageFromAnotherThread(u32 hash, std::function<void(rage::tlsContext*)> callback) {
-	try {
-		rage::tlsContext* threadStorage{ rage::tlsContext::get() };
-		GtaThread* thread{ util::classes::getGtaThread(hash) };
-		rage::scrThread* oThread{ threadStorage->m_script_thread };
-		rage::sysMemAllocator* oSysMemAllocater{ threadStorage->m_allocator };
-		rage::sysMemAllocator* oTlsSysMemAllocater{ threadStorage->m_tls_entry };
-		rage::sysMemAllocator* oUnkTlsSysMemAllocater{ threadStorage->m_unk_allocator };
-		threadStorage->m_script_thread = thread;
-		threadStorage->m_allocator = threadStorage->m_tls_entry;
-		threadStorage->m_tls_entry = threadStorage->m_allocator;
-		threadStorage->m_unk_allocator = threadStorage->m_tls_entry;
-		threadStorage->m_is_script_thread_active = true;
-		callback(threadStorage);
-		threadStorage->m_script_thread = oThread;
-		threadStorage->m_allocator = oSysMemAllocater;
-		threadStorage->m_tls_entry = oTlsSysMemAllocater;
-		threadStorage->m_unk_allocator = oUnkTlsSysMemAllocater;
-		threadStorage->m_is_script_thread_active = oThread->m_serialised.m_state == rage::eThreadState::running;
-	}
-	catch (std::runtime_error& err) {
-		LOG_DEBUG("Runtime error {} in {}", err.what(), __FUNCTION__);
-	}
-	catch (std::exception& ex) {
-		LOG_DEBUG("Exception {} in {}", ex.what(), __FUNCTION__);
-	}
-	catch (...) {
-		LOG_DEBUG("Unknown exception in {}", __FUNCTION__);
-	}
-}
-struct requestData {
-	std::string protocol{};
-	std::string baseUrl{};
-	std::string endpoint{};
-	std::string url{};
-	std::string response{};
-	std::string contentLength{};
-	std::vector<std::string> headers{};
-	void addHeadersFromString(std::string data) {
-		std::string line{};
-		std::istringstream stream{ data };
-		while (std::getline(stream, line)) {
-			if (line.empty()) {
-				break;
-			}
-			headers.push_back(line);
-		}
-	}
-};
-inline std::vector<requestData> g_requests{};
-inline u64 g_selectedRequest{ (u64)-1 };
+inline threadStorageAccessor g_threadStorageAccessor{};
 struct hooks {
 	static void* cTaskJumpConstructor(u64 _This, u32 Flags);
 	static void* cTaskFallConstructor(u64 _This, u32 Flags);

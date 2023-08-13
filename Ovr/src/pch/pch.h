@@ -11,6 +11,7 @@
 #define COUNT(a) ((sizeof(a)/sizeof(0[a])) / ((size_t)(!(sizeof(a) % sizeof(0[a])))))
 #define ONCE_PER_FRAME(a) do a while (false)
 #define ONCE(v, a) static bool v{ ([&] { a }(), true) };
+#define LAZY_FIX(a) try a catch (...) {}
 constexpr long double PI{ 3.141592653589793238462643383279502884L };
 	
 template <typename t>

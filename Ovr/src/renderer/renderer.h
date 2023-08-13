@@ -58,25 +58,26 @@ class renderer {
 public:
 	renderer();
 	~renderer();
-public:
+
 	void onPresent();
+	static void onTick();
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-public:
+
 	std::pair<shaderData, vec2> createTexture(fs::path path);
 	shaderData createShaderData(image image);
-public:
+
 	//SHV fuckery
 	void createTextures();
 	void reloadTextures();
 	int createTexture(const char* texFileName);
 	void drawTexture(int id, int index, int level, int time, float sizeX, float sizeY, float centerX, float centerY, float posX, float posY, float rotation, float screenHeightScaleFactor, float r, float g, float b, float a);
-public:
+
 	ImFont* m_font{};
 	ImFont* m_fontBold{};
 	ImFont* m_tahoma{};
 	ImFont* m_arial{};
 	ImFontConfig m_fontCfg{};
-public:
+
 	bool hasActiveCallback() {
 		for (auto& c : m_callbacks) {
 			if (c) {

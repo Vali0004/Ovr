@@ -75,7 +75,7 @@ namespace engine {
 		}
 		bool didWeGetSlot{ slot != collection.size() };
 		if (didWeGetSlot) {
-			std::string name{ std::format("thr_{}", count + 1) };
+			std::string name{ std::format("customGtaThread_{}", g_ownedThreads.size()) };
 			auto& ser{ thread->m_serialised };
 			strcpy_s(thread->m_name, name.c_str());
 			thread->m_script_hash = rage::joaat(thread->m_name);

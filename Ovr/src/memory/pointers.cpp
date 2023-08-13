@@ -1,5 +1,5 @@
 #include "memory/pointers.h"
-#include "hooking/hooking.h"
+#include "util/budgeting_fix.h"
 
 namespace pointers {
 	bool scanAll() {

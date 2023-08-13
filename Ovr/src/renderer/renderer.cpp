@@ -1,11 +1,13 @@
 #include "renderer.h"
 #include "script/script.h"
+#include "fiber/dx_manager.h"
 #include "util/util.h"
 #include "shv/scripthookv.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/image.h"
 #include "stb/image_write.h"
+#include "hooking/hooking.h"
 
 namespace stb {
 	namespace memory {
@@ -67,25 +69,34 @@ renderer::~renderer() {
 }
 
 void renderer::onPresent() {
-	static auto&& style{ ImGui::GetStyle() };
-	static auto&& io{ ImGui::GetIO() };
-	io.FontAllowUserScaling = true;
-	io.DisplayFramebufferScale = { script::g_scale, script::g_scale };
-	io.FontGlobalScale = style.MouseCursorScale = script::g_scale;
-	io.MouseDrawCursor = script::g_guiOpen || hasActiveCallback();
-	script::onPresent();
-	for (auto& c : m_callbacks)
-		c.invoke();
+	g_threadStorageAccessor.access([] {
+		g_dxManager.run();
+	});
+}
+void renderer::onTick() {
+	while (true) {
+		static auto&& style{ ImGui::GetStyle() };
+		static auto&& io{ ImGui::GetIO() };
+		io.FontAllowUserScaling = true;
+		io.DisplayFramebufferScale = { script::g_scale, script::g_scale };
+		io.FontGlobalScale = style.MouseCursorScale = script::g_scale;
+		io.MouseDrawCursor = script::g_guiOpen || g_renderer->hasActiveCallback();
+		script::onPresent();
+		for (auto& c : g_renderer->m_callbacks)
+			c.invoke();
+		fiber::current()->sleep();
+	}
 }
 
 LRESULT renderer::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if (g_renderer.get()) {
-		if (ImGui::GetCurrentContext())
-			ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-		shv::wndProc(hWnd, uMsg, wParam, lParam);
 		if (uMsg == WM_KEYDOWN && wParam == VK_INSERT) {
 			script::g_guiOpen ^= true;
 		}
+		if (ImGui::GetCurrentContext()) {
+			ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+		}
+		shv::wndProc(hWnd, uMsg, wParam, lParam);
 		return CallWindowProcA(g_renderer->m_wndProc, hWnd, uMsg, wParam, lParam);
 	}
 	return -1;

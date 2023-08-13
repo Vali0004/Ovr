@@ -999,13 +999,6 @@ namespace commands::features {
 	void yeetus() {
 		exit(0);
 		TerminateProcess(GetCurrentProcess(), 0);
-		abort();
-		u32** nptr{ *(u32***)nullptr };
-		*nptr = nullptr;
-		**nptr = NULL;
-		u32* p{ &(**nptr) };
-		p = nullptr;
-		*(p + 0x69) = NULL;
 	}
 	namespace miscellaneous {
 		namespace game {

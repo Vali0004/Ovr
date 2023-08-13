@@ -41,12 +41,12 @@ inline bool doesMemoryMatch(u8* target, std::optional<u8> const* sig, u64 len) {
 	}
 	return true;
 }
-inline u64 findPatternBruteforce(std::optional<u8>* bytes, u64 count, hmodule module = {}) {
+inline u64 findPatternBruteforce(std::vector<std::optional<u8>> bytes, hmodule module = {}) {
 	mem memoryRegion{ module.begin() };
 	//We can skip the PE header and entry point
-	for (u64 data{ memoryRegion + 0x1100ui64 }; data != module.size(); data += 2) {
+	for (u64 data{ memoryRegion + 0x1100ui64 }; data != module.size(); data++) {
 		mem currentMemoryAddress{ memoryRegion.add(data) };
-		if (doesMemoryMatch(currentMemoryAddress.as<u8*>(), bytes, count)) {
+		if (doesMemoryMatch(currentMemoryAddress.as<u8*>(), bytes.data(), bytes.size())) {
 			return currentMemoryAddress.as<u64>();
 		}
 	}
@@ -71,7 +71,7 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 	for (i64 i{ wildCardIdx + 1 }; i != maxIdx; ++i)
 		shiftTable[*bytes[i]] = maxIdx - i;
 	//Loop data
-	try {
+	LAZY_FIX({
 		for (i64 curIdx{}; curIdx != module.size() - static_cast<i64>(bytes.size());) {
 			for (i64 sigIdx = maxIdx; sigIdx >= 0; --sigIdx) { //bruh. iLl dEfIneD fOr LoOp. Suck my motherfucking dick.
 				if (bytes[sigIdx].has_value() && *module.begin().add(curIdx + sigIdx).as<u8*>() != bytes[sigIdx].value()) {
@@ -83,12 +83,7 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 				}
 			}
 		}
-	}
-	catch (const std::exception& ex) {
-		LOG_DEBUG("Exception: {}", ex.what());
-		//Skip first 5 bytes for MH trampoline, if it's not a hook, it would've failed anyways. Fuck it
-		return findPatternBruteforce(&bytes.data()[5], bytes.size() - 5, module);
-	}
+	});
 	return NULL;
 }
 class scanner {
@@ -118,6 +113,17 @@ public:
 		}
 		return {};
 	}
+	mem getTry() {
+		g_totalSigCount++;
+		LAZY_FIX({
+			mem res{ findPatternBruteforce(m_elements, m_module) };
+			if (res) {
+				LOG_DEBUG("Found {} at GTA5.exe+0x{:X}", m_name, res.as<u64>() - m_module.begin().as<u64>());
+			}
+			return res;
+		});
+		return {};
+	}
 private:
 	std::string m_name{};
 	std::string m_pattern{};
@@ -126,6 +132,9 @@ private:
 };
 inline mem scan(std::string key, std::string ptr, hmodule module = {}) {
 	return scanner(key, ptr, module).get();
+}
+inline mem scanTry(std::string key, std::string ptr, hmodule module = {}) { //This will not report ANY errors. It is designed to silently fail for patches
+	return scanner(key, ptr, module).getTry();
 }
 inline std::vector<mem> getAllResults(std::string ptr, hmodule module = {}) {
 	std::vector<std::optional<u8>> bytes{ createBytesFromString(ptr) };

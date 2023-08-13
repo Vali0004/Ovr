@@ -429,8 +429,18 @@
     <ClInclude Include="src\rage\script\program.h">
       <Filter>rage\script</Filter>
     </ClInclude>
-    <ClInclude Include="src\rage\script\command_list.h" />
-    <ClInclude Include="src\util\packet.h" />
+    <ClInclude Include="src\util\budgeting_fix.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rage\script\command_list.h">
+      <Filter>rage\script</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\packet.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fiber\dx_manager.h">
+      <Filter>fiber</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp">
@@ -578,8 +588,14 @@
     <ClCompile Include="src\rage\script\loader.cpp">
       <Filter>rage\script</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\get_news_story.cpp" />
-    <ClCompile Include="src\hooking\hooks\get_available_memory_for_streamer.cpp" />
-    <ClCompile Include="src\hooking\hooks\settings_vram_tex.cpp" />
+    <ClCompile Include="src\hooking\hooks\settings_vram_tex.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\get_news_story.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\get_available_memory_for_streamer.cpp">
+      <Filter>hooking\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

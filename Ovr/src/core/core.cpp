@@ -7,6 +7,7 @@
 #include "memory/scanner.h"
 #include "util/transaction.h"
 #include "rage/script/loader.h"
+#include "fiber/dx_manager.h"
 
 namespace core {
 	namespace thread {
@@ -67,6 +68,7 @@ namespace core {
 				fiber::current()->sleep(std::chrono::milliseconds(g_statistics.getLastFrameTime()));
 			}
 		});
+		g_dxManager.add("renderer", &renderer::onTick);
 		util::playSound("InjectionSound");
 		while (*pointers::g_loadingScreenState != eLoadingScreenState::Finished) {
 			std::this_thread::sleep_for(100ms);
@@ -89,6 +91,7 @@ namespace core {
 		commands::g_manager.clear();
 		exceptions::uninitExceptionHandler();
 		g_arxPatches.clear();
+		budgeting::restore();
 		g_logger.reset();
 		g_scyllaHide.reset();
 	}
