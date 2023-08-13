@@ -6,7 +6,7 @@
 namespace exceptions {
 	class exceptionError {
 	public:
-		exceptionError(int t, std::string_view r) : m_type(t), m_reason(r) {}
+		exceptionError(i32 t, std::string_view r) : m_type(t), m_reason(r) {}
 		std::string what() {
 			return m_reason.data();
 		}
@@ -17,12 +17,12 @@ namespace exceptions {
 			return !what().empty();
 		}
 	protected:
-		int m_type{};
+		i32 m_type{};
 		std::string_view m_reason{};
 	};
 	class exceptionType {
 	public:
-		exceptionType(uint32_t code, const char* str) : m_code(code), m_string(str) {}
+		exceptionType(u32 code, cc* str) : m_code(code), m_string(str) {}
 		std::string str() {
 			return m_string.data();
 		}
@@ -33,7 +33,7 @@ namespace exceptions {
 			return !str().empty();
 		}
 	protected:
-		uint32_t m_code{};
+		u32 m_code{};
 		std::string_view m_string{};
 	};
 	class exceptionContext {
@@ -56,15 +56,15 @@ namespace exceptions {
 			LOG(Registers, "R14: 0x{:X} || R15: 0x{:X}", m_context.R14, m_context.R15);
 		}
 	public:
-		uint32_t m_code{};
-		uint64_t m_exceptionAddress{};
+		u32 m_code{};
+		u64 m_exceptionAddress{};
 		EXCEPTION_RECORD& m_record;
 		CONTEXT& m_context;
-		uint64_t m_type{};
-		uint64_t m_deathAddress{};
+		u64 m_type{};
+		u64 m_deathAddress{};
 		std::string m_fileoffset{};
 	};
-	inline size_t g_recoveryCount{};
+	inline u64 g_recoveryCount{};
 	extern bool attemptStackRecovery(PEXCEPTION_POINTERS exceptionInfo);
 	#define PAIR(v) exceptionType(v, #v)
 	inline std::array<exceptionType, 62> g_exceptionTypes{

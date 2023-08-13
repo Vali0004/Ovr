@@ -137,7 +137,7 @@ namespace util {
 			inline std::string authorizationHeader() {
 				return "Authorization: SCAUTH val=\"" + getTicket() + "\"";
 			}
-			inline ScGame getInfo(ccp id) {
+			inline ScGame getInfo(cc* id) {
 				i32 index{ pointers::g_scGetGameInfoIndex(id, pointers::g_scGameInfo->GetGamesAddress(), pointers::g_scGameInfo->m_id) };
 				u64 address{ pointers::g_scGameInfo->GetGamesAddress() + (index * 0x148i64) };
 				ScGame game;
@@ -166,10 +166,10 @@ namespace util {
 		}
 		inline std::string base64Handle(u64 rid) {
 			u8 payloadData[16]{};
-			for (u8 i{}; i != 4; ++i) {
-				payloadData[i] = rid >> i * 8;
+			for (u64 i{}; i != 4; ++i) {
+				payloadData[i] = (rid >> i) * 8ui64;
 			}
-			payloadData[8] = 3;
+			payloadData[8] = 3ui8;
 			std::string payload{};
 			payload.resize(COUNT(payloadData));
 			memcpy(payload.data(), payloadData, payload.size());
@@ -293,7 +293,7 @@ namespace util {
 			sndPlaySoundA(path.string().c_str(), SND_FILENAME | SND_ASYNC);
 		});
 	}
-	inline bool inModuleRegion(ccp module, u64 address) {
+	inline bool inModuleRegion(cc* module, u64 address) {
 		static HMODULE hmod{ GetModuleHandleA(module ? module : NULL) };
 		static u64 moduleBase{};
 		static u64 moduleSize{};
@@ -309,7 +309,7 @@ namespace util {
 		}
 		return address > moduleBase && address < (moduleBase + moduleSize);
 	}
-	inline bool checkIns(ccp module, u64 address, u8 ins) {
+	inline bool checkIns(cc* module, u64 address, u8 ins) {
 		if (!inModuleRegion(module, address)) {
 			return false;
 		}
@@ -429,7 +429,7 @@ namespace util {
 	};
 	inline bool isSpamMessage(const std::string& message) {
 		for (auto& string : g_advertisementStrings) {
-			if (lStr(message).find(string) != std::string::npos)
+			if (stringToLower(message).find(string) != std::string::npos)
 				return true;
 		}
 		return false;

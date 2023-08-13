@@ -29,7 +29,7 @@ namespace rage::ysc {
 			m_opcodesTbl = opcodes;
 			callback(*this);
 
-			m_codePageCollection.codePageSize = (m_opcodesTbl - opcodes) + 1;
+			m_codePageCollection.codePageSize = static_cast<u32>((m_opcodesTbl - opcodes) + 1ui32);
 		}
 
 		void nop() {
@@ -435,7 +435,7 @@ namespace rage::ysc {
 			/*if (m_ip >= 4 && m_opcodesTbl[m_ip - 4] == OP_NATIVE && m_opcodesTbl[m_ip - 3] != 0) {
 				return;
 			}*/
-			if constexpr (std::is_same_v<t, ccp>) {
+			if constexpr (std::is_same_v<t, cc*>) {
 				push_string(std::forward<t>(value));
 			}
 			else if constexpr (std::is_same_v<t, float>) {
@@ -445,7 +445,7 @@ namespace rage::ysc {
 				push<t>(std::forward<t>(value));
 			}
 		}
-		void push_string(ccp string) {
+		void push_string(cc* string) {
 			OSTART(6)
 				PUSH8(OP_PUSH_CONST_U32)
 				PUSH32(getOrMakeStringIndex(string))
@@ -457,7 +457,7 @@ namespace rage::ysc {
 				PUSH8(OP_IS_BIT_SET)
 			OEND
 		}
-		void push_hash_string(ccp string) {
+		void push_hash_string(cc* string) {
 			push<u32>(rage::joaat(string)); //It's much easier to just push the joaat directly
 		}
 		void parseSingleLine(std::string& str, size_t lineCount) {
@@ -750,14 +750,14 @@ namespace rage::ysc {
 		bool m_labelMode{};
 		u16 getOrMakeNativeIndex(u64 hash) {
 			m_natives.emplace_back(hash);
-			for (u64 i{}; i != m_natives.size(); i++) {
+			for (u16 i{}; i != static_cast<u16>(m_natives.size()); i++) {
 				if (m_natives[i] == hash) {
 					return i;
 				}
 			}
 			return NULL;
 		}
-		u32 getOrMakeStringIndex(ccp string) {
+		u32 getOrMakeStringIndex(cc* string) {
 			return m_stringPageCollection.addString(string);
 		}
 		u32 getLabelInstructionPointer(std::string label) {

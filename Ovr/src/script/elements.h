@@ -130,7 +130,7 @@ namespace elements {
 			ImGui::PushStyleVar(var.first, var.second);
 		}
 		cb();
-		ImGui::PopStyleVar(vars.size());
+		ImGui::PopStyleVar(static_cast<i32>(vars.size()));
 	}
 	inline void setStyleColor(std::vector<std::pair<ImGuiCol_, ImU32>> vars, std::function<void()> cb = {}) {
 		for (auto& var : vars) {
@@ -340,7 +340,7 @@ namespace elements {
 		}, {}, continueLine);
 	}
 	template <typename t>
-	inline void selectionPopup(const std::string& id, const std::string& hint, t& index, ccp* data, u8 size, std::function<void(int)> cb = {}, bool continueLine = false) {
+	inline void selectionPopup(const std::string& id, const std::string& hint, t& index, cc** data, u8 size, std::function<void(int)> cb = {}, bool continueLine = false) {
 		textUnformatted(data[static_cast<u8>(index)]);
 		popup(id, [&] {
 			textUnformatted(hint);
@@ -355,14 +355,14 @@ namespace elements {
 		if (continueLine)
 			sameLine();
 	}
-	inline void protectionToggle(ccp id, bool continueLine = false) {
+	inline void protectionToggle(cc* id, bool continueLine = false) {
 		auto cmd{ commands::g_manager.getCommand<commands::protectionCommand>(id) };
 		popupButton(cmd->m_name, id, true);
 		selectionPopup<eProtectionState>(id, "State", cmd->m_state, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {
 			cmd->update(g_protectionStates[idx]);
 		}, continueLine);
 	}
-	inline void sectionProtectionToggle(ccp id, bool continueLine = false) {
+	inline void sectionProtectionToggle(cc* id, bool continueLine = false) {
 		auto cmd{ commands::g_manager.getCommand<commands::sectionProtectionCommand>(id) };
 		popupButton(cmd->m_name, id, true);
 		selectionPopup<eProtectionState>(id, "State", cmd->m_state, g_protectionStates, COUNT(g_protectionStates), [cmd](int idx) {

@@ -73,50 +73,50 @@ public:
 	template <typename ...arguments>
 	void send(eLogType type, std::string fmt, arguments... args) {
 		switch (type) {
-		case eLogType::Info: {
-			send(eLogColor::Grey, "Info", fmt, args...);
-		} break;
-		case eLogType::Warn: {
-			send(eLogColor::LightRed, "Warn", fmt, args...);
-		} break;
-		case eLogType::Fatal: {
-			send(eLogColor::Red, "Fatal", fmt, args...);
-		} break;
-		case eLogType::Exception: {
-			send(eLogColor::LightRed, "Exception", fmt, args...);
-		} break;
-		case eLogType::Registers: {
-			send(eLogColor::Grey, "Registers", fmt, args...);
-		} break;
-		case eLogType::Stackwalker: {
-			send(eLogColor::LightRed, "StackWalker", fmt, args...);
-		} break;
-		case eLogType::Commands: {
-			send(eLogColor::White, "Commands", fmt, args...);
-		} break;
-		case eLogType::Session: {
-			send(eLogColor::White, "Session", fmt, args...);
-		} break;
+			case eLogType::Info: {
+				send(eLogColor::Grey, "Info", fmt, args...);
+			} break;
+			case eLogType::Warn: {
+				send(eLogColor::LightRed, "Warn", fmt, args...);
+			} break;
+			case eLogType::Fatal: {
+				send(eLogColor::Red, "Fatal", fmt, args...);
+			} break;
+			case eLogType::Exception: {
+				send(eLogColor::LightRed, "Exception", fmt, args...);
+			} break;
+			case eLogType::Registers: {
+				send(eLogColor::Grey, "Registers", fmt, args...);
+			} break;
+			case eLogType::Stackwalker: {
+				send(eLogColor::LightRed, "StackWalker", fmt, args...);
+			} break;
+			case eLogType::Commands: {
+				send(eLogColor::White, "Commands", fmt, args...);
+			} break;
+			case eLogType::Session: {
+				send(eLogColor::White, "Session", fmt, args...);
+			} break;
 		#ifdef DEBUG
-		case eLogType::Debug: {
-			send(eLogColor::White, "Debug", fmt, args...);
-		} break;
+			case eLogType::Debug: {
+				send(eLogColor::White, "Debug", fmt, args...);
+			} break;
 		#endif
-		default: {
-		} break;
+			default: {
+			} break;
 		}
 	}
 	template <typename t>
 	void printArray(std::string start, t* arr, u64 size) {
 		#ifdef DEBUG
-		std::stringstream stream{};
-		stream << "Debug | " << start << " { ";
-		for (u64 i{}; i != size - 1; ++i) {
-			stream << (int)arr[i] << ", ";
-		}
-		stream << (int)arr[size] << " };";
-		m_con << stream.str() << std::endl;
-		m_file << stream.str() << std::endl;
+			std::stringstream stream{};
+			stream << "Debug | " << start << " { ";
+			for (u64 i{}; i != size - 1; ++i) {
+				stream << (int)arr[i] << ", ";
+			}
+			stream << (int)arr[size] << " };";
+			m_con << stream.str() << std::endl;
+			m_file << stream.str() << std::endl;
 		#endif
 	}
 private:

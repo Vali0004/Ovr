@@ -84,15 +84,16 @@ struct budgeting {
 		}
 		float multiplier{ getBudgetMultiplier() };
 		//This is designed to fix the logic error with low/high/veryhigh
-		//The logic error/issue is R* seems to thought in a few cases that the texture setting flag is mapped to to
+		//The logic error/issue is R* seems to thought in a few cases that the texture setting flag is mapped to
 		// normal, high, very high, and not unused, normal, high/very high.
 		// This creates the issue where very high is just high with the hi texture flag enabled.
 		//This will fix low and normal actually being low and normal
 		for (i32 i{}; i != 80; i += 4) {
-			pointers::g_vramLocation[i + 3] = budget * multiplier;
-			pointers::g_vramLocation[i + 2] = budget * multiplier;
-			pointers::g_vramLocation[i + 1] = (budget * multiplier) / 1.5;
-			pointers::g_vramLocation[i] = (budget * multiplier) / 2;
+			u64 value{ static_cast<u64>(budget * multiplier) };
+			pointers::g_vramLocation[i + 3] = value;
+			pointers::g_vramLocation[i + 2] = value;
+			pointers::g_vramLocation[i + 1] = static_cast<u64>(value / 1.5f);
+			pointers::g_vramLocation[i] = static_cast<u64>(value / 2.f);
 		}
 	}
 	static float getBudgetMultiplier() {
@@ -160,7 +161,7 @@ struct hooks {
 	static eAckCode receiveCloneSync(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, u16 ObjectId, rage::datBitBuffer* Buffer, u16 Unknown, u32 Timestamp);
 	static bool receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, eNetObjectType ObjectType, i32 ObjectId, i32 ObjectFlag, rage::datBitBuffer* Buffer, i32 Timestamp);
 	static bool canApplyData(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
-	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
+	static bool findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, i32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 	static bool processMatchmakingFind(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 	static i32 calculateMipLevel(u8 Type, u16 Width, u16 Height, u8 Levels, u32 Format);
 	static i32 insertStreamingModule(rage::strStreamingModuleMgr* pMgr, rage::strStreamingModule* pModule);

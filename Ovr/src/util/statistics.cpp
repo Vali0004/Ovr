@@ -4,7 +4,7 @@
 #include "script/elements.h"
 
 float roundUp(float value, int decimalPlace = 0) {
-	const float multiplier{ powf(10.f, decimalPlace) };
+	const float multiplier{ powf(10.f, static_cast<float>(decimalPlace)) };
 	return std::roundf(value * multiplier) / multiplier;
 }
 void statistics::draw() {

@@ -85,6 +85,7 @@ inline u64 findPatternBoyerMooreHorspool(std::vector<std::optional<u8>> bytes, h
 		}
 	}
 	catch (const std::exception& ex) {
+		LOG_DEBUG("Exception: {}", ex.what());
 		//Skip first 5 bytes for MH trampoline, if it's not a hook, it would've failed anyways. Fuck it
 		return findPatternBruteforce(&bytes.data()[5], bytes.size() - 5, module);
 	}

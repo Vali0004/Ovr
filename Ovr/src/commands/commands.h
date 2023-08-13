@@ -12,6 +12,7 @@ namespace commands {
 	extern void clearCommandBoxOnEnter(toggleCommand* command);
 	extern void print(stringCommand* command);
 	extern void forceQuitToSp(actionCommand* command);
+	extern void restartGame(actionCommand* command);
 	extern void resetState(actionCommand* command);
 	extern void nut(actionCommand* command);
 	extern void init();

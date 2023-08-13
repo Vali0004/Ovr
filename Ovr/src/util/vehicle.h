@@ -16,12 +16,12 @@ namespace util::vehicle {
 		std::string getLabelAsGXT() {
 			std::string displayName{ m_modelInfo->m_name };
 			std::string label{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(displayName.c_str()) };
-			return !label.compare("NULL") ? lStr(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
+			return !label.compare("NULL") ? stringToLower(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
 		}
 		std::string getManufacturerAsGXT() {
 			std::string displayName{ m_modelInfo->m_manufacturer };
 			std::string label{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(displayName.c_str()) };
-			return !label.compare("NULL") ? lStr(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
+			return !label.compare("NULL") ? stringToLower(!displayName.compare("NULL") ? m_nameLabel : displayName) : label;
 		}
 		std::string getGXT() {
 			std::string manufacturerGXT{ getManufacturerAsGXT() };

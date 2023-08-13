@@ -197,7 +197,7 @@ bool incrementStatEvent(CNetworkIncrementStatEvent* pEvent, CNetGamePlayer* Send
 void hooks::proccessPackedEvents(rage::netEventMgr* pEventMgr, CNetGamePlayer* Sender, CNetGamePlayer* Receiver, u16 Id, i32 Index, i32 HandledBitset, i32 BufferSize, rage::datBitBuffer* Buffer) {
 	if (Id > 91u)
 		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
-	ccp eventName{ *(ccp*)(u64(pEventMgr) + 8ui64 * Id + 0x3B6B0) };
+	cc* eventName{ *(cc**)(u64(pEventMgr) + 8ui64 * Id + 0x3B6B0) };
 	if (eventName == nullptr || Sender == nullptr || Sender->m_player_id < 0 || Sender->m_player_id >= 32)
 		return pointers::g_sendEventAck(pEventMgr, Sender, Receiver, Index, HandledBitset);
 	g_statistics.m_incomingNetworkEvents++;

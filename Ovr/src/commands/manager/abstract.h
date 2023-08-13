@@ -117,7 +117,7 @@ namespace commands {
 			m_values.clear();
 			m_hotkey.m_keys.clear();
 		}
-		ccp id() {
+		cc* id() {
 			return m_id.c_str();
 		}
 		void push_value(typedValue& v) {

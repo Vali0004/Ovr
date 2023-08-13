@@ -93,5 +93,4 @@ using i16 = int16_t;
 using u8 = uint8_t;
 using i8 = int8_t;
 using cc = const char;
-using ccp = cc*;
 using db = double;

@@ -34,7 +34,7 @@ namespace pointers {
 		using canApplyData = bool(*)(rage::netSyncTree* pSyncTree, rage::netObject* pObject);
 		using getSyncTreeForType = rage::netSyncTree*(*)(CNetworkObjectMgr* pObjMgr, u16 SyncType);
 		using getGamerTaskResult = bool(*)(i32 ProfileIndex, rage::rlGamerHandle* pHandles, i32 Count, rage::rlSessionByGamerTaskResult* pResult, i32 Unk, bool* pSuccess, rage::rlTaskStatus* pStatus);
-		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
+		using findGameMatch = bool(*)(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, i32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus);
 		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Flags);
 		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);

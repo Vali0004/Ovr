@@ -13,31 +13,31 @@ inline void mcpy(t address, t data, u64 size) {
 	VirtualProtect((void*)address, size, oldProt, (DWORD*)&oldProt);
 }
 template <typename t>
-inline void mset(t address, i32 value, u64 size) {
+inline void mset(t address, i32 value, i32 size) {
 	if (!address) {
 		return;
 	}
 	u32 oldProt{};
 	VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, (DWORD*)&oldProt);
-	memcpy((void*)address, (void*)data, size);
+	memset((void*)address, value, size);
 	VirtualProtect((void*)address, size, oldProt, (DWORD*)&oldProt);
 }
 template <typename a, typename v>
 inline void put(a addr, v value) {
-	memcpy((void*)addr, &value, sizeof(value));
+	memcpy(reinterpret_cast<void*>(addr), &value, sizeof(value));
 }
 template<typename a>
-inline void nop(a addr, u64 size) {
+inline void nop(a addr, i32 size) {
 	mset<a>(addr, 0x90, size);
 }
 template <typename a, typename t>
 inline void call(a addr, t func) {
-	put<u8>(addr, 0xE8);
-	put<i32>((u64)addr + 1, (i64)func - (i64)addr - 5);
+	put<a, u8>(addr, 0xE8);
+	put<u64, i32>(reinterpret_cast<u64>(addr) + 1, reinterpret_cast<u64>(func) - reinterpret_cast<u64>(addr) - 5);
 }
 class patch {
 public:
-	patch(ccp id, u8* ptr, const std::vector<u8>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
+	patch(cc* id, u8* ptr, const std::vector<u8>& bytes, bool set = false) : m_id(id), m_ptr(ptr), m_original(bytes), m_bytes(bytes), m_set(set)  {
 		mcpy(m_original.data(), m_ptr, m_bytes.size());
 	}
 	~patch() {
@@ -54,11 +54,11 @@ public:
 	t* get() {
 		return reinterpret_cast<t*>(m_ptr);
 	}
-	ccp& id() {
+	cc*& id() {
 		return m_id;
 	}
 private:
-	ccp m_id{};
+	cc* m_id{};
 	u8* m_ptr{};
 	std::vector<u8> m_bytes{};
 	std::vector<u8> m_original{};
@@ -66,18 +66,18 @@ private:
 };
 class patches {
 public:
-	void add(ccp id, u8* ptr, std::vector<u8> bytes, bool apply = true) {
+	void add(cc* id, u8* ptr, std::vector<u8> bytes, bool apply = true) {
 		m_patches.push_back(MakeSmartPointer<patch>(id, ptr, bytes));
 		if (apply)
 			m_patches.back()->apply();
 	}
 	template <typename t>
-	void remove(ccp id) {
+	void remove(cc* id) {
 		if (patch* p = get<t>(id); p) {
 			p->restore();
 		}
 	}
-	patch* get(ccp id) {
+	patch* get(cc* id) {
 		for (auto& p : m_patches) {
 			if (p->id() == id) {
 				return p.get();

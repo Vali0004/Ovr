@@ -2,7 +2,7 @@
 #include "pch/pch.h"
 
 namespace rage::ysc {
-	inline constexpr std::pair<ccp, u64> g_natives[]{
+	inline constexpr std::pair<cc*, u64> g_natives[]{
 		{ "WAIT", 0x4EDE34FBADD967A6 },
 		{ "START_NEW_SCRIPT", 0xE81651AD79516E48 },
 		{ "START_NEW_SCRIPT_WITH_ARGS", 0xB8BA7F44DF1575E1 },
@@ -6393,7 +6393,7 @@ namespace rage::ysc {
 		{ "CLEAR_POPSCHEDULE_OVERRIDE_VEHICLE_MODEL", 0x5C0DE367AA0D911C },
 		{ "GET_HASH_OF_MAP_AREA_AT_COORDS", 0x7EE64D51E8498728 },
 	};
-	inline u64 nativeFromName(ccp nativename) {
+	inline u64 nativeFromName(cc* nativename) {
 		for (auto& native : g_natives) {
 			if (std::string(native.first).find(nativename) != std::string::npos) {
 				return native.second;

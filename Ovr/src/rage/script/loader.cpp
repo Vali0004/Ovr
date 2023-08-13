@@ -45,7 +45,7 @@ namespace rage::ysc {
 		for (uint32_t i{}; i != m_bytecode->m_natives.size(); ++i) {
 			m_program->m_natives[i] = g_invoker.getNativeCmd(m_bytecode->m_natives[i]);
 		}
-		m_program->m_native_count = m_bytecode->m_natives.size();
+		m_program->m_native_count = static_cast<u32>(m_bytecode->m_natives.size());
 		m_program->m_global_count = 0x1337;
 		if (m_bytecode->m_staticCount) {
 			m_program->m_local_count = m_bytecode->m_staticCount;

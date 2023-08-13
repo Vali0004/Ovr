@@ -18,7 +18,7 @@ namespace commands {
 		}
 		return pressed;
 	}
-	void manager::remove(ccp id) {
+	void manager::remove(cc* id) {
 		if (auto it{ m_commands.find(id) }; it != m_commands.end()) {
 			delete it->second;
 			m_commands.erase(it);
@@ -28,12 +28,6 @@ namespace commands {
 		for (auto& e : m_commands) {
 			e.second->init();
 		}
-		/*if (util::files::input("Config.json").is_open()) {
-			fromFile("Config");
-		}
-		else {
-			toFile("Config");
-		}*/
 	}
 	void manager::tick() {
 		for (auto& e : m_commands) {

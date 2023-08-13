@@ -6,17 +6,17 @@
 #include "util/statistics.h"
 
 namespace exceptions {
-	uint8_t getInstructionLength(uint8_t* code) {
-		auto start = code;
+	u8 getInstructionLength(u8* code) {
+		u8* start{ code };
 		hde64s hde{};
-		if (uint8_t len = hde64_disasm((void*)code, &hde); len) {
+		if (u8 len{ static_cast<u8>(hde64_disasm(reinterpret_cast<void*>(code), &hde)) }) {
 			return len;
 		}
 		else if (x64::disassembleInstructionCode(code).isValid()) {
-			return code - start;
+			return static_cast<u8>(code - start);
 		}
 		else {
-			ZyanU64 opcodeAddress{ (uint64_t)code };
+			ZyanU64 opcodeAddress{ reinterpret_cast<u64>(code) };
 			ZydisDisassembledInstruction instruction{};
 			if (ZYAN_SUCCESS(ZydisDisassembleIntel(ZYDIS_MACHINE_MODE_LONG_64, opcodeAddress, reinterpret_cast<void*>(opcodeAddress), 32, &instruction))) {
 				return instruction.info.length;
@@ -25,11 +25,11 @@ namespace exceptions {
 		return NULL;
 	}
 	bool attemptStackRecovery(PEXCEPTION_POINTERS exceptionInfo) {
+		PCONTEXT ctx{ exceptionInfo->ContextRecord };
 		g_recoveryCount++;
 		if (g_recoveryCount >= 5)
 			g_running = false;
-		auto& ctx = exceptionInfo->ContextRecord;
-		if (const auto len = getInstructionLength(reinterpret_cast<uint8_t*>(ctx->Rip)); len) {
+		if (const auto len = getInstructionLength(reinterpret_cast<u8*>(ctx->Rip)); len) {
 			ctx->Rip += len;
 			return true;
 		}
@@ -42,34 +42,32 @@ namespace exceptions {
 		return "unknown";
 	}
 	LONG CALLBACK onExceptionCallback(PEXCEPTION_POINTERS exceptionInfo) {
+		LOG(Exception, "Game base address: 0x{:X}", reinterpret_cast<u64>(GetModuleHandleA(NULL)));
 		stackWalker sw(StackWalker::AfterExcept);
 		exceptionContext ctx{ exceptionInfo };
 		if (!ctx.m_fileoffset.empty()) {
+			std::string name{ g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code) };
 			switch (ctx.m_code) {
-			case CONTROL_C_EXIT:
-			case EXCEPTION_BREAKPOINT:
-			case EXCEPTION_SINGLE_STEP: {
-				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
-				LOG(Exception, "The game has suffered a non-fatal exception, you may disregard this message ({} at {})", exceptionName, ctx.m_fileoffset);
-				return EXCEPTION_CONTINUE_EXECUTION;
-			} break;
-			case EXCEPTION_GUARD_PAGE:
-			case EXCEPTION_ACCESS_VIOLATION: {
-				auto exceptionTypeStr = getExceptionType(ctx.m_type);
-				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
-				LOG(Exception, "The game suffered an fatal exception, you may need to restart the game. ({} at {}, reason of {} was {}{})", exceptionName, ctx.m_fileoffset, exceptionName, exceptionTypeStr, ctx.m_type != 8 && exceptionName != "unknown" ? "" : std::format("0x{:X}", ctx.m_deathAddress));
-			} break;
-			default: {
-				auto exceptionName = g_exceptionTypes[ctx.m_code]() ? g_exceptionTypes[ctx.m_code].str() : std::format("0x{:X}", ctx.m_code);
-				LOG(Exception, "The game suffered a exception of unknown severity, you may need to restart the game. ({} at {}, reason of exception is unknown)", exceptionName, ctx.m_fileoffset);
-			} break;
+				case CONTROL_C_EXIT:
+				case EXCEPTION_BREAKPOINT:
+				case EXCEPTION_SINGLE_STEP: {
+					LOG(Exception, "The game has suffered a non-fatal exception, you may disregard this message ({} at {})", name, ctx.m_fileoffset);
+					return EXCEPTION_CONTINUE_EXECUTION;
+				} break;
+				case EXCEPTION_GUARD_PAGE:
+				case EXCEPTION_ACCESS_VIOLATION: {
+					std::string type{ getExceptionType(ctx.m_type) };
+					LOG(Exception, "The game suffered an fatal exception, you may need to restart the game. ({} at {}, reason of {} was {}{})", name, ctx.m_fileoffset, name, type, ctx.m_type != 8 && name != "unknown" ? "" : std::format("0x{:X}", ctx.m_deathAddress));
+				} break;
+				default: {
+					LOG(Exception, "The game suffered a exception of unknown severity, you may need to restart the game. ({} at {}, reason of exception is unknown)", name, ctx.m_fileoffset);
+				} break;
 			}
 		}
 		LOG(Exception, "Dumping registers...");
-		LOG(Exception, "Game base address: 0x{:X}", reinterpret_cast<u64>(GetModuleHandleA(NULL)));
 		ctx.printRegisters();
-		LOG(Exception, "Showing information...");
 		#ifndef DEBUG
+			LOG(Exception, "Showing information...");
 			LOG(Exception, "Was In Session: {}", util::network::g_manager.online() ? "Yes" : "No");
 			LOG(Exception, "Host: {}", util::network::g_manager.online() ? g_statistics.m_host.m_name : "N/A");
 			LOG(Exception, "Coords: {}, {}, {}", util::classes::getPed()->get_position().x, util::classes::getPed()->get_position().y, util::classes::getPed()->get_position().z);
@@ -99,7 +97,8 @@ namespace exceptions {
 		SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER(unhandledExceptionHandler));
 	}
 	void uninitExceptionHandler() {
-		if (g_handler)
+		if (g_handler) {
 			RemoveVectoredExceptionHandler(g_handler);
+		}
 	}
 }

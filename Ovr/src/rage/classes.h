@@ -1576,7 +1576,8 @@ namespace rage {
 		bool m_initialized; //0x07FC
 
 		Cmd get_handler(uint64_t hash) {
-			for (auto entry{ m_entries[(uint8_t)(hash & 0xFF)] }; entry; entry = entry->get_next_registration()) {
+			uint8_t index{ hash & 0xFF };
+			for (auto entry{ m_entries[index] }; entry; entry = entry->get_next_registration()) {
 				for (uint32_t i{}, end{ entry->get_num_entries() }; i < end; ++i) {
 					if (auto entry_hash = entry->get_hash(i); entry_hash == hash) {
 						return entry->m_handlers[i];
@@ -2485,7 +2486,9 @@ public:
 	char pad_0020[64]; //0x0020
 	rage::streamingListEntry* m_request_list_head; //0x0060
 	rage::streamingListEntry* m_request_list_tail; //0x0068
-	char pad_0070[328]; //0x0070
+	char pad_0070[152]; //0x0070
+	uint32_t m_loaded_list_size; //0x0108
+	char pad_0010C[168]; //0x0010C
 	rage::strStreamingModuleMgr m_module_mgr; //0x01B8
 	int32_t m_num_pending_requests; //0x01E0
 	int32_t m_num_pending_requests_unk; //0x01E4

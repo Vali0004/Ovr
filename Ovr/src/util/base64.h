@@ -3,11 +3,11 @@
 
 namespace util {
 	constexpr std::string_view g_base64Charaters{ "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" };
-	inline constexpr size_t isCharacterBase64(u8 c) {
-		return g_base64Charaters.find(c);
+	inline constexpr bool isCharacterBase64(u8 c) {
+		return g_base64Charaters.find(c) != std::string_view::npos ? true : false;
 	}
 	inline std::string base64Encode(const std::string& str) {
-		u8 strLen{ (u8)str.length() };
+		u8 strLen{ static_cast<u8>(str.length()) };
 		u8 i{}, j{}, in_{};
 		u8 charArray4[4], charArray3[3];
 		std::string ret{};

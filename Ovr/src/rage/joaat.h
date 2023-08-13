@@ -40,5 +40,9 @@ namespace rage {
 		return hash;
 	}
 }
-inline consteval uint32_t operator ""_joaat(const char* str, size_t) { return rage::constexprJoaat(str); }
-inline consteval uint32_t operator ""_joaatNormalised(const char* str, size_t) { return rage::constexprJoaat(str, false); }
+inline consteval uint32_t operator ""_joaat(const char* str, size_t) {
+	return rage::constexprJoaat(str);
+}
+inline consteval uint32_t operator ""_joaatNormalised(const char* str, size_t) {
+	return rage::constexprJoaat(str, false);
+}

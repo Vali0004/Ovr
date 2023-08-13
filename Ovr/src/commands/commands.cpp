@@ -38,6 +38,9 @@ namespace commands {
 	void forceQuitToSp(actionCommand* command) {
 		NETWORK::SHUTDOWN_AND_LOAD_MOST_RECENT_SAVE();
 	}
+	void restartGame(actionCommand* command) {
+		MISC::RESTART_GAME();
+	}
 	void resetState(actionCommand* command) {
 		for (auto& entry : g_manager.getCommands()) {
 			auto& cmd{ entry.second };
@@ -67,6 +70,7 @@ namespace commands {
 		g_manager.add(toggleCommand("clearCommandBoxOnEnter", "Clear Command Box On Enter", clearCommandBoxOnEnter));
 		g_manager.add(stringCommand("print", "Print", "Prints a string", print));
 		g_manager.add(actionCommand("forceQuitToSp", "Force Quit To Story Mode", "Forcefully quits to SP", forceQuitToSp));
+		g_manager.add(actionCommand("restartGame", "Restart Game", "Restarts your game", restartGame));
 		g_manager.add(actionCommand("resetState", "Reset Menu State", "Resets all commands and GUI elements", resetState));
 		g_manager.add(actionCommand("nut", "da nut command (bess command)", nut));
 		features::init();

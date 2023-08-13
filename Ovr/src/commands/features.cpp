@@ -183,7 +183,7 @@ namespace commands::features {
 					if (PED::IS_PED_IN_ANY_VEHICLE(entity, FALSE)) {
 						VEHICLE::SET_VEHICLE_FIXED(entity);
 						Vector3 rotation{ CAM::GET_GAMEPLAY_CAM_ROT(0.1) };
-						ENTITY::SET_ENTITY_ROTATION(entity, rotation.x, rotation.y, rotation.z, 0.1, 0.1);
+						ENTITY::SET_ENTITY_ROTATION(entity, rotation.x, rotation.y, rotation.z, 1, FALSE);
 					}
 					Vector3 coords{ playerPosition + cameraRotation * command->get(1).floating_point };
 					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(entity, playerPosition, TRUE, TRUE, FALSE);
@@ -1052,7 +1052,7 @@ namespace commands::features {
 				util::blip waypoint{ 8, util::eBlipHandleType::First };
 				if (waypoint.exists()) {
 					Vector3 coords{ waypoint.coords() };
-					g_engine.primitiveExecute("teleportToCoords {} {} {}", coords.x, coords.y, coords.z);
+					g_engine.primitiveExecute("teleportToCoords {}, {}, {}", coords.x, coords.y, coords.z);
 				}
 			}
 		}

@@ -2,7 +2,7 @@
 #include "commands/features.h"
 
 bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
-	ccp key{};
+	cc* key{};
 	if (pMetric->using_a()) {
 		key = "A";
 	}

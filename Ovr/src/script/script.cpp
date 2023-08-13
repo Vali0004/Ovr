@@ -51,7 +51,7 @@ namespace script {
 			}
 			return m_serverUrl && m_rsToken && m_transactionMgr && m_transactionMgr->m_gs_token;
 		}
-		bool createRequest(ccp endpoint, std::vector<transactionItem> items, std::function<void(std::string)> callback = nullptr) {
+		bool createRequest(cc* endpoint, std::vector<transactionItem> items, std::function<void(std::string)> callback = nullptr) {
 			if (!isConnectedToServer()) {
 				return false;
 			}
@@ -149,8 +149,8 @@ namespace script {
 			return "Authorization: GSTOKEN token=" + std::string(m_transactionMgr->m_gs_token);
 		}
 		CNetworkShoppingMgr* m_transactionMgr{};
-		ccp m_serverUrl{};
-		ccp m_rsToken{};
+		cc* m_serverUrl{};
+		cc* m_rsToken{};
 		u32 m_catalogVersion{};
 	};
 	void onPresent() {

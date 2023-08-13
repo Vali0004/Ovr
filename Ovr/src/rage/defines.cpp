@@ -6,24 +6,21 @@ uint64_t rage::datBitBuffer::WriteBitsSingle(uint32_t value, int32_t bits) {
 	return pointers::g_writeBitsSingle(m_data, value, bits, m_bitsRead + m_bitOffset);
 }
 uint32_t rage::datBitBuffer::ReadBitsSingle(uint32_t numBits) {
-	auto const totalBits = (m_flagBits & 1) ? m_maxBit : m_curBit;
-	if ((m_flagBits & 2) || m_bitsRead + numBits > totalBits)
+	if ((m_flagBits & 2) || m_bitsRead + numBits > GetMaxDataLength()) {
 		return 0;
-	auto const bufPos = m_bitsRead + m_bitOffset;
-	auto const initialBitOffset = bufPos & 0b111;
-	auto const start = &((uint8_t*)m_data)[bufPos / 8];
-	auto const next = &start[1];
-	auto result = (start[0] << initialBitOffset) & 0xff;
-	for (auto i = 0; i < ((numBits - 1) / 8); i++)
-	{
+	}
+	uint32_t const bufPos = m_bitsRead + m_bitOffset;
+	uint32_t const initialBitOffset{ bufPos & 7 };
+	uint8_t* const start{ &m_data[bufPos / 8] };
+	uint8_t* const next{ &start[1] };
+	int32_t result{ (start[0] << initialBitOffset) & 0xFF };
+	for (uint32_t i{}; i < ((numBits - 1) / 8); ++i) {
 		result <<= 8;
 		result |= next[i] << initialBitOffset;
 	}
 	if (initialBitOffset)
 		result |= next[0] >> (8 - initialBitOffset);
-	m_bitsRead += static_cast<uint32_t>(numBits);
-	if (m_bitsRead > m_highestBitsRead)
-		m_highestBitsRead = m_bitsRead;
+	AddNumberOfBits(numBits);
 	return result >> ((8 - numBits) % 8);
 }
 bool rage::datBitBuffer::WriteArray(void* array, int32_t size) {

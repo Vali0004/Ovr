@@ -118,7 +118,7 @@ namespace pointers {
 		}
 		//Fix EXE path for Code EXE size
 		std::vector<u8> moduleName(MAX_PATH + 1);
-		GetModuleFileNameA(GetModuleHandleA(0), (char*)moduleName.data(), moduleName.size());
+		GetModuleFileNameA(GetModuleHandleA(0), (char*)moduleName.data(), static_cast<DWORD>(moduleName.size()));
 		if (mem target{ scan("CCRCEP", "41 BD 01 00 00 00 48 89 05").add(9).rip() }; *target.as<u8**>() != moduleName.data()) {
 			g_patches.add("CCRCEP", *target.as<u8**>(), moduleName, true);
 		}

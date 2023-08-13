@@ -2,7 +2,7 @@
 #include "fiber/pool.h"
 #include "commands/features.h"
 
-bool hooks::findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, u32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus) {
+bool hooks::findGameMatch(i32 ProfileIndex, i32 AvailableSlots, NetworkGameFilterMatchmakingComponent* pFilter, i32 Count, rage::rlSessionInfo* pSessions, i32* OutputSize, rage::rlTaskStatus* pStatus) {
 	u32 discriminator{ pFilter->m_param_values[0] };
 	if (pFilter->m_filter_type == 1) {
 		pStatus->m_state = 1;

@@ -177,6 +177,7 @@ void hooking::enable() {
 	m_DX.enable();
 	detour::enableAll();
 	MH_ApplyQueued();
+	budgeting::postInit();
 }
 void hooking::disable() {
 	SetWindowsHookExA(WH_KEYBOARD_LL, *pointers::g_windowHook.add(17).call().as<HOOKPROC>(), GetModuleHandleA(NULL), 0);

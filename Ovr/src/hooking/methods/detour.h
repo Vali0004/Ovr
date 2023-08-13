@@ -112,7 +112,7 @@ public:
 };
 class detour {
 public:
-	detour(ccp name, void* ptr, void* dtr, bool hook = true) : m_name(name), m_ptr(ptr), m_og(ptr), m_dtr(dtr), m_hook(hook) {
+	detour(cc* name, void* ptr, void* dtr, bool hook = true) : m_name(name), m_ptr(ptr), m_og(ptr), m_dtr(dtr), m_hook(hook) {
 		if (m_hook) {
 			MinHook::Create(m_ptr, m_dtr, m_og);
 		}
@@ -146,7 +146,7 @@ public:
 		return static_cast<t>(m_og);
 	}
 public:
-	ccp m_name{};
+	cc* m_name{};
 	void* m_dtr{};
 	void* m_ptr{};
 	void* m_og{};

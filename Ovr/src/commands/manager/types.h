@@ -7,7 +7,7 @@ enum class eProtectionState : i8 {
 	Block,
 	BlockAndNotify
 };
-inline ccp g_protectionStates[4]{
+inline cc* g_protectionStates[4]{
 	"Disabled",
 	"Notify",
 	"Block",
@@ -15,7 +15,7 @@ inline ccp g_protectionStates[4]{
 };
 namespace commands {
 	inline eProtectionState getProtectionStateFromString(const std::string& string) {
-		std::string str{ lStr(string) };
+		std::string str{ stringToLower(string) };
 		if (!str.compare("ban")) {
 			return eProtectionState::BlockAndNotify;
 		}
@@ -23,7 +23,7 @@ namespace commands {
 			return eProtectionState::BlockAndNotify;
 		}
 		for (i8 i{}; i != COUNT(g_protectionStates); ++i) {
-			if (!str.compare(lStr(g_protectionStates[i])) || lStr(g_protectionStates[i]).find(str) != std::string::npos) {
+			if (!str.compare(stringToLower(g_protectionStates[i])) || stringToLower(g_protectionStates[i]).find(str) != std::string::npos) {
 				return static_cast<eProtectionState>(i);
 			}
 		}
@@ -242,7 +242,7 @@ namespace commands {
 		void run() override {
 			abstractCommand::run();
 		}
-		void update(ccp n) {
+		void update(cc* n) {
 			m_value.m_value.string = (char*)n;
 			setState();
 		}
@@ -280,7 +280,7 @@ namespace commands {
 			}
 			abstractCommand::run();
 		}
-		void update(ccp n) {
+		void update(cc* n) {
 			m_value.m_value.string = (char*)n;
 			setState();
 		}

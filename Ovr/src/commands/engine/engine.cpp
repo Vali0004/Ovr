@@ -1,6 +1,5 @@
 #include "engine.h"
 #include "util/util.h"
-#include "script/notifications/notifications.h"
 #include "fiber/pool.h"
 
 namespace commands {
@@ -35,174 +34,174 @@ namespace commands {
 		auto arguments{ getMatches(context, R"_(\S+)_") };
 		size_t trueArgCount{ arguments.size() - 1 };
 		switch (command->m_type) {
-		case eCommandType::ToggleCommand:
-		case eCommandType::VariadicCommand:
-		case eCommandType::StringCommand:
-		case eCommandType::HashCommand: {
+			case eCommandType::ToggleCommand:
+			case eCommandType::VariadicCommand:
+			case eCommandType::StringCommand:
+			case eCommandType::HashCommand: {
 
-		} break;
-		case eCommandType::ActionCommand: {
-			if (trueArgCount > 0) {
-				LOG(Commands, "You provided {} arguments for a command that requires no arguments.", trueArgCount);
-				return;
-			}
-		} break;
-		case eCommandType::ToggleFloatCommand:
-		case eCommandType::ToggleIntCommand: {
-			if (trueArgCount > 2) {
-				LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
-				return;
-			}
-		} break;
-		case eCommandType::ColorCommand: {
-			if (trueArgCount >= 3) {
-				LOG(Commands, "You provided {} arguments for a command that requiresat least 3 arguments.", arguments.size());
-				return;
-			}
-		} break;
-		default: {
-			if (trueArgCount > 1) {
-				LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
-				return;
-			}
-		} break;
+			} break;
+			case eCommandType::ActionCommand: {
+				if (trueArgCount > 0) {
+					LOG(Commands, "You provided {} arguments for a command that requires no arguments.", trueArgCount);
+					return;
+				}
+			} break;
+			case eCommandType::ToggleFloatCommand:
+			case eCommandType::ToggleIntCommand: {
+				if (trueArgCount > 2) {
+					LOG(Commands, "You provided {} arguments for a command that requires 2 arguments.", arguments.size());
+					return;
+				}
+			} break;
+			case eCommandType::ColorCommand: {
+				if (trueArgCount >= 3) {
+					LOG(Commands, "You provided {} arguments for a command that requiresat least 3 arguments.", arguments.size());
+					return;
+				}
+			} break;
+			default: {
+				if (trueArgCount > 1) {
+					LOG(Commands, "You provided {} arguments for a command that requires one argument.", trueArgCount);
+					return;
+				}
+			} break;
 		}
 		//Handle argument parsing
 		switch (command->m_type) {
-		case eCommandType::ToggleCommand: {
-			command->get(0).toggle = convertData<bool>(arguments[1]);
-		} break;
-		case eCommandType::IntCommand: {
-			command->get(0).i32 = convertData<i32>(arguments[1]);
-		} break;
-		case eCommandType::FloatCommand: {
-			command->get(0).floating_point = convertData<float>(arguments[1]);
-		} break;
-		case eCommandType::ToggleIntCommand: {
-			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).i32 = convertData<i32>(arguments[2]);
-		} break;
-		case eCommandType::ToggleFloatCommand: {
-			command->get(0).toggle = convertData<bool>(arguments[1]);
-			command->get(1).floating_point = convertData<float>(arguments[2]);
-		} break;
-		case eCommandType::ActionCommand: {
-			//Handled below, no arguments required.
-		} break;
-		case eCommandType::ProtectionCommand: {
-			auto cmd{ static_cast<protectionCommand*>(command) };
-			cmd->get(0).string = (char*)arguments[1].c_str();
-			cmd->update(cmd->get(0).string);
-		} break;
-		case eCommandType::SectionProtectionCommand: {
-			auto cmd{ static_cast<sectionProtectionCommand*>(command) };
-			cmd->get(0).string = (char*)arguments[1].c_str();
-			cmd->update(cmd->get(0).string);
-		} break;
-		case eCommandType::StringCommand: {
-			auto cmd{ static_cast<stringCommand*>(command) };
-			cmd->m_buffer.clear();
-			cmd->m_context = context;
-			size_t index{ context.find(arguments[1]) };
-			cmd->m_buffer.push_back(context.substr(index));
-			cmd->set_string(cmd->m_buffer[0]);
-		} break;
-		case eCommandType::HashCommand: {
-			auto cmd{ static_cast<hashCommand*>(command) };
-			cmd->m_buffer.clear();
-			cmd->m_context = context;
-			size_t index{ context.find(arguments[1]) };
-			cmd->m_buffer.push_back(context.substr(index));
-			cmd->set_key(arguments[1]);
-		} break;
-		case eCommandType::ColorCommand: {
-			auto cmd{ static_cast<colorCommand*>(command) };
-			//This will make 255, into 255
-			//A bad side effect is 2,5,5, 1,,9,,,2, 2,,,,5,,,,5,,, will become valid, but fuck it. I don't care enough
-			cmd->get(0).u8 = convertData<u8>(trimString(arguments[1], ','));
-			cmd->get(1).u8 = convertData<u8>(trimString(arguments[2], ','));
-			cmd->get(2).u8 = convertData<u8>(trimString(arguments[3], ','));
-			if (arguments.size() == 4) {
-				cmd->get(3).u8 = convertData<u8>(arguments[4]);
-			}
-		} break;
-		case eCommandType::VariadicCommand: {
-			if (command->has_value()) {
-				if (command->get_value(0)->m_type != eValueType::String) {
-					if (command->value_count() != trueArgCount) {
-						LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
-						return;
-					}
-					for (size_t i{ 0 }; i != trueArgCount; ++i) {
-						typedValue& value{ *command->get_value(i) };
-						std::string arg{ arguments[i + 1] };
-						switch (value.m_type) {
-						case eValueType::String: {
-							strncpy((*value).string, arg.c_str(), arg.size());
-						} break;
-						case eValueType::Boolean: {
-							(*value).toggle = convertData<bool>(arg);
-						} break;
-						case eValueType::FloatingPoint: {
-							(*value).floating_point = convertData<float>(arg);
-						} break;
-						case eValueType::Int8: {
-							(*value).i8 = convertData<i8>(arg);
-						} break;
-						case eValueType::UInt8: {
-							(*value).u8 = convertData<u8>(arg);
-						} break;
-						case eValueType::Int16: {
-							(*value).i16 = convertData<i16>(arg);
-						} break;
-						case eValueType::UInt16: {
-							(*value).u16 = convertData<u16>(arg);
-						} break;
-						case eValueType::Int32: {
-							(*value).i32 = convertData<i32>(arg);
-						} break;
-						case eValueType::UInt32: {
-							(*value).u32 = convertData<u32>(arg);
-						} break;
-						case eValueType::Int64: {
-							(*value).i64 = convertData<i64>(arg);
-						} break;
-						case eValueType::UInt64: {
-							(*value).u64 = convertData<u64>(arg);
-						} break;
-						case eValueType::GamePlayer: {
-							(*value).game_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
-						} break;
-						case eValueType::NetPlayer: {
-							(*value).net_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
-						} break;
-						case eValueType::GamerInfo: {
-							(*value).gamer_info = getPlayerForCommandArgument(arg).m_gamerInfo;
-						} break;
-						}
-					}
+			case eCommandType::ToggleCommand: {
+				command->get(0).toggle = convertData<bool>(arguments[1]);
+			} break;
+			case eCommandType::IntCommand: {
+				command->get(0).i32 = convertData<i32>(arguments[1]);
+			} break;
+			case eCommandType::FloatCommand: {
+				command->get(0).floating_point = convertData<float>(arguments[1]);
+			} break;
+			case eCommandType::ToggleIntCommand: {
+				command->get(0).toggle = convertData<bool>(arguments[1]);
+				command->get(1).i32 = convertData<i32>(arguments[2]);
+			} break;
+			case eCommandType::ToggleFloatCommand: {
+				command->get(0).toggle = convertData<bool>(arguments[1]);
+				command->get(1).floating_point = convertData<float>(arguments[2]);
+			} break;
+			case eCommandType::ActionCommand: {
+				//Handled below, no arguments required.
+			} break;
+			case eCommandType::ProtectionCommand: {
+				auto cmd{ static_cast<protectionCommand*>(command) };
+				cmd->get(0).string = (char*)arguments[1].c_str();
+				cmd->update(cmd->get(0).string);
+			} break;
+			case eCommandType::SectionProtectionCommand: {
+				auto cmd{ static_cast<sectionProtectionCommand*>(command) };
+				cmd->get(0).string = (char*)arguments[1].c_str();
+				cmd->update(cmd->get(0).string);
+			} break;
+			case eCommandType::StringCommand: {
+				auto cmd{ static_cast<stringCommand*>(command) };
+				cmd->m_buffer.clear();
+				cmd->m_context = context;
+				size_t index{ context.find(arguments[1]) };
+				cmd->m_buffer.push_back(context.substr(index));
+				cmd->set_string(cmd->m_buffer[0]);
+			} break;
+			case eCommandType::HashCommand: {
+				auto cmd{ static_cast<hashCommand*>(command) };
+				cmd->m_buffer.clear();
+				cmd->m_context = context;
+				size_t index{ context.find(arguments[1]) };
+				cmd->m_buffer.push_back(context.substr(index));
+				cmd->set_key(arguments[1]);
+			} break;
+			case eCommandType::ColorCommand: {
+				auto cmd{ static_cast<colorCommand*>(command) };
+				//This will make 255, into 255
+				//A bad side effect is 2,5,5, 1,,9,,,2, 2,,,,5,,,,5,,, will become valid, but fuck it. I don't care enough
+				cmd->get(0).u8 = convertData<u8>(trimString(arguments[1], ','));
+				cmd->get(1).u8 = convertData<u8>(trimString(arguments[2], ','));
+				cmd->get(2).u8 = convertData<u8>(trimString(arguments[3], ','));
+				if (arguments.size() == 4) {
+					cmd->get(3).u8 = convertData<u8>(arguments[4]);
 				}
-				else {
-					command->m_buffer.clear();
-					command->m_context = context;
-					if (command->value_count() == 1) {
-						size_t index{ context.find(arguments[1]) };
-						command->m_buffer.push_back(context.substr(index));
-						command->get(0).string = (char*)command->m_buffer[0].c_str();
+			} break;
+			case eCommandType::VariadicCommand: {
+				if (command->has_value()) {
+					if (command->get_value(0)->m_type != eValueType::String) {
+						if (command->value_count() != trueArgCount) {
+							LOG(Commands, "You provided {} arguments for a command that requires {} arguments.", trueArgCount, command->value_count());
+							return;
+						}
+						for (size_t i{ 0 }; i != trueArgCount; ++i) {
+							typedValue& value{ *command->get_value(i) };
+							std::string arg{ arguments[i + 1] };
+							switch (value.m_type) {
+								case eValueType::String: {
+									strncpy((*value).string, arg.c_str(), arg.size());
+								} break;
+								case eValueType::Boolean: {
+									(*value).toggle = convertData<bool>(arg);
+								} break;
+								case eValueType::FloatingPoint: {
+									(*value).floating_point = convertData<float>(trimString(arg, ','));
+								} break;
+								case eValueType::Int8: {
+									(*value).i8 = convertData<i8>(arg);
+								} break;
+								case eValueType::UInt8: {
+									(*value).u8 = convertData<u8>(arg);
+								} break;
+								case eValueType::Int16: {
+									(*value).i16 = convertData<i16>(arg);
+								} break;
+								case eValueType::UInt16: {
+									(*value).u16 = convertData<u16>(arg);
+								} break;
+								case eValueType::Int32: {
+									(*value).i32 = convertData<i32>(arg);
+								} break;
+								case eValueType::UInt32: {
+									(*value).u32 = convertData<u32>(arg);
+								} break;
+								case eValueType::Int64: {
+									(*value).i64 = convertData<i64>(arg);
+								} break;
+								case eValueType::UInt64: {
+									(*value).u64 = convertData<u64>(arg);
+								} break;
+								case eValueType::GamePlayer: {
+									(*value).game_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
+								} break;
+								case eValueType::NetPlayer: {
+									(*value).net_player = getPlayerForCommandArgument(arg).m_netGamePlayer;
+								} break;
+								case eValueType::GamerInfo: {
+									(*value).gamer_info = getPlayerForCommandArgument(arg).m_gamerInfo;
+								} break;
+							}
+						}
 					}
 					else {
-						command->m_buffer.push_back("Reversed"); //Args start at index 1, this is so we don't fuck things up when reading args
-						for (size_t i{ 1 }; i != command->value_count(); ++i) {
-							command->m_buffer.push_back(arguments[i]);
-							strncpy(command->get(i).string, command->m_buffer[i].c_str(), command->m_buffer[i].size());
+						command->m_buffer.clear();
+						command->m_context = context;
+						if (command->value_count() == 1) {
+							size_t index{ context.find(arguments[1]) };
+							command->m_buffer.push_back(context.substr(index));
+							command->get(0).string = (char*)command->m_buffer[0].c_str();
+						}
+						else {
+							command->m_buffer.push_back("Reversed"); //Args start at index 1, this is so we don't fuck things up when reading args
+							for (size_t i{ 1 }; i != command->value_count(); ++i) {
+								command->m_buffer.push_back(arguments[i]);
+								strncpy(command->get(i).string, command->m_buffer[i].c_str(), command->m_buffer[i].size());
+							}
 						}
 					}
 				}
-			}
-		} break;
-		default: {
+			} break;
+			default: {
 
-		} break;
+			} break;
 		}
 		if (!command->m_looped)
 			command->run();
@@ -226,18 +225,17 @@ namespace commands {
 			return false;
 		if (words.size() == 1) {
 			switch (command->m_type) {
-			case eCommandType::ToggleIntCommand:
-			case eCommandType::ToggleFloatCommand:
-			case eCommandType::ToggleCommand: {
-				command->get(0).toggle ^= true;
-				//g_setConfig = true;
-				replaceCommand(command);
-				return true;
-			} break;
-			case eCommandType::ActionCommand: {
-				command->run();
-				return true;
-			} break;
+				case eCommandType::ToggleIntCommand:
+				case eCommandType::ToggleFloatCommand:
+				case eCommandType::ToggleCommand: {
+					command->get(0).toggle ^= true;
+					replaceCommand(command);
+					return true;
+				} break;
+				case eCommandType::ActionCommand: {
+					command->run();
+					return true;
+				} break;
 			}
 			LOG(Commands, "You provided no arguments for a command that requires arguments!");
 			return false;
@@ -245,24 +243,22 @@ namespace commands {
 		else if (words.size() > 1) {
 			if (words.size() == 2) {
 				switch (command->m_type) {
-				case eCommandType::ToggleIntCommand: {
-					if (containsAnNumber(words[1]) || isNumber(words[1]))
-						command->get(1).i32 = convertData<i32>(words[1]);
-					else
-						command->get(0).toggle = convertData<bool>(words[1]);
-					//g_setConfig = true;
-					replaceCommand(command);
-					return true;
-				} break;
-				case eCommandType::ToggleFloatCommand: {
-					if (containsAnNumber(words[1]) || isNumber(words[1]))
-						command->get(1).floating_point = convertData<float>(words[1]);
-					else
-						command->get(0).toggle = convertData<bool>(words[1]);
-					//g_setConfig = true;
-					replaceCommand(command);
-					return true;
-				} break;
+					case eCommandType::ToggleIntCommand: {
+						if (containsAnNumber(words[1]) || isNumber(words[1]))
+							command->get(1).i32 = convertData<i32>(words[1]);
+						else
+							command->get(0).toggle = convertData<bool>(words[1]);
+						replaceCommand(command);
+						return true;
+					} break;
+					case eCommandType::ToggleFloatCommand: {
+						if (containsAnNumber(words[1]) || isNumber(words[1]))
+							command->get(1).floating_point = convertData<float>(words[1]);
+						else
+							command->get(0).toggle = convertData<bool>(words[1]);
+						replaceCommand(command);
+						return true;
+					} break;
 				}
 			}
 			executeWithCommand(command, string.substr(string.find(words[0])));
@@ -281,10 +277,10 @@ namespace commands {
 		}
 	}
 	std::vector<abstractCommand*> engine::findMatches(const std::string& command) {
-		std::string lower{ lStr(command) };
+		std::string lower{ stringToLower(command) };
 		std::vector<abstractCommand*> matches{};
 		for (auto& f : g_manager.getCommands()) {
-			if (lStr(f.second->m_id).find(lower) != std::string::npos) {
+			if (stringToLower(f.second->m_id).find(lower) != std::string::npos) {
 				matches.push_back(f.second);
 			}
 		}
@@ -298,9 +294,9 @@ namespace commands {
 		}
 		else {
 			if (m_useDirectMatchResults) {
-				std::string lower{ lStr(search) };
+				std::string lower{ stringToLower(search) };
 				for (auto& m : matches) {
-					if (lStr(m->m_id) == lower) {
+					if (stringToLower(m->m_id) == lower) {
 						return m;
 					}
 				}
@@ -367,7 +363,8 @@ namespace commands {
 	}
 	void engine::commandStreamTick() {
 		while (true) {
-			g_engine.commandFromStream(); //This is typically used for serialising commandss from other processes
+			//This is typically used for serialising commandss from other processes
+			g_engine.commandFromStream();
 			fiber::current()->sleep(2s);
 		}
 	}

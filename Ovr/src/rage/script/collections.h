@@ -17,7 +17,7 @@ namespace rage::ysc {
 		void createNewPage() {
 			stringHeaps.push_back(new char[scrStringSize]);
 		}
-		u32 addString(ccp str) {
+		u32 addString(cc* str) {
 			if (auto it{ stringIndexLookup.find(str) }; it != stringIndexLookup.end()) {
 				return it->second;
 			}
@@ -35,7 +35,7 @@ namespace rage::ysc {
 			stringIndexLookup[str] = stringHeapSize - stringLength - 1;
 			return stringHeapSize - stringLength - 1;
 		}
-		ccp getString(u32 index) {
+		cc* getString(u32 index) {
 			if (index < stringHeapSize) {
 				return &stringHeaps[index >> scrStringShift][index & scrStringMask];
 			}
@@ -54,7 +54,7 @@ namespace rage::ysc {
 	public:
 		std::vector<char*> stringHeaps{};
 	private:
-		std::unordered_map<ccp, u32> stringIndexLookup{};
+		std::unordered_map<cc*, u32> stringIndexLookup{};
 		u32 stringHeapSize{};
 	};
 	class codePageCollection { //This was fucking CANCER
