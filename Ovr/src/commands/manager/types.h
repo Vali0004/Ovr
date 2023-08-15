@@ -373,6 +373,42 @@ namespace commands {
 		typedValue m_stringValue{};
 		fnptr<void(hashCommand*)> m_callback{};
 	};
+	class toggleColorCommand : public abstractCommand {
+	public:
+		toggleColorCommand(const std::string& id, const std::string& name, const std::string& description, fnptr<void(toggleColorCommand*)> callback = {}) :
+			abstractCommand(id, name, description, {}, eCommandType::ToggleColorCommand, true), m_callback(callback) {
+		}
+		toggleColorCommand(const std::string& id, const std::string& name, fnptr<void(toggleColorCommand*)> callback = {}) :
+			toggleColorCommand(id, name, {}, callback) {
+		}
+		~toggleColorCommand() {
+			abstractCommand::~abstractCommand();
+		}
+		void init() override {
+			push_value(m_toggleValue);
+			push_value(m_rValue);
+			push_value(m_gValue);
+			push_value(m_bValue);
+			push_value(m_aValue);
+			abstractCommand::init();
+		}
+		void run() override {
+			if (m_callback) {
+				m_callback(this);
+			}
+			abstractCommand::run();
+		}
+		color get_color() {
+			return { (*m_rValue).u8, (*m_gValue).u8, (*m_bValue).u8, (*m_aValue).u8 };
+		}
+	private:
+		fnptr<void(toggleColorCommand*)> m_callback{};
+		typedValue m_toggleValue{};
+		typedValue m_rValue{};
+		typedValue m_gValue{};
+		typedValue m_bValue{};
+		typedValue m_aValue{};
+	};
 	class colorCommand : public abstractCommand {
 	public:
 		colorCommand(const std::string& id, const std::string& name, const std::string& description) :

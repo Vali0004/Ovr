@@ -96,6 +96,7 @@ namespace commands {
 		StringCommand,
 		HashCommand,
 		ColorCommand,
+		ToggleColorCommand,
 		VariadicCommand
 	};
 	class abstractCommand {

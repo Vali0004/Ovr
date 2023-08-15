@@ -45,6 +45,9 @@ namespace pointers {
 		using updateVideoMemoryBar = void(*)(bool Unk);
 		using getAvailableMemoryForStreamer = u64(*)(u64* _This);
 		using settingsVramTex = u64(*)(u64* _This, i32 Quality, u64* pSettings);
+		using hasGameBeenAltered = bool(*)();
+		using resourceError = void(*)(u32 Hash, bool Kill);
+		using callResourceError = bool(*)(u32 Hash);
 
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
@@ -116,6 +119,9 @@ namespace pointers {
 	inline types::updateVideoMemoryBar g_updateVideoMemoryBar{};
 	inline types::getAvailableMemoryForStreamer g_getAvailableMemoryForStreamer{};
 	inline types::settingsVramTex g_settingsVramTex{};
+	inline types::hasGameBeenAltered g_hasGameBeenAltered{};
+	inline types::resourceError g_resourceError{};
+	inline types::callResourceError g_callResourceError{};
 
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
@@ -139,12 +145,15 @@ namespace pointers {
 	inline rage::atArray<GtaThread*>* g_gtaThreads{};
 	inline rage::scrValue** g_globals{};
 	inline eLoadingScreenState* g_loadingScreenState{};
+	inline CVFXWheel* g_vfxWheel{};
+	inline u8* g_vfxWheelClassSize{};
 	inline uint32_t* g_threadId{};
 	inline uint32_t* g_threadCount{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
 	inline u64 g_pedModelInfoVtbl{};
 	inline bool* g_forceHost{};
+	inline bool* g_registerDecorNotAllowed{};
 	inline u64* g_vramLocation{};
 	inline u32* g_allocatorAmount{};
 	inline mem g_windowHook{};

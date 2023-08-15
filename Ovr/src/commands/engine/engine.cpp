@@ -125,6 +125,16 @@ namespace commands {
 					cmd->get(3).u8 = convertData<u8>(arguments[4]);
 				}
 			} break;
+			case eCommandType::ToggleColorCommand: {
+				auto cmd{ static_cast<toggleColorCommand*>(command) };
+				cmd->get(0).toggle = convertData<bool>(arguments[1]);
+				cmd->get(1).u8 = convertData<u8>(trimString(arguments[2], ','));
+				cmd->get(2).u8 = convertData<u8>(trimString(arguments[3], ','));
+				cmd->get(3).u8 = convertData<u8>(trimString(arguments[4], ','));
+				if (arguments.size() == 4) {
+					cmd->get(4).u8 = convertData<u8>(arguments[5]);
+				}
+			} break;
 			case eCommandType::VariadicCommand: {
 				if (command->has_value()) {
 					if (command->get_value(0)->m_type != eValueType::String) {

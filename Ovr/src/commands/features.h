@@ -86,9 +86,12 @@ namespace commands::features {
 	namespace weapon {
 		namespace ammo {
 			namespace special {
-				inline eAmmoSpecialType o_specialAmmo{ eAmmoSpecialType::Invalid };
-				inline uint32_t w_hash{};
+				extern void armorPiercing(toggleCommand* command);
 				extern void explosive(toggleCommand* command);
+				extern void fullMetalJacket(toggleCommand* command);
+				extern void hollowPoint(toggleCommand* command);
+				extern void incendiary(toggleCommand* command);
+				extern void tracer(toggleCommand* command);
 			}
 			extern void infinite(toggleCommand* command);
 			extern void infiniteClip(toggleCommand* command);
@@ -240,11 +243,55 @@ namespace commands::features {
 		namespace world {
 			extern void teleportToWaypoint(actionCommand* command);
 		}
+		namespace vfx {
+			namespace wheel {
+				inline CVFXWheel* g_vfxWeelCache{};
+				extern void tireTracksColor(toggleColorCommand* command);
+			}
+			extern void azimuthEastIntensity(toggleFloatCommand* command);
+			extern void azimuthWestIntensity(toggleFloatCommand* command);
+			extern void azimuthTransitionIntensity(toggleFloatCommand* command);
+			extern void azimuthTransitionPosition(toggleFloatCommand* command);
+			extern void zenithIntensity(toggleFloatCommand* command);
+			extern void skyPlaneParams(toggleIntCommand* command);
+			extern void sunDirection(toggleIntCommand* command);
+			extern void sunPosition(toggleIntCommand* command);
+			extern void cloudGenerationFrequency(toggleIntCommand* command);
+			extern void speedConstants(toggleIntCommand* command);
+			extern void horizonLevel(toggleFloatCommand* command);
+			extern void starfieldIntensity(toggleFloatCommand* command);
+			extern void moonIntensity(toggleFloatCommand* command);
+			extern void lunarCycle(toggleIntCommand* command);
+			extern void moonDirection(toggleIntCommand* command);
+			extern void moonPosition(toggleIntCommand* command);
+			extern void noiseFrequency(toggleFloatCommand* command);
+			extern void noiseScale(toggleFloatCommand* command);
+			extern void noiseThreshold(toggleFloatCommand* command);
+			extern void noiseSoftness(toggleFloatCommand* command);
+			extern void noiseDensityOffset(toggleFloatCommand* command);
+		}
 	}
 	namespace settings {
 		namespace game {
 			extern void unload(actionCommand* command);
 			extern void exit(actionCommand* command);
+		}
+		namespace statistics {
+			extern void drawNativesInvokedByGame(toggleCommand* command);
+			extern void drawNativesInvokedByMenu(toggleCommand* command);
+			extern void drawPoolCounts(toggleCommand* command);
+			extern void drawCoordinates(toggleCommand* command);
+			extern void drawHeading(toggleCommand* command);
+			extern void drawPlayerCount(toggleCommand* command);
+			extern void drawIncomingNetworkEventCount(toggleCommand* command);
+			extern void drawFrameData(toggleCommand* command);
+			extern void drasFramesPerSecond(toggleCommand* command);
+			extern void drawSessionType(toggleCommand* command);
+			extern void drawHostName(toggleCommand* command);
+			extern void drawNextHostName(toggleCommand* command);
+			extern void drawScriptHostName(toggleCommand* command);
+			extern void drawLastScriptEventSenderName(toggleCommand* command);
+			extern void drawLocalPlayerName(toggleCommand* command);
 		}
 		namespace ui {
 			extern void scale(floatCommand* command);

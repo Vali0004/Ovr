@@ -70,6 +70,9 @@ inline commands::hashCommand* operator ""_HC(cc* str, u64) {
 inline commands::colorCommand* operator ""_CC(cc* str, u64) {
 	return commands::g_manager.getCommand<commands::colorCommand>(str);
 }
+inline commands::toggleColorCommand* operator ""_TCC(cc* str, u64) {
+	return commands::g_manager.getCommand<commands::toggleColorCommand>(str);
+}
 inline commands::variadicCommand* operator ""_VC(cc* str, u64) {
 	return commands::g_manager.getCommand<commands::variadicCommand>(str);
 }

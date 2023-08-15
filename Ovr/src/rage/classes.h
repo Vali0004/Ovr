@@ -2554,11 +2554,11 @@ public:
 	int m_index; //0x0000
 	char pad_0004[12]; //0x0004
 	rage::vector4 m_value; //0x0010
-	void setValueRGBA(u8 r, u8 g, u8 b, u8 a) {
-		m_value.x = (r & 0xFF) / 255.f;
-		m_value.y = (g & 0xFF) / 255.f;
-		m_value.z = (b & 0xFF) / 255.f;
-		m_value.w = (a & 0xFF) / 255.f;
+	void setValueRGBA(float* float4) {
+		m_value.x = float4[0];
+		m_value.y = float4[1];
+		m_value.z = float4[2];
+		m_value.w = float4[3];
 	}
 }; //Size: 0x0020
 static_assert(sizeof(UIElement) == 0x20);
@@ -2569,11 +2569,11 @@ public:
 	float m_position; //0x0014
 	char pad_0018[4]; //0x0018
 	int m_index; //0x001C
-	void setValueRGBA(u8 r, u8 g, u8 b, u8 a) {
-		m_value.x = (r & 0xFF) / 255.f;
-		m_value.y = (g & 0xFF) / 255.f;
-		m_value.z = (b & 0xFF) / 255.f;
-		m_value.w = (a & 0xFF) / 255.f;
+	void setValueRGBA(float* float4) {
+		m_value.x = float4[0];
+		m_value.y = float4[1];
+		m_value.z = float4[2];
+		m_value.w = float4[3];
 	}
 }; //Size: 0x0020
 static_assert(sizeof(UIElementConstant) == 0x20);
@@ -2582,13 +2582,13 @@ public:
 	int m_index; //0x0000
 }; //Size: 0x0004
 static_assert(sizeof(UIIndex) == 0x4);
-class UIElementInt {
+class UIElementInt { //Not real name
 public:
 	UIIndex m_index; //0x0000
 	float m_value; //0x0004
 }; //Size: 0x0008
 static_assert(sizeof(UIElementInt) == 0x8);
-class UIElementShader {
+class UIElementShader { //Not real name
 public:
 	uint64_t m_raw_element; //0x0000
 	rage::grcTexture* m_texture; //0x0008
@@ -2597,6 +2597,41 @@ public:
 	}
 }; //Size: 0x0010
 static_assert(sizeof(UIElementShader) == 0x10);
+#pragma pack(push, 4)
+class UIVisualSettings { //Not real name
+public:
+	char pad_0000[10356]; //0x0000
+	float m_rim_light; //0x2874
+	float m_global_environment_reflection; //0x2878
+	float m_gamma; //0x287C
+	float m_mid_blur; //0x2880
+	float m_far_blur; //0x2884
+	float m_sky_multiplier; //0x2888
+	float m_desaturation; //0x288C
+}; //Size: 0x2890
+static_assert(sizeof(UIVisualSettings) == 0x2890);
+#pragma pack(pop)
+class UIElementColor {
+public:
+	float m_intensity; //0x0000
+	float m_radius; //0x0004
+	float m_falloff_exponent; //0x0008
+	float m_inner_cone_angle; //0x000C
+	float m_outer_cone_angle; //0x0010
+	float m_corona_hdr; //0x0014
+	float m_corona_size; //0x0018
+	float m_shadow_blur; //0x001C
+	float m_capsule_length; //0x0020
+	char _0x0024[12]; //0x0024
+	rage::vector4 m_color{}; //0x0030
+	uint32_t m_flags; //0x0040
+	void using_sun() {
+		m_flags = 0x200;
+	}
+	void using_dynamic_shadows() {
+		m_flags = 0x200;
+	}
+}; //Size: 0x0044
 class TimecycleKeyframeData {
 public:
 	char pad_0000[16]; //0x0000
@@ -2643,7 +2678,7 @@ public:
 	char pad_0320[48]; //0x0320
 	UIElement m_cloud_base_minus_mid_colour; //0x0350
 	UIElement m_cloud_mid_color; //0x0370
-	UIElement m_cloud_shadow_minus_base_colour_times_shadow_strength; //0x0390
+	UIElement m_cloud_shadow_minus_base_color_times_shadow_strength; //0x0390
 	UIElementConstant m_small_cloud_constants; //0x03B0
 	char pad_03D0[32]; //0x03D0
 	UIElement m_small_cloud_color_hdr; //0x03F0
@@ -2683,7 +2718,60 @@ public:
 	}
 }; //Size: 0x05E8
 static_assert(sizeof(TimecycleKeyframeData) == 0x5E8);
-
+#pragma pack(push, 4)
+class CVFXWheel {
+public:
+	float m_slip_min; //0x0004
+	float m_slip_max; //0x0008
+	float m_pressure_min; //0x000C
+	float m_pressure_max; //0x0010
+	int m_type; //0x0014
+	BOOL unk_0018; //0x0018
+	int m_type2; //0x001C
+	BOOL unk_0020; //0x0020
+	int m_type3; //0x0024
+	BOOL unk_0028; //0x0028
+	int m_type4; //0x002C
+	BOOL unk_0030; //0x0030
+	uint8_t m_r; //0x0034
+	uint8_t m_g; //0x0035
+	uint8_t m_b; //0x0036
+	uint8_t m_a; //0x0037
+	float m_friction_thresh_min; //0x0038
+	float m_friction_thresh_max; //0x003C
+	uint32_t m_friction_fx1; //0x0040
+	uint32_t m_friction_fx2; //0x0044
+	uint32_t m_friction_fx3; //0x0048
+	float m_disp_thresh_min; //0x004C
+	float m_disp_thresh_max; //0x0050
+	uint32_t m_displacement_fx1; //0x0054
+	uint32_t m_displacement_fx2; //0x0058
+	uint32_t m_displacement_fx3; //0x005C
+	uint32_t m_displacement_fx_lod; //0x0060
+	float m_burn_friction_evo_min; //0x0064
+	float m_burn_friction_evo_max; //0x0068
+	float m_burn_temp_evo_min; //0x006C
+	float m_burn_temp_evo_max; //0x0070
+	uint32_t m_burnout_fx1; //0x0074
+	uint32_t m_burnout_fx2; //0x0078
+	uint32_t m_burnout_fx3; //0x007C
+	int m_lights_on; //0x0080
+	uint8_t m_lights_col_min_r; //0x0081
+	uint8_t m_lights_col_min_g; //0x0082
+	uint8_t m_lights_col_min_b; //0x0083
+	uint8_t m_lights_col_max_r; //0x0084
+	uint8_t m_lights_col_max_g; //0x0085
+	uint8_t m_lights_col_max_b; //0x0086
+	uint8_t unk_0087; //0x0087
+	float m_lights_intensity_min; //0x0088
+	float m_lights_intensity_max; //0x008C
+	float m_lights_range_min; //0x0090
+	float m_lights_range_max; //0x0094
+	float m_lights_falloff_min; //0x0098
+	float m_lights_falloff_max; //0x009C
+}; //Size: 0x00A0
+static_assert(sizeof(CVFXWheel) == 0xA0);
+#pragma pack(pop)
 class CRequestData {
 public:
 	char m_data[465]; //0x0000
@@ -5188,6 +5276,65 @@ public:
 	}
 }; //Size: 0x03C0
 static_assert(sizeof(CMsgPackedEvents) == 0x3C0);
+#pragma pack(pop)
+#pragma pack(push, 1)
+class CMsgCloneSync {
+public:
+	CMsgCloneSync(bool nullifyData = true) : m_data(CPackedMessageData(nullifyData)) {}
+	CNetGamePlayer* m_owner; //0x0000
+	uint32_t m_timestamp; //0x0008
+	uint16_t m_net_sequence; //0x000C
+	uint8_t m_num_objects; //0x000E
+	uint8_t unk_000F; //0x000F
+	CPackedMessageData m_data; //0x0010
+
+	bool Deserialise(rage::datBitBuffer* buffer) {
+		m_net_sequence = buffer->Read<uint16_t>(16);
+		m_timestamp = buffer->Read<uint32_t>(13);
+		m_data.Deserialise(buffer);
+		return true;
+	}
+}; //Size: 0x03C8
+static_assert(sizeof(CMsgCloneSync) == 0x3C8);
+class CMsgPackedReliables {
+public:
+	CMsgPackedReliables() :
+		m_creates(CPackedMessageData()), m_create_acks(CPackedMessageData()), m_removes(CPackedMessageData()), m_remove_acks(CPackedMessageData()) {}
+	CNetGamePlayer* m_owner; //0x0000
+	uint32_t m_timestamp; //0x0008
+	uint32_t unk_000C; //0x000C
+	CPackedMessageData m_creates; //0x0010
+	CPackedMessageData m_create_acks; //0x03C8
+	CPackedMessageData m_removes; //0x0780
+	CPackedMessageData m_remove_acks; //0x0B38
+
+	uint32_t FlagBits() {
+		uint32_t flags{ m_creates.m_count };
+		if (m_create_acks.m_count)
+			flags |= 2;
+		if (m_removes.m_count)
+			flags |= 4;
+		if (m_remove_acks.m_count)
+			flags |= 8;
+		return flags;
+	}
+	bool Deserialise(rage::datBitBuffer* buffer) {
+		uint32_t flags{ FlagBits() };
+		flags = buffer->Read<uint32_t>(4);
+		if (flags & 1) {
+			m_timestamp = buffer->Read<uint32_t>(0x20);
+			m_creates.Deserialise(buffer);
+		}
+		if (flags & 2)
+			m_create_acks.Deserialise(buffer);
+		if (flags & 4)
+			m_removes.Deserialise(buffer);
+		if (flags & 8)
+			m_remove_acks.Deserialise(buffer);
+		return true;
+	}
+}; //Size: 0x0EF0
+static_assert(sizeof(CMsgPackedReliables) == 0x0EF0);
 #pragma pack(pop)
 class netInventoryBaseItem {
 public:

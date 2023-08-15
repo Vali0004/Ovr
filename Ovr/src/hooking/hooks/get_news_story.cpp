@@ -12,7 +12,7 @@ public:
 	std::string m_content{};
 };
 std::vector<customNewsContext> g_newsContexts{
-	{ "Ovr", "Ovr", "ovrcheats.one", "bottom text" }
+	{ BRAND, BRAND, LOWER_BRAND "cheats.one", "bottom text" }
 };
 u64 g_currentNewsContext{};
 bool hooks::getNewsStory(CNetworkSCNewsStory* pStory) {

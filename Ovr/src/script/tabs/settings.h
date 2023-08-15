@@ -3,6 +3,7 @@
 #include "script/script.h"
 #include "settings/game.h"
 #include "settings/commands.h"
+#include "settings/statistics.h"
 #include "settings/ui.h"
 
 namespace tabs::settings {
@@ -10,6 +11,7 @@ namespace tabs::settings {
 		elements::menu("Settings", [] {
 			settings::game();
 			settings::command();
+			settings::statistics();
 			settings::ui();
 		});
 	}

@@ -67,6 +67,9 @@ namespace pointers {
 		g_updateVideoMemoryBar = scan("UVMB", "BE 06 00 00 00 8B CE E8").sub(0x6D).as<decltype(g_updateVideoMemoryBar)>();
 		g_getAvailableMemoryForStreamer = scan("GAMFS", "E8 ? ? ? ? 48 8D 0C 3B 48 3B C1").call().as<decltype(g_getAvailableMemoryForStreamer)>();
 		g_settingsVramTex = scan("SVT", "B9 84 04 00 00 41 B9 6B").sub(0x6D).as<decltype(g_settingsVramTex)>();
+		g_hasGameBeenAltered = scan("HGBA", "40 53 48 83 EC 30 48 8B 1D ? ? ? ? BA").as<decltype(g_hasGameBeenAltered)>();
+		g_resourceError = scan("RE", "E8 ? ? ? ? CC FF 15 ? ? ? ?").call().as<decltype(g_resourceError)>();
+		g_callResourceError = scan("CRE", "48 83 EC 28 33 D2 E8 ? ? ? ? CC").as<decltype(g_callResourceError)>();
 
 		g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
 		g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();
@@ -89,12 +92,15 @@ namespace pointers {
 		g_hashTable = scan("MT", "4C 03 05 ? ? ? ? EB 03").mov().as<decltype(g_hashTable)>();
 		g_gtaThreads = scan("GT", "F5 8B FD 73").add(5).mov().as<decltype(g_gtaThreads)>();
 		g_globals = scan("G", "48 8B 8D ? ? ? ? 4C 8D 4D 08").add(0xB).mov().as<decltype(g_globals)>();
+		g_vfxWheel = scan("VW", "48 8D 05 ? ? ? ? 48 6B FF 45 F3 0F 59 0D ? ? ? ? F3 41 0F 59 9E ? ? ? ? F3 0F 10 BD ? ? ? ? 48 03 FE 48 69 FF ? ? ? ? F3").mov().as<decltype(g_vfxWheel)>();
+		g_vfxWheelClassSize = scan("VWCS", "48 8D 05 ? ? ? ? 48 6B FF 45 F3 0F 59 0D ? ? ? ? F3 41 0F 59 9E ? ? ? ? F3 0F 10 BD ? ? ? ? 48 03 FE 48 69 FF ? ? ? ? F3").add(0xA).as<decltype(g_vfxWheelClassSize)>();
 		g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
 		g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
 		g_nativeRegistration = scan("NR", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 B9 20 03 00 00").add(0x1E).call().as<decltype(g_nativeRegistration)>();
 		g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_vehicleModelInfoVtbl)>();
 		g_pedModelInfoVtbl = scan("PMIV", "E3 FF FF 48 8D 05 ? ? ? ? 48 89 03 33 C0 48 89 83").add(3).mov().as<decltype(g_pedModelInfoVtbl)>();
 		g_forceHost = scan("FH", "C6 05 ? ? ? ? ? 48 8B CB E8 ? ? ? ? 84 C0 75 08").mov().as<decltype(g_forceHost)>();
+		g_registerDecorNotAllowed = scan("RDNA", "0F B6 05 ? ? ? ? 33 D2 83 F9 08 0F 44 C2 88 05 ? ? ? ? C3").add(0x10).call().as<decltype(g_registerDecorNotAllowed)>();
 		g_vramLocation = scan("VL", "4C 63 C0 48 8D 05 ? ? ? ? 48 8D 14").add(3).mov().as<decltype(g_vramLocation)>();
 		g_allocatorAmount = scan("AA", "41 B8 00 00 00 40 48 8B D5 89").add(2).as<decltype(g_allocatorAmount)>();
 		g_hwnd = FindWindowA("grcWindow", nullptr);
@@ -124,7 +130,7 @@ namespace pointers {
 		}
 		//Is matchmaking session valid
 		g_patches.add("ISMSV", scan("ISMSV", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F").as<u8*>(), { 0xB0ui8, 0x01ui8, 0xC3ui8 });
-		//I forgot to properly lable these, and I don't even remember what these do.
+		//Free Event Error
 		g_patches.add("FEE", scan("FEE", "48 8B 5C 24 40 48 8B 6C 24 48 48 8B 74 24 50 48 8B 7C 24 58 48 83 C4 30 41 5E C3 48 8B 0D").add(0x31).as<u8*>(), { 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8, 0x90ui8 });
 		//Crash trigger
 		g_patches.add("MTC", scan("MTC", "48 3B F8 74 ? 8B 1D").add(4).as<u8*>(), { 0x00ui8 });

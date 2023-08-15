@@ -337,24 +337,74 @@ namespace commands::features {
 			PED::SET_PED_CAN_RAGDOLL(ped, !command->get(0).toggle);
 			if (command->get(0).toggle) {
 				PED::SET_RAGDOLL_BLOCKING_FLAGS(ped, 2);
-				cPed->m_ped_type &= ~(uint32_t)ePedType::Ragdogable;
+				cPed->m_ped_type &= ~(u32)ePedType::Ragdogable;
 			}
 			else {
 				PED::CLEAR_RAGDOLL_BLOCKING_FLAGS(ped, 2);
-				cPed->m_ped_type |= (uint32_t)ePedType::Ragdogable;
+				cPed->m_ped_type |= (u32)ePedType::Ragdogable;
 			}
 		}
 	}
 	namespace weapon {
 		namespace ammo {
 			namespace special {
+				void armorPiercing(toggleCommand* command) {
+					if (cAmmoInfo) {
+						if (command->get(0).toggle) {
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::ArmorPiercing;
+						}
+						else {
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::ArmorPiercing;
+						}
+					}
+				}
 				void explosive(toggleCommand* command) {
 					if (cAmmoInfo) {
 						if (command->get(0).toggle) {
-							cAmmoInfo->m_ammo_special_type |= (uint32_t)eAmmoSpecialType::Explosive;
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::Explosive;
 						}
 						else {
-							cAmmoInfo->m_ammo_special_type &= ~(uint32_t)eAmmoSpecialType::Explosive;
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::Explosive;
+						}
+					}
+				}
+				void fullMetalJacket(toggleCommand* command) {
+					if (cAmmoInfo) {
+						if (command->get(0).toggle) {
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::FMJ;
+						}
+						else {
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::FMJ;
+						}
+					}
+				}
+				void hollowPoint(toggleCommand* command) {
+					if (cAmmoInfo) {
+						if (command->get(0).toggle) {
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::HollowPoint;
+						}
+						else {
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::HollowPoint;
+						}
+					}
+				}
+				void incendiary(toggleCommand* command) {
+					if (cAmmoInfo) {
+						if (command->get(0).toggle) {
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::Incendiary;
+						}
+						else {
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::Incendiary;
+						}
+					}
+				}
+				void tracer(toggleCommand* command) {
+					if (cAmmoInfo) {
+						if (command->get(0).toggle) {
+							cAmmoInfo->m_ammo_special_type |= (u32)eAmmoSpecialType::Tracer;
+						}
+						else {
+							cAmmoInfo->m_ammo_special_type &= ~(u32)eAmmoSpecialType::Tracer;
 						}
 					}
 				}
@@ -366,12 +416,14 @@ namespace commands::features {
 				cPed->m_inventory->m_infinite_clip = command->get(0).toggle;
 			}
 			void infiniteStickyBombs(toggleCommand* command) {
-				if (command->get(0).toggle)
+				if (command->get(0).toggle) {
 					cPed->m_fired_sticky_bombs = 0;
+				}
 			}
 			void infiniteFlares(toggleCommand* command) {
-				if (command->get(0).toggle)
+				if (command->get(0).toggle) {
 					cPed->m_fired_flares = 0;
+				}
 			}
 			void refill(actionCommand* command) {
 				Ped ped{ PLAYER::PLAYER_PED_ID() };
@@ -1049,6 +1101,111 @@ namespace commands::features {
 				}
 			}
 		}
+		namespace vfx {
+			namespace wheel {
+				void tireTracksColor(toggleColorCommand* command) {
+					if (!g_vfxWeelCache) {
+						g_vfxWeelCache = (CVFXWheel*)malloc((sizeof(CVFXWheel) * *pointers::g_vfxWheelClassSize) * 4);
+						memcpy(g_vfxWeelCache, pointers::g_vfxWheel, (sizeof(CVFXWheel) * *pointers::g_vfxWheelClassSize) * 4);
+					}
+					for (u32 i{}; i != *pointers::g_vfxWheelClassSize * 4; ++i) {
+						if (command->get(0).toggle) {
+							pointers::g_vfxWheel[i].m_type = 53;
+							pointers::g_vfxWheel[i].m_type2 = 53;
+							pointers::g_vfxWheel[i].m_type3 = 64;
+							pointers::g_vfxWheel[i].m_type4 = 255;
+							pointers::g_vfxWheel[i].unk_0018 = TRUE;
+							pointers::g_vfxWheel[i].unk_0020 = TRUE;
+							pointers::g_vfxWheel[i].unk_0028 = TRUE;
+							pointers::g_vfxWheel[i].unk_0030 = TRUE;
+							pointers::g_vfxWheel[i].m_r = command->get_color().r;
+							pointers::g_vfxWheel[i].m_g = command->get_color().g;
+							pointers::g_vfxWheel[i].m_b = command->get_color().b;
+							pointers::g_vfxWheel[i].m_pressure_min = -1.f;
+							pointers::g_vfxWheel[i].m_pressure_max = 0.f;
+						}
+						else {
+							pointers::g_vfxWheel[i].m_type = g_vfxWeelCache[i].m_type;
+							pointers::g_vfxWheel[i].m_type2 = g_vfxWeelCache[i].m_type2;
+							pointers::g_vfxWheel[i].m_type3 = g_vfxWeelCache[i].m_type3;
+							pointers::g_vfxWheel[i].m_type4 = g_vfxWeelCache[i].m_type4;
+							pointers::g_vfxWheel[i].unk_0018 = g_vfxWeelCache[i].unk_0018;
+							pointers::g_vfxWheel[i].unk_0020 = g_vfxWeelCache[i].unk_0020;
+							pointers::g_vfxWheel[i].unk_0028 = g_vfxWeelCache[i].unk_0028;
+							pointers::g_vfxWheel[i].unk_0030 = g_vfxWeelCache[i].unk_0030;
+							pointers::g_vfxWheel[i].m_r = g_vfxWeelCache[i].m_r;
+							pointers::g_vfxWheel[i].m_g = g_vfxWeelCache[i].m_g;
+							pointers::g_vfxWheel[i].m_b = g_vfxWeelCache[i].m_b;
+							pointers::g_vfxWheel[i].m_pressure_min = g_vfxWeelCache[i].m_pressure_min;
+							pointers::g_vfxWheel[i].m_pressure_max = g_vfxWeelCache[i].m_pressure_max;
+						}
+					}
+				}
+			}
+			void azimuthEastIntensity(toggleFloatCommand* command) {
+
+			}
+			void azimuthWestIntensity(toggleFloatCommand* command) {
+
+			}
+			void azimuthTransitionIntensity(toggleFloatCommand* command) {
+
+			}
+			void azimuthTransitionPosition(toggleFloatCommand* command) {
+
+			}
+			void zenithIntensity(toggleFloatCommand* command) {
+
+			}
+			void skyPlaneParams(toggleIntCommand* command) {
+
+			}
+			void sunDirection(toggleIntCommand* command) {
+
+			}
+			void sunPosition(toggleIntCommand* command) {
+
+			}
+			void cloudGenerationFrequency(toggleIntCommand* command) {
+
+			}
+			void speedConstants(toggleIntCommand* command) {
+
+			}
+			void horizonLevel(toggleFloatCommand* command) {
+
+			}
+			void starfieldIntensity(toggleFloatCommand* command) {
+
+			}
+			void moonIntensity(toggleFloatCommand* command) {
+
+			}
+			void lunarCycle(toggleIntCommand* command) {
+
+			}
+			void moonDirection(toggleIntCommand* command) {
+
+			}
+			void moonPosition(toggleIntCommand* command) {
+
+			}
+			void noiseFrequency(toggleFloatCommand* command) {
+
+			}
+			void noiseScale(toggleFloatCommand* command) {
+
+			}
+			void noiseThreshold(toggleFloatCommand* command) {
+
+			}
+			void noiseSoftness(toggleFloatCommand* command) {
+
+			}
+			void noiseDensityOffset(toggleFloatCommand* command) {
+
+			}
+		}
 	}
 	namespace settings {
 		namespace game {
@@ -1077,6 +1234,53 @@ namespace commands::features {
 						}, ImGuiWindowFlags_NoResize);
 					});
 				}));
+			}
+		}
+		namespace statistics {
+			void drawNativesInvokedByGame(toggleCommand* command) {
+
+			}
+			void drawNativesInvokedByMenu(toggleCommand* command) {
+
+			}
+			void drawPoolCounts(toggleCommand* command) {
+
+			}
+			void drawCoordinates(toggleCommand* command) {
+
+			}
+			void drawHeading(toggleCommand* command) {
+
+			}
+			void drawPlayerCount(toggleCommand* command) {
+
+			}
+			void drawIncomingNetworkEventCount(toggleCommand* command) {
+
+			}
+			void drawFrameData(toggleCommand* command) {
+
+			}
+			void drasFramesPerSecond(toggleCommand* command) {
+
+			}
+			void drawSessionType(toggleCommand* command) {
+
+			}
+			void drawHostName(toggleCommand* command) {
+
+			}
+			void drawNextHostName(toggleCommand* command) {
+
+			}
+			void drawScriptHostName(toggleCommand* command) {
+
+			}
+			void drawLastScriptEventSenderName(toggleCommand* command) {
+
+			}
+			void drawLocalPlayerName(toggleCommand* command) {
+
 			}
 		}
 		namespace ui {
@@ -1140,7 +1344,12 @@ namespace commands::features {
 		g_manager.add(toggleCommand("noRagdoll", "No Ragdoll", "No more flinging across the map for you", self::noRagdoll));
 		g_manager.add(toggleCommand("invisibility", "Invisibility", "Poof goes your player", self::invisibility));
 		//Weapon::Ammo::Special
+		g_manager.add(toggleCommand("armorPiercingAmmo", "Armor Piercing", "rmor Piercing Ammo", weapon::ammo::special::armorPiercing));
 		g_manager.add(toggleCommand("explosiveAmmo", "Exposive", "Explosive Ammo", weapon::ammo::special::explosive));
+		g_manager.add(toggleCommand("fullMetalJacketAmmo", "Full Metal Jacket", "Full Metal Jacket Ammo, also known as FMJ", weapon::ammo::special::fullMetalJacket));
+		g_manager.add(toggleCommand("hollowPointAmmo", "Hollow Point", "Hollow Point Ammo", weapon::ammo::special::hollowPoint));
+		g_manager.add(toggleCommand("incendiaryAmmo", "Incendiary", "Incendiary Ammo", weapon::ammo::special::incendiary));
+		g_manager.add(toggleCommand("tracerAmmo", "Tracer", "Tracer Ammo", weapon::ammo::special::tracer));
 		//Weapon::Ammo
 		g_manager.add(toggleCommand("infiniteAmmo", "Infinite Ammo", "Pretty self explanitory", weapon::ammo::infinite));
 		g_manager.add(toggleCommand("infiniteClip", "Infinite Clip", "Makes it so you never reload", weapon::ammo::infiniteClip));
@@ -1271,8 +1480,70 @@ namespace commands::features {
 		g_manager.add(floatCommand("setTimeScale", "Set Time Scale", miscellaneous::game::setTimeScale));
 		//Miscellaneous::World
 		g_manager.add(actionCommand("teleportToWaypoint", "Teleport To Waypoint", miscellaneous::world::teleportToWaypoint));
+		//Miscellaneous::VFX::Wheel
+		g_manager.add(toggleColorCommand("tireTracksColor", "Tire Tracks Color"));
+		//Miscellaneous::VFX
+		g_manager.add(toggleColorCommand("azimuthEastColor", "Azimuth East Color"));
+		g_manager.add(toggleFloatCommand("azimuthEastIntensity", "Azimuth East Intensity", miscellaneous::vfx::azimuthEastIntensity));
+		g_manager.add(toggleColorCommand("azimuthWestColor", "Azimuth West Color"));
+		g_manager.add(toggleFloatCommand("azimuthWestIntensity", "Azimuth West Intensity", miscellaneous::vfx::azimuthWestIntensity));
+		g_manager.add(toggleColorCommand("azimuthTransitionColor", "Azimuth Transition Color"));
+		g_manager.add(toggleFloatCommand("azimuthTransitionIntensity", "Azimuth Transition Intensity", miscellaneous::vfx::azimuthTransitionIntensity));
+		g_manager.add(toggleFloatCommand("azimuthTransitionPosition", "Azimuth Transition Position", miscellaneous::vfx::azimuthTransitionPosition));
+		g_manager.add(toggleColorCommand("zenithColor", "Zenith Color"));
+		g_manager.add(toggleFloatCommand("zenithIntensity", "Zenith Intensity", miscellaneous::vfx::zenithIntensity));
+		g_manager.add(toggleColorCommand("zenithTransitionColor", "Zenith Transition Color"));
+		g_manager.add(toggleColorCommand("zenithConstantColors", "Zenith Constant Colors"));
+		g_manager.add(toggleColorCommand("skyPlaneColor", "Sky Plane Color"));
+		g_manager.add(toggleIntCommand("skyPlaneParams", "Sky Plane Params", miscellaneous::vfx::skyPlaneParams));
+		g_manager.add(toggleIntCommand("sunDirection", "Sun Direction", miscellaneous::vfx::sunDirection));
+		g_manager.add(toggleIntCommand("sunPosition", "Sun Position", miscellaneous::vfx::sunPosition));
+		g_manager.add(toggleColorCommand("sunColor", "Sun Color"));
+		g_manager.add(toggleColorCommand("sunColorHdr", "Sun Color (HDR)"));
+		g_manager.add(toggleColorCommand("sunDiscColorHdr", "Sun Disc Color (HDR)"));
+		g_manager.add(toggleColorCommand("sunConstantColors", "Sun Constant Colors"));
+		g_manager.add(toggleColorCommand("cloudConstant1Color", "Cloud Constant Color (1)"));
+		g_manager.add(toggleColorCommand("cloudConstant2Color", "Cloud Constant Color (2)"));
+		g_manager.add(toggleColorCommand("cloudConstant3Color", "Cloud Constant Color (3)"));
+		g_manager.add(toggleColorCommand("cloudDetailConsvtantColor", "Cloud Detail Constant Color"));
+		g_manager.add(toggleColorCommand("cloudBaseColorMinusMidColor", "Cloud Base Color (Minus Mid Color)"));
+		g_manager.add(toggleColorCommand("cloudMidColor", "Cloud Mid Color"));
+		g_manager.add(toggleColorCommand("cloudShadowColorMinusBaseColorTimesShadowStrength", "Cloud Shadow Color (Minus Base Color Times Shadow Strength)"));
+		g_manager.add(toggleColorCommand("smallCloudConstantColors", "Small Cloud Constant Colors"));
+		g_manager.add(toggleColorCommand("smallCloudColorHdr", "Small Cloud Color (HDR)"));
+		g_manager.add(toggleIntCommand("cloudGenerationFrequency", "Cloud Generation Frequency", miscellaneous::vfx::cloudGenerationFrequency));
+		g_manager.add(toggleColorCommand("noisePhaseColor", "Noise Phase Color"));
+		g_manager.add(toggleIntCommand("speedConstants", "Speed Constants", miscellaneous::vfx::speedConstants));
+		g_manager.add(toggleFloatCommand("horizonLevel", "Horizon Level", miscellaneous::vfx::horizonLevel));
+		g_manager.add(toggleFloatCommand("starfieldIntensity", "Starfield Intensity", miscellaneous::vfx::starfieldIntensity));
+		g_manager.add(toggleFloatCommand("moonIntensity", "Moon Intensity", miscellaneous::vfx::moonIntensity));
+		g_manager.add(toggleColorCommand("moonColor", "Moon Color"));
+		g_manager.add(toggleIntCommand("lunarCycle", "Lunar Cycle", miscellaneous::vfx::lunarCycle));
+		g_manager.add(toggleIntCommand("moonDirection", "Moon Direction", miscellaneous::vfx::moonDirection));
+		g_manager.add(toggleIntCommand("moonPosition", "Moon Position", miscellaneous::vfx::moonPosition));
+		g_manager.add(toggleFloatCommand("noiseFrequency", "Noise Frequency", miscellaneous::vfx::noiseFrequency));
+		g_manager.add(toggleFloatCommand("noiseScale", "Noise Scale", miscellaneous::vfx::noiseScale));
+		g_manager.add(toggleFloatCommand("noiseThreshold", "Noise Threshold", miscellaneous::vfx::noiseThreshold));
+		g_manager.add(toggleFloatCommand("noiseSoftness", "Noise Softness", miscellaneous::vfx::noiseSoftness));
+		g_manager.add(toggleFloatCommand("noiseDensityOffset", "Noise Density Offset", miscellaneous::vfx::noiseDensityOffset));
 		//Settings::Ui
 		g_manager.add(floatCommand("scale", "Scale", "Sets the global UI scale", settings::ui::scale, true));
+		//Settings::Statistics
+		g_manager.add(toggleCommand("drawNativesInvokedByGame", "Draw Natives Invoked By Game", settings::statistics::drawNativesInvokedByGame));
+		g_manager.add(toggleCommand("drawNativesInvokedBy" BRAND, "Draw Natives Invoked By " BRAND, settings::statistics::drawNativesInvokedByMenu));
+		g_manager.add(toggleCommand("drawPoolCounts", "Draw Pool Counts", settings::statistics::drawPoolCounts));
+		g_manager.add(toggleCommand("drawCoordinates", "Draw Coordinates", settings::statistics::drawCoordinates));
+		g_manager.add(toggleCommand("drawHeading", "Draw Heading", settings::statistics::drawHeading));
+		g_manager.add(toggleCommand("drawPlayerCount", "Draw Player Count", settings::statistics::drawPlayerCount));
+		g_manager.add(toggleCommand("drawIncomingNetworkEventCount", "Draw Incoming Network Event Count", settings::statistics::drawIncomingNetworkEventCount));
+		g_manager.add(toggleCommand("drawFrameData", "Draw Frame Data", settings::statistics::drawFrameData));
+		g_manager.add(toggleCommand("drasFramesPerSecond", "Draw Frames Per Second", settings::statistics::drasFramesPerSecond));
+		g_manager.add(toggleCommand("drawSessionType", "Draw Session Type", settings::statistics::drawSessionType));
+		g_manager.add(toggleCommand("drawHostName", "Draw Host Name", settings::statistics::drawHostName));
+		g_manager.add(toggleCommand("drawNextHostName", "Draw Next Host Name", settings::statistics::drawNextHostName));
+		g_manager.add(toggleCommand("drawScriptHostName", "Draw Script Host Name", settings::statistics::drawScriptHostName));
+		g_manager.add(toggleCommand("drawLastScriptEventSenderName", "Draw Last Script Event Sender Name", settings::statistics::drawLastScriptEventSenderName));
+		g_manager.add(toggleCommand("drawLocalPlayerName", "Draw Local Playername", settings::statistics::drawLocalPlayerName));
 		//Settings::Game
 		g_manager.add(actionCommand("unload", "Unload", "Removes " BRAND " from the game", settings::game::unload));
 		g_manager.add(actionCommand("exit", "Exit", "Exit the game", settings::game::exit));

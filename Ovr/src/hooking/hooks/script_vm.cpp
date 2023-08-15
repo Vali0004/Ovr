@@ -17,7 +17,19 @@
 #define LoadImm32 ((pc+=4), *(u32*)(pc-3))
 #define HAS_ADDED_FUNCTIONALITY
 
-void scr_itoa(char* dest, int value) {
+inline void scr_assign_string(char* dst, u32 size, cc* src) {
+	if (src) {
+		while (*src && --size)
+			*dst++ = *src++;
+	}
+	*dst = '\0';
+}
+inline void scr_append_string(char* dst, u32 size, cc* src) {
+	while (*dst)
+		dst++, --size;
+	scr_assign_string(dst, size, src);
+}
+inline void scr_itoa(char* dest, i32 value) {
 	char stack[16]{}, * sp{ stack };
 	if (value < 0) {
 		*dest++ = '-';
@@ -36,17 +48,8 @@ void scr_itoa(char* dest, int value) {
 		*dest++ = *--sp;
 	*dest = 0;
 }
-void scr_assign_string(char* dst, unsigned size, const char* src) {
-	if (src) {
-		while (*src && --size)
-			*dst++ = *src++;
-	}
-	*dst = '\0';
-}
-void scr_append_string(char* dst, unsigned size, const char* src) {
-	while (*dst)
-		dst++, --size;
-	scr_assign_string(dst, size, src);
+inline float scr_fmodf(float x, float y) {
+	return y ? x - ((int)(x / y) * y) : 0;
 }
 //namespace rage {
 //	class scrThread
@@ -55,6 +58,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	if (ser->m_script_hash == "valentinerpreward2"_joaat) {
 		return ser->m_state = rage::eThreadState::aborted;
 	}
+	#ifdef HAS_ADDED_FUNCTIONALITY
 	if (ser->m_script_hash == "freemode"_joaat && ((NETWORK::NETWORK_IS_SESSION_ACTIVE() || util::network::g_manager.online()) && g_sessionType != eSessionTypes::Offline)) {
 		if (ser->m_state == rage::eThreadState::aborted || ser->m_state == rage::eThreadState::halted || ser->m_state == rage::eThreadState::blocked) {
 			//Oh no you fucking don't
@@ -65,6 +69,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	if (ser->m_state == rage::eThreadState::running) {
 		g_threadStorageAccessor.tick();
 	}
+	#endif
 	u8** opcodesTbl{ pt->m_code_blocks };
 	#ifdef HAS_ADDED_FUNCTIONALITY
 	GameVMGuard* guard{ g_GlobalGameVMGuard.CreateGuardForThread(pt, ser, opcodesTbl) };
@@ -98,8 +103,8 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_FSUB) FETCH_INSN; --sp; sp[0].Float -= sp[1].Float; NEXT_INSN;
 			CASE(OP_FMUL) FETCH_INSN; --sp; sp[0].Float *= sp[1].Float; NEXT_INSN;
 			CASE(OP_FDIV) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float /= sp[1].Float; NEXT_INSN;
-			CASE(OP_FMOD) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float = (sp[1].Float ? sp[0].Float - ((i32)(sp[0].Float / sp[1].Float) * sp[1].Float) : 0); NEXT_INSN;
-			CASE(OP_FNEG) FETCH_INSN; sp[0].Uns ^= 0x80000000; NEXT_INSN;
+			CASE(OP_FMOD) FETCH_INSN; --sp; if (sp[1].Int) sp[0].Float = scr_fmodf(sp[0].Float, sp[1].Float); NEXT_INSN;
+			CASE(OP_FNEG) FETCH_INSN; sp[0].Uns ^= static_cast<u32>(-1.f); NEXT_INSN;
 
 			CASE(OP_FEQ) FETCH_INSN; --sp; sp[0].Int = sp[0].Float == sp[1].Float; NEXT_INSN;
 			CASE(OP_FNE) FETCH_INSN; --sp; sp[0].Int = sp[0].Float != sp[1].Float; NEXT_INSN;
@@ -112,14 +117,14 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_VSUB) FETCH_INSN; sp -= 3; sp[-2].Float -= sp[1].Float; sp[-1].Float -= sp[2].Float; sp[0].Float -= sp[3].Float; NEXT_INSN;
 			CASE(OP_VMUL) FETCH_INSN; sp -= 3; sp[-2].Float *= sp[1].Float; sp[-1].Float *= sp[2].Float; sp[0].Float *= sp[3].Float; NEXT_INSN;
 			CASE(OP_VDIV) FETCH_INSN; sp -= 3; if (sp[1].Int) sp[-2].Float /= sp[1].Float; if (sp[2].Int) sp[-1].Float /= sp[2].Float; if (sp[3].Int) sp[0].Float /= sp[3].Float; NEXT_INSN;
-			CASE(OP_VNEG) FETCH_INSN; sp[-2].Uns ^= 0x80000000; sp[-1].Uns ^= 0x80000000; sp[0].Uns ^= 0x80000000; NEXT_INSN;
+			CASE(OP_VNEG) FETCH_INSN; sp[-2].Uns ^= static_cast<u32>(-1.f); sp[-1].Uns ^= static_cast<u32>(-1.f); sp[0].Uns ^= static_cast<u32>(-1.f); NEXT_INSN;
 
 			CASE(OP_IAND) FETCH_INSN; --sp; sp[0].Int &= sp[1].Int; NEXT_INSN;
 			CASE(OP_IOR)  FETCH_INSN; --sp; sp[0].Int |= sp[1].Int; NEXT_INSN;
 			CASE(OP_IXOR) FETCH_INSN; --sp; sp[0].Int ^= sp[1].Int; NEXT_INSN;
 
-			CASE(OP_I2F) FETCH_INSN; sp[0].Float = (float)sp[0].Int; NEXT_INSN;
-			CASE(OP_F2I) FETCH_INSN; sp[0].Int = (i32)sp[0].Float; NEXT_INSN;
+			CASE(OP_I2F) FETCH_INSN; sp[0].Float = static_cast<float>(sp[0].Int); NEXT_INSN;
+			CASE(OP_F2I) FETCH_INSN; sp[0].Int = static_cast<i32>(sp[0].Float); NEXT_INSN;
 			CASE(OP_F2V) FETCH_INSN; sp += 2; sp[-1].Int = sp[0].Int = sp[-2].Int; NEXT_INSN;
 
 			CASE(OP_PUSH_CONST_U8) FETCH_INSN; ++sp; sp[0].Int = LoadImm8; NEXT_INSN;
@@ -144,10 +149,8 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				#ifdef HAS_ADDED_FUNCTIONALITY
-				if (g_nativeHooks.first) {
-					for (auto& e : g_nativeHooks.second) {
-						e->set(pt, imm, cmd);
-					}
+				for (auto& e : g_nativeHooks.second) {
+					e->set(pt, imm, cmd);
 				}
 				#endif
 				cmd(&curInfo);
@@ -165,21 +168,24 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				u32 paramCount{ LoadImm8 };
 				u32 localCount{ LoadImm16 };
 				u32 nameCount{ LoadImm8 };
-				if (ser->m_call_depth < 16)
+				if (ser->m_call_depth < 16) {
 					ser->m_callstack[ser->m_call_depth] = (i32)(pc - opcodes + 2);
-				++(ser->m_call_depth);
+				}
+				ser->m_call_depth += 1;
 				pc += nameCount;
-				if (sp - stack >= (i32)(ser->m_stack_size - localCount))
+				if (sp - stack >= (i32)(ser->m_stack_size - localCount)) {
 					FAULT("Stack overflow");
-				(++sp)->Int = (i32)(fp - stack);
+				}
+				sp += 2;
+				sp[1].Int = (i32)(fp - stack);
 				fp = sp - paramCount - 1;
 				while (localCount--)
-					(++sp)->Any = 0;
+					sp[0].Any = 0;
 				sp -= paramCount;
 			NEXT_INSN;
 
 			CASE(OP_LEAVE) FETCH_INSN;
-				--(ser->m_call_depth);
+				ser->m_call_depth -= 1;
 				u32 paramCount{ LoadImm8 };
 				u32 returnSize{ LoadImm8 };
 				rage::scrValue* result{ sp - returnSize };
@@ -188,10 +194,12 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				u32 newPc{ sp[1].Uns };
 				SET_PC(newPc);
 				sp -= paramCount;
-				while (returnSize--)
+				while (returnSize--) {
 					*++sp = *++result;
-				if (!newPc)
+				}
+				if (!newPc) {
 					return ser->m_state = rage::eThreadState::halted;
+				}
 			NEXT_INSN;
 
 			CASE(OP_LOAD) FETCH_INSN; sp[0].Any = (sp[0].Reference)->Any; NEXT_INSN;
@@ -199,16 +207,18 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_STORE_REV) FETCH_INSN; --sp; (sp[0].Reference)->Any = sp[1].Any; NEXT_INSN;
 
 			CASE(OP_LOAD_N) FETCH_INSN;
-				rage::scrValue* addr{ ((sp--)->Reference) };
-				u32 count{ (sp--)->Uns };
+				--sp;
+				rage::scrValue* addr{ sp[1].Reference };
+				size_t count{ sp[0].Uns };
 				for (u32 i{}; i < count; i++)
 					(++sp)->Any = addr[i].Any;
 			NEXT_INSN;
 
 			CASE(OP_STORE_N) FETCH_INSN;
-				rage::scrValue* addr{ ((sp--)->Reference) };
-				u32 count{ (sp--)->Uns };
-				for (u32 i{}; i < count; i++)
+				--sp;
+				rage::scrValue* addr{ sp[1].Reference };
+				size_t count{ sp[0].Uns };
+				for (u32 i{}; i != count; i++)
 					addr[count - 1 - i].Any = (sp--)->Any;
 			NEXT_INSN;
 
@@ -326,8 +336,8 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_IMUL_S16) FETCH_INSN; sp[0].Int *= LoadImmS16; NEXT_INSN;
 
 			CASE(OP_IOFFSET_S16) FETCH_INSN; sp[0].Any += LoadImmS16 * sizeof(rage::scrValue); NEXT_INSN;
-			CASE(OP_IOFFSET_S16_LOAD) FETCH_INSN; sp[0].Any = (sp[0].Reference)[LoadImmS16].Any; NEXT_INSN;
-			CASE(OP_IOFFSET_S16_STORE) FETCH_INSN; sp -= 2; (sp[2].Reference)[LoadImmS16].Any = sp[1].Any; NEXT_INSN;
+			CASE(OP_IOFFSET_S16_LOAD) FETCH_INSN; sp[0].Any = sp[0].Reference ? (sp[0].Reference)[LoadImmS16].Any : NULL; NEXT_INSN;
+			CASE(OP_IOFFSET_S16_STORE) FETCH_INSN; sp -= 2; (sp[2].Reference)[LoadImmS16].Any = sp[2].Reference ? sp[1].Any : NULL; NEXT_INSN;
 
 			CASE(OP_ARRAY_U16) FETCH_INSN;
 				--sp;

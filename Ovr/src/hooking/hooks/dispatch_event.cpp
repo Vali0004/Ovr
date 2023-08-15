@@ -95,11 +95,65 @@ bool hooks::dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::
 					LOG(Session, "You were kicked by the host. Session rebound is not avaliable");
 				} break;
 				case eKickReason::PeerComplaints: {
-					LOG(Session, "You got kicked by {}",  player.m_name);
+					LOG(Session, "You were kicked by {} who was not a host. Session rebound is avaliable",  player.m_name);
 					pointers::g_joinBySessionInfo(util::network::get(), &util::network::get()->m_last_joined_session.m_session_info, 1, 1 | 2 | 4, nullptr, 0);
 				} break;
-				}			
+				case eKickReason::ConnectionError: {
+					LOG(Session, "Connection error. Session rebound is avaliable",  player.m_name);
+					pointers::g_joinBySessionInfo(util::network::get(), &util::network::get()->m_last_joined_session.m_session_info, 1, 1 | 2 | 4, nullptr, 0);
+				} break;
+				case eKickReason::NatType: {
+					LOG(Session, "Connection error. Session rebound is avaliable",  player.m_name);
+					pointers::g_joinBySessionInfo(util::network::get(), &util::network::get()->m_last_joined_session.m_session_info, 1, 1 | 2 | 4, nullptr, 0);
+				} break;
+				}
 				return false;
+			} break;
+			case eNetMessage::CMsgPackedReliables: {
+				CMsgPackedReliables msg{};
+				if (msg.Deserialise(&buffer)) {
+					auto messageBuffer = &msg.m_creates.m_buffer;
+					while (messageBuffer->GetDataLength() - messageBuffer->GetPosition() >= 38) {
+						uint16_t objectType{}, objectId{}, flags{};
+						uint32_t bits{};
+						uint8_t createData[4096]{};
+						messageBuffer->ReadWord(&objectType, 4);
+						messageBuffer->ReadWord(&objectId, 13);
+						messageBuffer->ReadWord(&flags, 8);
+						messageBuffer->ReadDword(&bits, 13);
+						if (bits > 0 && messageBuffer->ReadArray(createData, bits)) {
+							rage::datBitBuffer createBuffer(createData, bits, false);
+							createBuffer.m_maxBit = bits + 1;
+							createBuffer.Seek(0);
+							util::network::getObjectMgr()->HandleCloneCreate(player.m_netGamePlayer, util::network::g_manager.local().m_netGamePlayer, objectType, objectId, flags, &createBuffer, 0);
+						}
+					}
+					messageBuffer = &msg.m_create_acks.m_buffer;
+					while (messageBuffer->GetDataLength() - messageBuffer->GetPosition() >= 38) {
+						uint16_t objectId{};
+						uint32_t ackCode{};
+						messageBuffer->ReadWord(&objectId, 13u);
+						messageBuffer->ReadDword(&ackCode, 4u);
+						util::network::getObjectMgr()->HandleCloneCreateAck(player.m_netGamePlayer, util::network::g_manager.local().m_netGamePlayer, objectId, ackCode);
+					}
+					messageBuffer = &msg.m_removes.m_buffer;
+					while (messageBuffer->GetMaxDataLength() - messageBuffer->GetPosition() >= 18) {
+						uint16_t objectId{};
+						uint32_t token{};
+						messageBuffer->ReadWord(&objectId, 13u);
+						messageBuffer->ReadDword(&token, 5u);
+						util::network::getObjectMgr()->HandleCloneRemove(player.m_netGamePlayer, util::network::g_manager.local().m_netGamePlayer, objectId, token);
+					}
+					messageBuffer = &msg.m_remove_acks.m_buffer;
+					while (messageBuffer->GetDataLength() - messageBuffer->GetPosition() >= 38) {
+						uint16_t objectId{};
+						uint32_t ackCode{};
+						messageBuffer->ReadWord(&objectId, 13u);
+						messageBuffer->ReadDword(&ackCode, 4u);
+						util::network::getObjectMgr()->HandleCloneRemoveAck(player.m_netGamePlayer, util::network::g_manager.local().m_netGamePlayer, objectId, ackCode);
+					}
+					return false;
+				}
 			} break;
 			case eNetMessage::CMsgTextMessage: {
 				CMsgTextMessage msg{};
@@ -143,7 +197,7 @@ bool hooks::dispatchEvent(u64 _This, rage::netConnectionManager* pConMgr, rage::
 				}
 				LOG_DIRECT(White, "Text", "{}: {}", player.m_name, msg.m_message);
 			} break;
-			}		
+			}
 		}
 	}
 	RET_CALL(dispatchEvent, _This, pConMgr, pEvent);

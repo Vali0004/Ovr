@@ -69,9 +69,9 @@ renderer::~renderer() {
 }
 
 void renderer::onPresent() {
-	g_threadStorageAccessor.access([] {
+	//g_threadStorageAccessor.access([] {
 		g_dxManager.run();
-	});
+	//});
 }
 void renderer::onTick() {
 	while (true) {

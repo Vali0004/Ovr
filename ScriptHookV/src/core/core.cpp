@@ -2,13 +2,13 @@
 #include "core/core.h"
 #include "core/joaat.h"
 #include "exports/exports.h"
-
+#define BRAND "Ovr"
 namespace core {
 	void initialize() {
 	}
 	void loop() {
 		std::filesystem::path path{ std::getenv("appdata") };
-		path /= "Ovr";
+		path /= BRAND;
 		path /= "Cache";
 		path /= "Unload.txt";
 		std::ifstream file{};

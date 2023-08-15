@@ -23,10 +23,6 @@ namespace rage::ysc {
 	}
 	void loader::setThread(fnptr<void(program&)> callback) {
 		m_bytecode = MakeSmartPointer<program>(callback);
-		if (!m_bytecode->m_isGood) {
-			LOG(Fatal, "YSA Loading had an error, please refer to the messages above.");
-			return;
-		}
 		u64 scrProgramAddr{ (u64)m_program };
 		m_thread->m_serialised.m_state = rage::eThreadState::halted;
 		m_thread->m_serialised.m_pointer_count = NULL;

@@ -27,6 +27,9 @@ hooking::hooking() :
 	m_getNewsStory("GNS", pointers::g_getNewsStory, &hooks::getNewsStory),
 	m_getAvailableMemoryForStreamer("GAMFS", pointers::g_getAvailableMemoryForStreamer, &hooks::getAvailableMemoryForStreamer),
 	m_settingsVramTex("SVT", pointers::g_settingsVramTex, &hooks::settingsVramTex),
+	m_hasGameBeenAltered("HGBA", pointers::g_hasGameBeenAltered, &hooks::hasGameBeenAltered),
+	//m_resourceError("RE", pointers::g_resourceError, &hooks::resourceError),
+	m_callResourceError("CRE", pointers::g_callResourceError, &hooks::callResourceError),
 	m_addItemToBasket("AITB", pointers::g_addItemToBasket, &hooks::addItemToBasket),
 	m_request("R", pointers::g_request, &hooks::request),
 	m_sendMetric("SM", pointers::g_sendMetric, &hooks::sendMetric),
@@ -135,7 +138,6 @@ void hooking::enable() {
 	//		ENTITY::SET_ENTITY_VISIBLE(entity, info->Params[1].Int, info->Params[2].Int);
 	//	}
 	//});
-	////Currently has a logic error causing the coords to be at 0, 0, 1
 	//createNativeShim("maintransition"_joaat, 0x06843DA7060A026B, [](rage::scrThread::Info* info) { //SET_ENTITY_COORDS_NO_OFFSET
 	//	Entity entity{ info->Params[0].Int };
 	//	Vector3 pos_{ info->Params[1].Float, info->Params[2].Float, info->Params[3].Float };

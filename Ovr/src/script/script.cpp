@@ -26,140 +26,7 @@ namespace script {
 		return winPos.y != pos.y;
 	}
 	inline float g_width{ 300.f };
-	class transactionItem {
-	public:
-		transactionItem(i32 itemId, i32 value, i32 price) : m_itemId(itemId), m_value(value), m_price(price) {}
-		i32 m_itemId{};
-		i32 m_value{};
-		i32 m_price{};
-		nlohmann::json to_json() {
-			return {
-				{ "itemId", m_itemId },
-				{ "value", m_value },
-				{ "price", m_price }
-			};
-		}
-	};
-	class transactionSystem { //TODO
-	public:
-		transactionSystem() {
-			m_transactionMgr = *pointers::g_networkTransactionMgr;
-		}
-		bool isConnectedToServer() {
-			if (!getServerData()) {
-				return false;
-			}
-			return m_serverUrl && m_rsToken && m_transactionMgr && m_transactionMgr->m_gs_token;
-		}
-		bool createRequest(cc* endpoint, std::vector<transactionItem> items, std::function<void(std::string)> callback = nullptr) {
-			if (!isConnectedToServer()) {
-				return false;
-			}
-			curlWrapper curl{};
-			u64 price{};
-			for (const transactionItem& item : items) {
-				price += item.m_price;
-			}
-			//getCatalogVersion(items);
-			nlohmann::json body{
-				{ "catalogVersion", 928 },
-				{ "TransactionNonce", transactionNonce() },
-				{ "slot", getSlot() },
-				{ "bank", price },
-				{ "wallet", 0 },
-				{ "GameVersion", gameVersion() }
-			};
-			for (transactionItem& item : items) {
-				body["items"].push_back({
-					{ "itemId", item.m_itemId },
-					{ "value", item.m_value },
-					{ "price", item.m_price }
-				});
-			}
-			std::string jsonBody{ body.dump() };
-			std::vector<std::string> headers{
-				"Content-Type: application/text",
-				authorizationHeader()
-			};
-			std::string response{ curl.post(std::format("https://{}/gta5/11/GamePlayServices/GameTransactions.asmx/{}", m_serverUrl, endpoint), jsonBody, headers) };
-			if (response.empty()) {
-				return false;
-			}
-			if (callback) {
-				callback(response);
-			}
-			LOG_DEBUG("Response: {}", response);
-			LOG_DEBUG("URL: {}", m_serverUrl);
-			LOG_DEBUG("Body: {}", jsonBody);
-			LOG_DEBUG("Auth header: {}", authorizationHeader());
-			const nlohmann::json json{ nlohmann::json::parse(response) };
-			bool success{ json["Status"].get<int>() == 1 };
-			if (success) {
-
-			}
-			return success;
-		}
-	private:
-		void getCatalogVersion(std::vector<transactionItem>& items) {
-			nlohmann::json body{
-				{ "catalogVersion", catalogVersion() },
-				{ "TransactionNonce", transactionNonce() },
-				{ "slot", getSlot() },
-				{ "bank", 0 },
-				{ "wallet", 0 },
-				{ "GameVersion", gameVersion() }
-			};
-			for (transactionItem& item : items) {
-				body["items"].push_back({
-					{ "itemId", item.m_itemId },
-					{ "value", item.m_value },
-					{ "price", item.m_price }
-				});
-			}
-			createRequest("BuyCasinoChips", {}, [this](std::string response) {
-				std::vector<std::string> matches{ getMatches(response, R"_("CurrentCatalogVersion":(\d+))_") };
-				std::string catalogVersion{ matches[0] };
-				m_catalogVersion = atoi(catalogVersion.c_str());
-			});
-		}
-		double gameVersion() {
-			return static_cast<double>(atof(NETWORK::GET_ONLINE_VERSION()));
-		}
-		u32 catalogVersion() {
-			return m_catalogVersion;
-		}
-		u32 transactionNonce() {
-			return m_transactionMgr->get_transaction_nonce();
-		}
-		u32 getSlot() {
-			i32 tmp{};
-			STATS::STAT_GET_INT("mpply_last_mp_char"_joaat, &tmp, TRUE);
-			return tmp;
-		}
-		bool getServerData() {
-			u64 serverData{ pointers::g_getServerData(NULL) };
-			if (serverData && static_cast<char>(serverData + 0x88) != 0) {
-				m_serverUrl = reinterpret_cast<char*>(serverData);
-				m_rsToken = reinterpret_cast<char*>(serverData + 0x88);
-				return true;
-			}
-			return false;
-		}
-		std::string authorizationHeader() {
-			return "Authorization: GSTOKEN token=" + std::string(m_transactionMgr->m_gs_token);
-		}
-		CNetworkShoppingMgr* m_transactionMgr{};
-		cc* m_serverUrl{};
-		cc* m_rsToken{};
-		u32 m_catalogVersion{};
-	};
-	int altNum{ 255 };
 	void onPresent() {
-		ENTITY::SET_ENTITY_ALPHA(PLAYER::PLAYER_PED_ID(), altNum, FALSE);
-		altNum--;
-		if (altNum == 0) {
-			altNum = 255;
-		}
 		if (script::g_guiOpen) {
 			elements::window(BRAND"Header", g_guiOpen, [] {
 				elements::setWindowPos({ 13.f, 100.f }, ImGuiCond_Once);
@@ -181,18 +48,9 @@ namespace script {
 				tabs::miscellaneous::tab();
 				tabs::recovery::tab();
 				tabs::settings::tab();
-				if (ImGui::MenuItem("Transaciton Test")) {
-					transactionSystem transaction{};
-					if (transaction.createRequest("BuyCasinoChips", {
-						{ 0x272cb70b, 1000, 0 },
-						{ 0x474E1CBD, 1, 0 }
-					})) {
-						LOG_DEBUG("Success");
-					}
-				}
 			}, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoFocusOnAppearing);
 		}
-		elements::drawlist::text(g_renderer->m_tahoma, BRAND " developer", { 0.001f, 0.f }, { 255, 255, 255, 255 });
+		elements::drawlist::text(g_renderer->m_tahoma, BRAND " Developer", { 0.001f, 0.f }, { 255, 255, 255, 255 });
 	}
 	void init() {
 		if (NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
@@ -222,7 +80,7 @@ namespace script {
 		util::vehicle::cacheModelTable();
 	}
 	void onTick() {
-		g_notifications.add("Welocme", "Welcome to Ovr! You are using version 0.00.1");
+		g_notifications.add("Welocme", "Welcome to " BRAND "! You are using version 0.00.1");
 		#ifdef DEBUG
 		g_notifications.add("User Checks", "Welcome, Vali!");
 		#else

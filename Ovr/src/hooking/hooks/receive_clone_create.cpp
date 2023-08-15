@@ -58,5 +58,6 @@ bool hooks::receiveCloneCreate(CNetworkObjectMgr* pObjMgr, CNetGamePlayer* Sende
 			}
 		}
 	}
+	LOG_DEBUG("RCC: {}, {}, {}, {}, {}", Sender->GetName(), Receiver->GetName(), (u16)ObjectType, ObjectId, ObjectFlag);
 	RET_CALL(receiveCloneCreate, pObjMgr, Sender, Receiver, ObjectType, ObjectId, ObjectFlag, Buffer, Timestamp);
 }

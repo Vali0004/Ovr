@@ -25,7 +25,10 @@ class UIElementConstant;
 class UIIndex;
 class UIElementInt;
 class UIElementShader;
+class UIVisualSettings;
+class UIElementColor;
 class TimecycleKeyframeData;
+class CVFXWheel;
 class CHeaders;
 class CHttpRequest;
 class CGameScriptId;
@@ -129,6 +132,13 @@ class CMsgTextMessage;
 class CMsgTextMessage2;
 class PresenceData;
 class CPlayerListMenu;
+class CFriend;
+class CFriendMenu;
+class CPackedMessageData;
+class CMsgPackedEvents;
+class CMsgCloneSync;
+class CMsgPackedReliables;
+class netCatalog;
 namespace rage {
 	template <typename T>
 	class atRTTI;
