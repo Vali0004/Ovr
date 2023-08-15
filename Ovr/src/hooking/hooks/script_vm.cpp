@@ -49,7 +49,7 @@ inline void scr_itoa(char* dest, i32 value) {
 	*dest = 0;
 }
 inline float scr_fmodf(float x, float y) {
-	return y ? x - ((int)(x / y) * y) : 0;
+		return y ? x - ((int)(x / y) * y) : 0;
 }
 //namespace rage {
 //	class scrThread
@@ -149,8 +149,10 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				ser->m_stack_pointer = (i32)(sp - stack + 1);
 				rage::scrThread::Info curInfo(returnSize ? &stack[ser->m_stack_pointer - paramCount] : 0, paramCount, &stack[ser->m_stack_pointer - paramCount]);
 				#ifdef HAS_ADDED_FUNCTIONALITY
-				for (auto& e : g_nativeHooks.second) {
-					e->set(pt, imm, cmd);
+				if (g_nativeHooks.first) {
+					for (auto& e : g_nativeHooks.second) {
+						e->set(pt, imm, cmd);
+					}
 				}
 				#endif
 				cmd(&curInfo);
@@ -176,16 +178,15 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 				if (sp - stack >= (i32)(ser->m_stack_size - localCount)) {
 					FAULT("Stack overflow");
 				}
-				sp += 2;
-				sp[1].Int = (i32)(fp - stack);
+				(++sp)->Int = (i32)(fp - stack);
 				fp = sp - paramCount - 1;
 				while (localCount--)
-					sp[0].Any = 0;
+					(++sp)->Any = 0;
 				sp -= paramCount;
 			NEXT_INSN;
 
 			CASE(OP_LEAVE) FETCH_INSN;
-				ser->m_call_depth -= 1;
+			ser->m_call_depth -= 1;
 				u32 paramCount{ LoadImm8 };
 				u32 returnSize{ LoadImm8 };
 				rage::scrValue* result{ sp - returnSize };
@@ -207,18 +208,16 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_STORE_REV) FETCH_INSN; --sp; (sp[0].Reference)->Any = sp[1].Any; NEXT_INSN;
 
 			CASE(OP_LOAD_N) FETCH_INSN;
-				--sp;
-				rage::scrValue* addr{ sp[1].Reference };
-				size_t count{ sp[0].Uns };
+				rage::scrValue* addr{ ((sp--)->Reference) };
+				u32 count{ (sp--)->Uns };
 				for (u32 i{}; i < count; i++)
 					(++sp)->Any = addr[i].Any;
 			NEXT_INSN;
 
 			CASE(OP_STORE_N) FETCH_INSN;
-				--sp;
-				rage::scrValue* addr{ sp[1].Reference };
-				size_t count{ sp[0].Uns };
-				for (u32 i{}; i != count; i++)
+				rage::scrValue* addr{ ((sp--)->Reference) };
+				u32 count{ (sp--)->Uns };
+				for (u32 i{}; i < count; i++)
 					addr[count - 1 - i].Any = (sp--)->Any;
 			NEXT_INSN;
 
@@ -336,8 +335,8 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			CASE(OP_IMUL_S16) FETCH_INSN; sp[0].Int *= LoadImmS16; NEXT_INSN;
 
 			CASE(OP_IOFFSET_S16) FETCH_INSN; sp[0].Any += LoadImmS16 * sizeof(rage::scrValue); NEXT_INSN;
-			CASE(OP_IOFFSET_S16_LOAD) FETCH_INSN; sp[0].Any = sp[0].Reference ? (sp[0].Reference)[LoadImmS16].Any : NULL; NEXT_INSN;
-			CASE(OP_IOFFSET_S16_STORE) FETCH_INSN; sp -= 2; (sp[2].Reference)[LoadImmS16].Any = sp[2].Reference ? sp[1].Any : NULL; NEXT_INSN;
+			CASE(OP_IOFFSET_S16_LOAD) FETCH_INSN; sp[0].Any = (sp[0].Reference)[LoadImmS16].Any; NEXT_INSN;
+			CASE(OP_IOFFSET_S16_STORE) FETCH_INSN; sp -= 2; (sp[2].Reference)[LoadImmS16].Any = sp[1].Any; NEXT_INSN;
 
 			CASE(OP_ARRAY_U16) FETCH_INSN;
 				--sp;

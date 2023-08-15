@@ -9,61 +9,63 @@ float roundUp(float value, int decimalPlace = 0) {
 }
 void statistics::draw() {
 	m_drawBase = m_pos.y;
-	if ("drawNativesInvokedByGame"_TC->get(0).toggle) {
-		draw("{} Natives Invoked", m_nativesInvoked);
-	}
-	if ("drawNativesInvokedBy" BRAND ""_TC->get(0).toggle) {
-		draw("{} Natives Invoked By " BRAND, m_nativesInvokedByUs);
-	}
-	if ("drawPoolCounts"_TC->get(0).toggle) {
-		if (CVehicleInterface * inf{ util::classes::getVehicleInterface() })
-			draw("{} Vehicles", inf->m_count);
-		if (CPedInterface * inf{ util::classes::getPedInterface() })
-			draw("{} Pedestrians", inf->m_count);
-		if (CPickupInterface * inf{ util::classes::getPickupInterface() })
-			draw("{} Pickups", inf->m_count);
-		if (CObjectInterface * inf{ util::classes::getObjectInterface() })
-			draw("{} Objects", inf->m_count);
-	}
-	if ("drawCoordinates"_TC->get(0).toggle) {
-		draw("{} - X", util::classes::getPed()->get_position().x);
-		draw("{} - Y", util::classes::getPed()->get_position().y);
-		draw("{} - Z", util::classes::getPed()->get_position().z);
-	}
-	if ("drawHeading"_TC->get(0).toggle) {
-		draw("{} - Heading", util::classes::getPed()->get_heading());
-	}
-	if ("drawPlayerCount"_TC->get(0).toggle) {
-		draw("{} Player{}", util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1, (util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1) == 1 ? "" : "s");
-	}
-	if ("drawIncomingNetworkEventCount"_TC->get(0).toggle) {
-		draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
-	}
-	if ("drawFrameData"_TC->get(0).toggle) {
-		draw("{} - Frame Count", m_frameCount);
-		draw("{} - Frame Time", roundUp(m_frameTime, 2));
-		draw("{} - Last Frame Time", getLastFrameTime());
-	}
-	if ("drasFramesPerSecond"_TC->get(0).toggle) {
-		draw("{} - Frames Per Second", roundf(ImGui::GetIO().Framerate / 1.5f));
-	}
-	if ("drawSessionType"_TC->get(0).toggle) {
-		draw("{} - Session", m_gameType);
-	}
-	if ("drawHostName"_TC->get(0).toggle) {
-		draw("{} - Host", util::network::g_manager.online() ? m_host.m_name : "N/A");
-	}
-	if ("drawNextHostName"_TC->get(0).toggle) {
-		draw("{} - Next Host", util::network::g_manager.online() ? (m_playerCount > 1 ? m_nextHost.m_name : "N/A") : "N/A");
-	}
-	if ("drawScriptHostName"_TC->get(0).toggle) {
-		draw("{} - Script Host", util::network::g_manager.online() ? m_scriptHost.m_name : "N/A");
-	}
-	if ("drawLastScriptEventSenderName"_TC->get(0).toggle) {
-		draw("{} - Last Script Event Sender", util::network::g_manager.online() ? m_lastScriptEventSender.m_name : "N/A");
-	}
-	if ("drawLocalPlayerName"_TC->get(0).toggle) {
-		draw("{} - Player Name", util::network::g_manager.online() ? m_local.m_name : util::classes::getPlayerInfo()->m_gamer_info.m_name);
+	if (!commands::g_manager.getCommands().empty()) {
+		if ("drawNativesInvokedByGame"_TC->get(0).toggle) {
+			draw("{} Natives Invoked", m_nativesInvoked);
+		}
+		if ("drawNativesInvokedBy" BRAND ""_TC->get(0).toggle) {
+			draw("{} Natives Invoked By " BRAND, m_nativesInvokedByUs);
+		}
+		if ("drawPoolCounts"_TC->get(0).toggle) {
+			if (CVehicleInterface * inf{ util::classes::getVehicleInterface() })
+				draw("{} Vehicles", inf->m_count);
+			if (CPedInterface * inf{ util::classes::getPedInterface() })
+				draw("{} Pedestrians", inf->m_count);
+			if (CPickupInterface * inf{ util::classes::getPickupInterface() })
+				draw("{} Pickups", inf->m_count);
+			if (CObjectInterface * inf{ util::classes::getObjectInterface() })
+				draw("{} Objects", inf->m_count);
+		}
+		if ("drawCoordinates"_TC->get(0).toggle) {
+			draw("{} - X", util::classes::getPed()->get_position().x);
+			draw("{} - Y", util::classes::getPed()->get_position().y);
+			draw("{} - Z", util::classes::getPed()->get_position().z);
+		}
+		if ("drawHeading"_TC->get(0).toggle) {
+			draw("{} - Heading", util::classes::getPed()->get_heading());
+		}
+		if ("drawPlayerCount"_TC->get(0).toggle) {
+			draw("{} Player{}", util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1, (util::network::g_manager.online() ? (m_playerCount ? m_playerCount : 0) : 1) == 1 ? "" : "s");
+		}
+		if ("drawIncomingNetworkEventCount"_TC->get(0).toggle) {
+			draw("{} - Incoming Network Events", util::network::g_manager.online() ? std::to_string(m_incomingNetworkEvents) : "N/A");
+		}
+		if ("drawFrameData"_TC->get(0).toggle) {
+			draw("{} - Frame Count", m_frameCount);
+			draw("{} - Frame Time", roundUp(m_frameTime, 2));
+			draw("{} - Last Frame Time", getLastFrameTime());
+		}
+		if ("drasFramesPerSecond"_TC->get(0).toggle) {
+			draw("{} - Frames Per Second", roundf(ImGui::GetIO().Framerate / 1.5f));
+		}
+		if ("drawSessionType"_TC->get(0).toggle) {
+			draw("{} - Session", m_gameType);
+		}
+		if ("drawHostName"_TC->get(0).toggle) {
+			draw("{} - Host", util::network::g_manager.online() ? m_host.m_name : "N/A");
+		}
+		if ("drawNextHostName"_TC->get(0).toggle) {
+			draw("{} - Next Host", util::network::g_manager.online() ? (m_playerCount > 1 ? m_nextHost.m_name : "N/A") : "N/A");
+		}
+		if ("drawScriptHostName"_TC->get(0).toggle) {
+			draw("{} - Script Host", util::network::g_manager.online() ? m_scriptHost.m_name : "N/A");
+		}
+		if ("drawLastScriptEventSenderName"_TC->get(0).toggle) {
+			draw("{} - Last Script Event Sender", util::network::g_manager.online() ? m_lastScriptEventSender.m_name : "N/A");
+		}
+		if ("drawLocalPlayerName"_TC->get(0).toggle) {
+			draw("{} - Player Name", util::network::g_manager.online() ? m_local.m_name : util::classes::getPlayerInfo()->m_gamer_info.m_name);
+		}
 	}
 }
 
