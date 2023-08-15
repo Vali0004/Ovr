@@ -53,7 +53,8 @@ namespace commands {
 					return;
 				}
 			} break;
-			case eCommandType::ColorCommand: {
+			case eCommandType::ColorCommand:
+			case eCommandType::ToggleColorCommand: {
 				if (trueArgCount >= 3) {
 					LOG(Commands, "You provided {} arguments for a command that requiresat least 3 arguments.", arguments.size());
 					return;
