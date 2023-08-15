@@ -1505,7 +1505,7 @@ namespace commands::features {
 		g_manager.add(toggleColorCommand("cloudConstant1Color", "Cloud Constant Color (1)"));
 		g_manager.add(toggleColorCommand("cloudConstant2Color", "Cloud Constant Color (2)"));
 		g_manager.add(toggleColorCommand("cloudConstant3Color", "Cloud Constant Color (3)"));
-		g_manager.add(toggleColorCommand("cloudDetailConsvtantColor", "Cloud Detail Constant Color"));
+		g_manager.add(toggleColorCommand("cloudDetailConstantColor", "Cloud Detail Constant Color"));
 		g_manager.add(toggleColorCommand("cloudBaseColorMinusMidColor", "Cloud Base Color (Minus Mid Color)"));
 		g_manager.add(toggleColorCommand("cloudMidColor", "Cloud Mid Color"));
 		g_manager.add(toggleColorCommand("cloudShadowColorMinusBaseColorTimesShadowStrength", "Cloud Shadow Color (Minus Base Color Times Shadow Strength)"));
