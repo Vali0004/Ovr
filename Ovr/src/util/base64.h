@@ -6,6 +6,12 @@ namespace util {
 	inline constexpr bool isCharacterBase64(u8 c) {
 		return g_base64Charaters.find(c) != std::string_view::npos ? true : false;
 	}
+	inline int base64CharToValue(char c) {
+		if (isCharacterBase64((u8)c)) {
+			return g_base64Charaters.find(c); //Grabs the char 0 minus the current char, 
+		}
+		return -1;
+	}
 	inline std::string base64Encode(const std::string& str) {
 		u8 strLen{ static_cast<u8>(str.length()) };
 		u8 i{}, j{}, in_{};

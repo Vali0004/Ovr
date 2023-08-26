@@ -33,7 +33,7 @@ namespace tabs::protections {
 			elements::protectionToggle("moneyBankedNotificationProtection");
 			elements::protectionToggle("moneyStolenNotificationProtection");
 			elements::protectionToggle("moneyRemovedNotificationProtection");
-			elements::protectionToggle("destoryPersonalVehicleProtection");
+			elements::protectionToggle("destroyPersonalVehicleProtection");
 			elements::protectionToggle("triggerCeoRaidProtection");
 			elements::protectionToggle("startScriptBeginProtection");
 			elements::protectionToggle("startScriptProceedProtection");

@@ -30,7 +30,7 @@ namespace util::transactions {
 			if (NETSHOPPING::NET_GAMESERVER_BASKET_IS_ACTIVE()) {
 				NETSHOPPING::NET_GAMESERVER_BASKET_END();
 			}
-			i32 transactionId{};
+			i32 transactionId{ -1 };
 			CNetworkShoppingMgr* pShoppingMgr{ *pointers::g_networkShoppingMgr };
 			if (pointers::g_beginService(pShoppingMgr, &transactionId, "NET_SHOP_TTYPE_SERVICE"_joaat, category, item, action, value, flags)) {
 				NETSHOPPING::NET_GAMESERVER_CHECKOUT_START(transactionId);

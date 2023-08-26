@@ -249,7 +249,7 @@ namespace util {
 			relative /= nonRelative;
 			return relative;
 		}
-		inline void destory(std::ofstream& file) {
+		inline void destroy(std::ofstream& file) {
 			file.clear();
 			file = {};
 			file.close();

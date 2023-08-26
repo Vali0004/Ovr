@@ -151,6 +151,9 @@ bool checkNodes(rage::netSyncNodeBase* pNode, CNetGamePlayer* Sender, rage::netO
 			switch (id) {
 			case "CVehicleCreationDataNode"_joaat: {
 				const auto node{ (CVehicleCreationDataNode*)(pNode) };
+				if (crashVehicleCheck(Sender, node->m_model)) {
+					return true;
+				}
 			} break;
 			case "CDoorCreationDataNode"_joaat: {
 				const auto node{ (CDoorCreationDataNode*)(pNode) };

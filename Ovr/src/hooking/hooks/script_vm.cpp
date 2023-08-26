@@ -16,6 +16,25 @@
 #define LoadImm24 ((pc+=3), *(u32*)(pc-3) >> 8)
 #define LoadImm32 ((pc+=4), *(u32*)(pc-3))
 #define HAS_ADDED_FUNCTIONALITY
+#ifdef HAS_ADDED_FUNCTIONALITY
+	void patchOpcodes(rage::scrProgram* pt, rage::scrThread::Serialised* ser, const u32 scriptHash, const std::string& ptr, const u32 offset, const std::vector<std::optional<u8>>& patch) {
+		if (ser->m_script_hash == scriptHash) {
+			std::vector<std::optional<u8>> bytes{ createBytesFromString(ptr) };
+			for (u32 i{}; i != pt->m_code_size - bytes.size(); i++) {
+				if (u8* codeAddr{ pt->get_code_address(i) }) {
+					if (doesMemoryMatch(codeAddr, bytes.data(), bytes.size())) {
+						u32 ip{ i + offset };
+						memcpy(pt->get_code_address(ip), patch.data(), patch.size());
+					}
+				}
+			}
+		}
+	}
+	#define PATCH_OPCODES(s, o, p, ...) \
+	ONCE(s##PatchInitBool, { \
+		patchOpcodes(pt, ser, #s ""_joaat, p, o, __VA_ARGS__); \
+	})
+#endif
 
 inline void scr_assign_string(char* dst, u32 size, cc* src) {
 	if (src) {
@@ -55,16 +74,9 @@ inline float scr_fmodf(float x, float y) {
 //	class scrThread
 //	static u32 Run(scrValue * __restrict stack,scrValue * __restrict globals,const scrProgram &pt,Serialized * __restrict ser);
 rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globals, rage::scrProgram* pt, rage::scrThread::Serialised* ser) {
+	#ifdef HAS_ADDED_FUNCTIONALITY
 	if (ser->m_script_hash == "valentinerpreward2"_joaat) {
 		return ser->m_state = rage::eThreadState::aborted;
-	}
-	#ifdef HAS_ADDED_FUNCTIONALITY
-	if (ser->m_script_hash == "freemode"_joaat && ((NETWORK::NETWORK_IS_SESSION_ACTIVE() || util::network::g_manager.online()) && g_sessionType != eSessionTypes::Offline)) {
-		if (ser->m_state == rage::eThreadState::aborted || ser->m_state == rage::eThreadState::halted || ser->m_state == rage::eThreadState::blocked) {
-			//Oh no you fucking don't
-			ser->m_state = rage::eThreadState::running;
-			LOG(Fatal, "Someone attempted to end the session prematurely!");
-		}
 	}
 	if (ser->m_state == rage::eThreadState::running) {
 		g_threadStorageAccessor.tick();
@@ -79,6 +91,9 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 	u8* pc{};
 	u8* opcodes{};
 	SET_PC(ser->m_pointer_count);
+	#ifdef HAS_ADDED_FUNCTIONALITY
+	PATCH_OPCODES(shop_controller, 5, "2D 01 04 00 00 2C ? ? ? 56 ? ? 71", { 0x71, 0x2E, 0x01, 0x01 });
+	#endif
 	char buf[16]{};
 	while (true) {
 		u32 opcode{ LoadImm8 };
@@ -186,7 +201,7 @@ rage::eThreadState hooks::scriptVm(rage::scrValue* stack, rage::scrValue** globa
 			NEXT_INSN;
 
 			CASE(OP_LEAVE) FETCH_INSN;
-			ser->m_call_depth -= 1;
+				ser->m_call_depth -= 1;
 				u32 paramCount{ LoadImm8 };
 				u32 returnSize{ LoadImm8 };
 				rage::scrValue* result{ sp - returnSize };

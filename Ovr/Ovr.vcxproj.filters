@@ -441,9 +441,6 @@
     <ClInclude Include="src\fiber\dx_manager.h">
       <Filter>fiber</Filter>
     </ClInclude>
-    <ClInclude Include="src\hooking\hooks\resource_error.cpp">
-      <Filter>hooking\hooks</Filter>
-    </ClInclude>
     <ClInclude Include="src\script\tabs\settings\statistics.h">
       <Filter>script\tabs\settings</Filter>
     </ClInclude>
@@ -606,8 +603,6 @@
     <ClCompile Include="src\hooking\hooks\has_game_been_altered.cpp">
       <Filter>hooking\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\hooking\hooks\call_resource_error.cpp">
-      <Filter>hooking\hooks</Filter>
-    </ClCompile>
+    <ClCompile Include="src\hooking\hooks\post_raw_message.cpp" />
   </ItemGroup>
 </Project>

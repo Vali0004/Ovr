@@ -9,7 +9,7 @@ float roundUp(float value, int decimalPlace = 0) {
 }
 void statistics::draw() {
 	m_drawBase = m_pos.y;
-	if (!commands::g_manager.getCommands().empty()) {
+	if (!commands::g_manager.getCommands().empty() && "drawNativesInvokedByGame"_TC) {
 		if ("drawNativesInvokedByGame"_TC->get(0).toggle) {
 			draw("{} Natives Invoked", m_nativesInvoked);
 		}

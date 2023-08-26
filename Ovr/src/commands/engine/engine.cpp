@@ -367,7 +367,7 @@ namespace commands {
 		if (!stream.empty()) {
 			{
 				auto file{ util::files::output("Command.txt") };
-				util::files::destory(file);
+				util::files::destroy(file);
 			}
 			execute(stream);
 		}

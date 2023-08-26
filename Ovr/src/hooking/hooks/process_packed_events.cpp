@@ -28,10 +28,7 @@
 }
 bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	g_statistics.m_lastScriptEventSender.update(Sender);
-	PRINT_ARR(i64, std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
-	#ifdef DEBUG
-	g_logger->printArray<i64>(std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
-	#endif
+	//PRINT_ARR(i64, std::format("[{}]", Sender->GetName()), pEvent->m_args, pEvent->m_args_size);
 	#define CASE(e, n) case eScriptEvents::##e: { PROT_CHECK(n); } break
 	switch (static_cast<eScriptEvents>(pEvent->m_args[0])) {
 	CASE(ScriptEventGbDisableGoonMembership, "ceoBanProtection");
@@ -62,7 +59,7 @@ bool scriptedGameEvent(CScriptedGameEvent* pEvent, CNetGamePlayer* Sender) {
 	CASE(TickerEventTeamCashBanked, "moneyBankedNotificationProtection");
 	CASE(TickerEventTeamCashStolen, "moneyStolenNotificationProtection");
 	CASE(TickerEventTeamCashRemoved, "moneyRemovedNotificationProtection");
-	CASE(ScriptEventPersonalVehicleStolen, "destoryPersonalVehicleProtection");
+	CASE(ScriptEventPersonalVehicleStolen, "destroyPersonalVehicleProtection");
 	CASE(ScriptEventGbTriggerDefendMission, "triggerCeoRaidProtection");
 	CASE(ScriptEventConfirmationLaunchMission, "startScriptBeginProtection");
 	CASE(ScriptEventForcePlayerOntoMission, "startScriptProceedProtection");

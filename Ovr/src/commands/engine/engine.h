@@ -20,6 +20,7 @@ namespace commands {
 		t convertData(const std::string& str);
 		void commandFromStream();
 		static void commandStreamTick();
+
 		bool m_useDirectMatchResults{};
 		bool m_autoComplete{};
 		bool m_useFirstResultOnTooManyResults{};

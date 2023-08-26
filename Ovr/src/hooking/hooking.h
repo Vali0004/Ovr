@@ -21,9 +21,6 @@ inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };
 inline u64 g_updateAttributeIntIndex{ 1 };
-inline constexpr u32 g_errHashes[2]{
-	2207393597, 357929800
-};
 extern std::string getCurrentStreamingName();
 extern u32 getCurrentStreamingIndex();
 class threadStorageAccessor {
@@ -75,11 +72,10 @@ struct hooks {
 	static bool hasRosPrivilege(u64* _This, i32 Privilege);
 	static u64 writePlayerGameStateDataNode(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
 	static bool getNewsStory(CNetworkSCNewsStory* pStory);
+	static bool presencePostRawMessage(int localGamerindex, const rage::rlGamerHandle* recipients, unsigned int numRecipients, const char* message, unsigned int ttlSeconds);
 	static u64 getAvailableMemoryForStreamer(u64* _This);
 	static u64 settingsVramTex(u64* _This, i32 Quality, u64* pSettings);
 	static bool hasGameBeenAltered();
-	static void resourceError(u32 Hash, bool Kill);
-	static bool callResourceError(u32 Hash);
 	static bool addItemToBasket(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 	static bool request(CHttpRequest* pRequest);
 	static bool sendMetric(rage::rlMetric* pMetric, bool Unk);
@@ -137,11 +133,10 @@ public:
 	detour m_allocateReliable;
 	detour m_writePlayerGameStateDataNode;
 	detour m_getNewsStory;
+	detour m_presencePostRawMessage;
 	detour m_getAvailableMemoryForStreamer;
 	detour m_settingsVramTex;
 	detour m_hasGameBeenAltered;
-	//detour m_resourceError;
-	detour m_callResourceError;
 	detour m_addItemToBasket;
 	detour m_request;
 	detour m_sendMetric;

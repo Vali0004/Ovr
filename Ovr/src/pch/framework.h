@@ -94,3 +94,7 @@ using u8 = uint8_t;
 using i8 = int8_t;
 using cc = const char;
 using db = double;
+using s64 = i64;
+using s32 = i32;
+using s16 = i16;
+using s8 = i8;

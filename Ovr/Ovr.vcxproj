@@ -124,7 +124,6 @@
     <ClInclude Include="src\fiber\manager.h" />
     <ClInclude Include="src\fiber\pool.h" />
     <ClInclude Include="src\hooking\hooking.h" />
-    <ClInclude Include="src\hooking\hooks\resource_error.cpp" />
     <ClInclude Include="src\hooking\methods\detour.h" />
     <ClInclude Include="src\hooking\methods\native.h" />
     <ClInclude Include="src\hooking\methods\vmt.h" />
@@ -233,7 +232,6 @@
     <ClCompile Include="src\hooking\hooks\add_item_to_basket.cpp" />
     <ClCompile Include="src\hooking\hooks\allocate_reliable.cpp" />
     <ClCompile Include="src\hooking\hooks\calcuate_mip_level.cpp" />
-    <ClCompile Include="src\hooking\hooks\call_resource_error.cpp" />
     <ClCompile Include="src\hooking\hooks\can_apply_data.cpp" />
     <ClCompile Include="src\hooking\hooks\convert_thread_to_fiber.cpp" />
     <ClCompile Include="src\hooking\hooks\ctaskfall_constructor.cpp" />
@@ -246,6 +244,7 @@
     <ClCompile Include="src\hooking\hooks\has_game_been_altered.cpp" />
     <ClCompile Include="src\hooking\hooks\has_ros_privilege.cpp" />
     <ClCompile Include="src\hooking\hooks\insert_streaming_module.cpp" />
+    <ClCompile Include="src\hooking\hooks\post_raw_message.cpp" />
     <ClCompile Include="src\hooking\hooks\present.cpp" />
     <ClCompile Include="src\hooking\hooks\process_matchmaking_find.cpp" />
     <ClCompile Include="src\hooking\hooks\process_packed_events.cpp" />

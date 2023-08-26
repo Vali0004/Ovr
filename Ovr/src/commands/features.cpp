@@ -878,14 +878,24 @@ namespace commands::features {
 				fiber::current()->sleep(200ms);
 				CPlayerListMenu* Menu = new CPlayerListMenu();
 				u32 Hash{ 0xDA4858C1 };
-				CFriendMenu* Info{ pointers::g_getFriendsMenu(0) };	
-				if (u8 Index{ Info->get_online_friend() }) {
-					CFriend Friend{ Info->get_friend(Index) };
-					u64 OriginalRID{ Friend.m_rockstar_id };
-					Friend.m_rockstar_id = rid;
-					pointers::g_triggerPlayermenuAction(Menu, &Hash);
-					fiber::current()->sleep(400ms);
-					Friend.m_rockstar_id = OriginalRID;
+				u64 Info{ (u64)pointers::g_getFriendsMenu(0) };	
+				u8* Data{ reinterpret_cast<u8*>(Info + 0x8) };
+				if (Data) {
+					u8 Idx{};
+					while (*Data <= 3u) {
+						if (*Data == 3) {
+							break;
+						}
+						++Idx;
+						Data += 0x10;
+					}
+					if (Idx < 20ui8) {
+						u64 OriginalRID{ *(u64*)(Info + 16ui64 * Idx) };
+						*(u64*)(Info + 16ui64 * Idx) = rid;
+						pointers::g_triggerPlayermenuAction(Menu, &Hash);
+						fiber::current()->sleep(400ms);
+						*(u64*)(Info + 16ui64 * Idx) = OriginalRID;
+					}
 				}
 			});
 		}
@@ -912,6 +922,9 @@ namespace commands::features {
 		void bail(actionCommand* command) {
 			NETWORK::NETWORK_BAIL(0, 0, 16);
 			NETWORK::NETWORK_BAIL_TRANSITION(0, 0, 16);
+			if (NETWORK::NETWORK_IS_IN_TRANSITION() || !NETWORK::NETWORK_IS_SESSION_ACTIVE() && g_sessionType != eSessionTypes::Offline) {
+				util::classes::getGtaThread("maintransition"_joaat)->kill();
+			}
 		}
 	}
 	namespace protections {

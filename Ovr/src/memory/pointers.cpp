@@ -40,12 +40,14 @@ namespace pointers {
 		g_getSyncTreeForType = scan("GSTFT", "0F B7 CA 83 F9 07").as<decltype(g_getSyncTreeForType)>();
 		g_getGamerTaskResult = scan("GGTR", "E8 ? ? ? ? 84 C0 0F 84 ? ? ? ? 8B 05 ? ? ? ? 48 8D 4C 24").call().as<decltype(g_getGamerTaskResult)>();
 		g_findGameMatch = scan("FGM", "E8 ? ? ? ? 84 C0 0F 84 F6 FE FF FF").call().as<decltype(g_findGameMatch)>();
+		
 		g_addItemToBasket = scan("AITB", "48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 20 48 8B F2 48 8D 54 24").as<decltype(g_addItemToBasket)>();
 		g_beginService = scan("BS", "54 E9 9B 9B 94").as<decltype(g_beginService)>();
 		g_constructBasket = scan("CB", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 54 41 56 41 57 48 83 EC 30 48 8B F1").as<decltype(g_constructBasket)>();
-		g_request = scan("R", "40 55 57 41 54 41 55").as<decltype(g_request)>();
+		g_request = scan("R", "75 6F 48 8B CE").sub(0xE).call().as<decltype(g_request)>();
 		g_sendMetric = scan("SM", "E8 ? ? ? ? EB 69 41 8B D6").call().as<decltype(g_sendMetric)>();
-		g_sendNetworkEvent = scan("SNE", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 48 8D 71 28").as<decltype(g_sendNetworkEvent)>();
+		g_sendNetworkEvent = scan("SNE", "E8 ? ? ? ? EB 0D 48 8B 06").call().as<decltype(g_sendNetworkEvent)>();
+		
 		g_processMatchmakingFind = scan("PMF", "48 89 5C 24 08 48 89 74 24 10 57 48 81 EC F0 00 00 00 41 83").as<decltype(g_processMatchmakingFind)>();
 		g_triggerPlayermenuAction = scan("TPA", "48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B D9").as<decltype(g_triggerPlayermenuAction)>();
 		g_getFriendsMenu = scan("GFM", "75 1C E8 ? ? ? ? 48 85 C0").sub(0xB).as<decltype(g_getFriendsMenu)>();
@@ -59,7 +61,6 @@ namespace pointers {
 		g_conMgrTryFree = scan("CMTR", "48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 83 EC 20 48 8B D9 48 8B 49 18").add(0x51).call().as<decltype(g_conMgrTryFree)>();
 		g_removeMessageFromQueue = scan("RMFQ", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").call().as<decltype(g_removeMessageFromQueue)>();
 		g_removeMessageFromUnacknowledgedReliables = scan("RMFUR", "E8 ? ? ? ? 0F B7 43 4C 48 8D 55 20").add(0x18).call().as<decltype(g_removeMessageFromUnacknowledgedReliables)>();
-		g_sendPresenceEvent = scan("SPE", "E8 ? ? ? ? EB 02 B0 01 48 8B 9C 24").call().as<decltype(g_sendPresenceEvent)>();
 		g_writePlayerGameStateDataNode = scan("WPGSDN", "48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 41 54 41 55 41 56 41 57 48 83 EC 30 0F B7 81").as<decltype(g_writePlayerGameStateDataNode)>();
 		g_queuePacketViaMsgId = scan("QPVMI", "E8 ? ? ? ? 84 C0 74 4D B3 01").call().as<decltype(g_queuePacketViaMsgId)>();
 		g_getServerData = scan("GSD", "BA ? ? ? ? 48 8B D9 E8 ? ? ? ? 48 8B D0").sub(0x16).as<decltype(g_getServerData)>();
@@ -68,9 +69,10 @@ namespace pointers {
 		g_getAvailableMemoryForStreamer = scan("GAMFS", "E8 ? ? ? ? 48 8D 0C 3B 48 3B C1").call().as<decltype(g_getAvailableMemoryForStreamer)>();
 		g_settingsVramTex = scan("SVT", "B9 84 04 00 00 41 B9 6B").sub(0x6D).as<decltype(g_settingsVramTex)>();
 		g_hasGameBeenAltered = scan("HGBA", "40 53 48 83 EC 30 48 8B 1D ? ? ? ? BA").as<decltype(g_hasGameBeenAltered)>();
-		g_resourceError = scan("RE", "E8 ? ? ? ? CC FF 15 ? ? ? ?").call().as<decltype(g_resourceError)>();
-		g_callResourceError = scan("CRE", "48 83 EC 28 33 D2 E8 ? ? ? ? CC").as<decltype(g_callResourceError)>();
+		g_presencePostRawMessage = scan("P_PRM", "E8 ? ? ? ? 84 C0 75 02 33 FF 4C 8D").call().as<decltype(g_presencePostRawMessage)>();
+		g_presenceEventSendToCommunity = scan("PE_STC", "48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 55 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? 0F B7 FA").as<decltype(g_presenceEventSendToCommunity)>();
 
+		g_fingerOfGodEvent = scan("FOGE", "48 8D 05 ? ? ? 00 88 1D ? ? ? 01 48 89 05 ? ? ? 01 E8").lea().as<decltype(g_fingerOfGodEvent)>();
 		g_textureStore = scan("TS", "48 8D 0D ? ? ? ? E8 ? ? ? ? 8B 45 EC 4C 8D 45 F0 48 8D 55 EC 48 8D 0D ? ? ? ? 89 45 F0 E8").mov().as<decltype(g_textureStore)>();
 		g_streaming = scan("S", "48 8D 0D ? ? ? ? 03 D3 E8 ? ? ? ? 66 44 39 7D ? 74 09 48 8B 4D E8 E8").mov().as<decltype(g_streaming)>();
 		g_scGameInfo = scan("SGI", "48 8D 05 ? ? ? ? 48 03 F8 44 8B 47 14 48 8D 57 20 E8 ? ? ? ? 85", { "socialclub.dll" }).mov().as<decltype(g_scGameInfo)>();

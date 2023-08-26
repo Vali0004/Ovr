@@ -12,11 +12,12 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 	else if (pMetric->using_c()) {
 		key = "C";
 	}
-	rage::rlJSON json{ 256 };
+	char buf[1024]{};
+	rage::RsonWriter json{ buf, rage::RsonFormat::RSON_FORMAT_JSON };
 	pMetric->to_json(&json);
 	std::string name{ pMetric->get_name() };
 	if (!name.compare("SPAWN")) {
-		std::string s{ json.str() };
+		std::string s{ buf };
 		size_t start{ s.find(R"("c":[)") + 5 };
 		size_t end{ s.find(R"(],"d")") - 5 };
 		std::string str{ s.substr(start, end) };
@@ -41,7 +42,7 @@ bool hooks::sendMetric(rage::rlMetric* pMetric, bool Unk) {
 			LOG(Info, "Spawning at {}, {}, {}", newCoords.x, newCoords.y, newCoords.z);
 		}
 	}
-	LOG_DEBUG("[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, json.str());
+	LOG_DEBUG("[Metric{}][SendMetric{}]: {}", pMetric->get_name(), key, buf);
 	return false;
 	//RET_CALL(sendMetric, pMetric, Unk);
 }

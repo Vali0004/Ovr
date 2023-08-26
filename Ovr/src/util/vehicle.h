@@ -98,9 +98,9 @@ namespace util::vehicle {
 			for (HashNode* node{ hashTable.m_lookup_table[i] }; node; node = node->m_next) {
 				if (const u16 tableIdx{ node->m_idx }; tableIdx != hashTable.m_size) {
 					if (CVehicleModelInfo* model{ hashTable.m_data[tableIdx] }; model && model->is_type(eModelType::Vehicle) && model->get_class() == modelClass) {
-						std::string manufacturerLbl = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_manufacturer);
-						std::string nameLbl = HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_name);
-						vehData.push_back({ model, manufacturerLbl, model->m_name });
+						std::string manufacturer{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_manufacturer) };
+						std::string name{ HUD::GET_FILENAME_FOR_AUDIO_CONVERSATION(model->m_name) };
+						vehData.push_back({ model, manufacturer, model->m_name });
 					}
 				}
 			}

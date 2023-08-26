@@ -38,20 +38,12 @@ namespace pointers {
 		using addItemToBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* Items);
 		using constructBasket = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Category, u32 Action, u32 Flags);
 		using beginService = bool(*)(CNetworkShoppingMgr* pTransactionMgr, i32* pId, u32 Service, u32 Category, u32 Ttem, u32 Action, i32 Value, u32 Flags);
-		using writePlayerGameStateDataNode = u64(*)(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
-		using queuePacketViaMsgId = bool(*)(rage::netConnectionManager* pMgr, i32 MsgId, u8* pData, i32 Size, i32 Flags, void* pUnk);
-		using getServerData = u64(*)(i32 Unk);
-		using getNewsStory = bool(*)(CNetworkSCNewsStory* pStory);
-		using updateVideoMemoryBar = void(*)(bool Unk);
-		using getAvailableMemoryForStreamer = u64(*)(u64* _This);
-		using settingsVramTex = u64(*)(u64* _This, i32 Quality, u64* pSettings);
-		using hasGameBeenAltered = bool(*)();
-		using resourceError = void(*)(u32 Hash, bool Kill);
-		using callResourceError = bool(*)(u32 Hash);
 
+		using hasGameBeenAltered = bool(*)();
 		using request = bool(*)(CHttpRequest* pRequest);
 		using sendMetric = bool(*)(rage::rlMetric* pMetric, bool Unk);
 		using sendNetworkEvent = void(*)(rage::netEventMgr* pEventMgr, rage::netGameEvent* pEvent);
+
 		using processMatchmakingFind = bool(*)(u64* _This, u64* Unused, rage::JSONNode* pNode, i32* Unk);
 		using triggerPlayermenuAction = bool(*)(CPlayerListMenu* pMenu, u32* pHash);
 		using getFriendsMenu = CFriendMenu*(*)(u32 Index);
@@ -65,7 +57,15 @@ namespace pointers {
 		using conMgrTryFree = void(*)(rage::netConnectionManager* pConMgr);
 		using removeMessageFromQueue = void(*)(rage::netMessageQueue* pQueue, rage::netQueuedMessage* pMsg);
 		using removeMessageFromUnacknowledgedReliables = void(*)(rage::netQueuedMessage** pList, u16* pUnk);
-		using sendPresenceEvent = bool(*)(i32 Unk, rage::rlGamerHandle* pHandles, u32 HandleCount, u8* pPayload, i32 Unk5);
+		using writePlayerGameStateDataNode = u64(*)(rage::netObject* pObject, CPlayerGameStateDataNode* pNode);
+		using queuePacketViaMsgId = bool(*)(rage::netConnectionManager* pMgr, i32 MsgId, u8* pData, i32 Size, i32 Flags, void* pUnk);
+		using getServerData = u64(*)(i32 Unk);
+		using getNewsStory = bool(*)(CNetworkSCNewsStory* pStory);
+		using updateVideoMemoryBar = void(*)(bool Unk);
+		using getAvailableMemoryForStreamer = u64(*)(u64* _This);
+		using settingsVramTex = u64(*)(u64* _This, i32 Quality, u64* pSettings);
+		using presencePostRawMessage = bool(*)(int localGamerindex, const rage::rlGamerHandle* recipients, unsigned int numRecipients, const char* message, unsigned int ttlSeconds);
+		using presenceEventSendToCommunity = bool(*)(rage::netGamePresenceEvent* message, u16 sendflag);
 	}
 	inline types::scrThreadInit g_scrThreadInit{};
 	inline types::scrThreadTick g_scrThreadTick{};
@@ -92,12 +92,16 @@ namespace pointers {
 	inline types::getSyncTreeForType g_getSyncTreeForType{};
 	inline types::getGamerTaskResult g_getGamerTaskResult{};
 	inline types::findGameMatch g_findGameMatch{};
+
 	inline types::addItemToBasket g_addItemToBasket{};
 	inline types::beginService g_beginService{};
 	inline types::constructBasket g_constructBasket{};
+
 	inline types::request g_request{};
 	inline types::sendMetric g_sendMetric{};
 	inline types::sendNetworkEvent g_sendNetworkEvent{};
+	inline types::hasGameBeenAltered g_hasGameBeenAltered{};
+
 	inline types::processMatchmakingFind g_processMatchmakingFind{};
 	inline types::triggerPlayermenuAction g_triggerPlayermenuAction{};
 	inline types::getFriendsMenu g_getFriendsMenu{};
@@ -111,7 +115,6 @@ namespace pointers {
 	inline types::conMgrTryFree g_conMgrTryFree{};
 	inline types::removeMessageFromQueue g_removeMessageFromQueue{};
 	inline types::removeMessageFromUnacknowledgedReliables g_removeMessageFromUnacknowledgedReliables{};
-	inline types::sendPresenceEvent g_sendPresenceEvent{};
 	inline types::writePlayerGameStateDataNode g_writePlayerGameStateDataNode{};
 	inline types::queuePacketViaMsgId g_queuePacketViaMsgId{};
 	inline types::getServerData g_getServerData{};
@@ -119,10 +122,10 @@ namespace pointers {
 	inline types::updateVideoMemoryBar g_updateVideoMemoryBar{};
 	inline types::getAvailableMemoryForStreamer g_getAvailableMemoryForStreamer{};
 	inline types::settingsVramTex g_settingsVramTex{};
-	inline types::hasGameBeenAltered g_hasGameBeenAltered{};
-	inline types::resourceError g_resourceError{};
-	inline types::callResourceError g_callResourceError{};
+	inline types::presencePostRawMessage g_presencePostRawMessage{};
+	inline types::presenceEventSendToCommunity g_presenceEventSendToCommunity{};
 
+	inline CFingerOfGodPresenceEvent* g_fingerOfGodEvent{};
 	inline rage::grcTextureStore* g_textureStore{};
 	inline CStreaming* g_streaming{};
 	inline ScGameInfo* g_scGameInfo{};

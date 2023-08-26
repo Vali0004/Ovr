@@ -19,6 +19,7 @@
 #include "hooking/hooking.h"
 #include "rage/script/loader.h"
 #include "rage/script/commands.h"
+#undef PostMessage
 
 namespace script {
 	inline bool shouldPosChange(ImVec2 pos) {
@@ -26,6 +27,29 @@ namespace script {
 		return winPos.y != pos.y;
 	}
 	inline float g_width{ 300.f };
+	bool PostMessage(int localGamerindex, const rage::rlGamerHandle* recipients, uint32_t numRecipients, rage::rlScPresenceMessagePublish& t, uint32_t ttlSeconds) {
+		char buf[1024];
+		rage::RsonWriter rw(buf, 0x400u, rage::RsonFormat::RSON_FORMAT_JSON);
+		if (!t.Export(rw) || !pointers::g_presencePostRawMessage(localGamerindex, recipients, numRecipients, buf, ttlSeconds)) {
+			LOG_DEBUG("Failed with buf being {}", buf);
+			return false;
+		}
+		return true;
+	}
+	void sendEventToCommunityHackified(uint64_t rid, rage::netGamePresenceEvent& message) {
+		int myGamerIndex = 0;
+		char pubMessageBuffer[1024];
+		rage::RsonWriter rw(pubMessageBuffer, rage::RsonFormat::RSON_FORMAT_JSON);
+		bool success = rw.Begin(nullptr, nullptr) && message.Export(&rw) && rw.End();
+		if (success) {
+			LOG_DEBUG("Event buffer: {}", pubMessageBuffer);
+			rage::rlScPresenceMessagePublish pubEvent("self", pubMessageBuffer);
+			rage::rlGamerHandle gh(rid);
+			if (PostMessage(myGamerIndex, &gh, 1, pubEvent, 0)) {
+				LOG_DEBUG("Success");
+			}
+		}
+	}
 	void onPresent() {
 		if (script::g_guiOpen) {
 			elements::window(BRAND"Header", g_guiOpen, [] {
@@ -39,6 +63,11 @@ namespace script {
 				ImVec2 pos{ windowPos.x, windowPos.y + windowSize.y };
 				elements::setWindowPos(pos);
 				elements::setWindowSize({ g_width, 270.f }, ImGuiCond_Once);
+				if (ImGui::MenuItem("FOG Test")) {
+					CFingerOfGodPresenceEvent evt{};
+					evt.m_typeHash = FOG_TYPE_KICK;
+					sendEventToCommunityHackified(39138414, evt);
+				}
 				tabs::self::tab();
 				tabs::weapon::tab();
 				tabs::vehicle::tab();
