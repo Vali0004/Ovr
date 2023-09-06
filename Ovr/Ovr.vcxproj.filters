@@ -444,6 +444,8 @@
     <ClInclude Include="src\script\tabs\settings\statistics.h">
       <Filter>script\tabs\settings</Filter>
     </ClInclude>
+    <ClInclude Include="src\util\exploit.h" />
+    <ClInclude Include="src\util\garage_mgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\commands\commands.cpp">

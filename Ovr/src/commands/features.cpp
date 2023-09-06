@@ -1039,7 +1039,7 @@ namespace commands::features {
 				"moneyBankedNotificationProtection"_PC->setFromSection(command->state());
 				"moneyStolenNotificationProtection"_PC->setFromSection(command->state());
 				"moneyRemovedNotificationProtection"_PC->setFromSection(command->state()); 
-				"destoryPersonalVehicleProtection"_PC->setFromSection(command->state());
+				"destroyPersonalVehicleProtection"_PC->setFromSection(command->state());
 				"triggerCeoRaidProtection"_PC->setFromSection(command->state());
 				"startScriptBeginProtection"_PC->setFromSection(command->state());
 				"startScriptProceedProtection"_PC->setFromSection(command->state());
@@ -1476,7 +1476,7 @@ namespace commands::features {
 		g_manager.add(protectionCommand("moneyBankedNotificationProtection", "Money Banked Notification"));
 		g_manager.add(protectionCommand("moneyStolenNotificationProtection", "Money Stolen Notification"));
 		g_manager.add(protectionCommand("moneyRemovedNotificationProtection", "Money Removed Notification"));
-		g_manager.add(protectionCommand("destoryPersonalVehicleProtection", "Destroy Personal Vehicle"));
+		g_manager.add(protectionCommand("destroyPersonalVehicleProtection", "Destroy Personal Vehicle"));
 		g_manager.add(protectionCommand("triggerCeoRaidProtection", "Trigger CEO Raid"));
 		g_manager.add(protectionCommand("startScriptBeginProtection", "Start Script Begin"));
 		g_manager.add(protectionCommand("startScriptProceedProtection", "Start Script Proceed"));

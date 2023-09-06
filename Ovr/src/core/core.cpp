@@ -8,6 +8,7 @@
 #include "util/transaction.h"
 #include "rage/script/loader.h"
 #include "fiber/dx_manager.h"
+#include <util/exploit.h>
 
 namespace core {
 	namespace thread {

@@ -119,6 +119,7 @@
     <ClInclude Include="src\core\logger.h" />
     <ClInclude Include="src\exceptions\disassembler.h" />
     <ClInclude Include="src\exceptions\handler.h" />
+    <ClInclude Include="src\util\exploit.h" />
     <ClInclude Include="src\fiber\dx_manager.h" />
     <ClInclude Include="src\fiber\fiber.h" />
     <ClInclude Include="src\fiber\manager.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="src\util\clipboard.h" />
     <ClInclude Include="src\util\curl_wrapper.h" />
     <ClInclude Include="src\util\game_vm_guard.h" />
+    <ClInclude Include="src\util\garage_mgr.h" />
     <ClInclude Include="src\util\global.h" />
     <ClInclude Include="src\util\message.h" />
     <ClInclude Include="src\util\packet.h" />

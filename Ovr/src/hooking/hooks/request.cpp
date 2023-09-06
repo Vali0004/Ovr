@@ -5,8 +5,8 @@ bool hooks::request(CHttpRequest* pRequest) {
 	if (util::badEndpoint(endpoint)) {
 		return false;
 	}
-	LOG_DEBUG("\n{}://{}{}/\n{}\n", pRequest->m_protocol, pRequest->m_base_url, pRequest->m_endpoint_data, pRequest->m_http_headers->data());
+	//LOG_DEBUG("\n{}://{}{}/\n{}\n", pRequest->m_protocol, pRequest->m_base_url, pRequest->m_endpoint_data, pRequest->m_http_headers->data());
 	bool res{ CALL(request, pRequest) };
-	LOG_DEBUG("Request response: {}", pRequest->m_response->data());
+	//LOG_DEBUG("Request response: {}", pRequest->m_response->data());
 	return res;
 }

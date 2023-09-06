@@ -934,7 +934,7 @@ namespace rage {
 			float m_wait; //0x0020
 			int32_t m_min_pc; //0x0024
 			int32_t m_max_pc; //0x0028
-			char m_tls[36]; //0x002C
+			scrValue m_tls[4]; //0x002C
 			uint32_t m_stack_size; //0x0050
 			uint32_t m_catch_pointer_count; //0x0054
 			uint32_t m_catch_frame_pointer; //0x0058
@@ -2417,6 +2417,89 @@ namespace rage {
 		}
 		static strStreamingModuleMgr& Get();
 	};
+	class Vector3 {
+	public:
+		enum _ZeroType {
+			ZeroType = 0x0,
+		};
+		union {
+			__m128 xyzw;
+			struct {
+				float x;
+				float y;
+				float z;
+				float w;
+			};
+			struct {
+				uint32_t ux;
+				uint32_t uy;
+				uint32_t uz;
+				uint32_t uw;
+			};
+		};
+	};
+	class Matrix34 {
+	public:
+		typedef Vector3::_ZeroType _ZeroType;
+		enum _IdentityType {
+			IdentityType = 0x0,
+		};
+		enum _Identity3x3Type {
+			Identity3x3Type = 0x0,
+		};
+		enum _Zero3x3Type {
+			Zero3x3Type = 0x0,
+		};
+		Vector3 a;
+		Vector3 b;
+		Vector3 c;
+		Vector3 d;
+	};
+	class Quaternion {
+	public:
+		union {
+			__m128 xyzw;
+			struct {
+				float x;
+				float y;
+				float z;
+				float w;
+			};
+		};
+	};
+	class CSyncDataBase {
+	public:
+		virtual ~CSyncDataBase() = default;
+		virtual void SerialiseBitField(uint32_t*, const int) {}
+		virtual void SerialiseBitField(uint16_t*, const int) {}
+		virtual void SerialiseBitField(uint8_t*, const int) {}
+		virtual void SerialiseBitField(int*, const int) {}
+		virtual void SerialiseBitField(int16_t*, const int) {}
+		virtual void SerialiseBitField(int8_t*, const int) {}
+		virtual void SerialiseBool(bool*) {}
+		virtual void SerialiseInteger(int64_t*, const int) {}
+		virtual void SerialiseInteger(int*, const int) {}
+		virtual void SerialiseInteger(int16_t*, const int) {}
+		virtual void SerialiseInteger(int8_t*, const int) {}
+		virtual void SerialiseUnsigned(uint64_t*, const int) {}
+		virtual void SerialiseUnsigned(uint32_t*, const int) {}
+		virtual void SerialiseUnsigned(uint16_t*, const int) {}
+		virtual void SerialiseUnsigned(uint8_t*, const int) {}
+		virtual void SerialisePackedFloat(float*, const float, const int) {}
+		virtual void SerialisePackedUnsignedFloat(float*, const float, const int) {}
+		virtual void SerialiseObjectID(uint16_t*) {}
+		virtual void SerialisePosition(Vector3*, uint32_t) {}
+		virtual void SerialiseOrientation(Matrix34*) {}
+		virtual void SerialiseVector(Vector3*, const float, const int) {}
+		virtual void SerialiseQuaternion(Quaternion*, const int) {}
+		virtual void SerialiseDataBlock(uint8_t*, const int) {}
+		virtual void SerialiseString(char*, const uint32_t) {}
+		virtual bool GetIsMaximumSizeSerialiser() { return false; }
+		virtual uint32_t GetSize() { return NULL; }
+
+		uint8_t m_type;
+		void* m_log;
+	};
 }
 struct Asset {
 	int Value;
@@ -2926,6 +3009,21 @@ private:
 static_assert(sizeof(CProjectBaseSyncDataNode) == 0xC0);
 class CSyncDataNodeFrequent : public CProjectBaseSyncDataNode {};
 class CSyncDataNodeInfrequent : public CProjectBaseSyncDataNode {};
+class IPedNodeDataAccessor {
+public:
+	class __declspec(align(4)) CTaskData {
+	public:
+		uint32_t m_TaskType;
+		uint32_t m_TaskDataSize;
+		uint8_t m_TaskData[602];
+	};
+};
+class CPedTaskSpecificDataNode : public CSyncDataNodeFrequent {
+public:
+	CPedTaskSpecificDataNode* m_node;
+	int m_taskIndex;
+	IPedNodeDataAccessor::CTaskData m_taskData;
+};
 #pragma pack(push, 4)
 class CSectorPositionDataNode : CSyncDataNodeFrequent {
 public:
@@ -6332,6 +6430,11 @@ public:
 			rw->WriteString("d", m_charData);
 		return res;
 	}
+	union {
+		int m_iData;
+		unsigned int m_uData;
+		float m_fData;
+	};
 	eFogType m_typeHash;
 	char m_charData[64];
 };
@@ -6350,7 +6453,7 @@ namespace rage {
 		}
 
 		bool Export(RsonWriter& rw) {
-			return RsonReader::ValidateJson(m_Message, strlen(m_Message) && rw.Begin(MSG_ID(), NULL) && rw.WriteString("channel", m_Channel) && rw.WriteRawString("msg", m_Message) && rw.End();
+			return RsonReader::ValidateJson(m_Message, strlen(m_Message)) && rw.Begin(MSG_ID(), NULL) && rw.WriteString("channel", m_Channel) && rw.WriteRawString("msg", m_Message) && rw.End();
 		}
 		bool Import(class RsonReader* rw) { //I do NOT want to touch this fucking shit
 			return false;
