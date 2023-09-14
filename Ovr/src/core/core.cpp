@@ -39,7 +39,7 @@ namespace core {
 		}
 	}
 	void create() {
-		g_logger = MakeSmartPointer<logger>(BRAND " | Developer (0.00.1, b3311)"); //I really need to keep track of this...
+		g_logger = MakeSmartPointer<logger>(BRAND " | Developer (0.00.1, b8371)"); //I really need to keep track of this...
 		g_scyllaHide = MakeSmartPointer<scyllaHide>();
 		if (g_scyllaHide->getModule()) {
 			LOG_DEBUG("ScyllaHide loaded.");

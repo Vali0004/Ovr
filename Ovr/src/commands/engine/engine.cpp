@@ -361,12 +361,12 @@ namespace commands {
 		return (t)NULL;
 	}
 	void engine::commandFromStream() {
-		auto file{ util::files::input("Command.txt") };
+		std::ifstream file{ util::files::input("Command.txt") };
 		std::string stream{ util::files::read(file) };
 		file.close();
 		if (!stream.empty()) {
 			{
-				auto file{ util::files::output("Command.txt") };
+				std::ofstream file{ util::files::output("Command.txt") };
 				util::files::destroy(file);
 			}
 			execute(stream);

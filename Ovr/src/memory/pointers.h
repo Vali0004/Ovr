@@ -150,8 +150,9 @@ namespace pointers {
 	inline eLoadingScreenState* g_loadingScreenState{};
 	inline CVFXWheel* g_vfxWheel{};
 	inline u8* g_vfxWheelClassSize{};
-	inline uint32_t* g_threadId{};
-	inline uint32_t* g_threadCount{};
+	inline u32* g_threadId{};
+	inline u32* g_threadCount{};
+	inline u32* g_frameCount{};
 	inline u64 g_nativeRegistration{};
 	inline u64 g_vehicleModelInfoVtbl{};
 	inline u64 g_pedModelInfoVtbl{};

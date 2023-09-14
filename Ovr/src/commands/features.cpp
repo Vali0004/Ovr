@@ -701,43 +701,6 @@ namespace commands::features {
 					g_engine.primitiveExecute("go -1");
 					g_engine.primitiveExecute("bail");
 				}
-				void seamlessTransition(toggleCommand* command) {
-					if (command->get(0).toggle) {
-						Ped ped{ PLAYER::PLAYER_PED_ID() };
-						//Forcefully draw minimap and HUD
-						HUD::DISPLAY_HUD(TRUE);
-						HUD::DISPLAY_RADAR(TRUE);
-						HUD::DISPLAY_HUD_WHEN_NOT_IN_STATE_OF_PLAY_THIS_FRAME();
-						HUD::DISPLAY_HUD_WHEN_PAUSED_THIS_FRAME();
-						HUD::CLEAR_HELP(TRUE);
-						//Clear tooltips when loading
-						HUD::CLEAR_ALL_HELP_MESSAGES();
-						//Yeet the busyspinner
-						HUD::BUSYSPINNER_OFF();
-						HUD::DISABLE_PAUSEMENU_SPINNER(TRUE);
-						//Yeet thefeed (i.e., the loading screen tips/big fucking rectangle)
-						HUD::THEFEED_HIDE();
-						HUD::THEFEED_HIDE_THIS_FRAME();
-						HUD::THEFEED_FLUSH_QUEUE();
-						HUD::THEFEED_PAUSE();
-						//Set as mission entity to avoid the script doing cleanup
-						if (PED::IS_PED_IN_ANY_VEHICLE(ped, FALSE)) {
-							Vehicle veh{ PED::GET_VEHICLE_PED_IS_IN(ped, FALSE) };
-							ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, TRUE, TRUE);
-						}
-						//Does the same as above but to the last vehicle
-						Vehicle veh{ PED::GET_VEHICLE_PED_IS_IN(ped, TRUE) };
-						ENTITY::SET_ENTITY_AS_MISSION_ENTITY(veh, TRUE, TRUE);
-						const eTransitionState state{ static_cast<eTransitionState>(global(1574993).at(3).value()->Int) };
-						if (STREAMING::IS_PLAYER_SWITCH_IN_PROGRESS()) {
-							if (state <= eTransitionState::FreemodeFinalSetupPlayer) {
-								PLAYER::SET_PLAYER_CONTROL(ped, TRUE, 0);
-								STREAMING::STOP_PLAYER_SWITCH();
-								GRAPHICS::ANIMPOSTFX_STOP_ALL();
-							}
-						}
-					}
-				}
 			}
 		}
 		namespace socialclub {
@@ -863,6 +826,9 @@ namespace commands::features {
 		}
 		namespace tunables {
 			void offRadar(toggleCommand* command) {
+				if (!NETWORK::NETWORK_IS_SESSION_ACTIVE()) {
+					return;
+				}
 				global(2657704).at(PLAYER::PLAYER_ID(), 463).at(210).value()->Int = command->get(0).toggle;
 				global(2672524).at(57).value()->Int = NETWORK::GET_NETWORK_TIME() + (command->get(0).toggle ? 0xB8E10 : NULL);
 			}
@@ -1395,7 +1361,6 @@ namespace commands::features {
 		//Network::Session::Starter
 		g_manager.add(stringCommand("go", "Session Starter", "Join a session", network::session::starter::go));
 		g_manager.add(actionCommand("leave", "Leave", "Leave from online", network::session::starter::leave));
-		g_manager.add(toggleCommand("seamlessTransition", "Seamless Transition", "Seamlessly join a session", network::session::starter::seamlessTransition));
 		//Network::Socialclub
 		g_manager.add(stringCommand("nameToRid", "Name To Rockstar ID", "Converts a given name to an RID and copies it to clipboard", network::socialclub::nameToRid));
 		g_manager.add(variadicCommand("ridToName", "Rockstar ID To Name", "Converts a given RID to an name and copies it to clipboard", { { eValueType::UInt64 } }, network::socialclub::ridToName, false));

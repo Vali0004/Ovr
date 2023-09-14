@@ -4,7 +4,7 @@
 namespace pointers {
 	bool scanAll() {
 		g_loadingScreenState = scan("LSS", "83 3D ? ? ? ? ? 75 17 8B 43 20 25").lea().add(1).as<decltype(g_loadingScreenState)>();
-		switch (*pointers::g_loadingScreenState) {
+		/*switch (*pointers::g_loadingScreenState) {
 		case eLoadingScreenState::PreLegal: {
 			std::this_thread::sleep_for(24s);
 			*pointers::g_loadingScreenState = eLoadingScreenState::Legals;
@@ -14,7 +14,7 @@ namespace pointers {
 			std::this_thread::sleep_for(1s);
 			*pointers::g_loadingScreenState = eLoadingScreenState::LandingPage;
 		} break;
-		}
+		}*/
 		g_scrThreadInit = scan("STI", "83 89 ? ? ? ? ? 83 A1 ? ? ? ? ? 80 A1 ? ? ? ? ?").as<decltype(g_scrThreadInit)>();
 		g_scrThreadTick = scan("STT", "80 B9 ? ? ? ? ? 8B FA 48 8B D9 74 05").sub(0xF).as<decltype(g_scrThreadTick)>();
 		g_scrThreadKill = scan("STK", "48 89 5C 24 ? 57 48 83 EC 20 48 83 B9 ? ? ? ? ? 48 8B D9 74 14").as<decltype(g_scrThreadKill)>();
@@ -98,6 +98,7 @@ namespace pointers {
 		g_vfxWheelClassSize = scan("VWCS", "48 8D 05 ? ? ? ? 48 6B FF 45 F3 0F 59 0D ? ? ? ? F3 41 0F 59 9E ? ? ? ? F3 0F 10 BD ? ? ? ? 48 03 FE 48 69 FF ? ? ? ? F3").add(0xA).as<decltype(g_vfxWheelClassSize)>();
 		g_threadId = scan("TI", "8B 15 ? ? ? ? 48 8B 05 ? ? ? ? FF C2 89 15 ? ? ? ? 48 8B 0C D8").lea().as<decltype(g_threadId)>();
 		g_threadCount = scan("TC", "FF 0D ? ? ? ? 48 8B D9 75").lea().as<decltype(g_threadCount)>();
+		g_frameCount = scan("FC", "8B 15 ? ? ? ? 41 FF CF").lea().as<decltype(g_frameCount)>();
 		g_nativeRegistration = scan("NR", "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 B9 20 03 00 00").add(0x1E).call().as<decltype(g_nativeRegistration)>();
 		g_vehicleModelInfoVtbl = scan("VMIV", "45 33 C0 48 8D 05 ? ? ? ? 48 8D BB C0 00 00 00").add(3).mov().as<decltype(g_vehicleModelInfoVtbl)>();
 		g_pedModelInfoVtbl = scan("PMIV", "E3 FF FF 48 8D 05 ? ? ? ? 48 89 03 33 C0 48 89 83").add(3).mov().as<decltype(g_pedModelInfoVtbl)>();

@@ -53,7 +53,7 @@ namespace script {
 				elements::setWindowPos(pos);
 				elements::setWindowSize({ g_width, 270.f }, ImGuiCond_Once);
 				if (ImGui::MenuItem("Test")) {
-					rage::ysc::program bytecode{ [](rage::ysc::program& p) {
+					rage::ysc::g_loader->setThread([](rage::ysc::program& p) {
 						p.enter("main", 0, 100);
 						p.label("EntryPoint");
 						rage::ysc::GRAPHICS::DRAW_RECT(p, { 0.5f, 0.5f }, 0.1f, 0.1f, 255, 192, 255, 255, FALSE);
@@ -61,50 +61,13 @@ namespace script {
 						rage::ysc::SYSTEM::WAIT(p, 0);
 						p.jmp("EntryPoint");
 						p.leave(0, 0);
-					} };
-					rage::scrProgram program{};
-					rage::scrThread::Serialised serialised{};
-					serialised.m_script_hash = "dummy"_joaat;
-					program.m_name = "dummy";
-					program.m_name_hash = "dummy"_joaat;
-					serialised.m_state = rage::eThreadState::halted;
-					serialised.m_pointer_count = NULL;
-					serialised.m_catch_pointer_count = NULL;
-					serialised.m_frame_pointer = NULL;
-					serialised.m_catch_frame_pointer = NULL;
-					for (uint32_t i{}; i != bytecode.m_codePageCollection.codePages.size(); ++i) {
-						program.m_code_blocks = new u8*[]();
-						program.m_code_blocks[i] = new u8[]();
-					}
-					for (uint32_t i{}; i != bytecode.m_stringPageCollection.stringHeaps.size(); ++i) {
-						program.m_string_heaps = new const char*[]();
-						program.m_string_heaps[i] = new const char[]();
-					}
-					for (uint32_t i{}; i != bytecode.m_codePageCollection.codePages.size(); ++i) {
-						memcpy(program.m_code_blocks[i], bytecode.m_codePageCollection.codePages[i], bytecode.m_codePageCollection.getCodePageSize(i));
-					}
-					program.m_code_size = bytecode.m_codePageCollection.getCodePageSize();
-					for (uint32_t i{}; i != bytecode.m_stringPageCollection.stringHeaps.size(); ++i) {
-						memcpy(const_cast<char*>(program.m_string_heaps[i]), bytecode.m_stringPageCollection.stringHeaps[i], bytecode.m_stringPageCollection.getStringChunkSize(i));
-					}
-					program.m_string_heap_size = bytecode.m_stringPageCollection.getStringHeapSize();
-					for (uint32_t i{}; i != bytecode.m_natives.size(); ++i) {
-						program.m_natives[i] = g_invoker.getNativeCmd(bytecode.m_natives[i]);
-					}
-					program.m_native_count = static_cast<u32>(bytecode.m_natives.size());
-					program.m_global_count = 0x1337;
-					if (bytecode.m_staticCount) {
-						program.m_local_count = bytecode.m_staticCount;
-					}
-					if (bytecode.m_stackSize) {
-						serialised.m_stack_size = bytecode.m_stackSize;
-					}
-					else {
-						serialised.m_stack_size = 1024;
-					}
-					serialised.m_state = rage::eThreadState::running;
-					rage::scrValue* stack{ new rage::scrValue[serialised.m_stack_size]() };
-					pointers::g_scriptVm(stack, pointers::g_globals, &program, &serialised);
+					});
+				}
+				if (ImGui::MenuItem("Force Session Host")) {
+					util::async([] {
+						uint64_t peer_address = util::classes::getRlGamerInfo()->m_peer_address;
+						util::memory::findAndReplace<u64>(peer_address, 0xA0000000000044, 8, "GTA5.exe");
+					});
 				}
 				tabs::self::tab();
 				tabs::weapon::tab();

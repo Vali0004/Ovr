@@ -166,7 +166,6 @@ namespace commands::features {
 			namespace starter {
 				extern void go(stringCommand* command);
 				extern void leave(actionCommand* command);
-				extern void seamlessTransition(toggleCommand* command);
 			}
 			namespace players {
 				namespace selected {

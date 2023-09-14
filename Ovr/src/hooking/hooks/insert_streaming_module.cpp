@@ -1,15 +1,15 @@
 #include "hooking/hooking.h"
 #include "memory/patch.h"
 
-static thread_local std::string g_currentStreamingName;
-static thread_local u32 g_currentStreamingIndex;
+static std::string g_currentStreamingName;
+static u32 g_currentStreamingIndex;
 std::string getCurrentStreamingName() {
 	return g_currentStreamingName;
 }
 u32 getCurrentStreamingIndex() {
 	return g_currentStreamingIndex;
 }
-static thread_local void* g_currentStreamingModuleCallback;
+static void* g_currentStreamingModuleCallback;
 static void setCurrentStreamingModuleCallback(void* func) {
 	g_currentStreamingModuleCallback = func;
 }

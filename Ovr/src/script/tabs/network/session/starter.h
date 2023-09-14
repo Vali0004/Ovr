@@ -16,7 +16,6 @@ namespace tabs::network::session {
 					"bail"_AC->run();
 				});
 			});
-			ccheckbox("seamlessTransition"_TC);
 		});
 	}
 }

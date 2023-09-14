@@ -16,7 +16,12 @@
 #define RET_CALL(hk, ...) return CALL(hk, __VA_ARGS__);
 #define RET_CALL_DECL(hk, ...) return CALL_DECL(hk, __VA_ARGS__);
 #define VMT_CALL(vmt, hook, ...) g_hooking->m_##vmt##.getOg<decltype(&hooks::##hook)>(g_##hook##Index)(__VA_ARGS__)
+#define FRAME_COUNT_BLOCK(c, ...) if (c g_frameCount != *pointers::g_frameCount) { \
+	__VA_ARGS__ \
+	g_frameCount = *pointers::g_frameCount; \
+}
 
+inline u32 g_frameCount{};
 inline u64 g_swapchainSize{ 19 };
 inline u64 g_resizeBuffersIndex{ 13 };
 inline u64 g_presentIndex{ 8 };

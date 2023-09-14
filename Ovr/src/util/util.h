@@ -272,6 +272,28 @@ namespace util {
 			return { (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>() };
 		}
 	}
+	namespace memory {
+		template <typename t>
+		void findAndReplace(t value, t replacement, u8 alignment, cc* module) {
+			std::vector<t*> values{};
+			hmodule hmod{ module };
+			for (u64 i{ hmod.begin().as<u64>() + 0x1000ui64 }; i != hmod.end().as<u64>(); i += alignment) {
+				LAZY_FIX({
+					if (*reinterpret_cast<t*>(i) == value) {
+						values.push_back(reinterpret_cast<t*>(i));
+					}
+				});
+			}
+			for (auto& entry : values) {
+				if constexpr (std::is_same_v<t, cc*>) {
+					strcpy_s(*entry, strlen(*entry), replacement);
+				}
+				else {
+					*entry = replacement;
+				}
+			}
+		}
+	}
 	inline void async(std::function<void()> callback) {
 		std::thread(callback).detach();
 	}

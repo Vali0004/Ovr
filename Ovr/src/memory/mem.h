@@ -25,7 +25,10 @@ public:
 		return mem(as<u64>() - v);
 	}
 	mem rip() {
-		return add(as<int32_t&>()).add(4);
+		if (!as<u64>()) {
+			return {};
+		}
+		return add(as<i32&>()).add(4);
 	}
 	mem mov() {
 		return add(3).rip();
